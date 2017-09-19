@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+    $("button").click(function(){
+    	var myData = {
+	        'API' : 'funcionando'
+	    };
+        $.ajax({
+
+	        url: 'http://127.0.0.1:8000/api/tableaux',
+	        type: 'POST',
+	        callback: '?',
+	        data: myData,
+	        datatype: 'application/json',
+	        success: function(teste) { alert(teste['API']); },
+	        error: function() { alert('Failed!'); },
+	    });
+    });
+});
+</script>
+</head>
+<body>
+
+<button>Testar o retorno da API</button>
+
+<div class='resultado'>
+
+</div>
+
+</body>
+</html>

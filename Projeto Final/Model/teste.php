@@ -70,7 +70,7 @@ if(is_array($retorno)){
 }
 
 
-print_r($arvore);
+//print_r($arvore);
 echo "</br></br>";
 echo "Hash";
 echo "</br>";

@@ -6,50 +6,59 @@ $hash = array();
 $fork = false; 
 
 
-
 //Inicialização das fórmulas, aqui recebo os dados para resolver o tableaux
 //Vai sofrer mudanças, ao invés de inicializar diretamente eu receberei arrays e formulas prontas
 //Mas no momento está assim para os testes iniciais
 
 //A^B
-$formula= new Formula();
-$formula->setEsquerdo("A");
-$formula->setDireito("B");
-$formula->setConectivo("e");
+
+$formula = new Formula("A","e","B");
 
 //AvB
-$formula2= new Formula();
-$formula2->setEsquerdo("A");
-$formula2->setDireito("B");
-$formula2->setConectivo("ou");
+$formula2 = new Formula("A","ou","B");
 
+//Av¬B
+$formAux = new Formula("not","B");
+$formula3= new Formula("A","ou",$formAux);
+
+//A->B
+$formula4 = new Formula("A","implica","B");
+
+//¬¬A
+$formula5 = new Formula('notnot',"A");
+
+//¬(A^B)
+//$formAux2 = new Formula("A","e","B");
+$formula6 = new Formula("A","not_e","B");
+
+//¬(AvB)
+$formula7 = new Formula("A","not_ou","B");
+
+//¬(A->B)
+$formula8 = new Formula("A","not_implica","B");
 
 //Inicializar o banco de dados do problema com todas as fórmulas, incluindo a pergunta negada
 //$arvore[] = $formula;
 $arvore[] = $formula2;
 
+$retorno = aplicaFormula($arvore[0]); 
+$indice=0;
+
 //Fork generalizado para as fórmulas
 //Toda vez que um novo ramo for gerado daremos fork. Funciona do mesmo jeito que o fork em C.
 
-$retorno = aplicaFormula($arvore[0]); 
+forkArv($arvore, $retorno, $indice);
 
-if($fork == true){
-	foreach ($retorno as $chave => $valor) {
-		$arvore['fork'][] = $valor;
-		$arvore[0]->usaFormula();
-		//Se for um array, significa que é uma fórmula. Se não for um array, significa que é um átomo
-		if(!is_array($valor)){
-			$hash[$valor][] = 'positivo';
-		}
-	}
-	$fork = false;
-}
-else{
-	foreach ($retorno as $chave => $valor) {
-		$arvore[0]->usaFormula();
-		$arvore[] = $valor;
-	}
-}
+
+
+
+$indice=1;
+//forkArv($arvore, $retorno, $indice);
+
+//$retorno = aplicaFormula($arvore['fork'][0]);
+//$indice=1;
+//forkArv($arvore, $retorno, $indice);
+
 
 
 //Testes e impressões finais
@@ -59,6 +68,7 @@ echo "</br></br>";
 echo "Hash";
 echo "</br>";
 print_r($hash);
+
 
 
 ?>

@@ -7,12 +7,14 @@ $outro['left'] = 'B';
 $outro['conectivo'] = 'not';
 
 $ramo['left'] = 'A';
-$ramo['right'] = 'B';
+$ramo['right'] = $outro;
 $ramo['conectivo'] = 'ou';
 $ramo['usado'] = false;
 $arvore[] = $ramo;
+$teste="(A^B)vB";
+contaParenteses($teste);
 
-
+/*
 $retorno = aplicaFormula($arvore[0]);
 
 if($fork == true){
@@ -34,10 +36,10 @@ else{
 }
 
 //Chamando a função para o ¬B
-//$retorno = aplicaFormula($arvore['fork'][1]);
-/*
+$retorno = aplicaFormula($arvore['fork'][1]);
+
 if(is_array($retorno)){
-	echo "Retorno não é átomo";
+	
 	if($fork == true){
 		
 		foreach ($retorno as $chave => $valor) {
@@ -45,7 +47,6 @@ if(is_array($retorno)){
 			$arvore[0]['usado'] = true;
 			//Se for um array, significa que é uma fórmula. Se não for um array, significa que é um átomo
 			if(!is_array($valor)){
-				echo "Não é array";
 				$hash[$valor][] = 'positivo';
 			}
 		}
@@ -58,7 +59,7 @@ if(is_array($retorno)){
 			$arvore[] = $valor;
 		}
 	}
-}*/
+}
 
 
 print_r($arvore);
@@ -66,6 +67,48 @@ echo "</br></br>";
 echo "Hash";
 echo "</br>";
 print_r($hash);
+*/
+
+function contaParenteses($form){
+	$contador=0;
+	$contador2=0;
+	$i;
+	$abreFormula=false;
+	$subFormula=0;
+	for ($i=0; $i<strlen($form); $i++){
+		
+		//Abriu parenteses
+		if($form[$i]=='('){
+			$contador+=1;
+			print $contador;
+			if($form[$i+1]!='('){
+				$abreFormula=true;
+				$subFormula++;
+			}
+		}
+		//Fecha parenteses
+		elseif($form[$i]==')'){
+			$contador-=1;
+			print $contador;
+			
+			if($contador<0){
+				#Criar um tratamento aqui
+				print "Fórmula com digitação incorreta";
+			}
+			
+			if($abreFormula==true){
+				$abreFormula=false;
+			}
+			$contador2++;
+		}
+		
+		if($abreFormula==true){
+			if($form[$i])
+		}
+		
+	}
+	print "<br><br> parenteses= ".$contador2;
+}
 
 function aplicaFormula($raiz){
 	global $fork;
