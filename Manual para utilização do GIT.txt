@@ -1,10 +1,35 @@
+- Para clonar a pasta do repositório
 
-1- Download
+	Para Windows:
 
-Para Windows:
-https://git-for-windows.github.io/
+	1. Faça o download: https://git-for-windows.github.io/
+	2. Abra o Git Bash
+	3. Abra o site do GitHub no projeto final
+	4. No GitBash, navegue até c:\xampp\htdocs. Uma outra opção é chegar na pasta pelo Windows Explorer, clicar com o botão direito nela e depois clicar em Git Bash, que já irá abri-lo na pasta correta
+	5. Vá no site do GitHub, onde está o nosso projeto, e clique em "Clone or Download".
+	6. Copie o endereço que lá der (vou colocar aqui, mas confirme se pra você o endereço é igual: https://github.com/herbertsds/projetoFinal.git )
+	7. Digite no Git Bash: git clone endereçoQueVocêCopiou
+	8. Uma pasta com o nome "projetoFinal" será criada com todos os arquivos do projeto.
 
-Para Linux:
-apt-get install git
+	Para Linux:
+	apt-get install git
 
-2- Configura��o
+	Siga todos os passos do Windows, utilizando o terminal no lugar do Git Bash.
+
+	/******OBS*******/
+
+	Na pasta onde vai fazer o clone não pode haver uma outra pasta com o nome projetoFinal. Certifique-se disso.
+
+- Para enviar suas mudanças para o repositório
+	1. git status (para ver quais são as mudanças que você fez)
+	2. git add nomeDoArquivo (para adicionar o arquivo à lista de commit. Caso queira adicionar todos, dê um git add *)
+		- Pode pedir pra configurar seu email e nome de usuário, vai aparecer as instruções na tela
+	3. git commit -m "Digite uma mensagem para explicar o que você commitou dessa vez"
+	4. git status (pra ver quantos commits precisam ser enviados ao repositório)
+	5. git push (vai pedir usuário e senha)
+
+	/******OBS*******/
+
+	Como fiz rápido, não estudei a parte de como fazer um merge dos arquivos quando há diferenças da sua versão pra versão que está no repositório. Portanto, caso isso aconteça, tem que pesquisar. Vou passar essa semana estudando git pra conseguir fazer isso direito.
+
+
