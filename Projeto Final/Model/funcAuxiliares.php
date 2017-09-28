@@ -1,7 +1,7 @@
 <?php
-//Função que pega uma fórmula da árvore e aplica a regra corresponte
-//Para formulas cujo resultado da aplicação resulta em single note devem chamar aplicaFormula duas vezes para que o case not adicione os átomos na hash
-//Por exemplo, Av¬B ou A->B.
+//FunÃ§Ã£o que pega uma fÃ³rmula da Ã¡rvore e aplica a regra corresponte
+//Para formulas cujo resultado da aplicaÃ§Ã£o resulta em single note devem chamar aplicaFormula duas vezes para que o case not adicione os ï¿½tomos na hash
+//Por exemplo, AvÂ¬B ou A->B.
 function aplicaFormula(Formula $raiz){
 	global $fork;
 	global $hash;
@@ -9,65 +9,65 @@ function aplicaFormula(Formula $raiz){
 		//Regra 1
 		case 'e':
 			return array($raiz->getEsquerdo(),$raiz->getDireito());
-		//Regra 2
+			//Regra 2
 		case 'ou':
 			$fork = true;
 			return array($raiz->getEsquerdo(),$raiz->getDireito());
-		//Tratamento de Single not
+			//Tratamento de Single not
 		case 'not':
-			//Checa se é composto ou átomo
+			//Checa se ï¿½ composto ou ï¿½tomo
 			if(!is_object($raiz->getDireito())){
-				//print "Sei que é negativo<br>";
+				//print "Sei que ï¿½ negativo<br>";
 				$hash[$raiz->getDireito()][] = 'negativo';
 			}
-			//Se não for objeto chama de novo para aplicar a regra interior
+			//Se nï¿½o for objeto chama de novo para aplicar a regra interior
 			break;
-		//Regra 3	
+			//Regra 3
 		case 'implica':
 			$fork = true;
 			$aux1= new Formula();
 			//O lado esquero da formula vira not
-			//Atomos negativos são sempre adicionados no lado direito de uma Formula
+			//Atomos negativos sï¿½o sempre adicionados no lado direito de uma Formula
 			$aux1->setConectivo("not");
 			$aux1->setDireito($raiz->getEsquerdo());
 			return array($aux1,$raiz->getDireito());
-		//Regra 4
+			//Regra 4
 		case 'notnot':
 			if(!is_object($raiz->getDireito())){
 				$hash[$raiz->getDireito()][] = 'positivo';
-			}			
+			}
 			return array($raiz->getDireito());
-		//Regra 5	
+			//Regra 5
 		case 'not_e';
-			$fork = true;
-			$aux1 = new Formula();
-			$aux2 = new Formula();
-			$aux1->setConectivo('not');
-			$aux1->setDireito($raiz->getEsquerdo());
-			$aux2->setConectivo('not');
-			$aux2->setDireito($raiz->getDireito());
-			return array($aux1,$aux2);
+		$fork = true;
+		$aux1 = new Formula();
+		$aux2 = new Formula();
+		$aux1->setConectivo('not');
+		$aux1->setDireito($raiz->getEsquerdo());
+		$aux2->setConectivo('not');
+		$aux2->setDireito($raiz->getDireito());
+		return array($aux1,$aux2);
 		//Regra 6
 		case 'not_ou';
-			$aux1 = new Formula();
-			$aux2 = new Formula();
-			$aux1->setConectivo('not');
-			$aux1->setDireito($raiz->getEsquerdo());
-			$aux2->setConectivo('not');
-			$aux2->setDireito($raiz->getDireito());
-			return array($aux1,$aux2);
+		$aux1 = new Formula();
+		$aux2 = new Formula();
+		$aux1->setConectivo('not');
+		$aux1->setDireito($raiz->getEsquerdo());
+		$aux2->setConectivo('not');
+		$aux2->setDireito($raiz->getDireito());
+		return array($aux1,$aux2);
 		//Regra 7
 		case 'not_implica';
-			$aux1 = new Formula();
-			$aux1->setConectivo('not');
-			$aux1->setDireito($raiz->getDireito());
-			return array($raiz->getEsquerdo(),$aux1);
+		$aux1 = new Formula();
+		$aux1->setConectivo('not');
+		$aux1->setDireito($raiz->getDireito());
+		return array($raiz->getEsquerdo(),$aux1);
 		default:
-			# Tratamento de um possível erro
+			# Tratamento de um possï¿½vel erro
 			break;
 	}
 }
-//Função fork para 
+//Funï¿½ï¿½o fork para
 function forkArv(&$arvore,&$retorno,$indice){
 	global $fork;
 	global $hash;
@@ -76,7 +76,7 @@ function forkArv(&$arvore,&$retorno,$indice){
 		foreach ($retorno as $chave => $valor) {
 			$arvore['fork'][] = $valor;
 			$arvore[$indice]->usaFormula();
-			//Se for um array, significa que é uma fórmula. Se não for um array, significa que é um átomo
+			//Se for um array, significa que ï¿½ uma fï¿½rmula. Se nï¿½o for um array, significa que ï¿½ um ï¿½tomo
 			if(!is_object($valor)){
 				$hash[$valor][] = 'positivo';
 			}
@@ -91,5 +91,105 @@ function forkArv(&$arvore,&$retorno,$indice){
 			}
 		}
 	}
+}
+
+function converteConectivoSimbolo(&$form){
+	$form=str_replace('e','^',$form);
+	$form=str_replace('ou','v',$form);
+	$form=str_replace('implica','-',$form);
+}
+
+
+function converteConectivoExtenso($form){
+	$form=str_replace('^','e',$form);
+	$form=str_replace('v','ou',$form);
+	$form=str_replace('-','implica',$form);
+}
+
+
+//Funï¿½ï¿½o para verificaï¿½ï¿½o da corretude das formulas com parenteses
+//Use no lado direito ou esquerdo de um objeto formula
+function VerificaFormulaCorreta(&$form){
+	$contador=0;
+	$contador2=0;
+	$i;
+	$abreFormula=false;
+	$esquerdo=true;
+	$subFormula=0;
+	//$auxFormula[];
+	for ($i=0; $i<strlen($form); $i++){
+		
+		//Abriu parenteses
+		if($form[$i]=='('){
+			$contador+=1;
+			if($form[$i+1]!='('){
+				$abreFormula=true;
+				$subFormula++;
+			}
+		}
+		//Fecha parenteses
+		elseif($form[$i]==')'){
+			$contador-=1;
+			if($contador<0){
+				#Criar um tratamento aqui
+				print "Fï¿½rmula com digitaï¿½ï¿½o incorreta";
+				exit(1);
+			}
+			
+			if($abreFormula==true){
+				$abreFormula=false;
+			}
+			$contador2++;
+		}
+		
+	}
+	if($contador!=0){
+		#Criar um tratamento aqui
+		print "Fï¿½rmula com digitaï¿½ï¿½o incorreta";
+		exit(1);
+	}
+}
+
+
+//Recebe uma String fï¿½rmula (Nï¿½o um objeto fï¿½rmula), remove os parenteses mais externos
+//e devolve um objeto Formula com os dois lados separados e o conectivo mais externo classificado
+function resolveParenteses($form,$listaConectivos){
+	$auxForm = new Formula();
+	$aux;
+	$esquerdo=true;
+	$abreFormula=false;
+	$contador=0;
+	converteConectivoSimbolo($form);
+	for ($i=0; $i<strlen($form); $i++){
+		if($form[$i]=='('){
+			$abreFormula=true;
+			$contador++;
+			
+		}
+		if($form[$i]==')'){
+			$contador-=1;
+			if($contador==0){
+				$abreFormula=False;
+			}
+			
+		}
+		if($abreFormula==true){
+			if((in_array($form[$i],$listaConectivos)) && ($contador==1)){
+				$auxForm->setConectivo($form[$i]);
+				$esquerdo=false;
+			}
+			if($esquerdo==true){
+				$auxForm->setEsquerdo($auxForm->getEsquerdo().$form[$i]);
+				//$auxForm['esquerdo']=$auxForm['esquerdo'].$form[$i];
+			}
+			if($esquerdo==false){
+				$auxForm->setDireito($auxForm->getDireito().$form[$i]);
+				//$auxForm['direito']=$auxForm['direito'].$form[$i];
+			}
+		}
+	}
+	$auxForm->setEsquerdo(substr($auxForm->getEsquerdo(), 1));
+	$auxForm->setDireito(substr($auxForm->getDireito(), 1));
+	return $auxForm;
 }
 ?>

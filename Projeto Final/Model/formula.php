@@ -5,7 +5,7 @@ class Formula{
 	private $conectivo;
 	private $usado=False;
 	
-	//Adaptação para poder usar vários tipos de construtores diferentes
+	//AdaptaÃ§Ã£o para poder usar vÃ¡rios tipos de construtores diferentes
 	function __construct()
 	{
 		$a = func_get_args();
@@ -15,41 +15,41 @@ class Formula{
 		}
 	} 
 	
-	//Construtor para fórmula que é apenas um átomo
+	//Construtor para fÃ³rmula que Ã© apenas um Ã¡tomo
 	public function __construct1($direito){
 		$this->direito=$direito;
 	}
-	//Construtor para fórmula que é átomo negado
+	//Construtor para fï¿½rmula que Ã© Ã¡tomo negado
 	public function __construct2($conectivo,$direito){
 		$this->conectivo=$conectivo;
 		$this->direito=$direito;
 	}
-	//Construtor para fórmula de dois termos comum
+	//Construtor para fÃ³rmula de dois termos comum
 	public function __construct3($esquerdo,$conectivo,$direito){
 		$this->esquerdo=$esquerdo;
 		$this->conectivo=$conectivo;
 		$this->direito=$direito;
 	}
-	//Construtor para fórmula de dois termos cujo lado direito é uma fórmula objeto
+	//Construtor para fÃ³rmula de dois termos cujo lado direito Ã© uma fÃ³rmula objeto
 	public function __construct4($esquero,$conectivo,Formula $direito){
 		$this->esquerdo=$esquerdo;
 		$this->conectivo=$conectivo;
 		$this->direito=$direito;
 	}
 	
-	//Construtor para fórmula de dois termos cujo lado esquerdo é uma fórmula objeto
+	//Construtor para fÃ³rmula de dois termos cujo lado esquerdo Ã© uma fÃ³rmula objeto
 	public function __construct5(Formula $esquero,$conectivo,$direito){
 		$this->esquerdo=$esquerdo;
 		$this->conectivo=$conectivo;
 		$this->direito=$direito;
 	}
-	//Construtor para fórmula de dois termos cujo os dois lados são uma fórmula objeto
+	//Construtor para fÃ³rmula de dois termos cujo os dois lados sÃ£o uma fÃ³rmula objeto
 	public function __construct6(Formula $esquero,$conectivo,Formula $direito){
 		$this->esquerdo=$esquerdo;
 		$this->conectivo=$conectivo;
 		$this->direito=$direito;
 	}
-	//Construtor para fórmula que é uma fórmula negada
+	//Construtor para fÃ³rmula que Ã© uma fÃ³rmula negada
 	public function __construct7($conectivo,Formula $direito){
 		$this->conectivo=$conectivo;
 		$this->direito=$direito;
@@ -68,7 +68,7 @@ class Formula{
 		$this->conectivo=$c;
 	}
 	
-	//Se a fórmula for usada ela deve ser marcada como true
+	//Se a fÃ³rmula for usada ela deve ser marcada como true
 	public function usaFormula(){
 		$this->usado=true;
 	}
