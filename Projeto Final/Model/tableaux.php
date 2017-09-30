@@ -2,11 +2,14 @@
 include("formula.php");
 include("funcAuxiliares.php");
 
+//-------------------------------------VARIÁVEIS--GLOBAIS-------------------------------------------
+//
+
 $hash = array();
 $fork = false;
+$listaConectivos=array("^","v","-","!");
 
-$listaConectivos=array("^","v","-","¬");
-
+//---------------------------------------------------------------------------------------------------
 
 //Inicialização das fórmulas, aqui recebo os dados para resolver o tableaux
 //Vai sofrer mudanças, ao invés de inicializar diretamente eu receberei arrays e formulas prontas
@@ -26,7 +29,8 @@ $entradaTeste=array("(AimplicaB)","(BimplicaC)","(A)","(C)");
 
 inicializaArvore($entradaTeste,$arvore);
 
-print_r($arvore);
+imprime_r($arvore);
+
 
 
 

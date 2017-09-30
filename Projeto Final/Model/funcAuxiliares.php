@@ -95,19 +95,30 @@ function forkArv(&$arvore,&$retorno,$indice){
 	}
 }
 
+//Função recebe um ponteiro para uma String fórmula e converte
+//Seus conectivos para símbolos
 function converteConectivoSimbolo(&$form){
 	$form=str_replace('e','^',$form);
 	$form=str_replace('ou','v',$form);
-	$form=str_replace('implica','->',$form);
-	$form=str_replace('not','¬',$form);
+	$form=str_replace('implica','-',$form);
+	$form=str_replace('not','!',$form);
 }
 
-
+//Função recebe um ponteiro para uma String fórmula e converte
+//Seus conectivos de símbolos para o nome por extenso
 function converteConectivoExtenso(&$form){
 	$form=str_replace('^','e',$form);
 	$form=str_replace('v','ou',$form);
-	$form=str_replace('->','implica',$form);
-	$form=str_replace('¬','not',$form);
+	$form=str_replace('-','implica',$form);
+	$form=str_replace('!','not',$form);
+}
+
+//Função auxiliar para facilitar a extração de conectivos de fórmulas com not
+//Uso desta função é bem restrito e no momento do "parsing" das fórmulas
+function converteConectivoNot(&$form){
+	$form=str_replace('^','not_e',$form);
+	$form=str_replace('v','not_ou',$form);
+	$form=str_replace('-','not_implica',$form);
 }
 
 
@@ -166,6 +177,7 @@ function verificaFormulaCorreta(&$form){
 
 //Recebe uma String fórmula (Não é um objeto fórmula), remove os parenteses mais externos
 //e devolve um objeto Formula com os dois lados separados e o conectivo mais externo classificado
+//Basicamente faz um "PARSING"
 function resolveParenteses($form){
 	global $listaConectivos;
 	$auxForm = new Formula();
@@ -173,14 +185,40 @@ function resolveParenteses($form){
 	$esquerdo=true;
 	$abreFormula=false;
 	$contador=0;
+	$not=false;
 	converteConectivoSimbolo($form);
+	//Se for um átomo positivo
+	//OBS: Talvez haja uma maneira mais apropriada de tratar isto
+	//Em caso de erro nos cálculos, checar esta etapa
+
 	if(strlen($form)==3){
-		substr($form, 1);
-		substr($form, -1);
+		$form=substr($form, 1);
+		$form=substr($form, 0, strlen($form)-1);
 		$auxForm->setDireito($form);
 		return $auxForm;
 	}
+	//Se for um átomo negativo
+	//OBS: Talvez haja uma maneira mais apropriada de tratar isto
+	//Em caso de erro nos cálculos, checar esta etapa
+	if(strlen($form)==4){
+		$form=substr($form, 1);		
+		$form=substr($form, 1);
+		$form=substr($form, 0, strlen($form)-1);
+		$auxForm->setDireito($form);
+		$auxForm->setConectivo("not");
+		return $auxForm;
+	}
+
+	//Se não for átomo, caso mais geral
 	for ($i=0; $i<strlen($form); $i++){
+
+		//Se achar o conectivo not no exterior de um parentese
+		//Certamente há uma fórmula do tipo not para atribuir um conectivo not_algumacoisa
+		//Mas preciso me certificar de que não é um átomo negativo, então verifico se o próximo elemento
+		//é a abertura de um parenteses
+		if($form[$i]=='!' && $form[$i+1]=='('){
+			$not=true;
+		}
 		if($form[$i]=='('){
 			$abreFormula=true;
 			$contador++;
@@ -195,16 +233,26 @@ function resolveParenteses($form){
 		}
 		if($abreFormula==true){
 			if((in_array($form[$i],$listaConectivos)) && ($contador==1)){
-				$auxForm->setConectivo($form[$i]);
-				$esquerdo=false;
+				if($not==true){
+					$aux=$form[$i];
+					converteConectivoNot($aux);
+					$auxForm->setConectivo($aux);
+					$esquerdo=false;
+					$not=false;
+				}
+				else{
+					$aux=$form[$i];
+					converteConectivoExtenso($aux);
+					$auxForm->setConectivo($aux);
+					$esquerdo=false;
+				}
+				
 			}
 			if($esquerdo==true){
 				$auxForm->setEsquerdo($auxForm->getEsquerdo().$form[$i]);
-				//$auxForm['esquerdo']=$auxForm['esquerdo'].$form[$i];
 			}
 			if($esquerdo==false){
 				$auxForm->setDireito($auxForm->getDireito().$form[$i]);
-				//$auxForm['direito']=$auxForm['direito'].$form[$i];
 			}
 		}
 	}
@@ -223,16 +271,31 @@ function processaEntrada($form,&$objForm) {
 }
 //Recebe um array de Strings formula e os adiciona na árvore para inicializar o processamento
 //Um print está sendo colocado para controle interno, mas possivelmente será retirado na versão final
+//Faz a negação da pergunta, que é sempre o último elemento do array
 function inicializaArvore(&$arrayForm,&$arvore){
 
 	for ($i=0; $i < count($arrayForm); $i++) { 
 		converteConectivoSimbolo($arrayForm[$i]);
-		print "Processando... ".$arrayForm[$i]."<br><br>";
+		print "Processando etapa ".$i."... ".$arrayForm[$i]."<br><br>";
+
+		//Nega a pergunta
+		if(($i+1)==count($arrayForm)){
+			$arrayForm[$i]="not".$arrayForm[$i];
+		}
 
 		$auxForm = new Formula();
 		processaEntrada($arrayForm[$i],$auxForm);
 		$arvore[]=$auxForm;
 
+
+	}
+}
+
+function imprime_r($array){
+	for ($i=0; $i < count($array) ; $i++) {
+		print "Formula ".$i." - "; 
+		print_r($array[$i]);
+		print "<br>";
 	}
 }
 ?>
