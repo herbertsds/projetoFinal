@@ -1,5 +1,5 @@
 <?php
-//Não serve pra nada, apenas testando código e funções internas para aplicar no código principal
+//Nï¿½o serve pra nada, apenas testando cï¿½digo e funï¿½ï¿½es internas para aplicar no cï¿½digo principal
 
 
 
@@ -16,8 +16,15 @@ $ramo['conectivo'] = 'ou';
 $ramo['usado'] = false;
 $arvore[] = $ramo;
 
+$form='AvB';
+
+
 $retorno = aplicaFormula($arvore[0]);
 $indiceFormula=0;
+
+function stringParaFormula($form){
+    
+}
 
 function aplicaFork(&$retorno,&$arvore,$indice){
 	global $fork;
@@ -26,7 +33,7 @@ function aplicaFork(&$retorno,&$arvore,$indice){
 		foreach ($retorno as $chave => $valor) {
 			$arvore['fork'][] = $valor;
 			$arvore[$indice]['usado'] = true;
-			//Se for um array, significa que é uma fórmula. Se não for um array, significa que é um átomo
+			//Se for um array, significa que ï¿½ uma fï¿½rmula. Se nï¿½o for um array, significa que ï¿½ um ï¿½tomo
 			if(!is_array($valor)){
 				$hash[$valor][] = 'positivo';
 			}
@@ -43,7 +50,7 @@ function aplicaFork(&$retorno,&$arvore,$indice){
 
 aplicaFork($retorno, $arvore, $indiceFormula);
 
-//Chamando a função para o ¬B
+//Chamando a funï¿½ï¿½o para o ï¿½B
 $retorno = aplicaFormula($arvore['fork'][1]);
 
 if(is_array($retorno)){
@@ -53,7 +60,7 @@ if(is_array($retorno)){
 		foreach ($retorno as $chave => $valor) {
 			$arvore['fork'][] = $valor;
 			$arvore[0]['usado'] = true;
-			//Se for um array, significa que é uma fórmula. Se não for um array, significa que é um átomo
+			//Se for um array, significa que ï¿½ uma fï¿½rmula. Se nï¿½o for um array, significa que ï¿½ um ï¿½tomo
 			if(!is_array($valor)){
 				$hash[$valor][] = 'positivo';
 			}
@@ -85,7 +92,7 @@ function aplicaFormula($raiz){
 			return array($raiz['left'],$raiz['right']);
 			break;
 		case 'not':
-			//Checa se é array ou átomo
+			//Checa se ï¿½ array ou ï¿½tomo
 			if(!is_array($raiz['left'])){
 				$hash[$raiz['left']][] = 'negativo';
 			}

@@ -2,6 +2,8 @@
 //Função que pega uma fórmula da árvore e aplica a regra corresponte
 //Para formulas cujo resultado da aplicação resulta em single note devem chamar aplicaFormula duas vezes para que o case not adicione os �tomos na hash
 //Por exemplo, Av¬B ou A->B.
+//$listaConectivos=array("^","v","->","¬");
+
 function aplicaFormula(Formula $raiz){
 	global $fork;
 	global $hash;
@@ -15,19 +17,19 @@ function aplicaFormula(Formula $raiz){
 			return array($raiz->getEsquerdo(),$raiz->getDireito());
 			//Tratamento de Single not
 		case 'not':
-			//Checa se � composto ou �tomo
+			//Checa se � composto ou átomo
 			if(!is_object($raiz->getDireito())){
-				//print "Sei que � negativo<br>";
+				//print "Sei que é negativo<br>";
 				$hash[$raiz->getDireito()][] = 'negativo';
 			}
-			//Se n�o for objeto chama de novo para aplicar a regra interior
+			//Se não for objeto chama de novo para aplicar a regra interior
 			break;
 			//Regra 3
 		case 'implica':
 			$fork = true;
 			$aux1= new Formula();
 			//O lado esquero da formula vira not
-			//Atomos negativos s�o sempre adicionados no lado direito de uma Formula
+			//Atomos negativos são sempre adicionados no lado direito de uma Formula
 			$aux1->setConectivo("not");
 			$aux1->setDireito($raiz->getEsquerdo());
 			return array($aux1,$raiz->getDireito());
@@ -67,7 +69,7 @@ function aplicaFormula(Formula $raiz){
 			break;
 	}
 }
-//Fun��o fork para
+//Função fork para
 function forkArv(&$arvore,&$retorno,$indice){
 	global $fork;
 	global $hash;
@@ -76,7 +78,7 @@ function forkArv(&$arvore,&$retorno,$indice){
 		foreach ($retorno as $chave => $valor) {
 			$arvore['fork'][] = $valor;
 			$arvore[$indice]->usaFormula();
-			//Se for um array, significa que � uma f�rmula. Se n�o for um array, significa que � um �tomo
+			//Se for um array, significa que é uma fórmula. Se não for um array, significa que é um átomo
 			if(!is_object($valor)){
 				$hash[$valor][] = 'positivo';
 			}
@@ -96,20 +98,27 @@ function forkArv(&$arvore,&$retorno,$indice){
 function converteConectivoSimbolo(&$form){
 	$form=str_replace('e','^',$form);
 	$form=str_replace('ou','v',$form);
-	$form=str_replace('implica','-',$form);
+	$form=str_replace('implica','->',$form);
+	$form=str_replace('not','¬',$form);
 }
 
 
-function converteConectivoExtenso($form){
+function converteConectivoExtenso(&$form){
 	$form=str_replace('^','e',$form);
 	$form=str_replace('v','ou',$form);
-	$form=str_replace('-','implica',$form);
+	$form=str_replace('->','implica',$form);
+	$form=str_replace('¬','not',$form);
 }
 
 
-//Fun��o para verifica��o da corretude das formulas com parenteses
+//Função para verificação da corretude das formulas com parenteses
 //Use no lado direito ou esquerdo de um objeto formula
-function VerificaFormulaCorreta(&$form){
+//Recebe uma STRING e retorna erro caso haja, ou Ok caso esteja correta
+//OBSERVAÇÃO IMPORTANTE
+//Verificar durante a etapa de fazer o WebService funcionar
+//Um tratamento para fórmulas incorretas, a aplicação NÃO pode encerrar
+function verificaFormulaCorreta(&$form){
+    
 	$contador=0;
 	$contador2=0;
 	$i;
@@ -132,7 +141,8 @@ function VerificaFormulaCorreta(&$form){
 			$contador-=1;
 			if($contador<0){
 				#Criar um tratamento aqui
-				print "F�rmula com digita��o incorreta";
+				//Se o usuário digitar a entrada vamos precisar usar uma rotina de correção e chamar verifica recursivamente
+				print "Fórmula com digitação incorreta";
 				exit(1);
 			}
 			
@@ -145,21 +155,31 @@ function VerificaFormulaCorreta(&$form){
 	}
 	if($contador!=0){
 		#Criar um tratamento aqui
-		print "F�rmula com digita��o incorreta";
+		//Se o usuário digitar a entrada vamos precisar usar uma rotina de correção e chamar verifica recursivamente
+	    print "Fórmula com digitação incorreta";
 		exit(1);
 	}
+	print "Fórmula Ok<br>";
+	
 }
 
 
-//Recebe uma String f�rmula (N�o um objeto f�rmula), remove os parenteses mais externos
+//Recebe uma String fórmula (Não é um objeto fórmula), remove os parenteses mais externos
 //e devolve um objeto Formula com os dois lados separados e o conectivo mais externo classificado
-function resolveParenteses($form,$listaConectivos){
+function resolveParenteses($form){
+	global $listaConectivos;
 	$auxForm = new Formula();
 	$aux;
 	$esquerdo=true;
 	$abreFormula=false;
 	$contador=0;
 	converteConectivoSimbolo($form);
+	if(strlen($form)==3){
+		substr($form, 1);
+		substr($form, -1);
+		$auxForm->setDireito($form);
+		return $auxForm;
+	}
 	for ($i=0; $i<strlen($form); $i++){
 		if($form[$i]=='('){
 			$abreFormula=true;
@@ -191,5 +211,28 @@ function resolveParenteses($form,$listaConectivos){
 	$auxForm->setEsquerdo(substr($auxForm->getEsquerdo(), 1));
 	$auxForm->setDireito(substr($auxForm->getDireito(), 1));
 	return $auxForm;
+}
+
+//Recebe uma String formula como entrada, caso a formula não tenha
+//nenhum problema de digitação, como por exemplo, os parenteses,
+//a formula sera transformada em um objeto Formula pronto para
+//ser inserido na árvore.
+function processaEntrada($form,&$objForm) {
+	verificaFormulaCorreta($form);
+	$objForm=resolveParenteses($form);    
+}
+//Recebe um array de Strings formula e os adiciona na árvore para inicializar o processamento
+//Um print está sendo colocado para controle interno, mas possivelmente será retirado na versão final
+function inicializaArvore(&$arrayForm,&$arvore){
+
+	for ($i=0; $i < count($arrayForm); $i++) { 
+		converteConectivoSimbolo($arrayForm[$i]);
+		print "Processando... ".$arrayForm[$i]."<br><br>";
+
+		$auxForm = new Formula();
+		processaEntrada($arrayForm[$i],$auxForm);
+		$arvore[]=$auxForm;
+
+	}
 }
 ?>

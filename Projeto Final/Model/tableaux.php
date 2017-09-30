@@ -5,48 +5,35 @@ include("funcAuxiliares.php");
 $hash = array();
 $fork = false;
 
-$listaConectivos=array("^","v","-");
+$listaConectivos=array("^","v","-","¬");
 
 
 //Inicialização das fórmulas, aqui recebo os dados para resolver o tableaux
 //Vai sofrer mudanças, ao invés de inicializar diretamente eu receberei arrays e formulas prontas
 //Mas no momento está assim para os testes iniciais
 
-//A^B
+//---------------------------------------------------------------------------------------------------------------------
+//ENTRADAS
+//A entrada inicial vai ser um array de formulas do tipo STRING, a sequência deve ser
+//[banco_de_dados,pergunta], permitindo que eu saiba que a pergunta é a última facilita
+//na hora de inicializar o processamento do tableaux
 
-$formula = new Formula("A","e","B");
+//Cada fórmula deve seguir o formato (Átomo conectivo Átomo), exemplos
+//(Aimplica(BouC)), not((AeB)ou(CeD)),  (AouB), ((AeB)implica(not(CouD))
+//----------------------------------------------------------------------------------------------------------------------
 
-//AvB
-$formula2 = new Formula("A","ou","B");
+$entradaTeste=array("(AimplicaB)","(BimplicaC)","(A)","(C)");
 
-//Av¬B
-$formAux = new Formula("not","B");
-$formula3= new Formula("A","ou",$formAux);
+inicializaArvore($entradaTeste,$arvore);
 
-//A->B
-$formula4 = new Formula("A","implica","B");
+print_r($arvore);
 
-//¬¬A
-$formula5 = new Formula('notnot',"A");
 
-//¬(A^B)
-//$formAux2 = new Formula("A","e","B");
-$formula6 = new Formula("A","not_e","B");
 
-//¬(AvB)
-$formula7 = new Formula("A","not_ou","B");
 
-//¬(A->B)
-$formula8 = new Formula("A","not_implica","B");
 
-$formulaTesteErro = new Formula("((AeB)ouB)","not_e","C");
 
-$formulaTesteCorreto = new Formula("((AeB)ou((AeC)implicaD))","e","A");
-$novaForm = new Formula();
 
-$novaForm=resolveParenteses($formulaTesteCorreto->getEsquerdo(), $listaConectivos);
-
-print_r($novaForm);
 
 //VerificaFormulaCorreta($formulaTesteErro->getEsquerdo());
 
