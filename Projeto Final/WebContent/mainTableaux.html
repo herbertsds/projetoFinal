@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Resolução de Tableaux</title>
+</head>
+
+	<body>
+		<center> <h2>Sistema de Resolução de Árvore da Tableaux</h2></center>
+		
+		<script type="text/javascript" src="eventListener.js"></script> 
+
+<!-- <div  id="a^b" onmouseover="mOver()" onmouseout="mOut()"	><h3>A^B</h3></div> -->
+<div id="regras">
+	<center>
+	<a href="#"><button>A^B</button></a>
+	<a href="#"><button>not(A^B)</button></a></br></br>
+	<a href="#"><button>AuB</button></a>
+	<a href="#"><button>not(AuB)</button></a></br></br>
+	<a href="#"><button>A->B</button></a>
+	<a href="#"><button>not(A->B)</button></a></br></br>
+	</center>
+</div>
+</br></br>
+
+<center>
+
+	<font color="#006400" >Para utilizar o sistema basta selecionar a fórmula desejada e depois escolher qual regra acima deseja aplicar.</font>
+	</br></br>
+
+	<div id="arvore">
+		 <input type="radio" name="formula" value="AeB">A^B<br> 	
+		 <input type="radio" name="formula" value="AeC">A^C<br> 	
+		 <input type="radio" name="formula" value="AimplicaC" checked>A->B<br> 	
+
+
+
+	</div>
+
+</center>
+
+
+<!-- 
+<script type="text/javascript">
+	function mOver() {
+		var text = " <font color=" + "#0099FF" + ">A^B</font>"
+		
+		document.getElementById('a^b').innerHTML = text		
+	}
+
+	function mOut() {
+		var text = " <font color=" + "#000000" + ">A^B</font>"
+		
+		document.getElementById('a^b').innerHTML = text	
+   	}
+</script>		
+ -->
+	</body>
+</html>
