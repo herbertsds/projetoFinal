@@ -190,6 +190,7 @@ function resolveParenteses($form){
 	//Se for um átomo positivo
 	//OBS: Talvez haja uma maneira mais apropriada de tratar isto
 	//Em caso de erro nos cálculos, checar esta etapa
+	//Número 3 é porque há dois parênteses e o átomo SEMPRE, por exemplo: (A)
 
 	if(strlen($form)==3){
 		$form=substr($form, 1);
@@ -200,6 +201,8 @@ function resolveParenteses($form){
 	//Se for um átomo negativo
 	//OBS: Talvez haja uma maneira mais apropriada de tratar isto
 	//Em caso de erro nos cálculos, checar esta etapa
+	//Número 4 é porque há dois parênteses e o átomo com negativo SEMPRE, por exemplo: (!A)
+
 	if(strlen($form)==4){
 		$form=substr($form, 1);		
 		$form=substr($form, 1);
@@ -298,4 +301,36 @@ function imprime_r($array){
 		print "<br>";
 	}
 }
+
+function imprimeDescendo($no){
+	if($no==NULL){
+		return;
+	}
+	if($no->filhos==NULL){
+		$no->filhos[0]->info="parar";
+		$no->filhos[1]->info="parar";
+	}
+	imprimeDescendo($no->filhos[0]);
+	print_r($no->info);
+	verificaStatusNo($no);
+	//imprimeDescendo($no->filhos[1]);
+
+
+}
+
+function verificaStatusNo($no){
+	switch($no){
+		case $no->central:
+			print "Central";
+			break;
+		case $no->esquerda:
+			print "Esquerda";
+			break;
+		case $no->direita:
+			print "Direita";
+		default:
+			print "Nó não categorizado";
+	}
+}
+
 ?>
