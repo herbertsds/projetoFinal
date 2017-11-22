@@ -303,16 +303,24 @@ function imprime_r($array){
 }
 
 function imprimeDescendo($no){
-	if($no==NULL){
-		return;
-	}
-	if($no->filhos==NULL){
-		$no->filhos[0]->info="parar";
-		$no->filhos[1]->info="parar";
-	}
-	imprimeDescendo($no->filhos[0]);
+
+
 	print_r($no->info);
 	verificaStatusNo($no);
+
+	if($no->filhoCentral){
+		imprimeDescendo($no->filhoCentral);
+	}
+	if($no->filhoEsquerda){
+		imprimeDescendo($no->filhoEsquerda);
+	}
+	if($no->filhoDireita){
+		imprimeDescendo($no->filhoDireita);
+	}
+
+
+
+	
 	//imprimeDescendo($no->filhos[1]);
 
 
@@ -321,13 +329,13 @@ function imprimeDescendo($no){
 function verificaStatusNo($no){
 	switch($no){
 		case $no->central:
-			print "Central";
+			print "  Central <br>";
 			break;
 		case $no->esquerda:
-			print "Esquerda";
+			print "  Esquerda ------ ";
 			break;
 		case $no->direita:
-			print "Direita";
+			print "  Direita <br>";
 		default:
 			print "Nó não categorizado";
 	}

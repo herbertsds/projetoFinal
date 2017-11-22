@@ -10,6 +10,7 @@ $hash = array();
 $fork = false;
 $listaConectivos=array("^","v","-","!");
 $listaFormulasNaoUsadas = array();
+$nivelG=0;
 
 //-------------------------------------VARIÁVEIS--GLOBAIS--------------------------------------------
 
@@ -30,7 +31,7 @@ $listaFormulasNaoUsadas = array();
 
 $entradaTeste=array("(AimplicaB)","(BimplicaC)","(A)","(C)");
 
-$entradaTeste2=array("(AeB)","(A)");
+$entradaTeste2=array("(CeD)","(AouB)","(AeB)","(A)");
 
 
 
@@ -47,17 +48,23 @@ print_r($listaFormulasNaoUsadas);
 
 
 
-$arv = new Arvore(2);
+$arv = new Arvore(count($entradaTeste2));
 $arv->cria($entradaTeste2);
 print_r($arv);
 
-$retorno=$arv->aplicaFormula(0,0);
+$nosRetorno;
+$nosRetorno=$arv->aplicaFormula(0,$nivelG);
+$retorno=$arv->aplicaFormula(0,$nivelG,$arv->raiz[1]);
+//$retorno=$arv->aplicaFormula(0,$nivelG,$nosRetorno);
 print "<br><br>";
 
 //print_r($retorno);
 //print_r($arv->raiz[0]->info);
 //print_r($arv->raiz[0]->filhos[0]->info);
 imprimeDescendo($arv->raiz[0]);
+//imprimeDescendo($arv->raiz[2]);
+print "<br><br>";
+print_r($retorno);
 print "<br><br>";
 print_r($listaFormulasNaoUsadas);
 

@@ -15,7 +15,10 @@ class No{
 	public $esquerda=NULL;
 	public $direita=NULL;
 	public $central=NULL;
-	public $filhos= array();
+	//public $filhos= array();
+	public $filhoEsquerda=NULL;
+	public $filhoDireita=NULL;
+	public $filhoCentral=NULL;
 	public $nivel;
 
 
@@ -75,7 +78,7 @@ class Arvore{
 
 	}
 
-	public function aplicaFormula($indice,$nivelG,$no=NULL){
+	public function aplicaFormula($indice,&$nivelG,$no=NULL){
 		global $fork;
 		global $hash;
 		$paiAux = new No();
@@ -111,26 +114,37 @@ class Arvore{
 		switch ($elementoForm->getConectivo()) {
 			//Regra 1
 			case 'e':
-				array_push($elementoNo->filhos, $noAuxCen1);
+				//array_push($elementoNo->filhos, $noAuxCen1);
 				
 				$noAuxCen1->info = $elementoForm->getEsquerdo();
 				$noAuxCen2->info = $elementoForm->getDireito();
 				$noAuxCen1->central=true;
 				$noAuxCen2->central=true;
+				$nivelG++;
 				$noAuxCen2->pai=$noAuxCen1;			
-				array_push($noAuxCen1->filhos, $noAuxCen2);
-				return array($noAuxCen1,$noAuxCen2);
+				$elementoNo->filhoCentral=$noAuxCen1;
+				$noAuxCen1->filhoCentral=$noAuxCen2;
+				return $noAuxCen2;
+				//array_push($noAuxCen1->filhos, $noAuxCen2);
+				//return array($noAuxCen1,$noAuxCen2);
 				//return array($elementoForm->getEsquerdo(),$elementoForm->getDireito());
+				break; 
 				//Regra 2
 			case 'ou':
 				$fork = true;
+				print "PASSEI <br><br>";
 
 				$noAuxEsq->info = $elementoForm->getEsquerdo();
 				$noAuxDir->info = $elementoForm->getDireito();
 				$noAuxEsq->esquerda=true;
 				$noAuxDir->direita=true;
-				array_push($elementoNo->filhos, $noAuxEsq, $noAuxDir);
+				$nivelG++;
+				$elementoNo->filhoEsquerda=$noAuxEsq;
+				$elementoNo->filhoDireita=$noAuxDir;
+				return array($noAuxEsq,$noAuxDir);
+				//array_push($elementoNo->filhos, $noAuxEsq, $noAuxDir);
 				//return array($elementoForm->getEsquerdo(),$elementoForm->getDireito());
+				break; 
 				//Tratamento de Single not
 			case 'not':
 				//Checa se é composto ou átomo
