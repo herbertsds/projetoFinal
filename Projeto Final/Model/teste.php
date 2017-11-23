@@ -5,7 +5,14 @@
 
 echo "<pre>";
 
-$vetor = array(array("Tracer","DPS"), array("Sombra", "DPS"), array("Mercy","Healer"), array("Zarya","Tank"), array("Roadhog","Tank"));
-$v=$vetor[2];
-print_r($v[0]);
+$vetor = array("Tracer","Zeny","Roadhog","Mercy");
+$v="Zeny";
+$remover= array($v);
+
+//foreach ($vetor as $key => $value) {
+//	$v[$key]=$value;
+//}
+
+
+print_r(array_diff($vetor, $remover));
 

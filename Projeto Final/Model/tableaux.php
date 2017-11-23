@@ -10,7 +10,9 @@ $hash = array();
 $fork = false;
 $listaConectivos=array("^","v","-","!");
 $listaFormulasNaoUsadas = array();
+$listaFormulasDisponiveis = array();
 $nivelG=0;
+$numRamoGlobal=1;
 
 //-------------------------------------VARIÁVEIS--GLOBAIS--------------------------------------------
 
@@ -52,9 +54,21 @@ $arv = new Arvore(count($entradaTeste2));
 $arv->cria($entradaTeste2);
 print_r($arv);
 
+
+//Inicialização da lista de fórmulas que não foram usadas
+//Esta lista será única enquanto houver um único ramo
+foreach ($arv->raiz as $key => $value) {
+	$listaFormulasDisponiveis[$key]=$value;
+}
+
+
+
+
 $nosRetorno;
 $nosRetorno=$arv->aplicaFormula(0,$nivelG);
+
 $retorno=$arv->aplicaFormula(0,$nivelG,$arv->raiz[1]);
+
 //$retorno=$arv->aplicaFormula(0,$nivelG,$nosRetorno);
 print "<br><br>";
 
@@ -64,7 +78,7 @@ print "<br><br>";
 imprimeDescendo($arv->raiz[0]);
 //imprimeDescendo($arv->raiz[2]);
 print "<br><br>";
-print_r($retorno);
+
 print "<br><br>";
 print_r($listaFormulasNaoUsadas);
 

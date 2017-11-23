@@ -12,6 +12,8 @@ require_once("funcAuxiliares.php");
 class No{
 	public $info;
 	public $pai;
+	public $paiDireto;
+	public $numRamo;
 	public $esquerda=NULL;
 	public $direita=NULL;
 	public $central=NULL;
@@ -20,6 +22,7 @@ class No{
 	public $filhoDireita=NULL;
 	public $filhoCentral=NULL;
 	public $nivel;
+	public $formulasDisponiveis = array();
 
 
 	public function __construct($info=NULL){
@@ -81,6 +84,10 @@ class Arvore{
 	public function aplicaFormula($indice,&$nivelG,$no=NULL){
 		global $fork;
 		global $hash;
+		global $listaFormulasDisponiveis;
+		//local
+		$listaFormulasDisponiveis2;
+
 		$paiAux = new No();
 		$noAuxEsq = new No();
 		$noAuxDir = new No();
@@ -96,6 +103,7 @@ class Arvore{
 			$elementoForm=$elementoNo->info;
 
 			$paiAux=$this->raiz[$indice];
+			$paiAux->formulasDisponiveis=$listaFormulasDisponiveis;
 		}
 		else{
 			$elementoNo=$no;
@@ -103,11 +111,20 @@ class Arvore{
 
 			$paiAux=$no;
 		}
+		//Preparações na estrutura de dados para a aplicação da fórmula
+		//Em alguns casos uns serão usados e outros não, mas facilita manutenção depois separando este passo do switch
+
 
 		$noAuxEsq->pai = $paiAux;
+		$noAuxEsq->formulasDisponiveis=$paiAux->formulasDisponiveis;
 		$noAuxDir->pai = $paiAux;
+		$noAuxDir->formulasDisponiveis=$paiAux->formulasDisponiveis;
 		$noAuxCen1->pai = $paiAux;
 		$noAuxCen2->pai = $noAuxCen1;
+		$noAuxCen2->formulasDisponiveis=$paiAux->formulasDisponiveis;
+
+		//O nó da fórmula que eu usar terá de ser removido
+		$remover = array($elementoNo);
 		//Como eu separei a raiz e o tronco por razões de manipulação, foi conveniente criar
 		//uma variável que pudesse assumir um valor tanto de tronco quanto de raiz
 
@@ -124,6 +141,9 @@ class Arvore{
 				$noAuxCen2->pai=$noAuxCen1;			
 				$elementoNo->filhoCentral=$noAuxCen1;
 				$noAuxCen1->filhoCentral=$noAuxCen2;
+				array_diff($noAuxCen2->formulasDisponiveis, $remover);
+				print "<br><br>Disponiveis nessa etapa";
+				print_r($noAuxCen2->formulasDisponiveis);
 				return $noAuxCen2;
 				//array_push($noAuxCen1->filhos, $noAuxCen2);
 				//return array($noAuxCen1,$noAuxCen2);
@@ -132,7 +152,6 @@ class Arvore{
 				//Regra 2
 			case 'ou':
 				$fork = true;
-				print "PASSEI <br><br>";
 
 				$noAuxEsq->info = $elementoForm->getEsquerdo();
 				$noAuxDir->info = $elementoForm->getDireito();
@@ -141,6 +160,8 @@ class Arvore{
 				$nivelG++;
 				$elementoNo->filhoEsquerda=$noAuxEsq;
 				$elementoNo->filhoDireita=$noAuxDir;
+				array_diff($noAuxEsq->formulasDisponiveis, $remover);
+				array_diff($noAuxDir->formulasDisponiveis, $remover);
 				return array($noAuxEsq,$noAuxDir);
 				//array_push($elementoNo->filhos, $noAuxEsq, $noAuxDir);
 				//return array($elementoForm->getEsquerdo(),$elementoForm->getDireito());
