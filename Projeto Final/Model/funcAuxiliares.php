@@ -302,6 +302,8 @@ function imprime_r($array){
 	}
 }
 
+
+//Função recursiva para imprimir as fórmulas de cada Nó da Árvore
 function imprimeDescendo($no){
 
 
@@ -318,14 +320,8 @@ function imprimeDescendo($no){
 		imprimeDescendo($no->filhoDireita);
 	}
 
-
-
-	
-	//imprimeDescendo($no->filhos[1]);
-
-
 }
-
+//Função utilizada somente por imprimDescendo para ajustaro formato da impressão
 function verificaStatusNo($no){
 	switch($no){
 		case $no->central:
@@ -336,8 +332,17 @@ function verificaStatusNo($no){
 			break;
 		case $no->direita:
 			print "  Direita <br>";
+			break;
 		default:
 			print "Nó não categorizado";
+	}
+}
+
+function imprimeArvoreRaiz($arv){
+	foreach ($arv as $key => $value) {
+		print "BD".$key." - ";
+		print_r($arv[$key]->info);
+
 	}
 }
 

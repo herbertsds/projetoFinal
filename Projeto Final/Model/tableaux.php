@@ -2,7 +2,7 @@
 require_once("formula.php");
 require_once("funcAuxiliares.php");
 include("arvore.php");
-
+echo "<pre>";
 //-------------------------------------VARIÁVEIS--GLOBAIS-------------------------------------------
 //
 
@@ -52,22 +52,24 @@ print_r($listaFormulasNaoUsadas);
 
 $arv = new Arvore(count($entradaTeste2));
 $arv->cria($entradaTeste2);
-print_r($arv);
+//print_r($arv);
+imprimeArvoreRaiz($arv->raiz);
 
 
 //Inicialização da lista de fórmulas que não foram usadas
 //Esta lista será única enquanto houver um único ramo
 foreach ($arv->raiz as $key => $value) {
-	$listaFormulasDisponiveis[$key]=$value;
+		$listaFormulasDisponiveis[$key]=$value;
 }
 
 
+$noFolha;
+$noFolha=$arv->aplicaFormula(0,$nivelG);
 
 
-$nosRetorno;
-$nosRetorno=$arv->aplicaFormula(0,$nivelG);
-
-$retorno=$arv->aplicaFormula(0,$nivelG,$arv->raiz[1]);
+$noFolha=$arv->aplicaFormula(0,$nivelG,$arv->raiz[2],$noFolha);
+$noFolha=$arv->aplicaFormula(0,$nivelG,$arv->raiz[1],$noFolha);
+print "<br>No Folha<br>";
 
 //$retorno=$arv->aplicaFormula(0,$nivelG,$nosRetorno);
 print "<br><br>";
@@ -76,11 +78,12 @@ print "<br><br>";
 //print_r($arv->raiz[0]->info);
 //print_r($arv->raiz[0]->filhos[0]->info);
 imprimeDescendo($arv->raiz[0]);
+
 //imprimeDescendo($arv->raiz[2]);
 print "<br><br>";
 
-print "<br><br>";
-print_r($listaFormulasNaoUsadas);
+
+
 
 
 //VerificaFormulaCorreta($formulaTesteErro->getEsquerdo());

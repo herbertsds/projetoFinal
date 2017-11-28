@@ -12,8 +12,8 @@ require_once("funcAuxiliares.php");
 class No{
 	public $info;
 	public $pai;
-	public $paiDireto;
-	public $numRamo;
+	//public $paiDireto;
+	//public $numRamo;
 	public $esquerda=NULL;
 	public $direita=NULL;
 	public $central=NULL;
@@ -23,6 +23,7 @@ class No{
 	public $filhoCentral=NULL;
 	public $nivel;
 	public $formulasDisponiveis = array();
+	public $hashAtomos = array();
 
 
 	public function __construct($info=NULL){
@@ -34,9 +35,9 @@ class No{
 
 	}
 
-	public function __toString(){
-		return "$this->info";
-	}
+	//public function __toString(){
+	//	return "$this->info";
+	//}
 }
 
 
@@ -47,7 +48,6 @@ class Arvore{
 	public $raiz= array();
 	public $tamanho;
 	public $preenchidos;
-	public $tronco= array();
 	public $nivelGlobal;
 	public $numRamos=1;
 
@@ -58,7 +58,7 @@ class Arvore{
 	}
 
 	public function cria($info){
-		global $listaFormulasNaoUsadas;
+		//global $listaFormulasNaoUsadas;
 
 		//Criação do array raiz com os dados que compõe o banco de dados
 		while ($this->preenchidos < $this->tamanho) {
@@ -76,12 +76,12 @@ class Arvore{
 			//$aux2= $aux;
 			//$this->raiz[$this->preenchidos]=$aux2;
 			$this->preenchidos++;
-			array_push($listaFormulasNaoUsadas,$aux);			
+			//array_push($listaFormulasNaoUsadas,$aux);			
 		}
 
 	}
 
-	public function aplicaFormula($indice,&$nivelG,$no=NULL){
+	public function aplicaFormula($indice,&$nivelG,$no=NULL,$noPai=NULL){
 		global $fork;
 		global $hash;
 		global $listaFormulasDisponiveis;
@@ -104,12 +104,13 @@ class Arvore{
 
 			$paiAux=$this->raiz[$indice];
 			$paiAux->formulasDisponiveis=$listaFormulasDisponiveis;
+
 		}
 		else{
 			$elementoNo=$no;
 			$elementoForm=$elementoNo->info;
 
-			$paiAux=$no;
+			$paiAux=$noPai;
 		}
 		//Preparações na estrutura de dados para a aplicação da fórmula
 		//Em alguns casos uns serão usados e outros não, mas facilita manutenção depois separando este passo do switch
@@ -123,8 +124,14 @@ class Arvore{
 		$noAuxCen2->pai = $noAuxCen1;
 		$noAuxCen2->formulasDisponiveis=$paiAux->formulasDisponiveis;
 
+
+
 		//O nó da fórmula que eu usar terá de ser removido
-		$remover = array($elementoNo);
+		$remover = array($elementoNo->info)[0];
+
+		// $remover[1]['esquerdo:Formula:private'] = "A";
+
+
 		//Como eu separei a raiz e o tronco por razões de manipulação, foi conveniente criar
 		//uma variável que pudesse assumir um valor tanto de tronco quanto de raiz
 
@@ -132,27 +139,23 @@ class Arvore{
 			//Regra 1
 			case 'e':
 				//array_push($elementoNo->filhos, $noAuxCen1);
-				
+				$elementoNo=$paiAux;
 				$noAuxCen1->info = $elementoForm->getEsquerdo();
 				$noAuxCen2->info = $elementoForm->getDireito();
 				$noAuxCen1->central=true;
 				$noAuxCen2->central=true;
 				$nivelG++;
-				$noAuxCen2->pai=$noAuxCen1;			
+				$noAuxCen2->pai=$noAuxCen1;	
+
 				$elementoNo->filhoCentral=$noAuxCen1;
 				$noAuxCen1->filhoCentral=$noAuxCen2;
-				array_diff($noAuxCen2->formulasDisponiveis, $remover);
-				print "<br><br>Disponiveis nessa etapa";
-				print_r($noAuxCen2->formulasDisponiveis);
+				$this->removerFormula($noAuxCen2->formulasDisponiveis,$remover);
 				return $noAuxCen2;
-				//array_push($noAuxCen1->filhos, $noAuxCen2);
-				//return array($noAuxCen1,$noAuxCen2);
-				//return array($elementoForm->getEsquerdo(),$elementoForm->getDireito());
 				break; 
 				//Regra 2
 			case 'ou':
 				$fork = true;
-
+				$elementoNo=$paiAux;
 				$noAuxEsq->info = $elementoForm->getEsquerdo();
 				$noAuxDir->info = $elementoForm->getDireito();
 				$noAuxEsq->esquerda=true;
@@ -160,11 +163,9 @@ class Arvore{
 				$nivelG++;
 				$elementoNo->filhoEsquerda=$noAuxEsq;
 				$elementoNo->filhoDireita=$noAuxDir;
-				array_diff($noAuxEsq->formulasDisponiveis, $remover);
-				array_diff($noAuxDir->formulasDisponiveis, $remover);
+				$this->removerFormula($noAuxEsq->formulasDisponiveis,$remover);
+				$this->removerFormula($noAuxDir->formulasDisponiveis,$remover);
 				return array($noAuxEsq,$noAuxDir);
-				//array_push($elementoNo->filhos, $noAuxEsq, $noAuxDir);
-				//return array($elementoForm->getEsquerdo(),$elementoForm->getDireito());
 				break; 
 				//Tratamento de Single not
 			case 'not':
@@ -222,32 +223,42 @@ class Arvore{
 		}
 	}
 
-
-	function forkArv($indiceRamo,$filho1,$filho2=NULL){
-		global $fork;
-		global $hash;
-		
-		if($fork == true){
-			foreach ($retorno as $chave => $valor) {
-				$this->numRamos++;
-				$tronco[$this->numRamos-1]= new Ramo();
-
-				$arvore[$indice]->usaFormula();
-				//Se for um array, significa que é uma fórmula. Se não for um array, significa que é um átomo
-				if(!is_object($valor)){
-					$hash[$valor][] = 'positivo';
-				}
-			}
-			$fork = false;
-		}
-		else{
-			if (is_array($retorno) || is_object($retorno)){
-				foreach ($retorno as $chave => $valor) {
-					$arvore[$indice]->usaFormula();
-					$arvore[] = $valor;
-				}
+	public function removerFormula(&$formulasDisponiveis, $formulaRemover){
+		foreach ($formulasDisponiveis as $key => $value) {
+			if($value->info == $formulaRemover){
+				unset($formulasDisponiveis[$key]);
 			}
 		}
 	}
+
+
+	//Checa se a fórmula é um átomo
+	public function checaAtomico($formula){
+		if(($formula->getEsquerdo()==NULL) && ($formula->getDireito()!=NULL)){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+
+	//public function
+
+
+	/*//Checa se o nó folha Casa/Fecha com algum nó ascendente
+	public function checaCasamento($noFolha,$noAscendente){
+		//Para previnir erro
+		if(is_object($noAscendente->info)){
+			$conectivo=$noAscendente->info->getConectivo;
+			if($conectivo=='not'){
+				if(!is_object($noAscendente->info->getDireito))
+					if($noFolha->info==$noAscendente->info->getDireito){
+						print $noFolha." fechou";
+					}
+			}
+		}
+	}*/
+
+
 }
 ?>
