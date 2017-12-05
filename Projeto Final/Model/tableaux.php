@@ -51,6 +51,7 @@ print_r($listaFormulasNaoUsadas);
 
 
 $arv = new Arvore(count($entradaTeste2));
+//Criar hash inicial na função cria
 $arv->cria($entradaTeste2);
 //print_r($arv);
 imprimeArvoreRaiz($arv->raiz);
