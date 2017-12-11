@@ -1,18 +1,20 @@
 <?php
 //N�o serve pra nada, apenas testando c�digo e fun��es internas para aplicar no c�digo principal
+require_once("funcAuxiliares.php");
+require_once("formula.php");
+//require_once("funcAuxiliares.php");
 
-
-
+$listaConectivos=array("^","v","-","!");
 echo "<pre>";
 
-$vetor = array("Tracer","Zeny","Roadhog","Mercy");
-$v="Zeny";
-$remover= array($v);
 
-//foreach ($vetor as $key => $value) {
-//	$v[$key]=$value;
-//}
+$form="!(A^B)";
+converteConectivoSimbolo($form);
+print "<br>".$form."<br>";
+$aux=new Formula();
+$aux=resolveParenteses($form);
+print "<br>".$form."<br>";
+print_r($aux);
 
 
-print_r(array_diff($vetor, $remover));
 

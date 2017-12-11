@@ -1,4 +1,5 @@
 <?php
+
 //Função que pega uma fórmula da árvore e aplica a regra corresponte
 //Para formulas cujo resultado da aplicação resulta em single note devem chamar aplicaFormula duas vezes para que o case not adicione os �tomos na hash
 //Por exemplo, Av¬B ou A->B.
@@ -186,7 +187,9 @@ function resolveParenteses($form){
 	$abreFormula=false;
 	$contador=0;
 	$not=false;
+
 	converteConectivoSimbolo($form);
+	//print "<br> Teste".$form;
 	//Se for um átomo positivo
 	//OBS: Talvez haja uma maneira mais apropriada de tratar isto
 	//Em caso de erro nos cálculos, checar esta etapa
@@ -214,6 +217,23 @@ function resolveParenteses($form){
 
 	//Se não for átomo, caso mais geral
 	for ($i=0; $i<strlen($form); $i++){
+		//Caso notnotnot
+		if($form[$i]=='!' && $form[$i+1]=='!' && $form[$i+2]=='!'){
+			$form=substr($form, 4);		
+			$form=substr($form, 0, strlen($form)-1);
+			$auxForm->setDireito($form);
+			$auxForm->setConectivo("not");
+			return $auxForm;
+		}
+		//Caso notnot
+		if($form[$i]=='!' && $form[$i+1]=='!'){
+			$form=substr($form, 3);		
+			$form=substr($form, 0, strlen($form)-1);
+			$auxForm->setDireito($form);
+			$auxForm->setConectivo("notnot");
+			return $auxForm;
+		}
+		
 
 		//Se achar o conectivo not no exterior de um parentese
 		//Certamente há uma fórmula do tipo not para atribuir um conectivo not_algumacoisa
@@ -334,6 +354,9 @@ function verificaStatusNo($no){
 			print "  Direita <br>";
 			break;
 		default:
+			if($no->info=="fechado"){
+				break;
+			}
 			print "Nó não categorizado";
 	}
 }

@@ -6,7 +6,7 @@ echo "<pre>";
 //-------------------------------------VARIÁVEIS--GLOBAIS-------------------------------------------
 //
 
-$hash = array();
+$hashInicial = array();
 $fork = false;
 $listaConectivos=array("^","v","-","!");
 $listaFormulasNaoUsadas = array();
@@ -31,10 +31,21 @@ $numRamoGlobal=1;
 
 //-------------------------------------------------ENTRADAS---------------------------------------------------------------------
 
-$entradaTeste=array("(AimplicaB)","(BimplicaC)","(A)","(C)");
+$entradaTeste=array("((AeC)implicaB)","(BimplicaC)","(A)","(C)");
 
-$entradaTeste2=array("(CeD)","(AouB)","(AeB)","(A)");
+$entradaTeste2=array("((CouA)e(DouB))","(AouB)","(AeB)","(A)");
 
+$entradaTeste3=array("notnotnot(A)","(AeB)","(D)");
+
+$entradaTeste4=array("((AouB)e((AouC)implicaD))","(A)");
+
+$entradaTeste5=array("not(AeB)","(AeB)","(D)");
+$entradaTeste6=array("not(AouB)","(AeB)","(D)");
+$entradaTeste7=array("not(AimplicaB)","(AeB)","(D)");
+
+$entradaTeste8=array("not((AouC)e(BouD))","(AeB)","(D)");
+$entradaTeste9=array("not((AeC)ou(BeD))","(AeB)","(D)");
+$entradaTeste10=array("not((AouC)implica(BouD))","(AeB)","(D)");
 
 
 /*
@@ -50,9 +61,9 @@ print_r($listaFormulasNaoUsadas);
 
 
 
-$arv = new Arvore(count($entradaTeste2));
+$arv = new Arvore(count($entradaTeste9));
 //Criar hash inicial na função cria
-$arv->cria($entradaTeste2);
+$arv->cria($entradaTeste9);
 //print_r($arv);
 imprimeArvoreRaiz($arv->raiz);
 
@@ -60,27 +71,32 @@ imprimeArvoreRaiz($arv->raiz);
 //Inicialização da lista de fórmulas que não foram usadas
 //Esta lista será única enquanto houver um único ramo
 foreach ($arv->raiz as $key => $value) {
-		$listaFormulasDisponiveis[$key]=$value;
+	
+	if(!$arv->checaAtomico($value->info)){
+		$listaFormulasDisponiveis[$key]=$value->info;
+	}
+	else{
+		array_push($hashInicial,$value->info);
+	}
 }
 
 
 $noFolha;
-$noFolha=$arv->aplicaFormula(0,$nivelG);
-
-
-$noFolha=$arv->aplicaFormula(0,$nivelG,$arv->raiz[2],$noFolha);
+$primeiroNo=$arv->aplicaFormula(0,$nivelG);
+$noFolha=$primeiroNo;
 $noFolha=$arv->aplicaFormula(0,$nivelG,$arv->raiz[1],$noFolha);
-print "<br>No Folha<br>";
 
-//$retorno=$arv->aplicaFormula(0,$nivelG,$nosRetorno);
+
+//$noFolha=$arv->aplicaFormula(0,$nivelG,$arv->raiz[2],$noFolha[0]);
+//$noFolha=$arv->aplicaFormula(0,$nivelG,$arv->raiz[2],$noFolha[1]);
+//print "<br>No Folha<br>";
+
 print "<br><br>";
 
-//print_r($retorno);
-//print_r($arv->raiz[0]->info);
-//print_r($arv->raiz[0]->filhos[0]->info);
-imprimeDescendo($arv->raiz[0]);
 
-//imprimeDescendo($arv->raiz[2]);
+imprimeDescendo($primeiroNo->pai);
+
+
 print "<br><br>";
 
 
