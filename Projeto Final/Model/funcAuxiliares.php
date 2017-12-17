@@ -1,4 +1,5 @@
 <?php
+
 //Função que pega uma fórmula da árvore e aplica a regra corresponte
 //Para formulas cujo resultado da aplicação resulta em single note devem chamar aplicaFormula duas vezes para que o case not adicione os �tomos na hash
 //Por exemplo, Av¬B ou A->B.
@@ -186,7 +187,9 @@ function resolveParenteses($form){
 	$abreFormula=false;
 	$contador=0;
 	$not=false;
+
 	converteConectivoSimbolo($form);
+	//print "<br> Teste".$form;
 	//Se for um átomo positivo
 	//OBS: Talvez haja uma maneira mais apropriada de tratar isto
 	//Em caso de erro nos cálculos, checar esta etapa
@@ -214,6 +217,23 @@ function resolveParenteses($form){
 
 	//Se não for átomo, caso mais geral
 	for ($i=0; $i<strlen($form); $i++){
+		//Caso notnotnot
+		if($form[$i]=='!' && $form[$i+1]=='!' && $form[$i+2]=='!'){
+			$form=substr($form, 4);		
+			$form=substr($form, 0, strlen($form)-1);
+			$auxForm->setDireito($form);
+			$auxForm->setConectivo("not");
+			return $auxForm;
+		}
+		//Caso notnot
+		if($form[$i]=='!' && $form[$i+1]=='!'){
+			$form=substr($form, 3);		
+			$form=substr($form, 0, strlen($form)-1);
+			$auxForm->setDireito($form);
+			$auxForm->setConectivo("notnot");
+			return $auxForm;
+		}
+		
 
 		//Se achar o conectivo not no exterior de um parentese
 		//Certamente há uma fórmula do tipo not para atribuir um conectivo not_algumacoisa
@@ -302,34 +322,50 @@ function imprime_r($array){
 	}
 }
 
+
+//Função recursiva para imprimir as fórmulas de cada Nó da Árvore
 function imprimeDescendo($no){
-	if($no==NULL){
-		return;
-	}
-	if($no->filhos==NULL){
-		$no->filhos[0]->info="parar";
-		$no->filhos[1]->info="parar";
-	}
-	imprimeDescendo($no->filhos[0]);
+
+
 	print_r($no->info);
 	verificaStatusNo($no);
-	//imprimeDescendo($no->filhos[1]);
 
+	if($no->filhoCentral){
+		imprimeDescendo($no->filhoCentral);
+	}
+	if($no->filhoEsquerda){
+		imprimeDescendo($no->filhoEsquerda);
+	}
+	if($no->filhoDireita){
+		imprimeDescendo($no->filhoDireita);
+	}
 
 }
-
+//Função utilizada somente por imprimDescendo para ajustaro formato da impressão
 function verificaStatusNo($no){
 	switch($no){
 		case $no->central:
-			print "Central";
+			print "  Central <br>";
 			break;
 		case $no->esquerda:
-			print "Esquerda";
+			print "  Esquerda ------ ";
 			break;
 		case $no->direita:
-			print "Direita";
+			print "  Direita <br>";
+			break;
 		default:
+			if($no->info=="fechado"){
+				break;
+			}
 			print "Nó não categorizado";
+	}
+}
+
+function imprimeArvoreRaiz($arv){
+	foreach ($arv as $key => $value) {
+		print "BD".$key." - ";
+		print_r($arv[$key]->info);
+
 	}
 }
 

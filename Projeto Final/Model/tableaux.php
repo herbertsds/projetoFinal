@@ -2,14 +2,17 @@
 require_once("formula.php");
 require_once("funcAuxiliares.php");
 include("arvore.php");
-
+echo "<pre>";
 //-------------------------------------VARIÁVEIS--GLOBAIS-------------------------------------------
 //
 
-$hash = array();
+$hashInicial = array();
 $fork = false;
 $listaConectivos=array("^","v","-","!");
 $listaFormulasNaoUsadas = array();
+$listaFormulasDisponiveis = array();
+$nivelG=0;
+$numRamoGlobal=1;
 
 //-------------------------------------VARIÁVEIS--GLOBAIS--------------------------------------------
 
@@ -28,10 +31,22 @@ $listaFormulasNaoUsadas = array();
 
 //-------------------------------------------------ENTRADAS---------------------------------------------------------------------
 
-$entradaTeste=array("(AimplicaB)","(BimplicaC)","(A)","(C)");
+$entradaTeste=array("((AeC)implicaB)","(BimplicaC)","(A)","(C)");
 
-$entradaTeste2=array("(AeB)","(A)");
+$entradaTeste2=array("((CouA)e(DouB))","(AouB)","(AeB)","(A)");
 
+$entradaTeste3=array("notnot(A)","(AeB)","(D)");
+
+$entradaTeste4=array("((AouB)e((AouC)implicaD))","(A)");
+
+$entradaTeste5=array("not(AeB)","(AeB)","(D)");
+$entradaTeste6=array("not(AouB)","(AeB)","(D)");
+$entradaTeste7=array("not(AimplicaB)","(AeB)","(D)");
+
+$entradaTeste8=array("not((AouC)e(BouD))","(AeB)","(D)");
+$entradaTeste9=array("not((AeC)ou(BeD))","(AeB)","(D)"); 
+$entradaTeste10=array("not((AouC)implica(BouD))","(AeB)","(D)");
+$entradaTeste11=array("(AeB)","(AouB)","(A)");
 
 
 /*
@@ -47,19 +62,47 @@ print_r($listaFormulasNaoUsadas);
 
 
 
-$arv = new Arvore(2);
-$arv->cria($entradaTeste2);
-print_r($arv);
+$arv = new Arvore(count($entradaTeste5));
+//Criar hash inicial na função cria
+$arv->cria($entradaTeste5);
+//print_r($arv);
+imprimeArvoreRaiz($arv->raiz);
 
-$retorno=$arv->aplicaFormula(0,0);
+
+//Inicialização da lista de fórmulas que não foram usadas
+//Esta lista será única enquanto houver um único ramo
+foreach ($arv->raiz as $key => $value) {
+	
+	if(!$arv->checaAtomico($value->info)){
+		$listaFormulasDisponiveis[$key]=$value->info;
+	}
+	else{
+		$hashInicial[$value->info->getDireito()]=$value->info->getConectivo() == "not" ? 0:1;
+	}
+}
+
+
+$noFolha;
+$primeiroNo=$arv->aplicaFormula(0,$nivelG);
+$noFolha=$primeiroNo;
+//$noFolha=$arv->aplicaFormula(0,$nivelG,$arv->raiz[2],$noFolha);
+//$noFolha=$arv->aplicaFormula(0,$nivelG,$primeiroNo->pai,$noFolha);
+$noFolha=$arv->aplicaFormula(0,$nivelG,$arv->raiz[1],$noFolha[0]);
+
+//$noFolha=$arv->aplicaFormula(0,$nivelG,$arv->raiz[2],$noFolha[0]);
+//$noFolha=$arv->aplicaFormula(0,$nivelG,$arv->raiz[2],$noFolha[1]);
+//print "<br>No Folha<br>";
+
 print "<br><br>";
 
-//print_r($retorno);
-//print_r($arv->raiz[0]->info);
-//print_r($arv->raiz[0]->filhos[0]->info);
-imprimeDescendo($arv->raiz[0]);
+
+imprimeDescendo($primeiroNo[0]->pai);
+
+
 print "<br><br>";
-print_r($listaFormulasNaoUsadas);
+
+
+
 
 
 //VerificaFormulaCorreta($formulaTesteErro->getEsquerdo());

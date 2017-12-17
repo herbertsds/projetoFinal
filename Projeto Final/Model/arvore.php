@@ -12,11 +12,18 @@ require_once("funcAuxiliares.php");
 class No{
 	public $info;
 	public $pai;
+	//public $paiDireto;
+	//public $numRamo;
 	public $esquerda=NULL;
 	public $direita=NULL;
 	public $central=NULL;
-	public $filhos= array();
+	//public $filhos= array();
+	public $filhoEsquerda=NULL;
+	public $filhoDireita=NULL;
+	public $filhoCentral=NULL;
 	public $nivel;
+	public $formulasDisponiveis = array();
+	public $hashAtomos;
 
 
 	public function __construct($info=NULL){
@@ -28,9 +35,9 @@ class No{
 
 	}
 
-	public function __toString(){
-		return "$this->info";
-	}
+	//public function __toString(){
+	//	return "$this->info";
+	//}
 }
 
 
@@ -41,7 +48,6 @@ class Arvore{
 	public $raiz= array();
 	public $tamanho;
 	public $preenchidos;
-	public $tronco= array();
 	public $nivelGlobal;
 	public $numRamos=1;
 
@@ -52,10 +58,12 @@ class Arvore{
 	}
 
 	public function cria($info){
-		global $listaFormulasNaoUsadas;
+		global $hashInicial;
+		//global $listaFormulasNaoUsadas;
 
 		//Criação do array raiz com os dados que compõe o banco de dados
 		while ($this->preenchidos < $this->tamanho) {
+
 			$aux= new Formula();
 			//$aux2= new No();
 			converteConectivoSimbolo($info[$this->preenchidos]);			
@@ -63,28 +71,54 @@ class Arvore{
 				$info[$this->preenchidos]="!".$info[$this->preenchidos];
 			}
 			processaEntrada($info[$this->preenchidos],$aux);
-			converteConectivoExtenso($info[$this->preenchidos]);
+			//converteConectivoExtenso($info[$this->preenchidos]);
 
 			$this->raiz[$this->preenchidos]= new No($aux);
 			$this->raiz[$this->preenchidos]->central=true;
 			//$aux2= $aux;
 			//$this->raiz[$this->preenchidos]=$aux2;
 			$this->preenchidos++;
-			array_push($listaFormulasNaoUsadas,$aux);			
+			//array_push($listaFormulasNaoUsadas,$aux);			
 		}
 
 	}
 
-	public function aplicaFormula($indice,$nivelG,$no=NULL){
+	//Falta ainda otimizar o consumo de memória, apagando os dados das listas de fórmulas de cada nó
+	//e também das hash de cada nó
+	public function aplicaFormula($indice,&$nivelG,$no=NULL,$noPai=NULL){
 		global $fork;
-		global $hash;
+		global $hashInicial;
+		global $listaFormulasDisponiveis;
+		//local
+		$listaFormulasDisponiveis2;
+
 		$paiAux = new No();
 		$noAuxEsq = new No();
 		$noAuxDir = new No();
 		$noAuxCen1 = new No();
 		$noAuxCen2 = new No();
+		$formAux1 = new Formula();
+		$formAux2 = new Formula();
 		$elementoForm= new Formula();
 		$elementoNo= new No();
+		$auxFecha;
+
+		//Pra previnir erros, eu encerro a função caso ela tenha sido chamada em um ramo fechado
+		//Bug pra resolver, mesmo já tendo instanciado filho central ele avisa 
+		//Notice:  Trying to get property of non-object in C:\xampp\htdocs\projetoFinal\Projeto Final\Model\arvore.php on line 112
+		//Porém executa corretamente o if, achar um jeito de contornar esse aviso
+
+		if($no!=NULL){
+			if($noPai!=NULL){
+				if ($noPai->filhoCentral->info=="fechado") {
+					print "Este ramo já foi fechado. A função aplicaFormula deve ser chamada em outro ramo";
+					return;
+				}
+			}
+		}
+
+
+
 		//Se o nível for 0, escolheremos um Nó do array Raiz
 		//Caso contrário, escolheremos um Nó do array tronco
 		if($nivelG==0){
@@ -93,126 +127,560 @@ class Arvore{
 			$elementoForm=$elementoNo->info;
 
 			$paiAux=$this->raiz[$indice];
+			$paiAux->formulasDisponiveis=$listaFormulasDisponiveis;
+			$paiAux->hashAtomos=$hashInicial;
+
+
 		}
 		else{
 			$elementoNo=$no;
 			$elementoForm=$elementoNo->info;
 
-			$paiAux=$no;
+			$paiAux=$noPai;
 		}
+		//Preparações na estrutura de dados para a aplicação da fórmula
+		//Em alguns casos uns serão usados e outros não, mas facilita manutenção depois separando este passo do switch
+
 
 		$noAuxEsq->pai = $paiAux;
+		$noAuxEsq->formulasDisponiveis=$paiAux->formulasDisponiveis;
+
 		$noAuxDir->pai = $paiAux;
+		$noAuxDir->formulasDisponiveis=$paiAux->formulasDisponiveis;
+
 		$noAuxCen1->pai = $paiAux;
 		$noAuxCen2->pai = $noAuxCen1;
+		$noAuxCen2->formulasDisponiveis=$paiAux->formulasDisponiveis;
+		$noAuxCen1->formulasDisponiveis=$paiAux->formulasDisponiveis;
+
+
+
+		//O nó da fórmula que eu usar terá de ser removido
+		$remover = array($elementoNo->info)[0];
+
+
+		// $remover[1]['esquerdo:Formula:private'] = "A";
+
+		//Correção de conectivo
+		//$elementoForm->setConectivo(converteConectivoExtenso($elementoForm->getConectivo()));
+
+
 		//Como eu separei a raiz e o tronco por razões de manipulação, foi conveniente criar
 		//uma variável que pudesse assumir um valor tanto de tronco quanto de raiz
 
 		switch ($elementoForm->getConectivo()) {
 			//Regra 1
 			case 'e':
-				array_push($elementoNo->filhos, $noAuxCen1);
+				//array_push($elementoNo->filhos, $noAuxCen1);
+				$elementoNo=$paiAux;
+
+				//Tratamento necessário para o caso em que getEsquerdo e getDireito não sejam objetos
+				$this->tratarNaoFormula($elementoForm->getEsquerdo(),$formAux1);
+				$this->tratarNaoFormula($elementoForm->getDireito(),$formAux2);
+				$noAuxCen1->info = $formAux1;
+				$noAuxCen2->info = $formAux2;
+
 				
-				$noAuxCen1->info = $elementoForm->getEsquerdo();
-				$noAuxCen2->info = $elementoForm->getDireito();
 				$noAuxCen1->central=true;
 				$noAuxCen2->central=true;
-				$noAuxCen2->pai=$noAuxCen1;			
-				array_push($noAuxCen1->filhos, $noAuxCen2);
-				return array($noAuxCen1,$noAuxCen2);
-				//return array($elementoForm->getEsquerdo(),$elementoForm->getDireito());
-				//Regra 2
+				$nivelG++;
+				$noAuxCen2->pai=$noAuxCen1;
+				$noAuxCen1->hashAtomos=$paiAux->hashAtomos;
+				$noAuxCen2->hashAtomos=$paiAux->hashAtomos;
+
+				$elementoNo->filhoCentral=$noAuxCen1;
+				$noAuxCen1->filhoCentral=$noAuxCen2;
+
+				//Se após a aplicação da fórmula o objeto gerado não for uma fórmula atômica
+				//Então será uma fórmula útil para posterior aplicação de regra
+				//Desse modo, esta fórmula também deve constar na lista de fórmulas disponíveis
+				//Senão se a fórmula for atômica eu a adiciono na hash
+				
+				if(!$this->checaAtomico($noAuxCen1->info)){
+					array_push($noAuxCen1->formulasDisponiveis, $noAuxCen1->info);
+					if(!$this->checaAtomico($noAuxCen2->info)){
+						array_push($noAuxCen1->formulasDisponiveis, $noAuxCen2->info);
+					}
+				}
+	
+				elseif ($this->checaAtomico($noAuxCen1->info)) {
+					//Vamos checar se já está na hash, se já estiver e fechar com algum element
+					//Fechamos o ramo
+					if($this->casarFormula($noAuxCen1->hashAtomos,$noAuxCen1->info->getDireito())){
+						$noAuxCen2->filhoCentral= new No();
+						$noAuxCen2->filhoCentral->info="fechado";
+					}
+					$noAuxCen1->hashAtomos[$noAuxCen1->info->getDireito()]=$noAuxCen1->info->getConectivo() == "not" ? 0:1;
+					$noAuxCen2->hashAtomos[$noAuxCen2->info->getDireito()]=$noAuxCen1->info->getConectivo() == "not" ? 0:1;
+				}
+				if(!$this->checaAtomico($noAuxCen2->info)){
+					array_push($noAuxCen2->formulasDisponiveis, $noAuxCen2->info);
+					if(!$this->checaAtomico($noAuxCen1->info)){
+						array_push($noAuxCen2->formulasDisponiveis, $noAuxCen1->info);
+					}
+				}
+				elseif($this->checaAtomico($noAuxCen2->info)) {
+					//Vamos checar se já está na hash, se já estiver e fechar com algum element
+					//Fechamos o ramo
+					if($this->casarFormula($noAuxCen2->hashAtomos,$noAuxCen2->info->getDireito())){
+						$noAuxCen2->filhoCentral= new No();
+						$noAuxCen2->filhoCentral->info="fechado";
+					}
+					$noAuxCen2->hashAtomos[$noAuxCen2->info->getDireito()]=$noAuxCen2->info->getConectivo() == "not" ? 0:1;
+					$noAuxCen1->hashAtomos[$noAuxCen2->info->getDireito()]=$noAuxCen2->info->getConectivo() == "not" ? 0:1;
+				}
+
+				$this->removerFormula($noAuxCen2->formulasDisponiveis,$remover);
+				$this->removerFormula($noAuxCen1->formulasDisponiveis,$remover);
+
+				return $noAuxCen2;
+				break; 
+			//Regra 2
 			case 'ou':
 				$fork = true;
-
-				$noAuxEsq->info = $elementoForm->getEsquerdo();
-				$noAuxDir->info = $elementoForm->getDireito();
+				$elementoNo=$paiAux;
+				//Tratamento necessário para o caso em que getEsquerdo e getDireito não sejam objetos
+				$this->tratarNaoFormula($elementoForm->getEsquerdo(),$formAux1);
+				$this->tratarNaoFormula($elementoForm->getDireito(),$formAux2);
+				$noAuxEsq->info = $formAux1;
+				$noAuxDir->info = $formAux2;
 				$noAuxEsq->esquerda=true;
 				$noAuxDir->direita=true;
-				array_push($elementoNo->filhos, $noAuxEsq, $noAuxDir);
-				//return array($elementoForm->getEsquerdo(),$elementoForm->getDireito());
-				//Tratamento de Single not
-			case 'not':
-				//Checa se é composto ou átomo
-				if(!is_object($elementoForm->getDireito())){
-					//print "Sei que é negativo<br>";
-					$hash[$elementoForm->getDireito()][] = 'negativo';
+				$noAuxEsq->hashAtomos=$paiAux->hashAtomos;
+				$noAuxDir->hashAtomos=$paiAux->hashAtomos;
+				$nivelG++;
+				$elementoNo->filhoEsquerda=$noAuxEsq;
+				$elementoNo->filhoDireita=$noAuxDir;
+				//Se após a aplicação da fórmula o objeto gerado não for uma fórmula atômica
+				//Então será uma fórmula útil para posterior aplicação de regra
+				//Desse modo, esta fórmula também deve constar na lista de fórmulas disponíveis
+				
+				if(!$this->checaAtomico($noAuxEsq->info)){
+					array_push($noAuxEsq->formulasDisponiveis, $noAuxEsq->info);
+					if(!$this->checaAtomico($noAuxDir->info)){
+						array_push($noAuxEsq->formulasDisponiveis, $noAuxDir->info);
+					}
 				}
+				elseif ($this->checaAtomico($noAuxEsq->info)) {
+					if($this->casarFormula($noAuxEsq->hashAtomos,$noAuxEsq->info->getDireito())){
+						$noAuxEsq->filhoCentral= new No();
+						$noAuxEsq->filhoCentral->info="fechado";
+					}
+					$noAuxEsq->hashAtomos[$noAuxEsq->info->getDireito()]=$noAuxEsq->info->getConectivo() == "not" ? 0:1;
+				}
+				if(!$this->checaAtomico($noAuxDir->info)){
+					array_push($noAuxDir->formulasDisponiveis, $noAuxDir->info);
+					if(!$this->checaAtomico($noAuxEsq->info)){
+						array_push($noAuxDir->formulasDisponiveis, $noAuxEsq->info);
+					}
+				}
+				elseif ($this->checaAtomico($noAuxDir->info)) {
+					if($this->casarFormula($noAuxDir->hashAtomos,$noAuxDir->info->getDireito())){
+						$noAuxDir->filhoCentral= new No();
+						$noAuxDir->filhoCentral->info="fechado";
+					}
+					$noAuxDir->hashAtomos[$noAuxDir->info->getDireito()]=$noAuxDir->info->getConectivo() == "not" ? 0:1;
+				}
+			
+				$this->removerFormula($noAuxEsq->formulasDisponiveis,$remover);
+				$this->removerFormula($noAuxDir->formulasDisponiveis,$remover);
+
+	
+				return array($noAuxEsq,$noAuxDir);
+				break; 
+			//Tratamento de Single not
+			//possível dar bug se eu adicionar no ramo errado
+			case 'not':
+				$noAuxCen1->info=$elementoForm;
+				$noAuxCen1->central=true;
+				$noAuxCen1->hashAtomos=$paiAux->hashAtomos;
+				$elementoNo->filhoCentral=$noAuxCen1;
+				//Se for atômico, preciso adicionar na hash e dar prosseguimento
+				if($this->checaAtomico($elementoForm)){
+					$noAuxCen1->hashAtomos[$noAuxCen1->info->getDireito()]=$noAuxCen1->info->getConectivo() == "not" ? 0:1;
+					if($this->casarFormula($noAuxCen1->hashAtomos,$noAuxCen1->info->getDireito())){
+						$noAuxCen1->filhoCentral= new No();
+						$noAuxCen1->filhoCentral->info="fechado";
+					}
+				}
+
+				return $noAuxCen1;
+		
 				//Se não for objeto chama de novo para aplicar a regra interior
 				break;
 				//Regra 3
+			//Falta corrigir o lado esquedo para transformar as formulas em not_alguma coisa
 			case 'implica':
-				$fork = true;
-				$aux1= new Formula();
+				$elementoNo=$paiAux;
+				//Tratamento necessário para o caso em que getEsquerdo e getDireito não sejam objetos
+				$this->tratarNaoFormula($elementoForm->getEsquerdo(),$formAux1);
+				$this->tratarNaoFormula($elementoForm->getDireito(),$formAux2);
+
 				//O lado esquero da formula vira not
 				//Atomos negativos são sempre adicionados no lado direito de uma Formula
-				$aux1->setConectivo("not");
-				$aux1->setDireito($elementoForm->getEsquerdo());
-				return array($aux1,$elementoForm->getDireito());
+
+				if($this->checaAtomico($formAux1)){
+					$formAux1->setConectivo('not');
+				}
+				elseif(!$this->checaAtomico($formAux1)){
+					$elementoForm->setEsquerdo("!".$elementoForm->getEsquerdo());
+					//print_r($elementoForm->getEsquerdo());
+					//print "<br>| teste em cima |<br>";
+					$this->tratarNaoFormula($elementoForm->getEsquerdo(),$formAux1);
+				}
+				
+				$noAuxEsq->info = $formAux1;
+				$noAuxDir->info = $formAux2;
+				$noAuxEsq->esquerda=true;
+				$noAuxDir->direita=true;
+				$noAuxEsq->hashAtomos=$paiAux->hashAtomos;
+				$noAuxDir->hashAtomos=$paiAux->hashAtomos;
+				$nivelG++;
+				$elementoNo->filhoEsquerda=$noAuxEsq;
+				$elementoNo->filhoDireita=$noAuxDir;
+
+				if(!$this->checaAtomico($noAuxEsq->info)){
+					array_push($noAuxEsq->formulasDisponiveis, $noAuxEsq->info);
+					if(!$this->checaAtomico($noAuxDir->info)){
+						array_push($noAuxEsq->formulasDisponiveis, $noAuxDir->info);
+					}
+				}
+				elseif ($this->checaAtomico($noAuxEsq->info)) {
+					if($this->casarFormula($noAuxEsq->hashAtomos,$noAuxEsq->info->getDireito())){
+						$noAuxEsq->filhoCentral= new No();
+						$noAuxEsq->filhoCentral->info="fechado";
+					}
+					$noAuxEsq->hashAtomos[$noAuxEsq->info->getDireito()]=$noAuxEsq->info->getConectivo() == "not" ? 0:1;
+				}
+				if(!$this->checaAtomico($noAuxDir->info)){
+					array_push($noAuxDir->formulasDisponiveis, $noAuxDir->info);
+					if(!$this->checaAtomico($noAuxEsq->info)){
+						array_push($noAuxDir->formulasDisponiveis, $noAuxEsq->info);
+					}
+				}
+				elseif ($this->checaAtomico($noAuxDir->info)) {
+					if($this->casarFormula($noAuxDir->hashAtomos,$noAuxDir->info->getDireito())){
+						$noAuxDir->filhoCentral= new No();
+						$noAuxDir->filhoCentral->info="fechado";
+					}
+					$noAuxDir->hashAtomos[$noAuxDir->info->getDireito()]=$noAuxDir->info->getConectivo() == "not" ? 0:1;
+				}
+				
+				$this->removerFormula($noAuxEsq->formulasDisponiveis,$remover);
+				$this->removerFormula($noAuxDir->formulasDisponiveis,$remover);
+
+				//Correção do not
+				$conectivoAux=$noAuxEsq->info->getConectivo();
+				converteConectivoExtenso($conectivoAux);
+				$noAuxEsq->info->setConectivo($conectivoAux);
+
+				return array($noAuxEsq,$noAuxDir);
+				break;
+
+
 				//Regra 4
 			case 'notnot':
-				if(!is_object($elementoForm->getDireito())){
-					$hash[$elementoForm->getDireito()][] = 'positivo';
+				//Transformo notnot Formula em Formula removendo o conectivo
+				//Caso seja atomo, eu o removo da hash e adiciono a versão sem notnot
+				$this->tratarNaoFormula($elementoForm->getDireito(),$formAux1);
+				$this->removerFormula($noAuxCen1->formulasDisponiveis,$remover);
+				$formAux1->setConectivo(NULL);
+				$noAuxCen1->info=$formAux1;
+				$noAuxCen1->central=true;
+				$elementoNo->filhoCentral=$noAuxCen1;
+				if($this->checaAtomico($formAux1)){
+					$this->removerFormula($noAuxCen1->hashAtomos,$remover);
+					array_push($noAuxCen1->hashAtomos,$formAux1);
+					if($this->casarFormula($noAuxCen1->hashAtomos,$noAuxCen1->info->getDireito())){
+						$noAuxCen1->filhoCentral= new No();
+						$noAuxCen1->filhoCentral->info="fechado";
+					}
+					$noAuxEsq->hashAtomos[$noAuxEsq->info->getDireito()]=$noAuxEsq->info->getConectivo() == "not" ? 0:1;
 				}
-				return array($elementoForm->getDireito());
+				return $noAuxCen1;
+				break;
 				//Regra 5
 			case 'not_e';
-				$fork = true;
-				$aux1 = new Formula();
-				$aux2 = new Formula();
-				$aux1->setConectivo('not');
-				$aux1->setDireito($elementoForm->getEsquerdo());
-				$aux2->setConectivo('not');
-				$aux2->setDireito($elementoForm->getDireito());
-				return array($aux1,$aux2);
+				$elementoNo=$paiAux;
+				//Tratamento necessário para o caso em que getEsquerdo e getDireito não sejam objetos
+				$this->tratarNaoFormula($elementoForm->getEsquerdo(),$formAux1);
+				$this->tratarNaoFormula($elementoForm->getDireito(),$formAux2);
+				//Os dois lados viram not
+				//Atomos negativos são sempre adicionados no lado direito de uma Formula
+				
+				if($this->checaAtomico($formAux1)){
+					$formAux1->setConectivo('not');
+				}
+				elseif(!($this->checaAtomico($formAux1))){
+					$elementoForm->setEsquerdo("!".$elementoForm->getEsquerdo());
+					$this->tratarNaoFormula($elementoForm->getEsquerdo(),$formAux1);
+				}
+				if($this->checaAtomico($formAux2)){
+					$formAux2->setConectivo('not');
+				}				
+				elseif(!($this->checaAtomico($formAux2))){
+					$elementoForm->setDireito("!".$elementoForm->getDireito());
+					$this->tratarNaoFormula($elementoForm->getDireito(),$formAux2);
+				}
+				$noAuxEsq->info = $formAux1;
+				$noAuxDir->info = $formAux2;
+				$noAuxEsq->esquerda=true;
+				$noAuxDir->direita=true;
+				$noAuxEsq->hashAtomos=$paiAux->hashAtomos;
+				$noAuxDir->hashAtomos=$paiAux->hashAtomos;
+				$nivelG++;
+				$elementoNo->filhoEsquerda=$noAuxEsq;
+				$elementoNo->filhoDireita=$noAuxDir;
+				//Se após a aplicação da fórmula o objeto gerado não for uma fórmula atômica
+				//Então será uma fórmula útil para posterior aplicação de regra
+				//Desse modo, esta fórmula também deve constar na lista de fórmulas disponíveis
+				
+				if(!$this->checaAtomico($noAuxEsq->info)){
+					array_push($noAuxEsq->formulasDisponiveis, $noAuxEsq->info);
+					if(!$this->checaAtomico($noAuxDir->info)){
+						array_push($noAuxEsq->formulasDisponiveis, $noAuxDir->info);
+					}
+				}
+				elseif ($this->checaAtomico($noAuxEsq->info)) {
+					if($this->casarFormula($noAuxEsq->hashAtomos,$noAuxEsq->info->getDireito())){
+						$noAuxEsq->filhoCentral= new No();
+						$noAuxEsq->filhoCentral->info="fechado";
+					}
+					$noAuxEsq->hashAtomos[$noAuxEsq->info->getDireito()]=$noAuxEsq->info->getConectivo() == "not" ? 0:1;
+				}
+				if(!$this->checaAtomico($noAuxDir->info)){
+					array_push($noAuxDir->formulasDisponiveis, $noAuxDir->info);
+					if(!$this->checaAtomico($noAuxEsq->info)){
+						array_push($noAuxDir->formulasDisponiveis, $noAuxEsq->info);
+					}
+				}
+				elseif ($this->checaAtomico($noAuxDir->info)) {
+					if($this->casarFormula($noAuxDir->hashAtomos,$noAuxDir->info->getDireito())){
+						$noAuxDir->filhoCentral= new No();
+						$noAuxDir->filhoCentral->info="fechado";
+					}
+					$noAuxDir->hashAtomos[$noAuxDir->info->getDireito()]=$noAuxDir->info->getConectivo() == "not" ? 0:1;
+				}
+
+	
+				$this->removerFormula($noAuxEsq->formulasDisponiveis,$remover);
+				$this->removerFormula($noAuxDir->formulasDisponiveis,$remover);
+
+	
+				return array($noAuxEsq,$noAuxDir);
 				//Regra 6
 			case 'not_ou';
-				$aux1 = new Formula();
-				$aux2 = new Formula();
-				$aux1->setConectivo('not');
-				$aux1->setDireito($elementoForm->getEsquerdo());
-				$aux2->setConectivo('not');
-				$aux2->setDireito($elementoForm->getDireito());
-				return array($aux1,$aux2);
+				$elementoNo=$paiAux;
+				//Tratamento necessário para o caso em que getEsquerdo e getDireito não sejam objetos
+				$this->tratarNaoFormula($elementoForm->getEsquerdo(),$formAux1);
+				$this->tratarNaoFormula($elementoForm->getDireito(),$formAux2);
+				//Os dois lados viram not
+				//Atomos negativos são sempre adicionados no lado direito de uma Formula
+				
+				if($this->checaAtomico($formAux1)){
+					$formAux1->setConectivo('not');
+				}
+				elseif(!($this->checaAtomico($formAux1))){
+					$elementoForm->setEsquerdo("!".$elementoForm->getEsquerdo());
+					$this->tratarNaoFormula($elementoForm->getEsquerdo(),$formAux1);
+				}
+				if($this->checaAtomico($formAux2)){
+					$formAux2->setConectivo('not');
+				}				
+				elseif(!($this->checaAtomico($formAux2))){
+					$elementoForm->setDireito("!".$elementoForm->getDireito());
+					$this->tratarNaoFormula($elementoForm->getDireito(),$formAux2);
+				}
+				$noAuxCen1->info = $formAux1;
+				$noAuxCen2->info = $formAux2;
+
+				
+				$noAuxCen1->central=true;
+				$noAuxCen2->central=true;
+				$nivelG++;
+				$noAuxCen2->pai=$noAuxCen1;
+				$noAuxCen1->hashAtomos=$paiAux->hashAtomos;
+				$noAuxCen2->hashAtomos=$paiAux->hashAtomos;
+
+				$elementoNo->filhoCentral=$noAuxCen1;
+				$noAuxCen1->filhoCentral=$noAuxCen2;
+				//Se após a aplicação da fórmula o objeto gerado não for uma fórmula atômica
+				//Então será uma fórmula útil para posterior aplicação de regra
+				//Desse modo, esta fórmula também deve constar na lista de fórmulas disponíveis
+				//Senão se a fórmula for atômica eu a adiciono na hash
+				
+				if(!$this->checaAtomico($noAuxCen1->info)){
+					array_push($noAuxCen1->formulasDisponiveis, $noAuxCen1->info);
+					if(!$this->checaAtomico($noAuxCen2->info)){
+						array_push($noAuxCen1->formulasDisponiveis, $noAuxCen2->info);
+					}
+				}
+				elseif ($this->checaAtomico($noAuxCen1->info)) {
+					if($this->casarFormula($noAuxCen1->hashAtomos,$noAuxCen1->info->getDireito())){
+						$noAuxCen2->filhoCentral= new No();
+						$noAuxCen2->filhoCentral->info="fechado";
+					}
+					$noAuxCen1->hashAtomos[$noAuxCen1->info->getDireito()]=$noAuxCen1->info->getConectivo() == "not" ? 0:1;
+					$noAuxCen2->hashAtomos[$noAuxCen2->info->getDireito()]=$noAuxCen1->info->getConectivo() == "not" ? 0:1;
+				}
+				if(!$this->checaAtomico($noAuxCen2->info)){
+					array_push($noAuxCen2->formulasDisponiveis, $noAuxCen2->info);
+					if(!$this->checaAtomico($noAuxCen1->info)){
+						array_push($noAuxCen2->formulasDisponiveis, $noAuxCen1->info);
+					}
+				}
+				elseif ($this->checaAtomico($noAuxCen2->info)) {
+					if($this->casarFormula($noAuxCen1->hashAtomos,$noAuxCen1->info->getDireito())){
+						$noAuxCen2->filhoCentral= new No();
+						$noAuxCen2->filhoCentral->info="fechado";
+					}
+					$noAuxCen1->hashAtomos[$noAuxCen1->info->getDireito()]=$noAuxCen2->info->getConectivo() == "not" ? 0:1;
+					$noAuxCen2->hashAtomos[$noAuxCen2->info->getDireito()]=$noAuxCen2->info->getConectivo() == "not" ? 0:1;
+				}
+				
+
+				$this->removerFormula($noAuxCen2->formulasDisponiveis,$remover);
+				$this->removerFormula($noAuxCen1->formulasDisponiveis,$remover);
+
+				return $noAuxCen2;
 				//Regra 7
+				//Retorna apenas 1 elemento como central
 			case 'not_implica';
-				$aux1 = new Formula();
-				$aux1->setConectivo('not');
-				$aux1->setDireito($elementoForm->getDireito());
-				return array($elementoForm->getEsquerdo(),$aux1);
+				$elementoNo=$paiAux;
+				//Tratamento necessário para o caso em que getEsquerdo e getDireito não sejam objetos
+				$this->tratarNaoFormula($elementoForm->getEsquerdo(),$formAux1);
+				$this->tratarNaoFormula($elementoForm->getDireito(),$formAux2);
+				//Apenas o lado direito vira not
+				//Atomos negativos são sempre adicionados no lado direito de uma Formula
+				
+				if($this->checaAtomico($formAux2)){
+					$formAux2->setConectivo('not');
+				}				
+				elseif(!($this->checaAtomico($formAux2))){
+					$elementoForm->setDireito("!".$elementoForm->getDireito());
+					$this->tratarNaoFormula($elementoForm->getDireito(),$formAux2);
+				}
+				$noAuxCen1->info = $formAux1;
+				$noAuxCen2->info = $formAux2;
+
+				
+				$noAuxCen1->central=true;
+				$noAuxCen2->central=true;
+				$nivelG++;
+				$noAuxCen2->pai=$noAuxCen1;
+				$noAuxCen1->hashAtomos=$paiAux->hashAtomos;
+				$noAuxCen2->hashAtomos=$paiAux->hashAtomos;
+
+				$elementoNo->filhoCentral=$noAuxCen1;
+				$noAuxCen1->filhoCentral=$noAuxCen2;
+				//Se após a aplicação da fórmula o objeto gerado não for uma fórmula atômica
+				//Então será uma fórmula útil para posterior aplicação de regra
+				//Desse modo, esta fórmula também deve constar na lista de fórmulas disponíveis
+				//Senão se a fórmula for atômica eu a adiciono na hash
+
+				if(!$this->checaAtomico($noAuxCen1->info)){
+					array_push($noAuxCen1->formulasDisponiveis, $noAuxCen1->info);
+					if(!$this->checaAtomico($noAuxCen2->info)){
+						array_push($noAuxCen1->formulasDisponiveis, $noAuxCen2->info);
+					}
+				}
+				elseif ($this->checaAtomico($noAuxCen1->info)) {
+					if($this->casarFormula($noAuxCen1->hashAtomos,$noAuxCen1->info->getDireito())){
+						$noAuxCen2->filhoCentral= new No();
+						$noAuxCen2->filhoCentral->info="fechado";
+					}
+					$noAuxCen1->hashAtomos[$noAuxCen1->info->getDireito()]=$noAuxCen1->info->getConectivo() == "not" ? 0:1;
+					$noAuxCen2->hashAtomos[$noAuxCen2->info->getDireito()]=$noAuxCen1->info->getConectivo() == "not" ? 0:1;
+				}
+				if(!$this->checaAtomico($noAuxCen2->info)){
+					array_push($noAuxCen2->formulasDisponiveis, $noAuxCen2->info);
+					if(!$this->checaAtomico($noAuxCen1->info)){
+						array_push($noAuxCen2->formulasDisponiveis, $noAuxCen1->info);
+					}
+				}
+				elseif ($this->checaAtomico($noAuxCen2->info)) {
+					if($this->casarFormula($noAuxCen1->hashAtomos,$noAuxCen1->info->getDireito())){
+						$noAuxCen2->filhoCentral= new No();
+						$noAuxCen2->filhoCentral->info="fechado";
+					}
+					$noAuxCen1->hashAtomos[$noAuxCen1->info->getDireito()]=$noAuxCen2->info->getConectivo() == "not" ? 0:1;
+					$noAuxCen2->hashAtomos[$noAuxCen2->info->getDireito()]=$noAuxCen2->info->getConectivo() == "not" ? 0:1;
+				}
+				
+
+				$this->removerFormula($noAuxCen2->formulasDisponiveis,$remover);
+				$this->removerFormula($noAuxCen1->formulasDisponiveis,$remover);
+
+				return $noAuxCen2;
 			default:
-				# Tratamento de um poss�vel erro
+				print "<br><br>O elemento ".$elementoForm." chegou no método aplicaFormula e não possui
+				conectivo, rever as chamadas dos métodos<br><br>";
+				# Tratamento de um possível erro
 				break;
 
 		}
 	}
 
-
-	function forkArv($indiceRamo,$filho1,$filho2=NULL){
-		global $fork;
-		global $hash;
-		
-		if($fork == true){
-			foreach ($retorno as $chave => $valor) {
-				$this->numRamos++;
-				$tronco[$this->numRamos-1]= new Ramo();
-
-				$arvore[$indice]->usaFormula();
-				//Se for um array, significa que é uma fórmula. Se não for um array, significa que é um átomo
-				if(!is_object($valor)){
-					$hash[$valor][] = 'positivo';
-				}
+	public function removerFormula(&$formulasDisponiveis, $formulaRemover){
+		foreach ($formulasDisponiveis as $key => $value) {
+			if($value == $formulaRemover){
+				unset($formulasDisponiveis[$key]);
 			}
-			$fork = false;
+		}
+	}
+
+	//public function adicionaFormula()
+
+
+	//Checa se a fórmula é um átomo
+	public function checaAtomico($formula){
+		if(($formula->getEsquerdo()==NULL) && ($formula->getDireito()!=NULL) && (!is_object($formula->getDireito()))){
+			return true;
 		}
 		else{
-			if (is_array($retorno) || is_object($retorno)){
-				foreach ($retorno as $chave => $valor) {
-					$arvore[$indice]->usaFormula();
-					$arvore[] = $valor;
-				}
+			return false;
+		}
+	}
+
+	//Função para correção de nós cuja a informação não seja formula
+	//O tratamento é a transformação dessas infos em fórmulas
+	public function tratarNaoFormula($info,&$objForm){
+		if(!is_object($info)){
+			//If necessário porque fórmuas que começam com not, já tem parênteses
+			if(($info[0]=="!") || ($info[0]=="n")){
+				converteConectivoSimbolo($info);
+				processaEntrada($info,$objForm);
+				converteConectivoExtenso($info);
+				return ;
+			}
+			if($info[0]!="("){
+				$info="(".$info.")";
+			}
+						
+			converteConectivoSimbolo($info);
+			processaEntrada($info,$objForm);
+			converteConectivoExtenso($info);
+		}
+	}
+	public function imprimeListaNos($formulasDisponiveis){
+		foreach ($formulasDisponiveis as $key => $value) {
+			print_r($formulasDisponiveis[$key]->info);
+			print "<br>";
+		}
+	}
+
+
+	public function casarFormula($hash,$aux){
+		$aux2=$aux == "not" ? 0:1;
+		foreach ($hash as $key => $value) {			
+			//Verifico se alguma vez esse cara já foi setado na hash
+			if(!is_null($hash[$key])){
+				if(($hash[$key]==!$aux2) && ($aux==$key)){
+					return true;
+				}				
 			}
 		}
+		return false;
 	}
 }
 ?>
