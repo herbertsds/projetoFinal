@@ -23,7 +23,7 @@ class No{
 	public $filhoCentral=NULL;
 	public $nivel;
 	public $formulasDisponiveis = array();
-	public $hashAtomos = array();
+	public $hashAtomos;
 
 
 	public function __construct($info=NULL){
@@ -101,6 +101,7 @@ class Arvore{
 		$formAux2 = new Formula();
 		$elementoForm= new Formula();
 		$elementoNo= new No();
+		$auxFecha;
 
 		//Pra previnir erros, eu encerro a função caso ela tenha sido chamada em um ramo fechado
 		//Bug pra resolver, mesmo já tendo instanciado filho central ele avisa 
@@ -189,6 +190,7 @@ class Arvore{
 
 				$elementoNo->filhoCentral=$noAuxCen1;
 				$noAuxCen1->filhoCentral=$noAuxCen2;
+
 				//Se após a aplicação da fórmula o objeto gerado não for uma fórmula atômica
 				//Então será uma fórmula útil para posterior aplicação de regra
 				//Desse modo, esta fórmula também deve constar na lista de fórmulas disponíveis
@@ -200,11 +202,16 @@ class Arvore{
 						array_push($noAuxCen1->formulasDisponiveis, $noAuxCen2->info);
 					}
 				}
+	
 				elseif ($this->checaAtomico($noAuxCen1->info)) {
-					array_push($noAuxCen1->hashAtomos, $noAuxCen1->info);
-					if($this->checaAtomico($noAuxCen2->info)){
-						array_push($noAuxCen1->hashAtomos, $noAuxCen2->info);
+					//Vamos checar se já está na hash, se já estiver e fechar com algum element
+					//Fechamos o ramo
+					if($this->casarFormula($noAuxCen1->hashAtomos,$noAuxCen1->info->getDireito())){
+						$noAuxCen2->filhoCentral= new No();
+						$noAuxCen2->filhoCentral->info="fechado";
 					}
+					$noAuxCen1->hashAtomos[$noAuxCen1->info->getDireito()]=$noAuxCen1->info->getConectivo() == "not" ? 0:1;
+					$noAuxCen2->hashAtomos[$noAuxCen2->info->getDireito()]=$noAuxCen1->info->getConectivo() == "not" ? 0:1;
 				}
 				if(!$this->checaAtomico($noAuxCen2->info)){
 					array_push($noAuxCen2->formulasDisponiveis, $noAuxCen2->info);
@@ -212,16 +219,15 @@ class Arvore{
 						array_push($noAuxCen2->formulasDisponiveis, $noAuxCen1->info);
 					}
 				}
-				elseif ($this->checaAtomico($noAuxCen2->info)) {
-					array_push($noAuxCen2->hashAtomos, $noAuxCen2->info);
-					if($this->checaAtomico($noAuxCen1->info)){
-						array_push($noAuxCen2->hashAtomos, $noAuxCen1->info);
+				elseif($this->checaAtomico($noAuxCen2->info)) {
+					//Vamos checar se já está na hash, se já estiver e fechar com algum element
+					//Fechamos o ramo
+					if($this->casarFormula($noAuxCen2->hashAtomos,$noAuxCen2->info->getDireito())){
+						$noAuxCen2->filhoCentral= new No();
+						$noAuxCen2->filhoCentral->info="fechado";
 					}
-				}
-				
-				if($this->casarFormula($noAuxCen2->hashAtomos)){
-					$noAuxCen2->filhoCentral= new No();
-					$noAuxCen2->filhoCentral->info="fechado";
+					$noAuxCen2->hashAtomos[$noAuxCen2->info->getDireito()]=$noAuxCen2->info->getConectivo() == "not" ? 0:1;
+					$noAuxCen1->hashAtomos[$noAuxCen2->info->getDireito()]=$noAuxCen2->info->getConectivo() == "not" ? 0:1;
 				}
 
 				$this->removerFormula($noAuxCen2->formulasDisponiveis,$remover);
@@ -256,7 +262,11 @@ class Arvore{
 					}
 				}
 				elseif ($this->checaAtomico($noAuxEsq->info)) {
-					array_push($noAuxEsq->hashAtomos, $noAuxEsq->info);
+					if($this->casarFormula($noAuxEsq->hashAtomos,$noAuxEsq->info->getDireito())){
+						$noAuxEsq->filhoCentral= new No();
+						$noAuxEsq->filhoCentral->info="fechado";
+					}
+					$noAuxEsq->hashAtomos[$noAuxEsq->info->getDireito()]=$noAuxEsq->info->getConectivo() == "not" ? 0:1;
 				}
 				if(!$this->checaAtomico($noAuxDir->info)){
 					array_push($noAuxDir->formulasDisponiveis, $noAuxDir->info);
@@ -265,27 +275,20 @@ class Arvore{
 					}
 				}
 				elseif ($this->checaAtomico($noAuxDir->info)) {
-					array_push($noAuxDir->hashAtomos, $noAuxDir->info);
+					if($this->casarFormula($noAuxDir->hashAtomos,$noAuxDir->info->getDireito())){
+						$noAuxDir->filhoCentral= new No();
+						$noAuxDir->filhoCentral->info="fechado";
+					}
+					$noAuxDir->hashAtomos[$noAuxDir->info->getDireito()]=$noAuxDir->info->getConectivo() == "not" ? 0:1;
 				}
-
-				if($this->casarFormula($noAuxEsq->hashAtomos)){
-					$noAuxEsq->filhoCentral= new No();
-					$noAuxEsq->filhoCentral->info="fechado";
-				}
-				if($this->casarFormula($noAuxDir->hashAtomos)){
-					$noAuxDir->filhoCentral= new No();
-					$noAuxDir->filhoCentral->info="fechado";
-				}
-				
-
-
+			
 				$this->removerFormula($noAuxEsq->formulasDisponiveis,$remover);
 				$this->removerFormula($noAuxDir->formulasDisponiveis,$remover);
 
 	
 				return array($noAuxEsq,$noAuxDir);
 				break; 
-				//Tratamento de Single not
+			//Tratamento de Single not
 			//possível dar bug se eu adicionar no ramo errado
 			case 'not':
 				$noAuxCen1->info=$elementoForm;
@@ -294,12 +297,11 @@ class Arvore{
 				$elementoNo->filhoCentral=$noAuxCen1;
 				//Se for atômico, preciso adicionar na hash e dar prosseguimento
 				if($this->checaAtomico($elementoForm)){
-					array_push($noAuxCen1->hashAtomos,$elementoForm);
-				}
-
-				if($this->casarFormula($noAuxCen1->hashAtomos)){
-					$noAuxCen1->filhoCentral= new No();
-					$noAuxCen1->filhoCentral->info="fechado";
+					$noAuxCen1->hashAtomos[$noAuxCen1->info->getDireito()]=$noAuxCen1->info->getConectivo() == "not" ? 0:1;
+					if($this->casarFormula($noAuxCen1->hashAtomos,$noAuxCen1->info->getDireito())){
+						$noAuxCen1->filhoCentral= new No();
+						$noAuxCen1->filhoCentral->info="fechado";
+					}
 				}
 
 				return $noAuxCen1;
@@ -316,11 +318,11 @@ class Arvore{
 
 				//O lado esquero da formula vira not
 				//Atomos negativos são sempre adicionados no lado direito de uma Formula
-				
+
 				if($this->checaAtomico($formAux1)){
 					$formAux1->setConectivo('not');
 				}
-				else{
+				elseif(!$this->checaAtomico($formAux1)){
 					$elementoForm->setEsquerdo("!".$elementoForm->getEsquerdo());
 					//print_r($elementoForm->getEsquerdo());
 					//print "<br>| teste em cima |<br>";
@@ -344,7 +346,11 @@ class Arvore{
 					}
 				}
 				elseif ($this->checaAtomico($noAuxEsq->info)) {
-					array_push($noAuxEsq->hashAtomos, $noAuxEsq->info);
+					if($this->casarFormula($noAuxEsq->hashAtomos,$noAuxEsq->info->getDireito())){
+						$noAuxEsq->filhoCentral= new No();
+						$noAuxEsq->filhoCentral->info="fechado";
+					}
+					$noAuxEsq->hashAtomos[$noAuxEsq->info->getDireito()]=$noAuxEsq->info->getConectivo() == "not" ? 0:1;
 				}
 				if(!$this->checaAtomico($noAuxDir->info)){
 					array_push($noAuxDir->formulasDisponiveis, $noAuxDir->info);
@@ -353,16 +359,11 @@ class Arvore{
 					}
 				}
 				elseif ($this->checaAtomico($noAuxDir->info)) {
-					array_push($noAuxDir->hashAtomos, $noAuxDir->info);
-				}
-
-				if($this->casarFormula($noAuxEsq->hashAtomos)){
-					$noAuxEsq->filhoCentral= new No();
-					$noAuxEsq->filhoCentral->info="fechado";
-				}
-				if($this->casarFormula($noAuxDir->hashAtomos)){
-					$noAuxDir->filhoCentral= new No();
-					$noAuxDir->filhoCentral->info="fechado";
+					if($this->casarFormula($noAuxDir->hashAtomos,$noAuxDir->info->getDireito())){
+						$noAuxDir->filhoCentral= new No();
+						$noAuxDir->filhoCentral->info="fechado";
+					}
+					$noAuxDir->hashAtomos[$noAuxDir->info->getDireito()]=$noAuxDir->info->getConectivo() == "not" ? 0:1;
 				}
 				
 				$this->removerFormula($noAuxEsq->formulasDisponiveis,$remover);
@@ -390,6 +391,11 @@ class Arvore{
 				if($this->checaAtomico($formAux1)){
 					$this->removerFormula($noAuxCen1->hashAtomos,$remover);
 					array_push($noAuxCen1->hashAtomos,$formAux1);
+					if($this->casarFormula($noAuxCen1->hashAtomos,$noAuxCen1->info->getDireito())){
+						$noAuxCen1->filhoCentral= new No();
+						$noAuxCen1->filhoCentral->info="fechado";
+					}
+					$noAuxEsq->hashAtomos[$noAuxEsq->info->getDireito()]=$noAuxEsq->info->getConectivo() == "not" ? 0:1;
 				}
 				return $noAuxCen1;
 				break;
@@ -436,7 +442,11 @@ class Arvore{
 					}
 				}
 				elseif ($this->checaAtomico($noAuxEsq->info)) {
-					array_push($noAuxEsq->hashAtomos, $noAuxEsq->info);
+					if($this->casarFormula($noAuxEsq->hashAtomos,$noAuxEsq->info->getDireito())){
+						$noAuxEsq->filhoCentral= new No();
+						$noAuxEsq->filhoCentral->info="fechado";
+					}
+					$noAuxEsq->hashAtomos[$noAuxEsq->info->getDireito()]=$noAuxEsq->info->getConectivo() == "not" ? 0:1;
 				}
 				if(!$this->checaAtomico($noAuxDir->info)){
 					array_push($noAuxDir->formulasDisponiveis, $noAuxDir->info);
@@ -445,17 +455,14 @@ class Arvore{
 					}
 				}
 				elseif ($this->checaAtomico($noAuxDir->info)) {
-					array_push($noAuxDir->hashAtomos, $noAuxDir->info);
+					if($this->casarFormula($noAuxDir->hashAtomos,$noAuxDir->info->getDireito())){
+						$noAuxDir->filhoCentral= new No();
+						$noAuxDir->filhoCentral->info="fechado";
+					}
+					$noAuxDir->hashAtomos[$noAuxDir->info->getDireito()]=$noAuxDir->info->getConectivo() == "not" ? 0:1;
 				}
 
-				if($this->casarFormula($noAuxEsq->hashAtomos)){
-					$noAuxEsq->filhoCentral= new No();
-					$noAuxEsq->filhoCentral->info="fechado";
-				}
-				if($this->casarFormula($noAuxDir->hashAtomos)){
-					$noAuxDir->filhoCentral= new No();
-					$noAuxDir->filhoCentral->info="fechado";
-				}
+	
 				$this->removerFormula($noAuxEsq->formulasDisponiveis,$remover);
 				$this->removerFormula($noAuxDir->formulasDisponiveis,$remover);
 
@@ -509,10 +516,12 @@ class Arvore{
 					}
 				}
 				elseif ($this->checaAtomico($noAuxCen1->info)) {
-					array_push($noAuxCen1->hashAtomos, $noAuxCen1->info);
-					if($this->checaAtomico($noAuxCen2->info)){
-						array_push($noAuxCen1->hashAtomos, $noAuxCen2->info);
+					if($this->casarFormula($noAuxCen1->hashAtomos,$noAuxCen1->info->getDireito())){
+						$noAuxCen2->filhoCentral= new No();
+						$noAuxCen2->filhoCentral->info="fechado";
 					}
+					$noAuxCen1->hashAtomos[$noAuxCen1->info->getDireito()]=$noAuxCen1->info->getConectivo() == "not" ? 0:1;
+					$noAuxCen2->hashAtomos[$noAuxCen2->info->getDireito()]=$noAuxCen1->info->getConectivo() == "not" ? 0:1;
 				}
 				if(!$this->checaAtomico($noAuxCen2->info)){
 					array_push($noAuxCen2->formulasDisponiveis, $noAuxCen2->info);
@@ -521,15 +530,12 @@ class Arvore{
 					}
 				}
 				elseif ($this->checaAtomico($noAuxCen2->info)) {
-					array_push($noAuxCen2->hashAtomos, $noAuxCen2->info);
-					if($this->checaAtomico($noAuxCen1->info)){
-						array_push($noAuxCen2->hashAtomos, $noAuxCen1->info);
+					if($this->casarFormula($noAuxCen1->hashAtomos,$noAuxCen1->info->getDireito())){
+						$noAuxCen2->filhoCentral= new No();
+						$noAuxCen2->filhoCentral->info="fechado";
 					}
-				}
-				
-				if($this->casarFormula($noAuxCen2->hashAtomos)){
-					$noAuxCen2->filhoCentral= new No();
-					$noAuxCen2->filhoCentral->info="fechado";
+					$noAuxCen1->hashAtomos[$noAuxCen1->info->getDireito()]=$noAuxCen2->info->getConectivo() == "not" ? 0:1;
+					$noAuxCen2->hashAtomos[$noAuxCen2->info->getDireito()]=$noAuxCen2->info->getConectivo() == "not" ? 0:1;
 				}
 				
 
@@ -571,7 +577,7 @@ class Arvore{
 				//Então será uma fórmula útil para posterior aplicação de regra
 				//Desse modo, esta fórmula também deve constar na lista de fórmulas disponíveis
 				//Senão se a fórmula for atômica eu a adiciono na hash
-				
+
 				if(!$this->checaAtomico($noAuxCen1->info)){
 					array_push($noAuxCen1->formulasDisponiveis, $noAuxCen1->info);
 					if(!$this->checaAtomico($noAuxCen2->info)){
@@ -579,10 +585,12 @@ class Arvore{
 					}
 				}
 				elseif ($this->checaAtomico($noAuxCen1->info)) {
-					array_push($noAuxCen1->hashAtomos, $noAuxCen1->info);
-					if($this->checaAtomico($noAuxCen2->info)){
-						array_push($noAuxCen1->hashAtomos, $noAuxCen2->info);
+					if($this->casarFormula($noAuxCen1->hashAtomos,$noAuxCen1->info->getDireito())){
+						$noAuxCen2->filhoCentral= new No();
+						$noAuxCen2->filhoCentral->info="fechado";
 					}
+					$noAuxCen1->hashAtomos[$noAuxCen1->info->getDireito()]=$noAuxCen1->info->getConectivo() == "not" ? 0:1;
+					$noAuxCen2->hashAtomos[$noAuxCen2->info->getDireito()]=$noAuxCen1->info->getConectivo() == "not" ? 0:1;
 				}
 				if(!$this->checaAtomico($noAuxCen2->info)){
 					array_push($noAuxCen2->formulasDisponiveis, $noAuxCen2->info);
@@ -591,15 +599,12 @@ class Arvore{
 					}
 				}
 				elseif ($this->checaAtomico($noAuxCen2->info)) {
-					array_push($noAuxCen2->hashAtomos, $noAuxCen2->info);
-					if($this->checaAtomico($noAuxCen1->info)){
-						array_push($noAuxCen2->hashAtomos, $noAuxCen1->info);
+					if($this->casarFormula($noAuxCen1->hashAtomos,$noAuxCen1->info->getDireito())){
+						$noAuxCen2->filhoCentral= new No();
+						$noAuxCen2->filhoCentral->info="fechado";
 					}
-				}
-				
-				if($this->casarFormula($noAuxCen2->hashAtomos)){
-					$noAuxCen2->filhoCentral= new No();
-					$noAuxCen2->filhoCentral->info="fechado";
+					$noAuxCen1->hashAtomos[$noAuxCen1->info->getDireito()]=$noAuxCen2->info->getConectivo() == "not" ? 0:1;
+					$noAuxCen2->hashAtomos[$noAuxCen2->info->getDireito()]=$noAuxCen2->info->getConectivo() == "not" ? 0:1;
 				}
 				
 
@@ -664,53 +669,18 @@ class Arvore{
 		}
 	}
 
-	public function casarFormula($hash){
-		$formAux = new Formula();
-		//Primeiro procurar formula com not
-		foreach ($hash as $key => $value) {
-			//Casting
-			if($value->getConectivo()=="not"){
-				print "FECHADO<BR>";
-				$formAux=$value;
-				break;
-			}
 
-		}
-		//Se não há nenhum átomo com not, então não é possível fechar ainda
-		if($formAux==NULL){
-			return false;
-		}
-		else{
-			foreach ($hash as $key => $value) {
-
-				if($value->getDireito()==$formAux->getDireito()){
-					if (($value->getEsquerdo()==NULL) && ($value->getConectivo()!="not")) {
-						return true;
-					}
-					
-				}
-
+	public function casarFormula($hash,$aux){
+		$aux2=$aux == "not" ? 0:1;
+		foreach ($hash as $key => $value) {			
+			//Verifico se alguma vez esse cara já foi setado na hash
+			if(!is_null($hash[$key])){
+				if(($hash[$key]==!$aux2) && ($aux==$key)){
+					return true;
+				}				
 			}
 		}
+		return false;
 	}
-
-	//public function
-
-
-	/*//Checa se o nó folha Casa/Fecha com algum nó ascendente
-	public function checaCasamento($noFolha,$noAscendente){
-		//Para previnir erro
-		if(is_object($noAscendente->info)){
-			$conectivo=$noAscendente->info->getConectivo;
-			if($conectivo=='not'){
-				if(!is_object($noAscendente->info->getDireito))
-					if($noFolha->info==$noAscendente->info->getDireito){
-						print $noFolha." fechou";
-					}
-			}
-		}
-	}*/
-
-
 }
 ?>

@@ -35,7 +35,7 @@ $entradaTeste=array("((AeC)implicaB)","(BimplicaC)","(A)","(C)");
 
 $entradaTeste2=array("((CouA)e(DouB))","(AouB)","(AeB)","(A)");
 
-$entradaTeste3=array("notnotnot(A)","(AeB)","(D)");
+$entradaTeste3=array("notnot(A)","(AeB)","(D)");
 
 $entradaTeste4=array("((AouB)e((AouC)implicaD))","(A)");
 
@@ -44,8 +44,9 @@ $entradaTeste6=array("not(AouB)","(AeB)","(D)");
 $entradaTeste7=array("not(AimplicaB)","(AeB)","(D)");
 
 $entradaTeste8=array("not((AouC)e(BouD))","(AeB)","(D)");
-$entradaTeste9=array("not((AeC)ou(BeD))","(AeB)","(D)");
+$entradaTeste9=array("not((AeC)ou(BeD))","(AeB)","(D)"); 
 $entradaTeste10=array("not((AouC)implica(BouD))","(AeB)","(D)");
+$entradaTeste11=array("(AeB)","(AouB)","(A)");
 
 
 /*
@@ -61,9 +62,9 @@ print_r($listaFormulasNaoUsadas);
 
 
 
-$arv = new Arvore(count($entradaTeste9));
+$arv = new Arvore(count($entradaTeste5));
 //Criar hash inicial na função cria
-$arv->cria($entradaTeste9);
+$arv->cria($entradaTeste5);
 //print_r($arv);
 imprimeArvoreRaiz($arv->raiz);
 
@@ -76,7 +77,7 @@ foreach ($arv->raiz as $key => $value) {
 		$listaFormulasDisponiveis[$key]=$value->info;
 	}
 	else{
-		array_push($hashInicial,$value->info);
+		$hashInicial[$value->info->getDireito()]=$value->info->getConectivo() == "not" ? 0:1;
 	}
 }
 
@@ -84,8 +85,9 @@ foreach ($arv->raiz as $key => $value) {
 $noFolha;
 $primeiroNo=$arv->aplicaFormula(0,$nivelG);
 $noFolha=$primeiroNo;
-$noFolha=$arv->aplicaFormula(0,$nivelG,$arv->raiz[1],$noFolha);
-
+//$noFolha=$arv->aplicaFormula(0,$nivelG,$arv->raiz[2],$noFolha);
+//$noFolha=$arv->aplicaFormula(0,$nivelG,$primeiroNo->pai,$noFolha);
+$noFolha=$arv->aplicaFormula(0,$nivelG,$arv->raiz[1],$noFolha[0]);
 
 //$noFolha=$arv->aplicaFormula(0,$nivelG,$arv->raiz[2],$noFolha[0]);
 //$noFolha=$arv->aplicaFormula(0,$nivelG,$arv->raiz[2],$noFolha[1]);
@@ -94,7 +96,7 @@ $noFolha=$arv->aplicaFormula(0,$nivelG,$arv->raiz[1],$noFolha);
 print "<br><br>";
 
 
-imprimeDescendo($primeiroNo->pai);
+imprimeDescendo($primeiroNo[0]->pai);
 
 
 print "<br><br>";
