@@ -154,7 +154,9 @@ function verificaFormulaCorreta(&$form){
 			if($contador<0){
 				#Criar um tratamento aqui
 				//Se o usuário digitar a entrada vamos precisar usar uma rotina de correção e chamar verifica recursivamente
-				print "Fórmula com digitação incorreta";
+				print "Fórmula com digitação incorreta<br>";
+				print $form;
+				print "<br>";
 				exit(1);
 			}
 			
@@ -168,6 +170,8 @@ function verificaFormulaCorreta(&$form){
 	if($contador!=0){
 		#Criar um tratamento aqui
 		//Se o usuário digitar a entrada vamos precisar usar uma rotina de correção e chamar verifica recursivamente
+		print $form;
+		print "<br>";
 	    print "Fórmula com digitação incorreta";
 		exit(1);
 	}

@@ -1,13 +1,15 @@
 <?php
+require_once("funcAuxiliares.php");
 echo "<pre>";
 
-$hash['A']=array(0);
-$hash['B']=0;
-$hash['A']=array_push($hash['A'],1);
-$hash['A']=array_push($hash['A'],2);
+$teste="AenotB";
+print_r($teste);
+print "<br>";
+converteConectivoSimbolo($teste);
+print_r($teste);
 
 
-print_r($hash);
+//print_r($teste);
 
 
 ?>
