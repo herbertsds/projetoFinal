@@ -51,9 +51,9 @@ print_r($entradaConvertida);
 
 
 //Passo 3
-
-converteFNC($entradaConvertida[0]);
-converteFNC($entradaConvertida[1]);
+foreach ($entradaConvertida as $key => $value) {
+	converteFNC($entradaConvertida[$key]);
+}
 
 //Remove parênteses
 //$form=substr($form, 1);
@@ -188,6 +188,18 @@ foreach ($arrayFormulas as $key => $value) {
 	}
 }
 function converteFNC(&$form){
+
+	//Se for átomo, então sai
+	if (!is_array($form)) {
+		if (strlen($form)<=2) {
+			return;
+		}
+	}
+	if (is_array($form)) {
+		if ($form['esquerdo']==NULL && ($form['conectivo']=='not' || $form['conectivo']==NULL)) {
+			return;
+		}
+	}
 	
 
 	//Primeiro, remover a implicação, se houver
