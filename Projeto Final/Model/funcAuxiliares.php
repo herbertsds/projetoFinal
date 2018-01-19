@@ -287,6 +287,114 @@ function resolveParenteses($form){
 	$auxForm->setDireito(substr($auxForm->getDireito(), 1));
 	return $auxForm;
 }
+//Versão que retorna um array fórmula
+function resolveParenteses2($form){
+	global $listaConectivos;
+	$auxForm['esquerdo']=NULL;
+	$auxForm['conectivo']=NULL;
+	$auxForm['direito']=NULL;
+	$aux;
+	$esquerdo=true;
+	$abreFormula=false;
+	$contador=0;
+	$not=false;
+
+	converteConectivoSimbolo($form);
+	//print "<br> Teste".$form;
+	//Se for um átomo positivo
+	//OBS: Talvez haja uma maneira mais apropriada de tratar isto
+	//Em caso de erro nos cálculos, checar esta etapa
+	//Número 3 é porque há dois parênteses e o átomo SEMPRE, por exemplo: (A)
+
+	if(strlen($form)==3){
+		$form=substr($form, 1);
+		$form=substr($form, 0, strlen($form)-1);
+		$auxForm['direito']=$form;
+		return $auxForm;
+	}
+	//Se for um átomo negativo
+	//OBS: Talvez haja uma maneira mais apropriada de tratar isto
+	//Em caso de erro nos cálculos, checar esta etapa
+	//Número 4 é porque há dois parênteses e o átomo com negativo SEMPRE, por exemplo: (!A)
+
+	if(strlen($form)==4){
+		$form=substr($form, 1);		
+		$form=substr($form, 1);
+		$form=substr($form, 0, strlen($form)-1);
+		$auxForm['direito']=$form;
+		$auxForm['conectivo']='not';
+		return $auxForm;
+	}
+
+	//Se não for átomo, caso mais geral
+	for ($i=0; $i<strlen($form); $i++){
+		//Caso notnotnot
+		if($form[$i]=='!' && $form[$i+1]=='!' && $form[$i+2]=='!'){
+			$form=substr($form, 4);		
+			$form=substr($form, 0, strlen($form)-1);
+			$auxForm['direito']=$form;
+			$auxForm['conectivo']='not';
+			return $auxForm;
+		}
+		//Caso notnot
+		if($form[$i]=='!' && $form[$i+1]=='!'){
+			$form=substr($form, 3);		
+			$form=substr($form, 0, strlen($form)-1);
+			$auxForm['direito']=$form;
+			$auxForm['conectivo']='notnot';
+			return $auxForm;
+		}
+		
+
+		//Se achar o conectivo not no exterior de um parentese
+		//Certamente há uma fórmula do tipo not para atribuir um conectivo not_algumacoisa
+		//Mas preciso me certificar de que não é um átomo negativo, então verifico se o próximo elemento
+		//é a abertura de um parenteses
+		if($form[$i]=='!' && $form[$i+1]=='('){
+			$not=true;
+		}
+		if($form[$i]=='('){
+			$abreFormula=true;
+			$contador++;
+			
+		}
+		if($form[$i]==')'){
+			$contador-=1;
+			if($contador==0){
+				$abreFormula=False;
+			}
+			
+		}
+		if($abreFormula==true){
+			if((in_array($form[$i],$listaConectivos)) && ($contador==1)){
+				if($not==true){
+					$aux=$form[$i];
+					converteConectivoNot($aux);
+					$auxForm['conectivo']=$aux;
+					$esquerdo=false;
+					$not=false;
+				}
+				else{
+					$aux=$form[$i];
+					converteConectivoExtenso($aux);
+					$auxForm['conectivo']=$aux;
+					$esquerdo=false;
+				}
+				
+			}
+			if($esquerdo==true){
+				$auxForm['esquerdo']=$auxForm['esquerdo'].$form[$i];
+			}
+			if($esquerdo==false){
+				$auxForm['direito']=$auxForm['direito'].$form[$i];
+			}
+		}
+	}
+	$auxForm['esquerdo']=substr($auxForm['esquerdo'], 1);
+	$auxForm['direito']=substr($auxForm['direito'], 1);
+	return $auxForm;
+}
+
 
 //Recebe uma String formula como entrada, caso a formula não tenha
 //nenhum problema de digitação, como por exemplo, os parenteses,
@@ -371,6 +479,48 @@ function imprimeArvoreRaiz($arv){
 		print_r($arv[$key]->info);
 
 	}
+}
+//Função que adiciona Caracter no meio de uma string numa posição pré-definida
+function addCaracter($var, $caracter, $lim){
+	$saida;
+	$parte1='';
+	$parte2='';
+	for($i=0;$i<strlen($var);$i++){
+		if ($i>=$lim) {
+			$parte2.=$var[$i];
+		}
+		else{
+			$parte1.=$var[$i];
+		}
+				
+	}
+	$saida=$parte1.$caracter.$parte2;
+	return $saida;
+}
+
+//Função que deleta um Carater específico de uma String
+//Funciona por referência
+function deletaCaracter(&$str, $indice){
+	$str1=substr($str,0,$indice);
+	$str2 = substr($str,$indice+1,strlen($str));
+	$str=$str1.$str2;
+}
+//Em profundidade 
+function formataFormulas(&$form){
+
+	if(strlen(@$form['esquerdo'])>3){
+		$aux=resolveParenteses2($form['esquerdo']);
+		$form['esquerdo']=$aux;
+		print_r($form['esquerdo']);
+		formataFormulas($form['esquerdo']);
+	}
+	if(strlen(@$form['direito'])>3){
+		$aux=resolveParenteses2($form['direito']);
+		$form['direito']=$aux;
+		print_r($form['direito']);
+		formataFormulas($form['direito']);
+	}
+
 }
 
 ?>
