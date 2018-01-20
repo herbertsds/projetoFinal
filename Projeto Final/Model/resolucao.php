@@ -1,6 +1,7 @@
 <?php 
 require_once("formula.php");
 require_once("funcAuxiliares.php");
+require_once("exerciciosListas.php");
 echo "<pre>";
 
 //Variáveis Globais
@@ -24,7 +25,7 @@ $tamanho=0;
 //Passos 1 e 2
 
 //Entrada
-$entradaTeste= array ("(AimplicaB)","(BimplicaC)","(A)","(C)");
+$entradaTeste= $DNNquestao2;
 
 
 //Receber a entrada do Front-End
@@ -63,129 +64,229 @@ print "<br>Após FNC<br>";
 
 print_r($entradaConvertida);
 
-//Passo 4
-$arrayFormulas=array();
-foreach ($entradaConvertida as $key => $value) {
-	if($value['conectivo']=='e'){
-		array_push($arrayFormulas, $value['esquerdo']);
-		array_push($arrayFormulas, $value['direito']);
+//Os próximos passos precisam ser repetidos afim de extrair os arrays mais internos de fórmulas mais complexas
+$contador=0;
+while ($contador <= 1){
+	
+
+	//Passo 4
+	
+	if ($contador==0) {
+		$arrayFormulas=array();
+		foreach ($entradaConvertida as $key => $value) {
+			if($value['conectivo']=='e'){
+				array_push($arrayFormulas, $value['esquerdo']);
+				array_push($arrayFormulas, $value['direito']);
+			}
+			else{
+				array_push($arrayFormulas, $value);
+			}
+
+		}
 	}
 	else{
-		array_push($arrayFormulas, $value);
-	}
-
-}
-
-print "<br> FÓRMULAS APÓS SEPARAÇÃO DO E<BR>";
-print_r($arrayFormulas);
-
-//Passo 5
-$hashResolucao=array();
-foreach ($arrayFormulas as $key => $value) {
-	if (is_array($value['esquerdo']) && @$value['esquerdo']['esquerdo']==NULL) {
-		//Se o atomo que está chegando casar com algum já existente, então fechamos a resolução
-		if(casarAtomo($hashResolucao,$value['esquerdo']['direito'],$value['esquerdo']['conectivo'])){
-			print "Fechou, contradição com o átomo abaixo<br>";
-			print_r($value['esquerdo']['direito']);
-		}
-		$hashResolucao[$value['esquerdo']['direito']]=$value['conectivo'] == "not" ? 0:1;
-	}
-
-	if (is_array($value['direito']) && @$value['direito']['esquerdo']==NULL) {
-		if(casarAtomo($hashResolucao,$value['direito']['direito'],$value['direito']['conectivo'])){
-			print "Fechou, contradição com o átomo abaixo<br>";
-			print_r($value['direito']['direito']);
-		}
-		$hashResolucao[$value['direito']['direito']]=$value['conectivo'] == "not" ? 0:1;
-	}
-	if ($value['esquerdo']==NULL) {
-		if(casarAtomo($hashResolucao,$value['direito'],$value['conectivo'])){
-			print "Fechou, contradição com o átomo abaixo<br>";
-			print_r($value['direito']);
-		}
-		$hashResolucao[$value['direito']]=$value['conectivo'] == "not" ? 0:1;
-	}
-}
-print "HASH<BR>";
-print_r($hashResolucao);
-
-//Passo 6
-//
-foreach ($arrayFormulas as $key => $value) {
-	//Simplificação do tipo: Se Av¬B e B então A
-	foreach ($hashResolucao as $key2 => $value2) {
-		if ($value['conectivo']=="ou") {
-			if(is_array($value['esquerdo']) && $value['esquerdo']['esquerdo']==NULL){
-				if($hashResolucao[$value['esquerdo']['direito']]==1){
-					$arrayFormulas[$key]['esquerdo']=NULL;
-					$hashResolucao[$arrayFormulas[$key]['direito']]=$value['conectivo'] == "not" ? 0:1;
-					$arrayFormulas[$key]['conectivo']=NULL;
-					print_r($value);
-					print "<br><br>";
+		foreach ($arrayFormulas as $key => $value) {
+			if($value['conectivo']=='e'){
+				if (is_array($value['esquerdo'])) {
+					array_push($arrayFormulas, $value['esquerdo']);
 				}
-			}
-			if(is_array($value['direito']) && $value['direito']['esquerdo']==NULL){
-				if($hashResolucao[$value['direito']['direito']]==1){
-					$arrayFormulas[$key]['direito']=$value['esquerdo'];
-					$arrayFormulas[$key]['esquerdo']=NULL;
-					$hashResolucao[$value['direito']]=$value['conectivo'] == "not" ? 0:1;
-					$arrayFormulas[$key]['conectivo']=NULL;
+				else{
+					$arrayAux['esquerdo']=NULL;
+					$arrayAux['conectivo']=NULL;
+					$arrayAux['direito']=$value['esquerdo'];
+					array_push($arrayFormulas, $arrayAux);
 				}
-			}
-			if(!is_array($value['esquerdo'])){
-				if($hashResolucao[$value['esquerdo']]==0){
-					$value['esquerdo']=NULL;
-					$hashResolucao[$value['direito']]=$value['conectivo'] == "not" ? 0:1;
-					$value['conectivo']=NULL;
+				if (is_array($value['direito'])) {
+					array_push($arrayFormulas, $value['direito']);
 				}
-			}
-			if(!is_array($value['direito'])){
-				if($hashResolucao[$value['direito']]==0){
-					$value['direito']=$value['esquerdo'];
-					$value['esquerdo']=NULL;
-					$hashResolucao[$value['direito']]=$value['conectivo'] == "not" ? 0:1;
-					$value['conectivo']=NULL;
+				else{
+					$arrayAux['esquerdo']=NULL;
+					$arrayAux['conectivo']=NULL;
+					$arrayAux['direito']=$value['direito'];
+					array_push($arrayFormulas, $arrayAux);
 				}
+				unset($arrayFormulas[$key]);
 			}
+
 		}
 	}
 	
-}
-//Simplificação do tipo: Se Av¬B e AvB então A.
-	print "APÓS A SIMPLIFICAÇÃO<BR>";
+
+	print "<br> FÓRMULAS APÓS SEPARAÇÃO DO E<BR>";
 	print_r($arrayFormulas);
+
+	//Passo 5
+	$hashResolucao=array();
+	foreach ($arrayFormulas as $key => $value) {
+		if (is_array($value['esquerdo']) && @$value['esquerdo']['esquerdo']==NULL) {
+			//Se o atomo que está chegando casar com algum já existente, então fechamos a resolução
+			if(casarAtomo($hashResolucao,$value['esquerdo']['direito'],$value['esquerdo']['conectivo'])){
+				print "<br>Fechou, contradição com o átomo abaixo<br>";
+				print_r($value['esquerdo']['direito']);
+			}
+			$hashResolucao[$value['esquerdo']['direito']]=$value['conectivo'] == "not" ? 0:1;
+		}
+
+		if (is_array($value['direito']) && @$value['direito']['esquerdo']==NULL) {
+			if(casarAtomo($hashResolucao,$value['direito']['direito'],$value['direito']['conectivo'])){
+				print "<br>Fechou, contradição com o átomo abaixo<br>";
+				print_r($value['direito']['direito']);
+			}
+			$hashResolucao[$value['direito']['direito']]=$value['conectivo'] == "not" ? 0:1;
+		}
+		if ($value['esquerdo']==NULL) {
+			if(casarAtomo($hashResolucao,$value['direito'],$value['conectivo'])){
+				print "<br>Fechou, contradição com o átomo abaixo<br>";
+				print_r($value['direito']);
+			}
+			$hashResolucao[$value['direito']]=$value['conectivo'] == "not" ? 0:1;
+		}
+	}
+	print "HASH<BR>";
 	print_r($hashResolucao);
 
 
-//Passo 5 - REPETIÇÃO
-foreach ($arrayFormulas as $key => $value) {
-	if (is_array($value['esquerdo']) && @$value['esquerdo']['esquerdo']==NULL) {
-		print "ENTROU IF 1<BR>";
-		//Se o atomo que está chegando casar com algum já existente, então fechamos a resolução
-		if(casarAtomo($hashResolucao,$value['esquerdo']['direito'],$value['esquerdo']['conectivo'])){
+	//Passo 6
+	//
+	foreach ($arrayFormulas as $key => $value) {
+		//Simplificação do tipo: Se Av¬B e B então A
+		foreach ($hashResolucao as $key2 => $value2) {
+			if ($value['conectivo']=="ou") {
+				//Se for um array atômico, significa que é not átomo
+				//Assim, se houver o mesmo átomo positivo na hash, ou seja átomo==1
+				//Significa que esse membro é falso e eu posso isolar o lado direito do "ou"
+				if(is_array($value['esquerdo']) && $value['esquerdo']['esquerdo']==NULL){
+					if($hashResolucao[$value['esquerdo']['direito']]==1){
+						//O lado direito também pode ser array, porém não importa o que ele contém. Será verdade
+						if(is_array($value['direito'])){
+							$arrayFormulas[$key]['esquerdo']=$arrayFormulas[$key]['direito']['esquerdo'];
+							$arrayFormulas[$key]['conectivo']=$arrayFormulas[$key]['direito']['conectivo'];
+							$arrayFormulas[$key]['direito']=$arrayFormulas[$key]['direito']['direito'];
+							break;					
+							
+						}
+						else{
+							$arrayFormulas[$key]['esquerdo']=NULL;					
+							$hashResolucao[$arrayFormulas[$key]['direito']]=$value['conectivo'] == "not" ? 0:1;
+							$arrayFormulas[$key]['conectivo']=NULL;
+							break;
+						}
+						
+						print_r($value);
+						print "<br><br>";
+					}
+				}
+				//Se for um array atômico, significa que é not átomo
+				//Assim, se houver o mesmo átomo positivo na hash, ou seja átomo==1
+				//Significa que esse membro é falso e eu posso isolar o lado direito do "ou"
+				if(is_array($value['direito']) && $value['direito']['esquerdo']==NULL){								
+					if($hashResolucao[$value['direito']['direito']]==1){
+						//O lado direito também pode ser array, porém não importa o que ele contém. Será verdade
+						if(is_array($value['esquerdo'])){
+							$arrayFormulas[$key]['esquerdo']=$arrayFormulas[$key]['esquerdo']['esquerdo'];
+							$arrayFormulas[$key]['conectivo']=$arrayFormulas[$key]['esquerdo']['conectivo'];
+							$arrayFormulas[$key]['direito']=$arrayFormulas[$key]['esquerdo']['direito'];
+							break;
+						}
+						else{
+							//Todo átomo deve ser mantido do lado direito
+							$arrayFormulas[$key]['direito']=$value['esquerdo'];
 
-			print "Fechou, contradição com o átomo abaixo<br>";
-			print_r($value['esquerdo']['direito']);
+							$arrayFormulas[$key]['esquerdo']=NULL;
+							$hashResolucao[$value['direito']]=$value['conectivo'] == "not" ? 0:1;
+							$arrayFormulas[$key]['conectivo']=NULL;
+						}	
+						
+					}
+				}
+				//Se não for array, então com certeza é um átomo positivo
+				//Neste caso, temos que verificar, se há algum correspondente na hash com valor 0
+				//Se houver significa que podemos cortar esse cara do "ou"
+				if(!is_array($value['esquerdo'])){
+					if($hashResolucao[$value['esquerdo']]==0){
+						$value['esquerdo']=NULL;
+						$hashResolucao[$value['direito']]=$value['conectivo'] == "not" ? 0:1;
+						$value['conectivo']=NULL;
+					}
+				}
+				if(!is_array($value['direito'])){
+					if($hashResolucao[$value['direito']]==0){
+						$value['direito']=$value['esquerdo'];
+						$value['esquerdo']=NULL;
+						$hashResolucao[$value['direito']]=$value['conectivo'] == "not" ? 0:1;
+						$value['conectivo']=NULL;
+					}
+				}
+			}
 		}
-		$hashResolucao[$value['esquerdo']['direito']]=$value['conectivo'] == "not" ? 0:1;
-	}
-
-	if (is_array($value['direito']) && @$value['direito']['esquerdo']==NULL) {
-		print "ENTROU IF 2<BR>";
-		if(casarAtomo($hashResolucao,$value['direito']['direito'],$value['direito']['conectivo'])){
-			print "Fechou, contradição com o átomo abaixo<br>";
-			print_r($value['direito']['direito']);
-		}
-		$hashResolucao[$value['direito']['direito']]=$value['conectivo'] == "not" ? 0:1;
-	}
-	if ($value['esquerdo']==NULL) {
 		
-		if(casarAtomo($hashResolucao,$value['direito'],$value['conectivo'])){
-			print "Fechou, contradição com o átomo abaixo<br>";
-			print_r($value['direito']);
-		}
-		$hashResolucao[$value['direito']]=$value['conectivo'] == "not" ? 0:1;
 	}
+	//Simplificação do tipo: Se Av¬B e AvB então A.
+		print "APÓS A SIMPLIFICAÇÃO<BR>";
+		print_r($arrayFormulas);
+		print_r($hashResolucao);
+
+
+	//Passo 5 - REPETIÇÃO
+	foreach ($arrayFormulas as $key => $value) {
+		if (is_array($value['esquerdo']) && @$value['esquerdo']['esquerdo']==NULL) {
+			print "ENTROU IF 1<BR>";
+			//Se o atomo que está chegando casar com algum já existente, então fechamos a resolução
+			if(casarAtomo($hashResolucao,$value['esquerdo']['direito'],$value['esquerdo']['conectivo'])){
+
+				print "<br>Fechou, contradição com o átomo abaixo<br>";
+				print_r($value['esquerdo']['direito']);
+			}
+			$hashResolucao[$value['esquerdo']['direito']]=$value['conectivo'] == "not" ? 0:1;
+		}
+
+		if (is_array($value['direito']) && @$value['direito']['esquerdo']==NULL) {
+			print "ENTROU IF 2<BR>";
+			if(casarAtomo($hashResolucao,$value['direito']['direito'],$value['direito']['conectivo'])){
+				print "<br>Fechou, contradição com o átomo abaixo<br>";
+				print_r($value['direito']['direito']);
+			}
+			$hashResolucao[$value['direito']['direito']]=$value['conectivo'] == "not" ? 0:1;
+		}
+		if ($value['esquerdo']==NULL) {
+			
+			if(casarAtomo($hashResolucao,$value['direito'],$value['conectivo'])){
+				print "<br>Fechou, contradição com o átomo abaixo<br>";
+				print_r($value['direito']);
+			}
+			$hashResolucao[$value['direito']]=$value['conectivo'] == "not" ? 0:1;
+		}
+	}
+
+	if(!checaExisteArray($arrayFormulas)){
+		print "<br>Não existem mais array, saindo do loop<br><br>";
+		break;
+	}
+	else{
+		print "<br>Ainda existe array, próxima iteração<br><br>";
+	}
+	$contador++;
+}
+
+function checaExisteArray($listaFormulas){
+	foreach ($listaFormulas as $key => $value) {
+		if (is_array($listaFormulas[$key]['esquerdo'])) {
+			if ($listaFormulas[$key]['esquerdo']['conectivo']!='not') {
+				return true;
+			}
+		}
+		if (is_array($listaFormulas[$key]['direito'])) {
+			if ($listaFormulas[$key]['direito']['conectivo']!='not') {
+				return true;
+			}
+		}
+		if(!is_array($listaFormulas[$key]['esquerdo'])){
+			if($listaFormulas[$key]['esquerdo']!=NULL) {
+				return true;
+			}
+		}
+	}
+	return false;
 }
 function converteFNC(&$form){
 
