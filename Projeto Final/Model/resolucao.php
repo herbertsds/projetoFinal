@@ -25,7 +25,7 @@ $tamanho=0;
 //Passos 1 e 2
 
 //Entrada
-$entradaTeste= $DNNquestao2;
+$entradaTeste= $DNNquestao3;
 
 
 //Receber a entrada do Front-End
@@ -44,7 +44,15 @@ foreach ($entradaTeste as $key => $value) {
 
 print_r($entradaConvertida);
 
+//Print, pré-processa os notnot
+foreach ($entradaTeste as $key => $value) {
+	if ($entradaConvertida[$key]['conectivo']=='notnot') {
+		$entradaConvertida[$key]['conectivo']=NULL;
+	}	
+}
 
+print "<br>Após o processamento dos notnot<br>";
+print_r($entradaConvertida);
 
 //Se houver digitação incorreta vai haver um aviso. Para o front-end adicionar uma flag (valor "1")
 //A flag vai indicar que a fórmula está incorreta e ficar pedindo a digitação correta para o front-end
@@ -66,7 +74,7 @@ print_r($entradaConvertida);
 
 //Os próximos passos precisam ser repetidos afim de extrair os arrays mais internos de fórmulas mais complexas
 $contador=0;
-while ($contador <= 1){
+while ($contador <= 10){
 	
 
 	//Passo 4
@@ -118,26 +126,32 @@ while ($contador <= 1){
 	//Passo 5
 	$hashResolucao=array();
 	foreach ($arrayFormulas as $key => $value) {
-		if (is_array($value['esquerdo']) && @$value['esquerdo']['esquerdo']==NULL) {
+		if (is_array($value['esquerdo']) && @$value['esquerdo']['esquerdo']==NULL && @$value['direito']==NULL) {
 			//Se o atomo que está chegando casar com algum já existente, então fechamos a resolução
 			if(casarAtomo($hashResolucao,$value['esquerdo']['direito'],$value['esquerdo']['conectivo'])){
 				print "<br>Fechou, contradição com o átomo abaixo<br>";
 				print_r($value['esquerdo']['direito']);
+				print "<br>primeira condição<br>";
+				goto fim;
 			}
-			$hashResolucao[$value['esquerdo']['direito']]=$value['conectivo'] == "not" ? 0:1;
+			$hashResolucao[$value['esquerdo']['direito']]=$value['esquerdo']['conectivo'] == "not" ? 0:1;
 		}
 
-		if (is_array($value['direito']) && @$value['direito']['esquerdo']==NULL) {
+		if (is_array($value['direito']) && @$value['direito']['esquerdo']==NULL && @$value['esquerdo']==NULL) {
 			if(casarAtomo($hashResolucao,$value['direito']['direito'],$value['direito']['conectivo'])){
 				print "<br>Fechou, contradição com o átomo abaixo<br>";
 				print_r($value['direito']['direito']);
+				print "<br>Segunda condição<br>";
+				goto fim;
 			}
-			$hashResolucao[$value['direito']['direito']]=$value['conectivo'] == "not" ? 0:1;
+			$hashResolucao[$value['direito']['direito']]=$value['direito']['conectivo'] == "not" ? 0:1;
 		}
 		if ($value['esquerdo']==NULL) {
 			if(casarAtomo($hashResolucao,$value['direito'],$value['conectivo'])){
 				print "<br>Fechou, contradição com o átomo abaixo<br>";
 				print_r($value['direito']);
+				print "<br>Terceira condição<br>";
+				goto fim;
 			}
 			$hashResolucao[$value['direito']]=$value['conectivo'] == "not" ? 0:1;
 		}
@@ -156,7 +170,8 @@ while ($contador <= 1){
 				//Assim, se houver o mesmo átomo positivo na hash, ou seja átomo==1
 				//Significa que esse membro é falso e eu posso isolar o lado direito do "ou"
 				if(is_array($value['esquerdo']) && $value['esquerdo']['esquerdo']==NULL){
-					if($hashResolucao[$value['esquerdo']['direito']]==1){
+					//Pode acontecer de não existir o cara na hash ainda, então o @ é pra omitir este aviso desnecessário
+					if(@$hashResolucao[$value['esquerdo']['direito']]==1){
 						//O lado direito também pode ser array, porém não importa o que ele contém. Será verdade
 						if(is_array($value['direito'])){
 							$arrayFormulas[$key]['esquerdo']=$arrayFormulas[$key]['direito']['esquerdo'];
@@ -205,16 +220,21 @@ while ($contador <= 1){
 				if(!is_array($value['esquerdo'])){
 					if($hashResolucao[$value['esquerdo']]==0){
 						$value['esquerdo']=NULL;
-						$hashResolucao[$value['direito']]=$value['conectivo'] == "not" ? 0:1;
-						$value['conectivo']=NULL;
+						//garantidamente se o átomo não é array ele é positivo, então recebe 1
+						$hashResolucao[$value['esquerdo']]=1;
+						//$value['conectivo']=NULL;
 					}
 				}
 				if(!is_array($value['direito'])){
-					if($hashResolucao[$value['direito']]==0){
-						$value['direito']=$value['esquerdo'];
+					//Pode acontecer de não existir o cara na hash ainda, então o @ é pra omitir este aviso desnecessário
+					if(@$hashResolucao[$value['direito']]==0){
+						//print "Teste linha 235<br>";
+						//print_r($value);
+						//$value['direito']=$value['esquerdo'];
 						$value['esquerdo']=NULL;
-						$hashResolucao[$value['direito']]=$value['conectivo'] == "not" ? 0:1;
-						$value['conectivo']=NULL;
+						//garantidamente se o átomo não é array ele é positivo, então recebe 1
+						$hashResolucao[$value['direito']]=1;
+						//$value['conectivo']=NULL;
 					}
 				}
 			}
@@ -229,30 +249,32 @@ while ($contador <= 1){
 
 	//Passo 5 - REPETIÇÃO
 	foreach ($arrayFormulas as $key => $value) {
-		if (is_array($value['esquerdo']) && @$value['esquerdo']['esquerdo']==NULL) {
+		if (is_array($value['esquerdo']) && @$value['esquerdo']['esquerdo']==NULL && @$value['direito']==NULL) {
 			print "ENTROU IF 1<BR>";
 			//Se o atomo que está chegando casar com algum já existente, então fechamos a resolução
 			if(casarAtomo($hashResolucao,$value['esquerdo']['direito'],$value['esquerdo']['conectivo'])){
-
 				print "<br>Fechou, contradição com o átomo abaixo<br>";
 				print_r($value['esquerdo']['direito']);
+				goto fim;
 			}
-			$hashResolucao[$value['esquerdo']['direito']]=$value['conectivo'] == "not" ? 0:1;
+			$hashResolucao[$value['esquerdo']['direito']]=$value['esquerdo']['conectivo'] == "not" ? 0:1;
 		}
 
-		if (is_array($value['direito']) && @$value['direito']['esquerdo']==NULL) {
+		if (is_array($value['direito']) && @$value['direito']['esquerdo']==NULL && @$value['esquerdo']==NULL) {
 			print "ENTROU IF 2<BR>";
 			if(casarAtomo($hashResolucao,$value['direito']['direito'],$value['direito']['conectivo'])){
 				print "<br>Fechou, contradição com o átomo abaixo<br>";
 				print_r($value['direito']['direito']);
+				goto fim;
 			}
-			$hashResolucao[$value['direito']['direito']]=$value['conectivo'] == "not" ? 0:1;
+			$hashResolucao[$value['direito']['direito']]=$value['conectivo']['esquerdo'] == "not" ? 0:1;
 		}
 		if ($value['esquerdo']==NULL) {
-			
+			print "ENTROU IF 3<BR>";
 			if(casarAtomo($hashResolucao,$value['direito'],$value['conectivo'])){
 				print "<br>Fechou, contradição com o átomo abaixo<br>";
 				print_r($value['direito']);
+				goto fim;
 			}
 			$hashResolucao[$value['direito']]=$value['conectivo'] == "not" ? 0:1;
 		}
@@ -267,6 +289,9 @@ while ($contador <= 1){
 	}
 	$contador++;
 }
+
+fim:
+print "<br>Encerra processamento<br>";
 
 function checaExisteArray($listaFormulas){
 	foreach ($listaFormulas as $key => $value) {
