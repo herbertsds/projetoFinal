@@ -25,7 +25,7 @@ $tamanho=0;
 //Passos 1 e 2
 
 //Entrada
-$entradaTeste= $DNNquestao3;
+$entradaTeste= $DNNquestao16;
 
 
 //Receber a entrada do Front-End
@@ -70,6 +70,22 @@ foreach ($entradaConvertida as $key => $value) {
 
 print "<br>Após FNC<br>";
 
+print_r($entradaConvertida);
+
+foreach ($entradaConvertida as $key => $value) {
+	if (is_array($value['esquerdo'])) {
+		formataFormulas($entradaConvertida[$key]['esquerdo']);
+	}
+	if (is_array($value['direito'])) {
+		formataFormulas($entradaConvertida[$key]['direito']);
+	}
+	elseif (!(is_array($value['esquerdo'])) && !(is_array($value['direito']))) {
+		formataFormulas($entradaConvertida[$key]);
+	}
+	
+}
+
+print "<br>Após a formatação<br>";
 print_r($entradaConvertida);
 
 //Os próximos passos precisam ser repetidos afim de extrair os arrays mais internos de fórmulas mais complexas
@@ -241,10 +257,74 @@ while ($contador <= 10){
 		}
 		
 	}
-	//Simplificação do tipo: Se Av¬B e AvB então A.
-		print "APÓS A SIMPLIFICAÇÃO<BR>";
+	print "APÓS A SIMPLIFICAÇÃO DE 'OU' SIMPLES<BR>";
 		print_r($arrayFormulas);
 		print_r($hashResolucao);
+
+	//Simplificação do tipo: Se Av¬B e AvB então A.
+	foreach ($arrayFormulas as $key => $value) {
+		//Para reduzir um pouco o processamento que é de ordem quadrática, só entro no segundo loop
+		//após achar uma fórmula que tenha ou como conectivo externo, no melhor caso esse processamento
+		//passa a ser N invés de N²
+		if ($value['conectivo']=='ou') {
+			//Consideremos uma fórmula do tipo alfa v beta, onde alfa e beta podem ser fórmulas ou átomos
+			foreach ($arrayFormulas as $key2 => $value2) {
+				//Se alfa e beta forem iguais, pode pular esse processamento
+				if ($value==$value2) {
+					print "Os dois lados são iguais<br><br>";
+					break;
+				}
+				//Haverão 4 possibilidades
+				//1- Os Alfas são iguais e os betas são diferentes com o not sendo a diferença
+				//2- Os Alfas são iguais e os betas são totalmente diferentes
+				//3- Os Betas são iguais e os alfas são diferentes com o not sendo a diferença
+				//4- Os Betas são iguais e os alfas são totalmente diferentes
+				if ($value2['conectivo']=='ou') {					
+					if ($value['esquerdo']==$value2['esquerdo']){
+						//Possibilidade 1
+						if (is_array($value['direito']) && $value['direito']['conectivo']=='not') {
+							if ((is_array($value2['direito']) && $value2['direito']['conectivo']==NULL && $value['direito']['direito']==$value2['direito']['direito']) || $value['direito']==$value2['direito'] ) {
+								$arrayFormulas[$key]['direito']=NULL;
+								//Se o esquerdo for átomo, vou corrigir e passar pra direita
+								if($value['esquerdo']) {
+									$arrayFormulas[$key]['direito']=$value['esquerdo'];
+									$arrayFormulas[$key]['esquerdo']=NULL;
+								}
+								if ($value['esquerdo']['conectivo']=='not') {
+									$arrayFormulas[$key]['direito']['conectivo']='not';
+									$arrayFormulas[$key]['direito']['direito']=$value['esquerdo']['direito'];
+									$arrayFormulas[$key]['esquerdo']=NULL;
+								}		
+							}
+						}
+						//Possibilidade 2
+						//Se os beta forem diferentes, não preciso fazer nada						
+					}
+
+					
+					if ($value['direito']==$value2['direito']){
+						//Possibilidade 3
+						if (is_array($value['esquerdo']) && $value['esquerdo']['conectivo']=='not') {
+							if ((is_array($value2['esquerdo']) && $value2['esquerdo']['conectivo']==NULL && $value['esquerdo']['direito']==$value2['esquerdo']['direito']) || $value['esquerdo']==$value2['esquerdo'] ) {
+								$arrayFormulas[$key]['esquerdo']=NULL;			
+							}
+						}
+
+						//Possibilidade 4
+						//Se os alfa forem diferentes, não preciso fazer nada
+
+					}
+				}
+			}
+		}		
+	}
+
+	print "APÓS A SIMPLIFICAÇÃO DE 'OU' COMPOSTO<BR>";
+		print_r($arrayFormulas);
+		print_r($hashResolucao);
+
+	
+		
 
 
 	//Passo 5 - REPETIÇÃO

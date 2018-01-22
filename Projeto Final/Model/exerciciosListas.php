@@ -21,6 +21,7 @@ $DNNquestao1 = array ("(AimplicaB)","(BimplicaC)","(A)","(C)"); //,"(C)"
 $DNNquestao2 = array ("(Pimplica(QeR))","((PeQ)implicaR)");
 $DNNquestao3 = array ("(PimplicaQ)","not(Q)","not(P)");
 $DNNquestao4 = array ();
+$DNNquestao16 = array ("((AouB)implicaC)","(CimplicaD)","((AeB)implica(CeD))");
 
 
 ?>
