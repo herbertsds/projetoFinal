@@ -3,31 +3,38 @@ require_once("funcAuxiliares.php");
 echo "<pre>";
 $listaConectivos=array("^","v","-","!");
 
-$hash = array('A' => 1, 'B' => 1 );
+$form1['esquerdo']="A";
+$form1['conectivo']='ou';
+$form1['direito']='B';
 
-$form['direito']='B';
-$form['conectivo']='not';
-if(casarAtomo($hash,$form['direito'],$form['conectivo'])){
-	print "fechou";
+$form2['esquerdo']="A";
+$form2['conectivo']='e';
+$form2['direito']='B';
+
+$form3['esquerdo']="C";
+$form3['conectivo']='ou';
+$form3['direito']='B';
+
+$form4['esquerdo']="A";
+$form4['conectivo']='ou';
+$form4['direito']='B';
+
+$form5['esquerdo']="A";
+$form5['conectivo']="ou";
+$form5['direito']='B';
+
+if ($form1==$form2) {
+	print "Form1 e form2 são iguais<br><br>";
 }
-
-function casarAtomo($hash,$aux,$sinal=NULL){
-		$aux2=$sinal == "not" ? 0:1;
-		if (count($hash)<=1) {
-			return false;
-		}
-		foreach ($hash as $key => $value) {		
-			//Verifico se alguma vez esse cara já foi setado na hash
-			if(!is_null($hash[$key])){
-
-				if(($hash[$key]==!$aux2) && ($aux==$key)){
-					return true;
-				}				
-			}
-		}
-		return false;
-	}
-
+if ($form1==$form3) {
+	print "Form1 e form3 são iguais<br><br>";
+}
+if ($form1==$form4) {
+	print "Form1 e form4 são iguais<br><br>";
+}
+if ($form1==$form5) {
+	print "Form1 e form5 são iguais<br><br>";
+}
 
 
 ?>
