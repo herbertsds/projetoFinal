@@ -5,3 +5,14 @@
 /* ao clicar em next, passar para a tela de exercicio, apresentando as regras aplicaveis e uma area para a arvore
 ser montada dinamicamente */ 
 // nao permitir usar regras repetidas ou invalidas
+
+
+	var vet_regras = [];
+
+	function f_AddRegra(){
+		vet_regras.push($('#regra').val());
+		adicionadas = $('#regra').val();
+		
+		$('#regrasAdicionadas').append("<br/>" + adicionadas );
+		
+	} 

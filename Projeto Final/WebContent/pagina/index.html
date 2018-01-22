@@ -22,13 +22,16 @@
 	<!-- CSS Just for demo purpose, don't include it in your project -->
 	<link href="assets/css/demo.css" rel="stylesheet" />
 	
-	<script type="text/javascript" src="funcoes.js">  </script>
-	 
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> 	
 
+  <script src="funcoes.js" type="text/javascript"></script>
+	
+	
 
 </head>
 
 <body>
+
 
 	<div class="image-container set-full-height" style="background-image: url('assets/img/wall.jpg')">
 
@@ -62,12 +65,12 @@
 			                            	<div class="col-sm-12">
 			                                <!--	<h4 class="info-text"> Let's start with the basic details.</h4> -->
 			                            	</div>
-		                                	<div class="col-sm-6 col-sm-offset-4">
+		                                	<div class="col-sm-6 col-sm-offset-0">
 												<div class="input-group">											
 													<div class="form-group label-floating">
 			                                          	<label class="control-label">Regra</label>
-			                                          	<input name="regra" type="text" class="form-control">
-			                                          	<button type="button" onclick="function()"> + </button>
+			                                          	<input name="regra" id="regra" 	type="text" class="form-control">
+			                                          	<button type="button" id="buttonRegra" onClick="f_AddRegra()"> + </button>
 			                                        </div>
 												</div>
 
@@ -76,10 +79,17 @@
 													<div class="form-group label-floating">
 			                                          	<label class="control-label">Pergunta</label>
 			                                          	<input name="pergunta" type="text" class="form-control">
-			                                          	<button type="button" onclick=""> + </button>
+			                                          	<button type="button" id="" onclick=""> + </button>
 			                                        </div>
 												</div>
-
+											</div>		
+												
+		                                	<div class="col-sm-6 col-sm-offset-0">
+													
+													<div class="form-group label-floating">
+			                                          	<small>Regras adicionadas:</small>
+			                                          	<article  id="regrasAdicionadas" ></article>
+			                                        </div>
 		                                	</div>
 		                                	
 		                            	</div>
@@ -151,6 +161,8 @@
 	    </div>
 	</div>
 </body>
+
+
 	<!--   Core JS Files   -->
 	<script src="assets/js/jquery-2.2.4.min.js" type="text/javascript"></script>
 	<script src="assets/js/bootstrap.min.js" type="text/javascript"></script>
