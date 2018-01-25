@@ -10,7 +10,21 @@ ser montada dinamicamente */
 	var vet_regras = [];
 	var pergunta;
 	
+	function load(){
+		$('#regra').val("");
+		$('#pergunta').val("");
+    	//alert("onload ok");
+    
+          	
+	}
+	
+
+	$('input[type=radio]').change( function() {
+		   alert("test");   
+		});
+	
 	// ############# ADICAO DE REGRAS E PERGUNTA ############################################################
+	
 	function f_AddRegra(){
 		if($('#regra').val() == ""){
 			alert("Regra inválida!");
@@ -26,21 +40,38 @@ ser montada dinamicamente */
 	
 	function f_AddPergunta(){
 		if($('#pergunta').val() == ""){
-			alert("Regra inválida!");
+			alert("Pergunta inválida!");
 		}
 		else{
-			pergunta = $('#pergunta').val().replace(/\s/gi, '');
-			$('#perguntaAdicionada').append("<br/>" + $('#pergunta').val() );
-			$('#pergunta').val("");
+			encerrado = confirm("Tem certeza que todas as regras do BD foram adicionadas?");
+			if(encerrado){
+		
+				pergunta = $('#pergunta').val().replace(/\s/gi, '');
+				$('#perguntaAdicionada').append("<br/>" + $('#pergunta').val() );
+				$('#pergunta').val("Pergunta Adicionada!!");
+				$('#regra').prop('disabled', true);
+				$('#pergunta').prop('disabled', true);
+				$('#buttonRegra').hide();
+				$('#buttonPergunta').hide();
+			}
 		}	
 	}
+	
+	// FALTA PERMITIR EXCLUSAO/ALTERACAO DA PERGUNTA E DE REGRAS
 	
 	// ######################################################################################################
 	
 	// ######### ESCOLHA DO TIPO DE EXERCICIO ###############################################################
+		// ao selecionar o tipo, mudar a tela de resolução
+
+
+	// ######################################################################################################
 	
+	// ######### EXECUCAO DO EXERCICIO ######################################################################
 	
+	// ######################################################################################################
 	
+		
 	
 	
 	

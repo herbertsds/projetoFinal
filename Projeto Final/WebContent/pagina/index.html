@@ -30,9 +30,18 @@
 
 </head>
 
-<body>
+<body onload="load()">
 
-
+	    <a href="http://creative-tim.com">
+	         <div class="logo-container">
+	            <div class="logo">
+	                <img src="assets/ufrj.jpg">
+	            </div>
+	            <div class="brand">
+	                Universidade Federal do Rio de Janeiro
+	            </div>
+	        </div>
+	    </a>
 	<div class="image-container set-full-height" style="background-image: url('assets/img/wall.jpg')">
 
 	    <!--   Big container   -->
@@ -53,14 +62,57 @@
 		                    	</div>
 								<div class="wizard-navigation">
 									<ul>
-			                            <li><a href="#inicio" data-toggle="tab">Inserção de Regras</a></li>
-			                            <li><a href="#tipo" data-toggle="tab">Tipo de Exercício</a></li>
+										<!--  style="display:none" -->
+			                            <li><a href="#tipo" data-toggle="tab">Tipo de Exercício</a></li>								
+			                            <li><a href="#exercicio" data-toggle="tab">Inserção de Regras</a></li>
 			                            <li><a href="#execucao" data-toggle="tab">Exercício</a></li>
 			                        </ul>
 								</div>
 
 		                        <div class="tab-content">
-		                            <div class="tab-pane" id="inicio">
+<!---------------------------------------------------------------------------------------------------------------------------------->         
+		                        
+<!------------------  TAB DOS TIPOS DE EXERCICIOS  --------------------------------------------------------------------------------->      
+   
+		                        <div class="tab-pane" id="tipo">
+		                                <h4 class="info-text">Qual tipo de exercício deseja praticar? </h4>
+		                                <div class="row">
+		                                    <div class="col-sm-10 col-sm-offset-1">
+		                                        <div class="col-sm-4">
+		                                            <div class="choice" data-toggle="wizard-radio" rel="tooltip" title="Árvore de Tableaux">
+		                                                <input type="radio" name="tipo" value="tableaux">
+		                                                <div class="icon">
+		                                                    <i class="material-icons">weekend</i>
+		                                                </div>
+		                                                <h6>Tableaux</h6>
+		                                            </div>
+		                                        </div>
+		                                        <div class="col-sm-4">
+		                                            <div class="choice" data-toggle="wizard-radio" rel="tooltip" title="Método de Resolução">
+		                                                <input type="radio" name="tipo" value="resolucao">
+		                                                <div class="icon">
+		                                                    <i class="material-icons">home</i>
+		                                                </div>
+		                                                <h6>Resolução</h6>
+		                                            </div>
+		                                        </div>
+												<div class="col-sm-4">
+		                                            <div class="choice" data-toggle="wizard-radio" rel="tooltip" title="Método de Dedução Natural">
+		                                                <input type="radio" name="tipo" value="deducao">
+		                                                <div class="icon">
+		                                                    <i class="material-icons">business</i>
+		                                                </div>
+		                                                <h6>Deducao Natural</h6>
+		                                            </div>
+		                                        </div>
+		                                    </div>
+		                                </div>
+		                            </div>
+<!---------------------------------------------------------------------------------------------------------------------------------->         
+		                            
+<!-----------------  TAB DE SELECAO DE EXERCICIOS / ADD REGRAS --------------------------------------------------------------------->         
+		                  
+		                            <div class="tab-pane" id="exercicio">
 		                            	<div class="row">
 			                            	<div class="col-sm-12">
 			                                <!--	<h4 class="info-text"> Let's start with the basic details.</h4> -->
@@ -98,53 +150,28 @@
 		                                	
 		                            	</div>
 		                            </div>
-		                            <div class="tab-pane" id="tipo">
-		                                <h4 class="info-text">Qual tipo de exercício deseja praticar? </h4>
-		                                <div class="row">
-		                                    <div class="col-sm-10 col-sm-offset-1">
-		                                        <div class="col-sm-4">
-		                                            <div class="choice" data-toggle="wizard-radio" rel="tooltip" title="Árvore de Tableaux">
-		                                                <input type="radio" name="job" value="Design">
-		                                                <div class="icon">
-		                                                    <i class="material-icons">weekend</i>
-		                                                </div>
-		                                                <h6>Tableaux</h6>
-		                                            </div>
-		                                        </div>
-		                                        <div class="col-sm-4">
-		                                            <div class="choice" data-toggle="wizard-radio" rel="tooltip" title="Método de Resolução">
-		                                                <input type="radio" name="job" value="Code">
-		                                                <div class="icon">
-		                                                    <i class="material-icons">home</i>
-		                                                </div>
-		                                                <h6>Resolução</h6>
-		                                            </div>
-		                                        </div>
-												<div class="col-sm-4">
-		                                            <div class="choice" data-toggle="wizard-radio" rel="tooltip" title="Método de Dedução Natural">
-		                                                <input type="radio" name="job" value="Code">
-		                                                <div class="icon">
-		                                                    <i class="material-icons">business</i>
-		                                                </div>
-		                                                <h6>Deducao Natural</h6>
-		                                            </div>
-		                                        </div>
-		                                    </div>
-		                                </div>
-		                            </div>
+<!--------------------------------------------------------------------------------------------------------------------->         
+
+<!-----------------  TAB DE EXECUCAO  --------------------------------------------------------------------------------->         
+	                            
 		                            <div class="tab-pane" id="execucao">
 		                                <div class="row">
 		                                    <h4 class="info-text"> Área para execução dos métodos...</h4>
 		                                </div>
 		                            </div>
 		                        </div>
+<!--------------------------------------------------------------------------------------------------------------------->         
+
+<!-----------------  NEXT/PREVIOUS/RODAPE  --------------------------------------------------------------------------------->         
+		                        
+		                        
 	                        	<div class="wizard-footer">
 	                            	<div class="pull-right">
-	                                    <input type='button' class='btn btn-next btn-fill btn-danger btn-wd' name='next' value='Next' />
-	                                    <input type='button' class='btn btn-finish btn-fill btn-danger btn-wd' name='finish' value='Finish' />
+	                                    <input disabled type='button' class='btn btn-next btn-fill btn-danger btn-wd' id="next" name='next' value='Next' />
+	                                    <input type='button' class='btn btn-finish btn-fill btn-danger btn-wd' id="finish" name='finish' value='Finish' />
 	                                </div>
 	                                <div class="pull-left">
-	                                    <input type='button' class='btn btn-previous btn-fill btn-default btn-wd' name='previous' value='Previous' />
+	                                    <input type='button' class='btn btn-previous btn-fill btn-default btn-wd' id="previous" name='previous' value='Previous' />
 
 
 	                                </div>
