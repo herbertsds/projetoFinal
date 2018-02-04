@@ -20,7 +20,13 @@ $DNSquestao10 = array ("((AouB)implicaC)","(DimplicaA)","(DimplicaC)");
 $DNNquestao1 = array ("(AimplicaB)","(BimplicaC)","(A)","(C)"); //,"(C)"
 $DNNquestao2 = array ("(Pimplica(QeR))","((PeQ)implicaR)");
 $DNNquestao3 = array ("(PimplicaQ)","not(Q)","not(P)");
-$DNNquestao4 = array ();
+$DNNquestao4 = array ("(AimplicaB)","(BimplicaC)","(AimplicaC)");
+$DNNquestao5 = array ("((PouQ)implicaR)","(Pimplica(QimplicaR))"); //testar depois
+$DNNquestao6 = array ("(Bimplica(CeA))","(AimplicaD)","(BeC)","(D)");
+$DNNquestao7 = array ("((AouB)implicaC)","(DimplicaA)","(DimplicaC)");
+$DNNquestao8 = array ("(AimplicaB)","(BimplicaC)","(C)","(Aimplica(BeC))");
+$DNNquestao9 = array ("(PouQ)","(PimplicaR)","(QimplicaR)","(R)");
+$DNNquestao10 = array ("(Aimplica(BeC))","((DeF)implicaA)","(DeF)","(BeF)");
 $DNNquestao16 = array ("((AouB)implicaC)","(CimplicaD)","((AeB)implica(CeD))");
 
 

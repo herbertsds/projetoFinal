@@ -507,17 +507,15 @@ function deletaCaracter(&$str, $indice){
 }
 //Em profundidade 
 function formataFormulas(&$form){
-
-	if(strlen(@$form['esquerdo'])>3){
+	//Se ocorrer erro, investigar a entrada no if barra por strlen
+	if(@strlen(@$form['esquerdo'])>3){
 		$aux=resolveParenteses2($form['esquerdo']);
 		$form['esquerdo']=$aux;
-		print_r($form['esquerdo']);
 		formataFormulas($form['esquerdo']);
 	}
-	if(strlen(@$form['direito'])>3){
+	if(@strlen(@$form['direito'])>3){
 		$aux=resolveParenteses2($form['direito']);
 		$form['direito']=$aux;
-		print_r($form['direito']);
 		formataFormulas($form['direito']);
 	}
 

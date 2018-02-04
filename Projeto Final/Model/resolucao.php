@@ -2,6 +2,7 @@
 require_once("formula.php");
 require_once("funcAuxiliares.php");
 require_once("exerciciosListas.php");
+require_once("funcResolucao.php");
 echo "<pre>";
 
 //Variáveis Globais
@@ -25,23 +26,17 @@ $tamanho=0;
 //Passos 1 e 2
 
 //Entrada
-$entradaTeste= $DNNquestao16;
-
+$entradaTeste= $DNNquestao7;
+$tamanho=count($entradaTeste);
 
 //Receber a entrada do Front-End
 
-$tamanho=count($entradaTeste);
-
-//Negação da pergunta
-$entradaTeste[$tamanho-1]="not".$entradaTeste[$tamanho-1];
-
-//Tratar a entrada, verificação de digitação correta
-foreach ($entradaTeste as $key => $value) {
-	verificaFormulaCorreta($entradaTeste[$key]);
-	$entradaConvertida[$key]=resolveParenteses2($entradaTeste[$key]);
-}
+//Negação da pergunta+Validação
+$entradaConvertida=negaPergunta($entradaTeste,$tamanho);
 
 
+
+print "<br>Entrada recebida<br>";
 print_r($entradaConvertida);
 
 //Print, pré-processa os notnot
@@ -64,14 +59,15 @@ foreach ($entradaConvertida as $key => $value) {
 	converteFNC($entradaConvertida[$key]);
 }
 
-//Remove parênteses
-//$form=substr($form, 1);
-//$form=substr($form, 0, strlen($form)-1);
 
 print "<br>Após FNC<br>";
 
 print_r($entradaConvertida);
 
+//Loop para tranfosformar em arrays as fórmulas mais internas, por exemplo
+//Nesta etapa um Av(BeC) é representado como
+//$form['esquerdo']=A  $form['conectivo']='ou' $form['direito']='BvC'
+//Após este loop, este lado direito também estará no formato de array, dentro desse array mais externo
 foreach ($entradaConvertida as $key => $value) {
 	if (is_array($value['esquerdo'])) {
 		formataFormulas($entradaConvertida[$key]['esquerdo']);
@@ -81,11 +77,15 @@ foreach ($entradaConvertida as $key => $value) {
 	}
 	elseif (!(is_array($value['esquerdo'])) && !(is_array($value['direito']))) {
 		formataFormulas($entradaConvertida[$key]);
-	}
-	
+	}	
 }
 
 print "<br>Após a formatação<br>";
+print_r($entradaConvertida);
+
+
+
+print "<br>Após o tratamento dos átomos<br>";
 print_r($entradaConvertida);
 
 //Os próximos passos precisam ser repetidos afim de extrair os arrays mais internos de fórmulas mais complexas
@@ -94,13 +94,31 @@ while ($contador <= 10){
 	
 
 	//Passo 4
-	
+	$aux1['esquerdo']=NULL;
+	$aux1['conectivo']=NULL;
+	$aux1['direito']=NULL;
+	$aux2['esquerdo']=NULL;
+	$aux2['conectivo']=NULL;
+	$aux2['direito']=NULL;
 	if ($contador==0) {
 		$arrayFormulas=array();
 		foreach ($entradaConvertida as $key => $value) {
 			if($value['conectivo']=='e'){
-				array_push($arrayFormulas, $value['esquerdo']);
-				array_push($arrayFormulas, $value['direito']);
+				if (!is_array($value['esquerdo'])) {
+					$aux1['direito']=$value['esquerdo'];
+					array_push($arrayFormulas, $aux1);
+				}
+				else{
+					array_push($arrayFormulas, $value['esquerdo']);
+				}
+				if (!is_array($value['direito'])) {
+					$aux2['direito']=$value['direito'];
+					array_push($arrayFormulas, $aux2);
+				}
+				else{
+					array_push($arrayFormulas, $value['direito']);
+				}			
+				
 			}
 			else{
 				array_push($arrayFormulas, $value);
@@ -134,6 +152,7 @@ while ($contador <= 10){
 
 		}
 	}
+
 	
 
 	print "<br> FÓRMULAS APÓS SEPARAÇÃO DO E<BR>";
@@ -182,10 +201,10 @@ while ($contador <= 10){
 		//Simplificação do tipo: Se Av¬B e B então A
 		foreach ($hashResolucao as $key2 => $value2) {
 			if ($value['conectivo']=="ou") {
-				//Se for um array atômico, significa que é not átomo
-				//Assim, se houver o mesmo átomo positivo na hash, ou seja átomo==1
+				//Se for um array atômico, ele pode ser not
+				//Sendo not, se houver o mesmo átomo positivo na hash, ou seja átomo==1
 				//Significa que esse membro é falso e eu posso isolar o lado direito do "ou"
-				if(is_array($value['esquerdo']) && $value['esquerdo']['esquerdo']==NULL){
+				if(is_array($value['esquerdo']) && $value['esquerdo']['esquerdo']==NULL && $value['esquerdo']['conectivo']=='not'){
 					//Pode acontecer de não existir o cara na hash ainda, então o @ é pra omitir este aviso desnecessário
 					if(@$hashResolucao[$value['esquerdo']['direito']]==1){
 						//O lado direito também pode ser array, porém não importa o que ele contém. Será verdade
@@ -196,21 +215,18 @@ while ($contador <= 10){
 							break;					
 							
 						}
-						else{
+						elseif(!is_array($value['direito'])){
 							$arrayFormulas[$key]['esquerdo']=NULL;					
 							$hashResolucao[$arrayFormulas[$key]['direito']]=$value['conectivo'] == "not" ? 0:1;
 							$arrayFormulas[$key]['conectivo']=NULL;
 							break;
 						}
-						
-						print_r($value);
-						print "<br><br>";
 					}
 				}
-				//Se for um array atômico, significa que é not átomo
-				//Assim, se houver o mesmo átomo positivo na hash, ou seja átomo==1
+				//Se for um array atômico, pode ser not
+				//Sendo not, se houver o mesmo átomo positivo na hash, ou seja átomo==1
 				//Significa que esse membro é falso e eu posso isolar o lado direito do "ou"
-				if(is_array($value['direito']) && $value['direito']['esquerdo']==NULL){								
+				if(is_array($value['direito']) && $value['direito']['esquerdo']==NULL && $value['direito']['conectivo']=='not'){								
 					if($hashResolucao[$value['direito']['direito']]==1){
 						//O lado direito também pode ser array, porém não importa o que ele contém. Será verdade
 						if(is_array($value['esquerdo'])){
@@ -219,38 +235,65 @@ while ($contador <= 10){
 							$arrayFormulas[$key]['direito']=$arrayFormulas[$key]['esquerdo']['direito'];
 							break;
 						}
-						else{
+						elseif(!is_array($value['esquerdo'])){
+							//CHECAR CASO DÊ ERRO
 							//Todo átomo deve ser mantido do lado direito
 							$arrayFormulas[$key]['direito']=$value['esquerdo'];
 
 							$arrayFormulas[$key]['esquerdo']=NULL;
-							$hashResolucao[$value['direito']]=$value['conectivo'] == "not" ? 0:1;
+							$hashResolucao[$value['direito']['direito']]=$value['conectivo'] == "not" ? 0:1;
 							$arrayFormulas[$key]['conectivo']=NULL;
 						}	
 						
+					}
+				}
+				//Pode ser um array de átomo positivo
+				//Neste caso, temos que verificar, se há algum correspondente na hash com valor 0
+				//Se houver significa que podemos cortar esse cara do "ou"
+				if((is_array($value['esquerdo']) && $value['esquerdo']['conectivo']==NULL)){
+					if(@$hashResolucao[$value['esquerdo']['direito']]==0){
+						//$value['esquerdo']=NULL;
+						//garantidamente se o átomo não é array ele é positivo, então recebe 1
+						$hashResolucao[$value['esquerdo']['direito']]=1;
+						//$value['conectivo']=NULL;
+					}
+				}
+				if((is_array($value['direito']) && $value['direito']['conectivo']==NULL)){
+					//Pode acontecer de não existir o cara na hash ainda, então o @ é pra omitir este aviso desnecessário
+					if(@$hashResolucao[$value['direito']['direito']]==0){
+						//$value['esquerdo']=NULL;
+						//garantidamente se o átomo não é array ele é positivo, então recebe 1
+						$hashResolucao[$value['direito']['direito']]=1;
+						//$value['conectivo']=NULL;
 					}
 				}
 				//Se não for array, então com certeza é um átomo positivo
 				//Neste caso, temos que verificar, se há algum correspondente na hash com valor 0
 				//Se houver significa que podemos cortar esse cara do "ou"
 				if(!is_array($value['esquerdo'])){
-					if($hashResolucao[$value['esquerdo']]==0){
-						$value['esquerdo']=NULL;
-						//garantidamente se o átomo não é array ele é positivo, então recebe 1
-						$hashResolucao[$value['esquerdo']]=1;
-						//$value['conectivo']=NULL;
+					//Pode acontecer de não existir o cara na hash ainda, então o @ é pra omitir este aviso desnecessário
+					if(@$hashResolucao[$value['esquerdo']]==0){
+						//O cara que vai sobrar do "ou" pode ser adicionado na hash caso seja átomo
+						if (!is_array($value['direito'])) {
+							$hashResolucao[$value['direito']]=1;
+						}
+						elseif(is_array($value['direito']) && $value['direito']['conectivo']=='not') {
+							$hashResolucao[$value['direito']['direito']]=0;
+						}
+						$arrayFormulas[$key]=$value['direito'];
 					}
 				}
 				if(!is_array($value['direito'])){
 					//Pode acontecer de não existir o cara na hash ainda, então o @ é pra omitir este aviso desnecessário
 					if(@$hashResolucao[$value['direito']]==0){
-						//print "Teste linha 235<br>";
-						//print_r($value);
-						//$value['direito']=$value['esquerdo'];
-						$value['esquerdo']=NULL;
-						//garantidamente se o átomo não é array ele é positivo, então recebe 1
-						$hashResolucao[$value['direito']]=1;
-						//$value['conectivo']=NULL;
+						//O cara que vai sobrar do "ou" pode ser adicionado na hash caso seja átomo
+						if (!is_array($value['esquerdo'])) {
+							$hashResolucao[$value['esquerdo']]=1;
+						}
+						elseif(is_array($value['esquerdo']) && $value['esquerdo']['conectivo']=='not') {
+							$hashResolucao[$value['esquerdo']['direito']]=0;
+						}
+						$arrayFormulas[$key]=$value['esquerdo'];
 					}
 				}
 			}
@@ -282,6 +325,7 @@ while ($contador <= 10){
 				if ($value2['conectivo']=='ou') {					
 					if ($value['esquerdo']==$value2['esquerdo']){
 						//Possibilidade 1
+						//Se o not estiver no beta da primeira fórmula
 						if (is_array($value['direito']) && $value['direito']['conectivo']=='not') {
 							if ((is_array($value2['direito']) && $value2['direito']['conectivo']==NULL && $value['direito']['direito']==$value2['direito']['direito']) || $value['direito']==$value2['direito'] ) {
 								$arrayFormulas[$key]['direito']=NULL;
@@ -289,8 +333,26 @@ while ($contador <= 10){
 								if($value['esquerdo']) {
 									$arrayFormulas[$key]['direito']=$value['esquerdo'];
 									$arrayFormulas[$key]['esquerdo']=NULL;
+									$arrayFormulas[$key]['conectivo']=NULL;
 								}
 								if ($value['esquerdo']['conectivo']=='not') {
+									$arrayFormulas[$key]['direito']['conectivo']='not';
+									$arrayFormulas[$key]['direito']['direito']=$value['esquerdo']['direito'];
+									$arrayFormulas[$key]['esquerdo']=NULL;
+								}		
+							}
+						}
+						//Se o not estiver no beta da segunda fórmula
+						if (is_array($value2['direito']) && $value2['direito']['conectivo']=='not') {
+							if ((is_array($value['direito']) && $value['direito']['conectivo']==NULL && $value2['direito']['direito']==$value2['direito']['direito']) || $value['direito']==$value2['direito'] ) {
+								$arrayFormulas[$key]['direito']=NULL;
+								//Se o esquerdo for átomo, vou corrigir e passar pra direita
+								if(!is_array($value['esquerdo'])) {
+									$arrayFormulas[$key]['direito']=$value['esquerdo'];
+									$arrayFormulas[$key]['esquerdo']=NULL;
+									$arrayFormulas[$key]['conectivo']=NULL;
+								}
+								if (@$value['esquerdo']['conectivo']=='not') {
 									$arrayFormulas[$key]['direito']['conectivo']='not';
 									$arrayFormulas[$key]['direito']['direito']=$value['esquerdo']['direito'];
 									$arrayFormulas[$key]['esquerdo']=NULL;
@@ -304,8 +366,15 @@ while ($contador <= 10){
 					
 					if ($value['direito']==$value2['direito']){
 						//Possibilidade 3
+						//Se o not estiver no primeiro alfa
 						if (is_array($value['esquerdo']) && $value['esquerdo']['conectivo']=='not') {
 							if ((is_array($value2['esquerdo']) && $value2['esquerdo']['conectivo']==NULL && $value['esquerdo']['direito']==$value2['esquerdo']['direito']) || $value['esquerdo']==$value2['esquerdo'] ) {
+								$arrayFormulas[$key]['esquerdo']=NULL;			
+							}
+						}
+						//Se o not estiver no segundo alfa
+						if (is_array($value2['esquerdo']) && $value2['esquerdo']['conectivo']=='not') {
+							if ((is_array($value['esquerdo']) && $value['esquerdo']['conectivo']==NULL && $value['esquerdo']['direito']==$value2['esquerdo']['direito']) || $value['esquerdo']==$value2['esquerdo'] ) {
 								$arrayFormulas[$key]['esquerdo']=NULL;			
 							}
 						}
@@ -329,8 +398,7 @@ while ($contador <= 10){
 
 	//Passo 5 - REPETIÇÃO
 	foreach ($arrayFormulas as $key => $value) {
-		if (is_array($value['esquerdo']) && @$value['esquerdo']['esquerdo']==NULL && @$value['direito']==NULL) {
-			print "ENTROU IF 1<BR>";
+		if (@is_array($value['esquerdo']) && @$value['esquerdo']['esquerdo']==NULL && @$value['direito']==NULL) {
 			//Se o atomo que está chegando casar com algum já existente, então fechamos a resolução
 			if(casarAtomo($hashResolucao,$value['esquerdo']['direito'],$value['esquerdo']['conectivo'])){
 				print "<br>Fechou, contradição com o átomo abaixo<br>";
@@ -340,8 +408,7 @@ while ($contador <= 10){
 			$hashResolucao[$value['esquerdo']['direito']]=$value['esquerdo']['conectivo'] == "not" ? 0:1;
 		}
 
-		if (is_array($value['direito']) && @$value['direito']['esquerdo']==NULL && @$value['esquerdo']==NULL) {
-			print "ENTROU IF 2<BR>";
+		if (@is_array($value['direito']) && @$value['direito']['esquerdo']==NULL && @$value['esquerdo']==NULL) {
 			if(casarAtomo($hashResolucao,$value['direito']['direito'],$value['direito']['conectivo'])){
 				print "<br>Fechou, contradição com o átomo abaixo<br>";
 				print_r($value['direito']['direito']);
@@ -349,8 +416,7 @@ while ($contador <= 10){
 			}
 			$hashResolucao[$value['direito']['direito']]=$value['conectivo']['esquerdo'] == "not" ? 0:1;
 		}
-		if ($value['esquerdo']==NULL) {
-			print "ENTROU IF 3<BR>";
+		if (@$value['esquerdo']==NULL) {
 			if(casarAtomo($hashResolucao,$value['direito'],$value['conectivo'])){
 				print "<br>Fechou, contradição com o átomo abaixo<br>";
 				print_r($value['direito']);
@@ -375,6 +441,11 @@ print "<br>Encerra processamento<br>";
 
 function checaExisteArray($listaFormulas){
 	foreach ($listaFormulas as $key => $value) {
+		if (is_array($listaFormulas[$key])) {
+			if ($listaFormulas[$key]['conectivo']!='not') {
+				return true;
+			}
+		}
 		if (is_array($listaFormulas[$key]['esquerdo'])) {
 			if ($listaFormulas[$key]['esquerdo']['conectivo']!='not') {
 				return true;
@@ -385,6 +456,7 @@ function checaExisteArray($listaFormulas){
 				return true;
 			}
 		}
+		
 		if(!is_array($listaFormulas[$key]['esquerdo'])){
 			if($listaFormulas[$key]['esquerdo']!=NULL) {
 				return true;
@@ -393,162 +465,9 @@ function checaExisteArray($listaFormulas){
 	}
 	return false;
 }
-function converteFNC(&$form){
-
-	//Se for átomo, então sai
-	if (!is_array($form)) {
-		if (strlen($form)<=2) {
-			return;
-		}
-	}
-	if (is_array($form)) {
-		if ($form['esquerdo']==NULL && ($form['conectivo']=='not' || $form['conectivo']==NULL)) {
-			return;
-		}
-	}
-	
-
-	//Primeiro, remover a implicação, se houver
-	//VAI MUDAR PARA O CASO GERAL (IDEIA: USAR WHILE)
-	//Caso de implicação dentro de um not
-	if($form['conectivo']=="not_implica"){
-		if(@strlen($form['direito'])==1){
-			$form['direito']="!(".$form['direito'].")";
-		}
-		else{
-			$form['direito']="!".$form['direito'];
-		}
-		
-		$form['conectivo']="e";
-	}
-	//Caso de implicação sem not
-	else{
-		if(@strlen($form['esquerdo'])==1){
-			$form['esquerdo']="!(".$form['esquerdo'].")";
-		}
-		else{
-			$form['esquerdo']="!".$form['esquerdo'];
-		}
-		$form['conectivo']="ou";
-	}
-	print "<br>";
-	//print "PRIMEIRO PASSO CONCLUÍDO";
 
 
-		
-	//Segundo Passar todos os not fora de parênteses para dentro
-
-	formataFormulas($form);
-	$aux1=&$form['esquerdo'];
-	$aux2=&$form['direito'];
-	$c=0;
-	
-	if($form['conectivo']=='not_e'){
-		$form['direito']="!".$form['direito'];
-		$form['conectivo']='ou';
-		$form['esquerdo']="!".$form['esquerdo'];
-	}
-
-	if($form['conectivo']=='not_ou'){
-		$form['direito']="!".$form['direito'];
-		$form['conectivo']='e';
-		$form['esquerdo']="!".$form['esquerdo'];
-	}
-
-	do{
-		if(@$aux1['conectivo']=='not_e'){
-			$aux1['direito']="!(".$aux1['direito'].")";
-			$aux1['conectivo']='ou';
-			$aux1['esquerdo']="!(".$aux1['esquerdo'].")";
-		}
-
-		if($aux1['conectivo']=='not_ou'){
-			$aux1['direito']="!(".$aux1['direito'].")";
-			$aux1['conectivo']='e';
-			$aux1['esquerdo']="!(".$aux1['esquerdo'].")";
-		}
-
-		if(@$aux2['conectivo']=='not_e'){
-			$aux2['direito']="!(".$aux2['direito'].")";
-			$aux2['conectivo']='ou';
-			$aux2['esquerdo']="!(".$aux2['esquerdo'].")";
-		}
-
-		if(@$aux2['conectivo']=='not_ou'){
-			$aux2['direito']="!(".$aux2['direito'].")";
-			$aux2['conectivo']='e';
-			$aux2['esquerdo']="!(".$aux2['esquerdo'].")";
-		}
-		if(is_array($aux1['esquerdo'])){
-			$array1=$aux1;
-			$aux1=$aux1['esquerdo'];
-		}
-		else{
-			break;
-		}
-		if(is_array($aux2['direito'])){
-			$array2=$aux2;
-			$aux2=$aux2['direito'];
-		}
-		else{
-			break;
-		}
-		$c++;
-	}while ($array1['esquerdo'] || $array1['direito'] || $array2['esquerdo'] || $array2['direito']);
-
-	
 
 
-	//Terceira, aplicar a distributiva, formalizar o "e" de "ou"
-
-
-	if($form['conectivo']=='ou'){
-		if(is_array($form['esquerdo']) && $form['conectivo']=='ou' && $form['esquerdo']['conectivo']=='e'){
-
-			$aux1=&$form['esquerdo'];
-			$auxilia['esquerdo']=NULL;
-			$auxilia['conectivo']=NULL;
-			$auxilia['direito']=NULL;
-
-			//Se o array na verdade for array de átomo, não faça nada
-			if($aux1['esquerdo']==NULL){
-				print "ESQUERDO É NULO<BR>";
-				//NADA
-			}
-			else{
-				if(!is_array($form['direito'])){
-					$aux3=$aux1['direito'];
-					$aux1['direito']=$form['direito'];
-					$aux1['conectivo']="ou";
-					$form['direito']=array('esquerdo' => $aux3 , 'conectivo' => "ou" , 'direito' => $form['direito'] );
-					$form['conectivo']='e';
-
-				}
-			}
-
-		}
-	}
-
-	/*
-
-	converteConectivoExtenso($form);
-	*/
-}
-
-function casarAtomo($hash,$aux,$sinal){
-		$aux2=$sinal == "not" ? 0:1;
-		if (count($hash)<=1) {
-			return false;
-		}
-		foreach ($hash as $key => $value) {			
-			//Verifico se alguma vez esse cara já foi setado na hash
-			if(!is_null($hash[$key])){
-				if(($hash[$key]==!$aux2) && ($aux==$key)){
-					return true;
-				}				
-			}
-		}
-		return false;
-	}
 
 ?>
