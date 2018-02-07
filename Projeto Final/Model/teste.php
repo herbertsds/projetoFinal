@@ -3,39 +3,46 @@ require_once("funcAuxiliares.php");
 echo "<pre>";
 $listaConectivos=array("^","v","-","!");
 
-$form1['esquerdo']="A";
-$form1['conectivo']='ou';
-$form1['direito']='B';
+$hash['A']='0';
+$hash['B']='1';
+$hash['C']='0';
 
-$form2['esquerdo']="A";
-$form2['conectivo']='e';
-$form2['direito']='B';
 
-$form3['esquerdo']="C";
-$form3['conectivo']='ou';
-$form3['direito']='B';
 
-$form4['esquerdo']="A";
-$form4['conectivo']='ou';
-$form4['direito']='B';
 
-$form5['esquerdo']="A";
-$form5['conectivo']="ou";
-$form5['direito']='B';
-
-if ($form1==$form2) {
-	print "Form1 e form2 são iguais<br><br>";
+if($hash['C']=='1'){
+	print "Ok";
 }
-if ($form1==$form3) {
-	print "Form1 e form3 são iguais<br><br>";
-}
-if ($form1==$form4) {
-	print "Form1 e form4 são iguais<br><br>";
-}
-if ($form1==$form5) {
-	print "Form1 e form5 são iguais<br><br>";
+else{
+	print "not";
 }
 
+/*
+//Loop para garantir que os átomos restantes se tornem arrays
+foreach ($entradaConvertida as $key => $value) {
+	if (!is_array($value)) {
+		if (strlen($value)==1) {
+			$entradaConvertida[$key]['esquerdo']=NULL;
+			$entradaConvertida[$key]['conectivo']=NULL;
+			$entradaConvertida[$key]['direito']=$value;
+		}
+	}
+	if (!is_array($value['esquerdo'])) {
+		if (strlen($value['esquerdo'])==1) {
+			$entradaConvertida[$key]['esquerdo']['esquerdo']=NULL;
+			$entradaConvertida[$key]['esquerdo']['conectivo']=NULL;
+			$entradaConvertida[$key]['esquerdo']['direito']=$value['esquerdo'];
+		}
+	}
+	if (!is_array($value['direito'])) {
+		if (strlen($value['direito'])==1) {
+			$entradaConvertida[$key]['direito']['esquerdo']=NULL;
+			$entradaConvertida[$key]['direito']['conectivo']=NULL;
+			$entradaConvertida[$key]['direito']['direito']=$value['direito'];
+		}
+	}
+}
+*/
 
 ?>
 
