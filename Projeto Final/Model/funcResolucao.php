@@ -169,33 +169,79 @@ function casarAtomo($hash,$aux,$sinal){
 	}
 	return false;
 }
+//Talvez precise de melhorias
+function checaImplica(&$form){
+	$esquerdo=true;
+	$direito=true;
+	$aux=$form;
+	while($esquerdo || $direito){
+		if($esquerdo){
+			if(@$aux['conectivo']=='implica' || @$aux['conectivo']=='not_implica') {
+				return true;
+			}
+			elseif(@is_array($aux['esquerdo'])){
+				$aux=$aux['esquerdo'];
+			}
+			else{
+				$esquerdo=false;
+			}
+		}
+		elseif($direito){
+			if(@$aux['conectivo']=='implica' || @$aux['conectivo']=='not_implica') {
+				return true;
+			}
+			elseif(@is_array($aux['direito'])){
+				$aux=$aux['direito'];
+			}
+			else{
+				$direito=false;
+			}
+		}
+	}
 
+}
 function resolveImplicacoes(&$form){
-	
-	
+	$flag=true;
+	$form3=$form;
+	formataFormulas($form);
 	//VAI MUDAR PARA O CASO GERAL (IDEIA: USAR WHILE)
 	//Caso de implicação dentro de um not
-	if($form['conectivo']=="not_implica"){
-		if(@strlen($form['direito'])==1){
-			$form['direito']="!(".$form['direito'].")";
+	while($flag){
+		if($form['conectivo']=="not_implica"){
+			if(@strlen($form['direito'])==1){
+				$form['direito']="!(".$form['direito'].")";
+			}
+			else{
+				$form['direito']="!".$form['direito'];
+			}
+			
+			$form['conectivo']="e";
+		}
+		//Caso de implicação sem not
+		elseif($form['conectivo']=="implica"){
+			if(@strlen($form['esquerdo'])==1){
+				$form['esquerdo']="!(".$form['esquerdo'].")";
+			}
+			else{
+				$form['esquerdo']="!".$form['esquerdo'];
+			}
+			$form['conectivo']="ou";
+		}
+		elseif(!(is_array($form['esquerdo'])) && !(is_array($form['direito']))){
+			$form=$form3;
+		}
+		if(is_array($form['esquerdo']) && checaImplica($form['esquerdo'])){
+			$form=&$form['esquerdo'];
+		}
+		elseif(is_array($form['direito']) && checaImplica($form['direito'])){
+			$form=&$form['direito'];
 		}
 		else{
-			$form['direito']="!".$form['direito'];
+			$flag=checaImplica($form);
 		}
-		
-		$form['conectivo']="e";
+		print "<br>";
+
 	}
-	//Caso de implicação sem not
-	elseif($form['conectivo']=="implica"){
-		if(@strlen($form['esquerdo'])==1){
-			$form['esquerdo']="!(".$form['esquerdo'].")";
-		}
-		else{
-			$form['esquerdo']="!".$form['esquerdo'];
-		}
-		$form['conectivo']="ou";
-	}
-	print "<br>";
 }
 
 function checaExisteArray($listaFormulas){
@@ -289,8 +335,9 @@ function confrontaAtomos(&$arrayFormulas,&$hashResolucao,&$flag){
 				print_r($value['esquerdo']['direito']);
 				//print "<br>primeira condição<br>";
 				$flag=true;
+				break;
 			}
-			$hashResolucao[$value['esquerdo']['direito']]=$value['esquerdo']['conectivo'] == "not" ? 0:1;
+			$hashResolucao[$value['esquerdo']['direito']]=$value['esquerdo']['conectivo'] == "not" ? '0':'1';
 		}
 
 		if (is_array($value['direito']) && @$value['direito']['esquerdo']==NULL && @$value['esquerdo']==NULL) {
@@ -299,8 +346,9 @@ function confrontaAtomos(&$arrayFormulas,&$hashResolucao,&$flag){
 				print_r($value['direito']['direito']);
 				//print "<br>Segunda condição<br>";
 				$flag=true;
+				break;
 			}
-			$hashResolucao[$value['direito']['direito']]=$value['direito']['conectivo'] == "not" ? 0:1;
+			$hashResolucao[$value['direito']['direito']]=$value['direito']['conectivo'] == "not" ? '0':'1';
 		}
 		if ($value['esquerdo']==NULL) {
 			if(casarAtomo($hashResolucao,$value['direito'],$value['conectivo'])){
@@ -308,8 +356,9 @@ function confrontaAtomos(&$arrayFormulas,&$hashResolucao,&$flag){
 				print_r($value['direito']);
 				//print "<br>Terceira condição<br>";
 				$flag=true;
+				break;
 			}
-			$hashResolucao[$value['direito']]=$value['conectivo'] == "not" ? 0:1;
+			$hashResolucao[$value['direito']]=$value['conectivo'] == "not" ? '0':'1';
 		}
 	}
 }
@@ -318,13 +367,13 @@ function separarOU1(&$arrayFormulas,&$hashResolucao){
 	foreach ($arrayFormulas as $key => $value) {
 		//Simplificação do tipo: Se Av¬B e B então A
 		foreach ($hashResolucao as $key2 => $value2) {
-			if ($value['conectivo']=="ou") {
+			if ($value['conectivo']=="ou"){
 				//Se for um array atômico, ele pode ser not
 				//Sendo not, se houver o mesmo átomo positivo na hash, ou seja átomo==1
 				//Significa que esse membro é falso e eu posso isolar o lado direito do "ou"
 				if(is_array($value['esquerdo']) && $value['esquerdo']['esquerdo']==NULL && $value['esquerdo']['conectivo']=='not'){
 					//Pode acontecer de não existir o cara na hash ainda, então o @ é pra omitir este aviso desnecessário
-					if(@$hashResolucao[$value['esquerdo']['direito']]==1){
+					if(@$hashResolucao[$value['esquerdo']['direito']]=='1'){
 						//O lado direito também pode ser array, porém não importa o que ele contém. Será verdade
 						if(is_array($value['direito'])){
 							$arrayFormulas[$key]['esquerdo']=$arrayFormulas[$key]['direito']['esquerdo'];
@@ -335,7 +384,7 @@ function separarOU1(&$arrayFormulas,&$hashResolucao){
 						}
 						elseif(!is_array($value['direito'])){
 							$arrayFormulas[$key]['esquerdo']=NULL;					
-							$hashResolucao[$arrayFormulas[$key]['direito']]=$value['conectivo'] == "not" ? 0:1;
+							$hashResolucao[$arrayFormulas[$key]['direito']]=$value['conectivo'] == "not" ? '0':'1';
 							$arrayFormulas[$key]['conectivo']=NULL;
 							break;
 						}
@@ -345,22 +394,29 @@ function separarOU1(&$arrayFormulas,&$hashResolucao){
 				//Sendo not, se houver o mesmo átomo positivo na hash, ou seja átomo==1
 				//Significa que esse membro é falso e eu posso isolar o lado direito do "ou"
 				if(is_array($value['direito']) && $value['direito']['esquerdo']==NULL && $value['direito']['conectivo']=='not'){								
-					if($hashResolucao[$value['direito']['direito']]==1){
+					if(@$hashResolucao[$value['direito']['direito']]=='1'){
 						//O lado direito também pode ser array, porém não importa o que ele contém. Será verdade
-						if(is_array($value['esquerdo'])){
+						if(is_array($value['esquerdo']) && $value['esquerdo']['conectivo']!='not'){
 							$arrayFormulas[$key]['esquerdo']=$arrayFormulas[$key]['esquerdo']['esquerdo'];
 							$arrayFormulas[$key]['conectivo']=$arrayFormulas[$key]['esquerdo']['conectivo'];
 							$arrayFormulas[$key]['direito']=$arrayFormulas[$key]['esquerdo']['direito'];
 							break;
 						}
+						elseif(is_array($value['esquerdo']) && $value['esquerdo']['conectivo']=='not'){
+							$arrayFormulas[$key]['conectivo']=$arrayFormulas[$key]['esquerdo']['conectivo'];
+							$arrayFormulas[$key]['direito']=$arrayFormulas[$key]['esquerdo']['direito'];
+							$arrayFormulas[$key]['esquerdo']=NULL;
+							break;
+						}
+
 						elseif(!is_array($value['esquerdo'])){
 							//CHECAR CASO DÊ ERRO
 							//Todo átomo deve ser mantido do lado direito
 							$arrayFormulas[$key]['direito']=$value['esquerdo'];
-
 							$arrayFormulas[$key]['esquerdo']=NULL;
-							$hashResolucao[$value['direito']['direito']]=$value['conectivo'] == "not" ? 0:1;
+							$hashResolucao[$value['direito']['direito']]=$value['conectivo'] == "not" ? '0':'1';
 							$arrayFormulas[$key]['conectivo']=NULL;
+							break;
 						}	
 						
 					}
@@ -369,56 +425,78 @@ function separarOU1(&$arrayFormulas,&$hashResolucao){
 				//Neste caso, temos que verificar, se há algum correspondente na hash com valor 0
 				//Se houver significa que podemos cortar esse cara do "ou"
 				if((is_array($value['esquerdo']) && $value['esquerdo']['conectivo']==NULL)){
-					if(@$hashResolucao[$value['esquerdo']['direito']]==0){
+					if(@$hashResolucao[$value['esquerdo']['direito']]=='0'){
 						//$value['esquerdo']=NULL;
 						//garantidamente se o átomo não é array ele é positivo, então recebe 1
-						$hashResolucao[$value['esquerdo']['direito']]=1;
+						$hashResolucao[$value['esquerdo']['direito']]='1';
 						//$value['conectivo']=NULL;
+						break;
 					}
 				}
 				if((is_array($value['direito']) && $value['direito']['conectivo']==NULL)){
 					//Pode acontecer de não existir o cara na hash ainda, então o @ é pra omitir este aviso desnecessário
-					if(@$hashResolucao[$value['direito']['direito']]==0){
+					if(@$hashResolucao[$value['direito']['direito']]=='0'){
 						//$value['esquerdo']=NULL;
 						//garantidamente se o átomo não é array ele é positivo, então recebe 1
-						$hashResolucao[$value['direito']['direito']]=1;
+						$hashResolucao[$value['direito']['direito']]='1';
 						//$value['conectivo']=NULL;
+						break;
 					}
 				}
 				//Se não for array, então com certeza é um átomo positivo
 				//Neste caso, temos que verificar, se há algum correspondente na hash com valor 0
 				//Se houver significa que podemos cortar esse cara do "ou"
 				if(!is_array($value['esquerdo'])){
+
 					//Pode acontecer de não existir o cara na hash ainda, então o @ é pra omitir este aviso desnecessário
-					if(@$hashResolucao[$value['esquerdo']]==0){
+					if(@$hashResolucao[$value['esquerdo']]=='0'){
 						//O cara que vai sobrar do "ou" pode ser adicionado na hash caso seja átomo
 						if (!is_array($value['direito'])) {
-							$hashResolucao[$value['direito']]=1;
+							$hashResolucao[$value['direito']]='1';
 						}
 						elseif(is_array($value['direito']) && $value['direito']['conectivo']=='not') {
-							$hashResolucao[$value['direito']['direito']]=0;
+							$hashResolucao[$value['direito']['direito']]='0';
 						}
-						$arrayFormulas[$key]=$value['direito'];
+						//Correção para que o átomo se torne um array com o lado direito preenchido
+						$aux['esquerdo']=NULL;
+						$aux['conectivo']=NULL;
+						$aux['direito']=$value['direito'];
+						$arrayFormulas[$key]=$aux;
+						break;
 					}
 				}
 				if(!is_array($value['direito'])){
 					//Pode acontecer de não existir o cara na hash ainda, então o @ é pra omitir este aviso desnecessário
-					if(@$hashResolucao[$value['direito']]==0){
+					if(@$hashResolucao[$value['direito']]=='0'){
+						//print "<br>Formula completa<br>";
+						//print_r($value['direito']);
+						//print "<br>hash<br>";
+						//print_r($hashResolucao);
 						//O cara que vai sobrar do "ou" pode ser adicionado na hash caso seja átomo
 						if (!is_array($value['esquerdo'])) {
-							$hashResolucao[$value['esquerdo']]=1;
+							$hashResolucao[$value['esquerdo']]='1';
 						}
 						elseif(is_array($value['esquerdo']) && $value['esquerdo']['conectivo']=='not') {
-							$hashResolucao[$value['esquerdo']['direito']]=0;
+							$hashResolucao[$value['esquerdo']['direito']]='0';
 						}
-						$arrayFormulas[$key]=$value['esquerdo'];
+						$aux['esquerdo']=NULL;
+						$aux['conectivo']=NULL;
+						$aux['direito']=$value['esquerdo'];
+						$arrayFormulas[$key]=$aux;
+						break;
 					}
 				}
 			}
 		}
 		
 	}
+	//Correção de átomos
+	//Átomos que virarem array(array(direiro=>X)) passam a ser array(direito=>X)
+	foreach ($arrayFormulas as $key => $value) {
+		corrigeAtomos($arrayFormulas[$key]);
+	}
 }
+
 
 function separarOU2(&$arrayFormulas){
 	foreach ($arrayFormulas as $key => $value) {
@@ -478,7 +556,6 @@ function separarOU2(&$arrayFormulas){
 						//Possibilidade 2
 						//Se os beta forem diferentes, não preciso fazer nada						
 					}
-
 					
 					if ($value['direito']==$value2['direito']){
 						//Possibilidade 3
@@ -494,10 +571,8 @@ function separarOU2(&$arrayFormulas){
 								$arrayFormulas[$key]['esquerdo']=NULL;			
 							}
 						}
-
 						//Possibilidade 4
 						//Se os alfa forem diferentes, não preciso fazer nada
-
 					}
 				}
 			}
@@ -505,4 +580,12 @@ function separarOU2(&$arrayFormulas){
 	}
 }
 
+function corrigeAtomos(&$form){
+	if(@$form['esquerdo']==NULL && @is_array($form['direito'])){
+		if (@$form['direito']['esquerdo']==NULL) {
+			$form['conectivo']=$form['direito']['conectivo'];
+			$form['direito']=$form['direito']['direito'];
+		}
+	}
+}
 ?>

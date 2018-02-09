@@ -3,20 +3,36 @@ require_once("funcAuxiliares.php");
 echo "<pre>";
 $listaConectivos=array("^","v","-","!");
 
-$hash['A']='0';
-$hash['B']='1';
-$hash['C']='0';
 
 
 
+$outro['esquerdo']=NULL;
+$outro['conectivo']='not';
+$outro['direito']='A';
 
-if($hash['C']=='1'){
-	print "Ok";
+
+
+$form['esquerdo']=NULL;
+$form['conectivo']=NULL;
+$form['direito']=$outro;
+
+print_r($form);
+corrigeAtomos($form);
+print_r($form);
+
+// && @!$form['esquerdo']
+
+
+//Talvez precise de melhorias
+function corrigeAtomos(&$form){
+	if(@$form['esquerdo']==NULL && @is_array($form['direito'])){
+		if (@$form['direito']['esquerdo']==NULL) {
+			$form['conectivo']=$form['direito']['conectivo'];
+			$form['direito']=$form['direito']['direito'];
+
+		}
+	}
 }
-else{
-	print "not";
-}
-
 /*
 //Loop para garantir que os átomos restantes se tornem arrays
 foreach ($entradaConvertida as $key => $value) {

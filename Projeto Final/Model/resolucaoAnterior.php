@@ -140,7 +140,7 @@ while ($contador <= 10){
 				print "<br>primeira condição<br>";
 				goto fim;
 			}
-			$hashResolucao[$value['esquerdo']['direito']]=$value['esquerdo']['conectivo'] == "not" ? 0:1;
+			$hashResolucao[$value['esquerdo']['direito']]=$value['esquerdo']['conectivo'] == "not" ? '0':'1';
 		}
 		if (is_array($value['direito']) && @$value['direito']['esquerdo']==NULL && @$value['esquerdo']==NULL) {
 			if(casarAtomo($hashResolucao,$value['direito']['direito'],$value['direito']['conectivo'])){
@@ -149,7 +149,7 @@ while ($contador <= 10){
 				print "<br>Segunda condição<br>";
 				goto fim;
 			}
-			$hashResolucao[$value['direito']['direito']]=$value['direito']['conectivo'] == "not" ? 0:1;
+			$hashResolucao[$value['direito']['direito']]=$value['direito']['conectivo'] == "not" ? '0':'1';
 		}
 		if ($value['esquerdo']==NULL) {
 			if(casarAtomo($hashResolucao,$value['direito'],$value['conectivo'])){
@@ -158,7 +158,7 @@ while ($contador <= 10){
 				print "<br>Terceira condição<br>";
 				goto fim;
 			}
-			$hashResolucao[$value['direito']]=$value['conectivo'] == "not" ? 0:1;
+			$hashResolucao[$value['direito']]=$value['conectivo'] == "not" ? '0':'1';
 		}
 	}
 	print "HASH<BR>";
@@ -174,7 +174,7 @@ while ($contador <= 10){
 				//Significa que esse membro é falso e eu posso isolar o lado direito do "ou"
 				if(is_array($value['esquerdo']) && $value['esquerdo']['esquerdo']==NULL && $value['esquerdo']['conectivo']=='not'){
 					//Pode acontecer de não existir o cara na hash ainda, então o @ é pra omitir este aviso desnecessário
-					if(@$hashResolucao[$value['esquerdo']['direito']]==1){
+					if(@$hashResolucao[$value['esquerdo']['direito']]=='1'){
 						print "<br>Teste de if<br>";
 						print "Formula completa<br>";
 						print_r($value);
@@ -191,7 +191,7 @@ while ($contador <= 10){
 						}
 						elseif(!is_array($value['direito'])){
 							$arrayFormulas[$key]['esquerdo']=NULL;					
-							$hashResolucao[$arrayFormulas[$key]['direito']]=$value['conectivo'] == "not" ? 0:1;
+							$hashResolucao[$arrayFormulas[$key]['direito']]=$value['conectivo'] == "not" ? '0':'1';
 							$arrayFormulas[$key]['conectivo']=NULL;
 							break;
 						}
@@ -201,7 +201,7 @@ while ($contador <= 10){
 				//Sendo not, se houver o mesmo átomo positivo na hash, ou seja átomo==1
 				//Significa que esse membro é falso e eu posso isolar o lado direito do "ou"
 				if(is_array($value['direito']) && $value['direito']['esquerdo']==NULL && $value['direito']['conectivo']=='not'){								
-					if(@$hashResolucao[$value['direito']['direito']]==1){
+					if(@$hashResolucao[$value['direito']['direito']]=='1'){
 						print "<br>Teste de if<br>";
 						print "Formula completa<br>";
 						print_r($value);
@@ -227,7 +227,7 @@ while ($contador <= 10){
 							//Todo átomo deve ser mantido do lado direito
 							$arrayFormulas[$key]['direito']=$value['esquerdo'];
 							$arrayFormulas[$key]['esquerdo']=NULL;
-							$hashResolucao[$value['direito']['direito']]=$value['conectivo'] == "not" ? 0:1;
+							$hashResolucao[$value['direito']['direito']]=$value['conectivo'] == "not" ? '0':'1';
 							$arrayFormulas[$key]['conectivo']=NULL;
 							break;
 						}	
@@ -239,21 +239,23 @@ while ($contador <= 10){
 				//Se houver significa que podemos cortar esse cara do "ou"
 				if((is_array($value['esquerdo']) && $value['esquerdo']['conectivo']==NULL)){
 					print "<BR>ENTREI1<BR>";
-					if(in_array($value['esquerdo']['direito'], $hashResolucao) && @$hashResolucao[$value['esquerdo']['direito']]==0){
+					if(@$hashResolucao[$value['esquerdo']['direito']]=='0'){
 						//$value['esquerdo']=NULL;
 						//garantidamente se o átomo não é array ele é positivo, então recebe 1
-						$hashResolucao[$value['esquerdo']['direito']]=1;
+						$hashResolucao[$value['esquerdo']['direito']]='1';
 						//$value['conectivo']=NULL;
+						break;
 					}
 				}
 				if((is_array($value['direito']) && $value['direito']['conectivo']==NULL)){
 					print "<BR>ENTREI2<BR>";
 					//Pode acontecer de não existir o cara na hash ainda, então o @ é pra omitir este aviso desnecessário
-					if(in_array($value['direito']['direito'], $hashResolucao) && @$hashResolucao[$value['direito']['direito']]==0){
+					if(@$hashResolucao[$value['direito']['direito']]=='0'){
 						//$value['esquerdo']=NULL;
 						//garantidamente se o átomo não é array ele é positivo, então recebe 1
-						$hashResolucao[$value['direito']['direito']]=1;
+						$hashResolucao[$value['direito']['direito']]='1';
 						//$value['conectivo']=NULL;
+						break;
 					}
 				}
 				//Se não for array, então com certeza é um átomo positivo
@@ -262,33 +264,35 @@ while ($contador <= 10){
 				if(!is_array($value['esquerdo'])){
 
 					//Pode acontecer de não existir o cara na hash ainda, então o @ é pra omitir este aviso desnecessário
-					if(in_array($value['esquerdo'], $hashResolucao) && @$hashResolucao[$value['esquerdo']]==0){
+					if(@$hashResolucao[$value['esquerdo']]=='0'){
 						//O cara que vai sobrar do "ou" pode ser adicionado na hash caso seja átomo
 						if (!is_array($value['direito'])) {
-							$hashResolucao[$value['direito']]=1;
+							$hashResolucao[$value['direito']]='1';
 						}
 						elseif(is_array($value['direito']) && $value['direito']['conectivo']=='not') {
-							$hashResolucao[$value['direito']['direito']]=0;
+							$hashResolucao[$value['direito']['direito']]='0';
 						}
 						$arrayFormulas[$key]=$value['direito'];
+						break;
 					}
 				}
 				if(!is_array($value['direito'])){
 					print "<BR>ENTREI4<BR>";
 					//Pode acontecer de não existir o cara na hash ainda, então o @ é pra omitir este aviso desnecessário
-					if(in_array($value['direito'], $hashResolucao) && @$hashResolucao[$value['direito']]==0){
+					if(@$hashResolucao[$value['direito']]=='0'){
 						print "<br>Formula completa<br>";
 						print_r($value['direito']);
 						print "<br>hash<br>";
 						print_r($hashResolucao);
 						//O cara que vai sobrar do "ou" pode ser adicionado na hash caso seja átomo
 						if (!is_array($value['esquerdo'])) {
-							$hashResolucao[$value['esquerdo']]=1;
+							$hashResolucao[$value['esquerdo']]='1';
 						}
 						elseif(is_array($value['esquerdo']) && $value['esquerdo']['conectivo']=='not') {
-							$hashResolucao[$value['esquerdo']['direito']]=0;
+							$hashResolucao[$value['esquerdo']['direito']]='0';
 						}
 						$arrayFormulas[$key]=$value['esquerdo'];
+						break;
 					}
 				}
 			}
@@ -392,7 +396,7 @@ while ($contador <= 10){
 				print_r($value['esquerdo']['direito']);
 				goto fim;
 			}
-			$hashResolucao[$value['esquerdo']['direito']]=$value['esquerdo']['conectivo'] == "not" ? 0:1;
+			$hashResolucao[$value['esquerdo']['direito']]=$value['esquerdo']['conectivo'] == "not" ? '0':'1';
 		}
 		if (@is_array($value['direito']) && @$value['direito']['esquerdo']==NULL && @$value['esquerdo']==NULL) {
 			if(casarAtomo($hashResolucao,$value['direito']['direito'],$value['direito']['conectivo'])){
@@ -400,7 +404,7 @@ while ($contador <= 10){
 				print_r($value['direito']['direito']);
 				goto fim;
 			}
-			$hashResolucao[$value['direito']['direito']]=$value['conectivo']['esquerdo'] == "not" ? 0:1;
+			$hashResolucao[$value['direito']['direito']]=$value['conectivo']['esquerdo'] == "not" ? '0':'1';
 		}
 		if (@$value['esquerdo']==NULL) {
 			if(casarAtomo($hashResolucao,$value['direito'],$value['conectivo'])){
@@ -408,7 +412,7 @@ while ($contador <= 10){
 				print_r($value['direito']);
 				goto fim;
 			}
-			$hashResolucao[$value['direito']]=$value['conectivo'] == "not" ? 0:1;
+			$hashResolucao[$value['direito']]=$value['conectivo'] == "not" ? '0':'1';
 		}
 	}
 	if(!checaExisteArray($arrayFormulas)){
