@@ -27,7 +27,21 @@ $DNNquestao7 = array ("((AouB)implicaC)","(DimplicaA)","(DimplicaC)");
 $DNNquestao8 = array ("(AimplicaB)","(BimplicaC)","(C)","(Aimplica(BeC))");
 $DNNquestao9 = array ("(PouQ)","(PimplicaR)","(QimplicaR)","(R)");
 $DNNquestao10 = array ("(Aimplica(BeC))","((DeF)implicaA)","(DeF)","(BeF)");
+$DNNquestao11 = array ("(AouB)","(Cimplica(not(A)))","(CeD)","(BouA)");
+$DNNquestao12 = array ("((AouB)implicaC)","(Cimplica(DeF))","(A)","(FouE)");
+$DNNquestao13 = array ("((AeB)implicaC)","((CouD)implicaE)","((AeB)implica(EouF))");
+$DNNquestao14 = array ("(AeB)","not(C)","((AeB)implica(CouD))","(DouE)");
+$DNNquestao15 = array ("(D)","(I)","((DeA)implica(not(C))","(IimplicaM)","(MimplicaA)","not(P)");
 $DNNquestao16 = array ("((AouB)implicaC)","(CimplicaD)","((AeB)implica(CeD))");
+$DNNquestao17 = array ("((not(P))implicaQ))","(PouQ)");
+$DNNquestao18 = array ("(AouB)","((AouC)implicaD)","(Bimplica(DeC))","(D)");
+$DNNquestao19 = array ("((not(AeB))implica((not(A))ou(not(B)))");
+$DNNquestao20 = array ("not(Pe(not(P)))");
+$DNNquestao21 = array ("(not(PimplicaQ)implicaP)");
+$DNNquestao22 = array ("(not(PimplicaQ)implica(not(Q)))");
+$DNNquestao23 = array ("((Pimplica(not(P)))implica(not(P)))");
+$DNNquestao24 = array ("((not(P)implicaP)implicaP)");
+$DNNquestao25 = array ("((PeQ)implica(not((not(P))ou(not(Q)))");
 $DNNquestao30 = array ("(Aimplica(BouC))","(BimplicaD)","(Fimplica(DeE))","(AouF)","((CimplicaD)implicaD)");
 
 

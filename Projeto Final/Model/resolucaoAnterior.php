@@ -22,7 +22,7 @@ $listaFormulasDisponiveis = array();
 $tamanho=0;
 //Passos 1 e 2
 //Entrada
-$entradaTeste= $DNNquestao10;
+$entradaTeste= $DNNquestao1;
 $tamanho=count($entradaTeste);
 //Receber a entrada do Front-End
 //Negação da pergunta+Validação

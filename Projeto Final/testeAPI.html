@@ -10,12 +10,12 @@ $(document).ready(function(){
 	    };
         $.ajax({
 
-	        url: 'http://127.0.0.1:8000/api/tableaux',
+	        url: 'http://127.0.0.1:8000/api/resolucao',
 	        type: 'POST',
 	        callback: '?',
 	        data: myData,
 	        datatype: 'application/json',
-	        success: function(teste) { alert(teste['API']); },
+	        success: function(teste) { alert(teste); },
 	        error: function() { alert('Failed!'); },
 	    });
     });

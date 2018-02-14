@@ -203,10 +203,13 @@ function checaImplica(&$form){
 function resolveImplicacoes(&$form){
 	$flag=true;
 	$form3=$form;
-	formataFormulas($form);
+	
 	//VAI MUDAR PARA O CASO GERAL (IDEIA: USAR WHILE)
 	//Caso de implicação dentro de um not
+	implica:
 	while($flag){
+		//print "<br>Fórmula<br>";
+		//print_r($form);
 		if($form['conectivo']=="not_implica"){
 			if(@strlen($form['direito'])==1){
 				$form['direito']="!(".$form['direito'].")";
@@ -231,9 +234,11 @@ function resolveImplicacoes(&$form){
 			$form=$form3;
 		}
 		if(is_array($form['esquerdo']) && checaImplica($form['esquerdo'])){
+			print "<BR>PASSEI<BR>";
 			$form=&$form['esquerdo'];
 		}
 		elseif(is_array($form['direito']) && checaImplica($form['direito'])){
+			print "<BR>PASSEI<BR>";
 			$form=&$form['direito'];
 		}
 		else{
@@ -241,6 +246,11 @@ function resolveImplicacoes(&$form){
 		}
 		print "<br>";
 
+	}
+	formataFormulas($form);
+	if (checaImplica($form)) {
+		$flag=true;
+		goto implica;
 	}
 }
 
