@@ -9,6 +9,8 @@ ser montada dinamicamente */
 
 	var vet_regras = [];
 	var pergunta;
+	var tipoEx = "";
+	var adicionadas="";
 	
 	function load(){
 		$('#regra').val("");
@@ -18,11 +20,93 @@ ser montada dinamicamente */
           	
 	}
 	
+// ------------ Escolha do tipo de Ex / carregamento da ultima tela -------------------
+	$(document).ready(function() {
 
-	$('input[type=radio]').change( function() {
-		   alert("test");   
-		});
+
+		$("#botaoTableaux").click( function()
+		    {
+				tipoEx = "tableaux";
+			
+				carregaTela("tableaux");
+				$("#next").removeAttr("disabled");
+		      
+		    }
+		 );
+		
+		$("#botaoResolucao").click( function()
+			    {
+					
+					tipoEx = "resolucao";
+					carregaTela("resolucao");
+					
+					$("#next").removeAttr("disabled");
+					
+			      
+			    }
+			 );
+		$("#botaoDeducao").click( function()
+			    {
+					tipoEx = "deducao";
+					
+					carregaTela("deducao");
+					$("#next").removeAttr("disabled");
+			      
+			    }
+			 );
+
+	});
 	
+	
+	function teste(){
+		
+		alert(pergunta);
+		
+	}
+	
+	// ---------------------------------------------------------------------------------------
+	function carregaTela(exercicio){
+		switch (exercicio) {
+		case "tableaux":
+			$("#execucao").attr("w3-include-html", "tableaux.html");
+			
+			w3.includeHTML();
+			break;
+		case "resolucao":
+			$("#execucao").attr("w3-include-html", "resolucao.html");
+
+			w3.includeHTML();
+			break;
+		case "deducao":
+			$("#execucao").attr("w3-include-html", "deducao.html");
+			w3.includeHTML();
+			break;
+			
+		default:
+			break;
+		}
+	}
+	
+	function atualizaTela(){
+		
+		switch(tipoEx){
+		case "tableaux":
+			$('#formulas').append("<br/>" + pergunta );
+			break;
+		case "resolucao":
+			  for (var cont = 0; cont in vet_regras; cont++){
+					$('#formulas').append("<p>" + vet_regras[cont] + "</p>" );
+
+			  }
+			$('#formulas').append("<p>" + pergunta + "</p>" );
+			
+		break;
+		case "deducao":
+			$('#formulas').append("<br/>" + pergunta );
+			break;
+		}
+	}	
+	//-------------------------------------------------------------------------------------------------------
 	// ############# ADICAO DE REGRAS E PERGUNTA ############################################################
 	
 	function f_AddRegra(){
@@ -35,6 +119,7 @@ ser montada dinamicamente */
 			
 			$('#regrasAdicionadas').append("<br/>" + adicionadas );
 			$('#regra').val("");
+
 		}	
 	} 
 	
@@ -53,6 +138,9 @@ ser montada dinamicamente */
 				$('#pergunta').prop('disabled', true);
 				$('#buttonRegra').hide();
 				$('#buttonPergunta').hide();
+				atualizaTela(tipoEx);
+				
+				
 			}
 		}	
 	}

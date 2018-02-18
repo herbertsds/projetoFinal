@@ -23,8 +23,11 @@
 	<link href="assets/css/demo.css" rel="stylesheet" />
 	
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> 	
+	
 
+<script src="https://www.w3schools.com/lib/w3.js"></script>
   <script src="funcoes.js" type="text/javascript"></script>
+  <script src="teste.js" type="text/javascript"></script>
 	
 	
 
@@ -80,8 +83,9 @@
 		                                    <div class="col-sm-10 col-sm-offset-1">
 		                                        <div class="col-sm-4">
 		                                            <div class="choice" data-toggle="wizard-radio" rel="tooltip" title="Árvore de Tableaux">
-		                                                <input type="radio" name="tipo" value="tableaux">
-		                                                <div class="icon">
+		                                                <input type="radio" name="escolha" value="tableaux">
+		                    
+		                                                <div class="icon" id="botaoTableaux">
 		                                                    <i class="material-icons">weekend</i>
 		                                                </div>
 		                                                <h6>Tableaux</h6>
@@ -89,8 +93,8 @@
 		                                        </div>
 		                                        <div class="col-sm-4">
 		                                            <div class="choice" data-toggle="wizard-radio" rel="tooltip" title="Método de Resolução">
-		                                                <input type="radio" name="tipo" value="resolucao">
-		                                                <div class="icon">
+		                                                <input type="radio" name="escoha" value="resolucao">
+		                                                <div class="icon" id="botaoResolucao">
 		                                                    <i class="material-icons">home</i>
 		                                                </div>
 		                                                <h6>Resolução</h6>
@@ -98,8 +102,8 @@
 		                                        </div>
 												<div class="col-sm-4">
 		                                            <div class="choice" data-toggle="wizard-radio" rel="tooltip" title="Método de Dedução Natural">
-		                                                <input type="radio" name="tipo" value="deducao">
-		                                                <div class="icon">
+		                                                <input type="radio" name="escolha" value="deducao">
+		                                                <div class="icon" id="botaoDeducao">
 		                                                    <i class="material-icons">business</i>
 		                                                </div>
 		                                                <h6>Deducao Natural</h6>
@@ -114,9 +118,6 @@
 		                  
 		                            <div class="tab-pane" id="exercicio">
 		                            	<div class="row">
-			                            	<div class="col-sm-12">
-			                                <!--	<h4 class="info-text"> Let's start with the basic details.</h4> -->
-			                            	</div>
 		                                	<div class="col-sm-6 col-sm-offset-0">
 												<div class="input-group">											
 													<div class="form-group label-floating">
@@ -152,13 +153,12 @@
 		                            </div>
 <!--------------------------------------------------------------------------------------------------------------------->         
 
-<!-----------------  TAB DE EXECUCAO  --------------------------------------------------------------------------------->         
-	                            
+<!-----------------  TAB DE EXECUCAO  --------------------------------------------------------------------------------->          	
 		                            <div class="tab-pane" id="execucao">
-		                                <div class="row">
-		                                    <h4 class="info-text"> Área para execução dos métodos...</h4>
-		                                </div>
+		                                	
 		                            </div>
+		                            
+				    				
 		                        </div>
 <!--------------------------------------------------------------------------------------------------------------------->         
 
@@ -167,7 +167,7 @@
 		                        
 	                        	<div class="wizard-footer">
 	                            	<div class="pull-right">
-	                                    <input disabled type='button' class='btn btn-next btn-fill btn-danger btn-wd' id="next" name='next' value='Next' />
+	                                    <input disabled type='button' class='btn btn-next btn-fill btn-danger btn-wd' id="next" name='next' value='Next'  />
 	                                    <input type='button' class='btn btn-finish btn-fill btn-danger btn-wd' id="finish" name='finish' value='Finish' />
 	                                </div>
 	                                <div class="pull-left">
@@ -204,4 +204,5 @@
 
 	<!--  More information about jquery.validate here: http://jqueryvalidation.org/	 -->
 	<script src="assets/js/jquery.validate.min.js"></script>
+
 </html>
