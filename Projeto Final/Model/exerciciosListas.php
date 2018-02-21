@@ -4,6 +4,17 @@
 
 //O formato será um array padronizado, qualquer método pode chamar a questão diretamente como entrada
 
+//-------------------------------------------------ENTRADAS--------------------------------------------------------------------
+//
+//A entrada inicial vai ser um array de formulas do tipo STRING, a sequência deve ser
+//[banco_de_dados,pergunta], permitindo que eu saiba que a pergunta é a última facilita
+//na hora de inicializar o processamento do tableaux
+
+//Cada fórmula deve seguir o formato (Átomo conectivo Átomo), exemplos
+//(Aimplica(BouC)), not((AeB)ou(CeD)),  (AouB), ((AeB)implica(not(CouD))
+
+//------------------------------------------------------------------------------------------------------------------------------
+
 //Lista de DN sem Negação
 $DNSquestao1 = array ("(AouB)","(Bimplica(notnotC)","(AimplicaC)implicaC)");
 $DNSquestao2 = array ("(AimplicaB)","(BimplicaC)","(Aimplica(BeC))");

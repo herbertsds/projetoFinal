@@ -453,6 +453,7 @@ function imprimeDescendo($no){
 	}
 
 }
+/*
 //Função utilizada somente por imprimDescendo para ajustaro formato da impressão
 function verificaStatusNo($no){
 	switch($no){
@@ -472,7 +473,7 @@ function verificaStatusNo($no){
 			print "Nó não categorizado";
 	}
 }
-
+*/
 function imprimeArvoreRaiz($arv){
 	foreach ($arv as $key => $value) {
 		print "BD".$key." - ";
