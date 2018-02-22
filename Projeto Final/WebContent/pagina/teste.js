@@ -25,8 +25,3 @@ function carregaTela(exercicio){
 		break;
 	}
 }*/
-
-	    $("#tipo").mouseenter(function(){
-	        alert("O cursor saiu da div.");
-	   
-		

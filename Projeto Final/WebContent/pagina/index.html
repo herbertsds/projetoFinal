@@ -66,9 +66,9 @@
 								<div class="wizard-navigation">
 									<ul>
 										<!--  style="display:none" -->
-			                            <li><a href="#tipo" data-toggle="tab">Tipo de Exercício</a></li>								
-			                            <li><a href="#exercicio" data-toggle="tab">Inserção de Regras</a></li>
-			                            <li><a href="#execucao" data-toggle="tab">Exercício</a></li>
+			                            <li><a href="#tipo"  data-toggle="tab">Tipo de Exercício</a></li>								
+			                            <li><a href="#exercicio" id='tabExercicio' data-toggle="tab">Seleção do Exercício</a></li>
+			                            <li><a href="#execucao" id='tabExecucao' data-toggle="tab">Solução</a></li>
 			                        </ul>
 								</div>
 
@@ -116,9 +116,27 @@
 		                            
 <!-----------------  TAB DE SELECAO DE EXERCICIOS / ADD REGRAS --------------------------------------------------------------------->         
 		                  
-		                            <div class="tab-pane" id="exercicio">
+		                            <div class="tab-pane" id="exercicio" style="display: none">
 		                            	<div class="row">
 		                                	<div class="col-sm-6 col-sm-offset-0">
+												<div class="dropdown">
+												  <button class="btn btn-info btn-sm dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+												    Listas de Exercícíos
+												  </button>
+												  <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+												    <h6 class="dropdown-header">Lista 1</h6>
+												    <button class="dropdown-item" type="button">Ex.1</button>
+												    <button class="dropdown-item" type="button">Ex.2</button>
+												    <h6 class="dropdown-header">Lista 2</h6>
+												    <button class="dropdown-item" type="button">Ex.1</button>
+												    <button class="dropdown-item" type="button">Ex.2</button>
+												    <button class="dropdown-item" type="button">Ex.3</button>
+												    <h6 class="dropdown-header">Lista 3</h6>
+												    <button class="dropdown-item" type="button">Ex.1</button>
+												    <button class="dropdown-item" type="button">Ex.2</button>
+												    
+												  </div>
+												</div>
 												<div class="input-group">											
 													<div class="form-group label-floating">
 			                                          	<label class="control-label">Regra</label>
@@ -153,12 +171,60 @@
 		                            </div>
 <!--------------------------------------------------------------------------------------------------------------------->         
 
-<!-----------------  TAB DE EXECUCAO  --------------------------------------------------------------------------------->          	
-		                            <div class="tab-pane" id="execucao">
-		                                	
+<!-----------------  TAB DE SOLUCAO DO EXERCICIO  --------------------------------------------------------------------------------->          	
+		                            <div class="tab-pane" id="execucao"  >
+		                               	
+										<div class="row">
+										
+											<div class="col-sm-6 col-sm-offset-3">
+											<!--  DIV PARA TABLEAUX -->
+											<div class="regrasTableaux" id='divTableaux' style="display: none">											
+												<h4 class="info-text"> Execução do Tableaux...</h4>
+												<article id="formulas"></article>
+												
+											</div>
+											
+											<!--  DIV PARA RESOLUCAO -->
+												<div class="regrasResolucao" id='divResolucao' style="display: none">											
+													<div class="passos" id="passos">
+														<h4 class="control-label"><strong> > Passo-a-passo Para Resolução:</strong></h4>
+														
+														<span id='1'>- Passar as fórmulas do Banco para FNC</span> </br>
+																													
+														<span id='2'>- Passar a Pergunta para FNC</span> </br>
+														
+														<span id='3'>- Negar a Pergunta e encontrar o absurdo █</span> </br> 
+													</div>
+												
+													<div class="inicioEx">
+														<h4><strong>> Início do Exercício</strong> </h4>
+														
+<!-- 														<p>teste mouse over/enter/click</p> -->
+														<div  id="divFormulas">
+													
+														</div>	
+														<input type="button" id="simplificarRegra" class="btn btn-default btn-sm"  onclick='simplificar()' value='Simplificar Regras' />			
+													
+													</div>
+												</div>
+												
+												
+												<!--  DIV PARA DEDUCAO NATURAL-->
+											<div class="regrasDeducao" id='divDeducao' style="display: none">		
+												<h4 class="info-text"> Execução da Dedução Natural...</h4>
+												<article id="formulas"></article>
+	
+	
+																				
+											</div>
+												
+												
+											</div>
+										
+											
+										</div>
 		                            </div>
-		                            
-				    				
+<!-- fechando div do tabpane -->				    				
 		                        </div>
 <!--------------------------------------------------------------------------------------------------------------------->         
 
