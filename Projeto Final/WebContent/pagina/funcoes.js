@@ -295,22 +295,28 @@ ser montada dinamicamente */
 	function simplificar(){
 		
 		//VERIFICAR OBRIGATORIEDADE DA SEQUENCIA
-		if(regras >0 && passoId != "1"){ 
-			alert("Atenção!\nAntes de mudar de passo, passe todas as fórmulas do banco para FNC.");
-		
-		}		
-		else{
-			if(formulaId == 'finalVetor' && passoId != "2"){
-		
-				alert("Atenção!\nAntes de mudar de passo, passe a PERGUNTA para FNC.");
-			}
-			else if(perguntaFNC == false && passoId=="3"){
-				// negar pergunta e seguir
-			}
-		}	
+		switch(passoId){
+			case '1':
+				if(formulaId=='finalVetor'){
+					alert("Atenção!\nPasse todas as fórmulas do banco para FNC.");
+				}
+				break;
 			
+			case '2':
+				if(regras>0){
+					alert("Atenção!\nPasse todas as fórmulas do banco para FNC.");
+
+				}
+				break;
+			case '3':
+				if(regras>0 || perguntaFNC == false){
+					alert("Atenção!\nPasse todas as fórmulas do banco e a pergunta para FNC.");
+
+				}
+				break;
+		}
+		
 	}
-	
 	// abrir a formula para fnc
 	function f_FNC(){
 		
