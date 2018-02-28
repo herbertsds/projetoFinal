@@ -5,12 +5,21 @@ echo "<pre>";
 $listaConectivos=array("^","v","-","!");
 $listaFormulasDisponiveis=array();
 
-$teste1=array(1,2,3);
-$teste2=&$teste1;
-print_r($teste2);
+$form['esquerdo']=null;
+$form['conectivo']=null;
+$form['direito']='A';
 
 
+$form2['esquerdo']=null;
+$form2['conectivo']='not';
+$form2['direito']='A';
 
+if (checaAtomico($form)) {
+	print "O primeiro é atomico<br>";
+}
+if (checaAtomico($form2)) {
+	print "<br>O segundo é atomico<br>";
+}
 ?>
 
 

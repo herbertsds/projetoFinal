@@ -42,7 +42,7 @@ $form = array ('info' => array ('esquerdo' => , 'conectivo' => , 'direito' =>), 
 
 
 //Passo 1
-$entradaTeste=array("(AeB)","(BeC)","(A)");
+$entradaTeste= array ("(A)","(B)","(AeB)");
 $tamanho=count($entradaTeste);
 
 //Passo 2
@@ -57,8 +57,6 @@ foreach ($entradaTeste as $key => $value) {
 	if($value['info']['esquerdo']==NULL && ($value['info']['conectivo']==NULL || $value['info']['conectivo']='not')){
 		$hashInicial[$value['info']['direito']]=$value['info']['conectivo'] == "not" ? 0:1;
 	}
-
-
 }
 
 
@@ -120,6 +118,11 @@ while ($contador <= 10) {
 			print "<br>";
 		}
 		escolhaEficiente($listaFormulasDisponiveis,$hashInicial,$nosFolha);
+		if (todasFechadas($nosFolha)) {
+			print "<br>Todos os ramos já estão fechados<br>";
+			print $contador."<br>";
+			break;
+		}
 		
 	}
 	elseif ($escolhaUsuario) {
@@ -130,7 +133,11 @@ while ($contador <= 10) {
 
 	$contador++;
 }
-print "<br>Imprime raiz<br>";
-//print_r($raiz);
-imprimeArvore($raiz);
+if (todasFechadas($nosFolha)) {
+	print "<br>Todos os ramos já estão fechados<br>";
+	print $contador."<br>";
+}
+else{
+	print "<br>Nem todos os ramos foram fechados<br>Este Tableaux não fecha<br>";
+}
 ?>

@@ -18,7 +18,7 @@ function aplicaFormula(Formula $raiz){
 			return array($raiz->getEsquerdo(),$raiz->getDireito());
 			//Tratamento de Single not
 		case 'not':
-			//Checa se � composto ou átomo
+			//Checa se é composto ou átomo
 			if(!is_object($raiz->getDireito())){
 				//print "Sei que é negativo<br>";
 				$hash[$raiz->getDireito()][] = 'negativo';
@@ -521,5 +521,6 @@ function formataFormulas(&$form){
 	}
 
 }
+
 
 ?>
