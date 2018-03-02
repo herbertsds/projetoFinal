@@ -113,7 +113,7 @@ function resolveParentesesTableaux($form){
 	$auxForm['info']['direito']=substr($auxForm['info']['direito'], 1);
 	return $auxForm;
 }
-function escolhaEficiente(&$listaFormulasDisponiveis,&$hashInicial,&$nosFolha){
+function escolhaEficiente(&$listaFormulasDisponiveis,&$hashInicial,&$nosFolha,&$historicoVariaveis){
 	global $contador;
 	global $raiz;
 	//Verificação para saber se a função foi chamada mesmo
@@ -142,10 +142,11 @@ function escolhaEficiente(&$listaFormulasDisponiveis,&$hashInicial,&$nosFolha){
 				$raiz=$listaFormulasDisponiveis[$key];
 				$raiz['formDisponiveis']=$listaFormulasDisponiveis;
 				$raiz['hashAtomos']=$hashInicial;
-				aplicaRegra($raiz,$raiz,$nosFolha);
 				print "<br>Aplicando regra em<br>";
 				print_r($raiz['info']);
+				aplicaRegra($raiz,$raiz,$nosFolha);
 				removerFormula($listaFormulasDisponiveis,$raiz['info']);
+				armazenaHistorico($historicoVariaveis,$nosFolha,$raiz,$contador+1,$listaFormulasDisponiveis);
 				return;
 			}
 		}
@@ -166,6 +167,7 @@ function escolhaEficiente(&$listaFormulasDisponiveis,&$hashInicial,&$nosFolha){
 		print "<br>Aplicando regra em<br>";
 		print_r($raiz['info']);
 		removerFormula($listaFormulasDisponiveis,$raiz['info']);
+		armazenaHistorico($historicoVariaveis,$nosFolha,$raiz,$contador+1,$listaFormulasDisponiveis);
 		return;
 	}
 	//--------------------------------------------------------------------	
@@ -193,6 +195,8 @@ function escolhaEficiente(&$listaFormulasDisponiveis,&$hashInicial,&$nosFolha){
 					print "<br>Aplicando regra em<br>";
 					print_r($formDispAtual['info']);
 					aplicaRegra($formDispAtual,$nosFolha[$key],$nosFolha);
+					removerFormula($listaFormulasDisponiveis,$formDispAtual['info']);
+					armazenaHistorico($historicoVariaveis,$nosFolha,$raiz,$contador+1,$listaFormulasDisponiveis);
 					//OTIMIZAR - NÃO PODE ACONTECER
 					//Verificação para saber se a função foi chamada mesmo
 					//que todas os ramos já estejam fechados
@@ -201,7 +205,7 @@ function escolhaEficiente(&$listaFormulasDisponiveis,&$hashInicial,&$nosFolha){
 						print $contador."<br>";
 						return;
 					}
-					removerFormula($listaFormulasDisponiveis,$formDispAtual['info']);
+					
 					return;
 				}
 			}	
@@ -229,6 +233,8 @@ function escolhaEficiente(&$listaFormulasDisponiveis,&$hashInicial,&$nosFolha){
 				print "<br>Com nó pai sendo<br>";
 				print_r($nosFolha[$key]['info']);
 				aplicaRegra($formDispAtual,$nosFolha[$key],$nosFolha);
+				removerFormula($listaFormulasDisponiveis,$formDispAtual['info']);
+				armazenaHistorico($historicoVariaveis,$nosFolha,$raiz,$contador+1,$listaFormulasDisponiveis);
 				//OTIMIZAR - NÃO PODE ACONTECER
 				//Verificação para saber se a função foi chamada mesmo
 				//que todas os ramos já estejam fechados
@@ -237,7 +243,7 @@ function escolhaEficiente(&$listaFormulasDisponiveis,&$hashInicial,&$nosFolha){
 					print $contador."<br>";
 					return;
 				}
-				removerFormula($listaFormulasDisponiveis,$formDispAtual['info']);
+				
 				return;
 			}
 		}	
@@ -590,7 +596,7 @@ function aplicaRegra(&$form,&$pai,&$nosFolha){
 			}
 
 			//Manipulação específica do not_e
-			//O lado esquerdo deve passar a ter um not externamente
+			//Os dois lados devem passar a ter um not externamente
 
 			//Se o lado esquerdo for átomo
 			if (checaAtomico($noAuxEsq['info'])) {
@@ -644,12 +650,6 @@ function aplicaRegra(&$form,&$pai,&$nosFolha){
 			elseif(!checaAtomico($noAuxDir['info'])) {
 				array_push($noAuxDir['formDisponiveis'], $noAuxDir);
 			}
-			print "<br>Conferindo o lado esquerdo<br>";
-			print_r($noAuxEsq['info']);
-			print_r($noAuxEsq['hashAtomos']);
-			print "<br>Conferindo o lado direito<br>";
-			print_r($noAuxDir['info']);
-			print_r($noAuxDir['hashAtomos']);
 			removerFormula($noAuxEsq['formDisponiveis'],$form['info']);
 			removerFormula($noAuxDir['formDisponiveis'],$form['info']);	
 			adicionaArray($nosFolha, $noAuxEsq);
@@ -657,12 +657,179 @@ function aplicaRegra(&$form,&$pai,&$nosFolha){
 			return;	
 		
 		case 'not_ou':
-			# code...
-			break;
+			//Com exceção da raiz, todo o no que é pai neste momento, deixará de ser nó folha.
+			//Relembrando, consideramos que a raiz é pai dela mesma para a aplicação inicial.
+			if ($contador!=0) {
+				removerFormula($nosFolha,$pai['info']);
+			}
+			
+			$pai['filhoCentral']=&$noAuxCen1;
+			$noAuxCen1['pai']=&$pai;
+			//Inicialização das variáveis auxiliáres
+			$noAuxCen1['info']['direito']=$form['info']['esquerdo'];
+			$noAuxCen2['info']['direito']=$form['info']['direito'];
+			//Inicialização dos dados que são compartilhados com o pai
+			$noAuxCen1['formDisponiveis']=$pai['formDisponiveis'];
+			$noAuxCen2['formDisponiveis']=$pai['formDisponiveis'];
+			$noAuxCen1['hashAtomos']=$pai['hashAtomos'];
+			$noAuxCen2['hashAtomos']=$pai['hashAtomos'];
+
+			//Correções na estrutura de dados
+			
+			foreach ($noAuxCen1 as $key => $value) {
+				corrigeArrays($noAuxCen1[$key]);
+			}
+			foreach ($noAuxCen2 as $key => $value) {
+				corrigeArrays($noAuxCen2[$key]);
+			}
+
+
+			//Manipulação específica do not_ou
+			//Os dois lados devem passar a ter um not externamente
+
+			//Se o lado esquerdo for átomo
+			if (checaAtomico($noAuxCen1['info'])) {
+				if ($noAuxCen1['info']['conectivo']=='not') {
+					//Equivalente a notnot
+					$noAuxCen1['info']['conectivo']=null;
+				}
+				else{
+					$noAuxCen1['info']['conectivo']='not';
+				}
+			}
+			//Se o lado esquerdo for array
+			elseif (!checaAtomico($noAuxCen1['info'])){
+				negaArrayTableaux($noAuxCen1['info']);
+			}
+
+			//Se o lado direito for átomo
+			if (checaAtomico($noAuxCen2['info'])) {
+				if ($noAuxCen2['info']['conectivo']=='not') {
+					//Equivalente a notnot
+					$noAuxCen2['info']['conectivo']=null;
+				}
+				else{
+					$noAuxCen2['info']['conectivo']='not';
+				}
+			}
+			//Se o lado direito for array
+			elseif (!checaAtomico($noAuxCen2['info'])){
+				negaArrayTableaux($noAuxCen2['info']);
+			}
+			
+
+			//Se a fórmula for atômica eu adiciono átomo gerado na hash da mesma
+			//Se não for átomo, então é uma fórmula e adiciono a fórmula gerada na lista de fórmulas desse elemento
+			//Como noAuxCen1 e noAuxCen2 estão no mesmo ramo, estes devem compartilhar as informações
+			if(checaAtomico($noAuxCen1['info'])){
+				if (casarFormula($noAuxCen1['hashAtomos'],$noAuxCen1['info'])) {
+					$noAuxCen2['filhoCentral']='fechado';
+				}
+				$noAuxCen1['hashAtomos'][$noAuxCen1['info']['direito']]=$noAuxCen1['info']['conectivo'] == 'not' ? '0':'1';
+				$noAuxCen2['hashAtomos'][$noAuxCen1['info']['direito']]=$noAuxCen1['info']['conectivo'] == 'not' ? '0':'1';		
+			}
+			elseif(!checaAtomico($noAuxCen1['info'])) {
+				array_push($noAuxCen1['formDisponiveis'], $noAuxCen1);
+				array_push($noAuxCen2['formDisponiveis'], $noAuxCen1);
+			}			
+			
+			if(checaAtomico($noAuxCen2['info'])){
+				if (casarFormula($noAuxCen2['hashAtomos'],$noAuxCen2['info'])) {
+					$noAuxCen2['filhoCentral']='fechado';
+				}
+				$noAuxCen2['hashAtomos'][$noAuxCen2['info']['direito']]=$noAuxCen2['info']['conectivo'] == 'not' ? '0':'1';
+				$noAuxCen1['hashAtomos'][$noAuxCen2['info']['direito']]=$noAuxCen2['info']['conectivo'] == 'not' ? '0':'1';				
+			}
+			elseif(!checaAtomico($noAuxCen2['info'])) {
+				array_push($noAuxCen1['formDisponiveis'], $noAuxCen2);
+				array_push($noAuxCen2['formDisponiveis'], $noAuxCen2);
+			}
+
+			removerFormula($noAuxCen1['formDisponiveis'],$form['info']);
+			removerFormula($noAuxCen2['formDisponiveis'],$form['info']);
+				
+			adicionaArray($nosFolha, $noAuxCen2);
+			return;
 		
 		case 'not_implica':
-			# code...
-			break;
+			//Com exceção da raiz, todo o no que é pai neste momento, deixará de ser nó folha.
+			//Relembrando, consideramos que a raiz é pai dela mesma para a aplicação inicial.
+			if ($contador!=0) {
+				removerFormula($nosFolha,$pai['info']);
+			}
+			
+			$pai['filhoCentral']=&$noAuxCen1;
+			$noAuxCen1['pai']=&$pai;
+			//Inicialização das variáveis auxiliáres
+			$noAuxCen1['info']['direito']=$form['info']['esquerdo'];
+			$noAuxCen2['info']['direito']=$form['info']['direito'];
+			//Inicialização dos dados que são compartilhados com o pai
+			$noAuxCen1['formDisponiveis']=$pai['formDisponiveis'];
+			$noAuxCen2['formDisponiveis']=$pai['formDisponiveis'];
+			$noAuxCen1['hashAtomos']=$pai['hashAtomos'];
+			$noAuxCen2['hashAtomos']=$pai['hashAtomos'];
+
+			//Correções na estrutura de dados
+			
+			foreach ($noAuxCen1 as $key => $value) {
+				corrigeArrays($noAuxCen1[$key]);
+			}
+			foreach ($noAuxCen2 as $key => $value) {
+				corrigeArrays($noAuxCen2[$key]);
+			}
+
+			//Manipulação específica do not_implica
+			//O lado direito deve passar a ter um not externamente
+
+
+			//Se o lado direito for átomo
+			if (checaAtomico($noAuxCen2['info'])) {
+				if ($noAuxCen2['info']['conectivo']=='not') {
+					//Equivalente a notnot
+					$noAuxCen2['info']['conectivo']=null;
+				}
+				else{
+					$noAuxCen2['info']['conectivo']='not';
+				}
+			}
+			//Se o lado direito for array
+			elseif (!checaAtomico($noAuxCen2['info'])){
+				negaArrayTableaux($noAuxCen2['info']);
+			}
+			
+
+			//Se a fórmula for atômica eu adiciono átomo gerado na hash da mesma
+			//Se não for átomo, então é uma fórmula e adiciono a fórmula gerada na lista de fórmulas desse elemento
+			//Como noAuxCen1 e noAuxCen2 estão no mesmo ramo, estes devem compartilhar as informações
+			if(checaAtomico($noAuxCen1['info'])){
+				if (casarFormula($noAuxCen1['hashAtomos'],$noAuxCen1['info'])) {
+					$noAuxCen2['filhoCentral']='fechado';
+				}
+				$noAuxCen1['hashAtomos'][$noAuxCen1['info']['direito']]=$noAuxCen1['info']['conectivo'] == 'not' ? '0':'1';
+				$noAuxCen2['hashAtomos'][$noAuxCen1['info']['direito']]=$noAuxCen1['info']['conectivo'] == 'not' ? '0':'1';		
+			}
+			elseif(!checaAtomico($noAuxCen1['info'])) {
+				array_push($noAuxCen1['formDisponiveis'], $noAuxCen1);
+				array_push($noAuxCen2['formDisponiveis'], $noAuxCen1);
+			}			
+			
+			if(checaAtomico($noAuxCen2['info'])){
+				if (casarFormula($noAuxCen2['hashAtomos'],$noAuxCen2['info'])) {
+					$noAuxCen2['filhoCentral']='fechado';
+				}
+				$noAuxCen2['hashAtomos'][$noAuxCen2['info']['direito']]=$noAuxCen2['info']['conectivo'] == 'not' ? '0':'1';
+				$noAuxCen1['hashAtomos'][$noAuxCen2['info']['direito']]=$noAuxCen2['info']['conectivo'] == 'not' ? '0':'1';				
+			}
+			elseif(!checaAtomico($noAuxCen2['info'])) {
+				array_push($noAuxCen1['formDisponiveis'], $noAuxCen2);
+				array_push($noAuxCen2['formDisponiveis'], $noAuxCen2);
+			}
+
+			removerFormula($noAuxCen1['formDisponiveis'],$form['info']);
+			removerFormula($noAuxCen2['formDisponiveis'],$form['info']);
+				
+			adicionaArray($nosFolha, $noAuxCen2);
+			return;
 		//Caso extra
 		case 'not':
 			//Se for atômico devemos adicionar na hash e verificar se casa com alguma fórmula
@@ -866,4 +1033,22 @@ function negaArrayTableaux(&$form){
 		$form['conectivo']='implica';
 	}
 }
+//Função para armazenar a estrutura de dados no histórico
+function armazenaHistorico(&$arrayHistorico,$nosFolha,$raiz,$numPasso,$listaFormulasDisponiveis){
+	$aux['nosFolha']=$nosFolha;
+	$aux['raiz']=$raiz;
+	$aux['numPasso']=$numPasso;
+	$aux['listaFormulasDisponiveis']=$listaFormulasDisponiveis;
+	array_push($arrayHistorico,$aux);
+}
+//Função para voltar um passo na execução do Tableaux
+function voltaUmPasso(&$arrayHistorico,&$nosFolha,&$raiz,&$numPasso,&$listaFormulasDisponiveis){
+	$tam=count($arrayHistorico);
+	unset($arrayHistorico[$tam-1]);	
+	$raiz=$arrayHistorico[$tam-2]['raiz'];
+	$nosFolha=$arrayHistorico[$tam-2]['nosFolha'];
+	$listaFormulasDisponiveis=$arrayHistorico[$tam-2]['listaFormulasDisponiveis'];
+	$numPasso=$arrayHistorico[$tam-2]['numPasso'];
+}
+
 ?>

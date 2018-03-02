@@ -42,7 +42,17 @@ $form = array ('info' => array ('esquerdo' => , 'conectivo' => , 'direito' =>), 
 
 
 //Passo 1
-$entradaTeste= array ("(A)","(B)","(AeB)");
+
+//Recebe do front-end a entrada, que pode ser tanto um array novo quanto um exercício da lista de exercícios
+/*
+.
+.
+Colocar aqui como vou receber do front-end
+.
+.
+*/
+
+$entradaTeste=array("(A)","(B)","(AimplicaB)");
 $tamanho=count($entradaTeste);
 
 //Passo 2
@@ -70,10 +80,15 @@ $escolhaAleatoria=false;
 $escolhaEficiente=true;
 $escolhaUsuario=false;
 $raiz=criaFormulaTableaux();
-$noFolha=criaFormulaTableaux();
-$noFolha2=criaFormulaTableaux();
+$historicoVariaveis=array();
 $nosFolha=array();
 
+//Inicialização do histórico de variáveis
+//Neste passo qualquer nó pode ser raiz
+$historicoVariaveis[0]['raiz']=criaFormulaTableaux();
+$historicoVariaveis[0]['nosFolha']=null;
+$historicoVariaveis[0]['listaFormulasDisponiveis']=null;
+$historicoVariaveis[0]['numPasso']=0;
 
 /*
 print "<br>Modo de Usuário escolhe a fórmula<br>";
@@ -94,15 +109,65 @@ $contador++;
 */
 
 
-while ($contador <= 10) {
+//---------------------------TESTE--------------------------------------------
+/*
+print "<br>Raiz no estado inicial<br>";
+print_r($raiz);
+
+
+
+print "<br>Chamando a função de escolha eficiente<br>";
+		foreach ($listaFormulasDisponiveis as $key => $value) {
+			print "key ".$key."<br>";
+			print_r($value['info']);
+			print "<br>";
+		}
+		escolhaEficiente($listaFormulasDisponiveis,$hashInicial,$nosFolha,$historicoVariaveis);
+	
+$contador++;
+
+print "<br>Chamando a função de escolha eficiente<br>";
+		foreach ($listaFormulasDisponiveis as $key => $value) {
+			print "key ".$key."<br>";
+			print_r($value['info']);
+			print "<br>";
+		}
+		escolhaEficiente($listaFormulasDisponiveis,$hashInicial,$nosFolha,$historicoVariaveis);
+	
+$contador++;
+
+
+
+print "<br>Raiz antes de voltar um passo<br>";
+print_r($raiz);
+voltaUmPasso($historicoVariaveis,$nosFolha,$raiz,$contador,$listaFormulasDisponiveis);
+
+print "<br>Raiz após voltar um passo<br>";
+print_r($raiz);
+*/
+
+
+//---------------------------FIM DO TESTE-------------------------------------
+
+
+while (!(todasFechadas($nosFolha)) && ($contador<10)) {
 	//Recebe do front-end o critério para escolha de fórmula
-	/*
-	.
-	.
-	Colocar aqui como vou receber do front-end
-	.
-	.
-	*/
+	////////////////////////////////
+	//.
+	//.
+	//Colocar aqui como vou receber do front-end
+	//.
+	//.
+	//////////////////////////////////
+
+	//Recebe do front-end o critério para escolha de fórmula
+	/////////////////////////////////
+	//.
+	//.
+	//Colocar aqui "voltar um passo"
+	//.
+	//.
+	///////////////////////////
 	
 	if ($escolhaAleatoria) {
 		# Chama a função de escolha aleatória
@@ -110,6 +175,13 @@ while ($contador <= 10) {
 		break;
 	}
 	elseif ($escolhaEficiente) {
+		/////////////////////
+		//.
+		//.
+		////Receber aqui avançar um passo se for verdade, se não for simplesmente resolve tudo
+		//.
+		//.
+		////////////////////
 		# Chama a função de escolha eficiente
 		print "<br>Chamando a função de escolha eficiente<br>";
 		foreach ($listaFormulasDisponiveis as $key => $value) {
@@ -117,12 +189,13 @@ while ($contador <= 10) {
 			print_r($value['info']);
 			print "<br>";
 		}
-		escolhaEficiente($listaFormulasDisponiveis,$hashInicial,$nosFolha);
+		escolhaEficiente($listaFormulasDisponiveis,$hashInicial,$nosFolha,$historicoVariaveis);
 		if (todasFechadas($nosFolha)) {
-			print "<br>Todos os ramos já estão fechados<br>";
-			print $contador."<br>";
+			//print "<br>Todos os ramos já estão fechados<br>";
+			//print $contador."<br>";
 			break;
 		}
+		print "<br>Contador ".$contador."<br>";
 		
 	}
 	elseif ($escolhaUsuario) {
@@ -133,11 +206,15 @@ while ($contador <= 10) {
 
 	$contador++;
 }
+
 if (todasFechadas($nosFolha)) {
-	print "<br>Todos os ramos já estão fechados<br>";
+	print "<br>Todos os ramos foram fechados com sucesso<br>";
 	print $contador."<br>";
 }
 else{
 	print "<br>Nem todos os ramos foram fechados<br>Este Tableaux não fecha<br>";
 }
+print "<br>Árvore a partir da raiz<br>";
+imprimeArvore($raiz);
+
 ?>
