@@ -6,16 +6,16 @@
 $(document).ready(function(){
     $("button").click(function(){
     	var myData = {
-	        'API' : 'funcionando'
+	        'exercicio' : 1
 	    };
         $.ajax({
 
 	        url: 'http://127.0.0.1:8000/api/resolucao',
-	        type: 'POST',
+	        type: 'GET',
 	        callback: '?',
 	        data: myData,
 	        datatype: 'application/json',
-	        success: function(teste) { alert(teste); },
+	        success: function(teste) { console.log(teste); },
 	        error: function() { alert('Failed!'); },
 	    });
     });

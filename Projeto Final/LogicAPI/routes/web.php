@@ -26,9 +26,7 @@ Route::group(['prefix' => 'api'], function(){
 
 	Route::group(['prefix' => 'resolucao', 'middleware' => 'cors'], function(){
 		
-		Route::get('/', function () {
-		    return 'Recebe uma nova proposição';
-		});
+		Route::get('/', 'ResolucaoController@index');
 
 		Route::post('', function () {
 		    return 'Resolucao';
