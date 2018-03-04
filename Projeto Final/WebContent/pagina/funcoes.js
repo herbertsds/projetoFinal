@@ -17,6 +17,10 @@ ser montada dinamicamente */
 	var formulaId="";
 	var regras = 0;
 	var perguntaFNC=false;
+	var formulas_JSON;
+	var transformados_FNC;
+	var cont =0;
+	
 	// funcao apenas para testes de eventos
 	function teste(){
 		
@@ -61,7 +65,6 @@ ser montada dinamicamente */
 			  
         	$(e.target).css({
 					'color':'red',
-					//'background':'pink',
 					'font-weight': 900
 					
         	});;
@@ -75,20 +78,14 @@ ser montada dinamicamente */
         $('#divFormulas').on('mouseenter','p', function(e) {
         	$(e.target).css({
         		'cursor':'pointer',
-   				//'color':'green',
-   				//'background':'LightGreen ',
+
    				'font-weight': 900	        			
         });
          $('#divFormulas').on('mouseout','p', function(e) {
         	 $('p').css({
-   					//'color':'black',
-   					//'background':'none',
 					'font-weight': 100,
         	 });	
         	 $(e.target).css({
-   					//'color':'black',
-   					//'background':'none',
-					//'font-weight': 100,
  	        		'cursor':'text'
         	 });;
          });
@@ -229,7 +226,7 @@ ser montada dinamicamente */
 				break;
 			
 			case "resolucao":
-				  for (var cont = 0; cont in vet_regras; cont++){
+				  for (cont = 0; cont in vet_regras; cont++){
 						$('#divFormulas').append("<p id='" + cont+ "'>" + vet_regras[cont] + "</p>" );
 	
 				  }
@@ -276,11 +273,11 @@ ser montada dinamicamente */
 				atualizaTela(tipoEx);
 				$('#tabExecucao').click();
 				if(regras == 0){
-					$('#1').html('');	
+					$('#1').html('');
+					$('#alertResolucao').attr("style", 'display:none');
 					// mudando a cor do campo
-				    	
 				}
-
+				//CHAMAR PASSAR PRA FNC(vet_regras)############################################################################
 			}
 		}
 		
@@ -296,42 +293,95 @@ ser montada dinamicamente */
 		
 		//VERIFICAR OBRIGATORIEDADE DA SEQUENCIA
 		switch(passoId){
-			case '1':
+			case 'passo1':
 				if(formulaId=='finalVetor'){
 					alert("Atenção!\nPasse todas as fórmulas do banco para FNC.");
 				}
+				else{
+					cont++;
+					regras--;
+					$('#divFormulas').append("<p id='" + cont+ "'>Formula " + $("[id^= '0']").text() + " em FNC</p>");
+					//console.log($("p[id^='formulaId']"));
+//					.css({
+//						    'text-decoration': 'line-through'
+//
+//					});
+//					$('#divFormulas').append("<p id='" + cont+ "'>" + transformados_FNC[formulaId] + "</p>" );
+					if(regras == 0){
+						$('#passo1').off();
+
+						$('#passo1').css({
+						    'text-decoration': 'line-through',
+
+						});
+						$('#alertResolucao').fadeOut();
+						passoId = "passo2";
+						formulaId = "";
+					}
+				}
 				break;
 			
-			case '2':
+			case 'passo2':
+					if(regras>0){
+						alert("Atenção!\nPasse todas as fórmulas do banco para FNC.");
+
+					}
+					else if(formulaId == "finalVetor"){
+						perguntaFNC = true;
+						$('#divFormulas').append("<p id='" + cont+ "'>Pergunta " + $('#finalVetor').text() + " em FNC</p>");
+
+						
+						$('#passo2').off();
+						$('#finalVetor').unbind();
+
+						$('#passo2').css({
+						    'text-decoration': 'line-through'
+							
+						});
+
+							$('#finalVetor').css({
+
+							    'text-decoration': 'line-through'
+								
+							});
+							
+						}										
+
+						
+						
+					else{
+						alert("Selecione a pergunta!");
+						}
+				
+				break;
+			case 'passo3':
 				if(regras>0){
 					alert("Atenção!\nPasse todas as fórmulas do banco para FNC.");
 
 				}
-				break;
-			case '3':
-				if(regras>0 || perguntaFNC == false){
-					alert("Atenção!\nPasse todas as fórmulas do banco e a pergunta para FNC.");
-
+				else{
+					if(perguntaFNC == false){
+						alert("Atenção!\nPasse a pergunta para FNC.")
+						break;
+					}
+					else{
+						console.log("ok");
+					}//exibir pergunta negada
 				}
 				break;
+			default: 
+
+					break;
 		}
 		
+		
+		 
 	}
 	// abrir a formula para fnc
 	function f_FNC(){
 		
 		// chamar a funcao php que transforma fnc
-		if(passoId == 1){
-			regras--;
-			if(regras == 0){
-				$('#1').html('');	
 
-			}
-			// criar json com a formula e enviar pro back end
-		}
-		else{
-			// criar json e mandar a pergunta pro back
-		}
 	
 	}
 	//bater duas fórmulas diferentes para gerar uma nova
