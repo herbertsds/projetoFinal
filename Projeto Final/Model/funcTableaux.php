@@ -336,12 +336,8 @@ function aplicaRegra(&$form,&$pai,&$nosFolha){
 
 			//Correções na estrutura de dados
 			
-			foreach ($noAuxCen1 as $key => $value) {
-				corrigeArrays($noAuxCen1[$key]);
-			}
-			foreach ($noAuxCen2 as $key => $value) {
-				corrigeArrays($noAuxCen2[$key]);
-			}
+			corrigeArrays($noAuxCen1);			
+			corrigeArrays($noAuxCen2);
 			
 
 			//Se a fórmula for atômica eu adiciono átomo gerado na hash da mesma
@@ -401,12 +397,8 @@ function aplicaRegra(&$form,&$pai,&$nosFolha){
 
 			//Correções na estrutura de dados
 			
-			foreach ($noAuxCen1 as $key => $value) {
-				corrigeArrays($noAuxCen1[$key]);
-			}
-			foreach ($noAuxCen2 as $key => $value) {
-				corrigeArrays($noAuxCen2[$key]);
-			}
+			corrigeArrays($noAuxEsq);			
+			corrigeArrays($noAuxDir);
 
 			//Se a fórmula for atômica eu adiciono átomo gerado na hash da mesma
 			//Se não for átomo, então é uma fórmula e adiciono a fórmula gerada na lista de fórmulas desse elemento
@@ -456,12 +448,9 @@ function aplicaRegra(&$form,&$pai,&$nosFolha){
 
 			//Correções na estrutura de dados
 			
-			foreach ($noAuxCen1 as $key => $value) {
-				corrigeArrays($noAuxCen1[$key]);
-			}
-			foreach ($noAuxCen2 as $key => $value) {
-				corrigeArrays($noAuxCen2[$key]);
-			}
+			corrigeArrays($noAuxEsq);			
+			corrigeArrays($noAuxDir);
+			
 
 			//Manipulação específica da implicação
 			//O lado esquerdo deve passar a ter um not externamente
@@ -526,14 +515,14 @@ function aplicaRegra(&$form,&$pai,&$nosFolha){
 
 			//Correções na estrutura de dados
 			
-			foreach ($noAuxCen1 as $key => $value) {
-				corrigeArrays($noAuxCen1[$key]);
-			}
+			
+			corrigeArrays($noAuxCen1);
+			
 
 			//Manipulação específica de notnot
 			
 
-			//Sea fórmula for átomo
+			//Se a fórmula for átomo
 			if (checaAtomico($noAuxEsq['info'])) {
 				if ($noAuxEsq['info']['conectivo']=='notnot') {
 					//Equivalente a notnot
@@ -588,12 +577,8 @@ function aplicaRegra(&$form,&$pai,&$nosFolha){
 
 			//Correções na estrutura de dados
 			
-			foreach ($noAuxCen1 as $key => $value) {
-				corrigeArrays($noAuxCen1[$key]);
-			}
-			foreach ($noAuxCen2 as $key => $value) {
-				corrigeArrays($noAuxCen2[$key]);
-			}
+			corrigeArrays($noAuxEsq);			
+			corrigeArrays($noAuxDir);
 
 			//Manipulação específica do not_e
 			//Os dois lados devem passar a ter um not externamente
@@ -676,12 +661,8 @@ function aplicaRegra(&$form,&$pai,&$nosFolha){
 
 			//Correções na estrutura de dados
 			
-			foreach ($noAuxCen1 as $key => $value) {
-				corrigeArrays($noAuxCen1[$key]);
-			}
-			foreach ($noAuxCen2 as $key => $value) {
-				corrigeArrays($noAuxCen2[$key]);
-			}
+			corrigeArrays($noAuxCen1);			
+			corrigeArrays($noAuxCen2);
 
 
 			//Manipulação específica do not_ou
@@ -771,12 +752,8 @@ function aplicaRegra(&$form,&$pai,&$nosFolha){
 
 			//Correções na estrutura de dados
 			
-			foreach ($noAuxCen1 as $key => $value) {
-				corrigeArrays($noAuxCen1[$key]);
-			}
-			foreach ($noAuxCen2 as $key => $value) {
-				corrigeArrays($noAuxCen2[$key]);
-			}
+			corrigeArrays($noAuxCen1);			
+			corrigeArrays($noAuxCen2);
 
 			//Manipulação específica do not_implica
 			//O lado direito deve passar a ter um not externamente

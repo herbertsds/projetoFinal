@@ -52,7 +52,7 @@ Colocar aqui como vou receber do front-end
 .
 */
 
-$entradaTeste=array("(A)","(B)","(AimplicaB)");
+$entradaTeste=$DNNquestao5;
 $tamanho=count($entradaTeste);
 
 //Passo 2
@@ -64,7 +64,8 @@ foreach ($entradaTeste as $key => $value) {
 	//$raiz[$key]=$value;
 	$listaFormulasDisponiveis[$key]=$value;
 	//Checa se é átomo para adicionar na hash
-	if($value['info']['esquerdo']==NULL && ($value['info']['conectivo']==NULL || $value['info']['conectivo']='not')){
+
+	if($value['info']['esquerdo']==NULL && ($value['info']['conectivo']==NULL || $value['info']['conectivo']=='not')){
 		$hashInicial[$value['info']['direito']]=$value['info']['conectivo'] == "not" ? 0:1;
 	}
 }
@@ -109,45 +110,6 @@ $contador++;
 */
 
 
-//---------------------------TESTE--------------------------------------------
-/*
-print "<br>Raiz no estado inicial<br>";
-print_r($raiz);
-
-
-
-print "<br>Chamando a função de escolha eficiente<br>";
-		foreach ($listaFormulasDisponiveis as $key => $value) {
-			print "key ".$key."<br>";
-			print_r($value['info']);
-			print "<br>";
-		}
-		escolhaEficiente($listaFormulasDisponiveis,$hashInicial,$nosFolha,$historicoVariaveis);
-	
-$contador++;
-
-print "<br>Chamando a função de escolha eficiente<br>";
-		foreach ($listaFormulasDisponiveis as $key => $value) {
-			print "key ".$key."<br>";
-			print_r($value['info']);
-			print "<br>";
-		}
-		escolhaEficiente($listaFormulasDisponiveis,$hashInicial,$nosFolha,$historicoVariaveis);
-	
-$contador++;
-
-
-
-print "<br>Raiz antes de voltar um passo<br>";
-print_r($raiz);
-voltaUmPasso($historicoVariaveis,$nosFolha,$raiz,$contador,$listaFormulasDisponiveis);
-
-print "<br>Raiz após voltar um passo<br>";
-print_r($raiz);
-*/
-
-
-//---------------------------FIM DO TESTE-------------------------------------
 
 
 while (!(todasFechadas($nosFolha)) && ($contador<10)) {

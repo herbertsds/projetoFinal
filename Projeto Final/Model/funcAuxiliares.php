@@ -1,101 +1,5 @@
 <?php
 
-//Função que pega uma fórmula da árvore e aplica a regra corresponte
-//Para formulas cujo resultado da aplicação resulta em single note devem chamar aplicaFormula duas vezes para que o case not adicione os �tomos na hash
-//Por exemplo, Av¬B ou A->B.
-//$listaConectivos=array("^","v","->","¬");
-
-function aplicaFormula(Formula $raiz){
-	global $fork;
-	global $hash;
-	switch ($raiz->getConectivo()) {
-		//Regra 1
-		case 'e':
-			return array($raiz->getEsquerdo(),$raiz->getDireito());
-			//Regra 2
-		case 'ou':
-			$fork = true;
-			return array($raiz->getEsquerdo(),$raiz->getDireito());
-			//Tratamento de Single not
-		case 'not':
-			//Checa se é composto ou átomo
-			if(!is_object($raiz->getDireito())){
-				//print "Sei que é negativo<br>";
-				$hash[$raiz->getDireito()][] = 'negativo';
-			}
-			//Se não for objeto chama de novo para aplicar a regra interior
-			break;
-			//Regra 3
-		case 'implica':
-			$fork = true;
-			$aux1= new Formula();
-			//O lado esquero da formula vira not
-			//Atomos negativos são sempre adicionados no lado direito de uma Formula
-			$aux1->setConectivo("not");
-			$aux1->setDireito($raiz->getEsquerdo());
-			return array($aux1,$raiz->getDireito());
-			//Regra 4
-		case 'notnot':
-			if(!is_object($raiz->getDireito())){
-				$hash[$raiz->getDireito()][] = 'positivo';
-			}
-			return array($raiz->getDireito());
-			//Regra 5
-		case 'not_e';
-		$fork = true;
-		$aux1 = new Formula();
-		$aux2 = new Formula();
-		$aux1->setConectivo('not');
-		$aux1->setDireito($raiz->getEsquerdo());
-		$aux2->setConectivo('not');
-		$aux2->setDireito($raiz->getDireito());
-		return array($aux1,$aux2);
-		//Regra 6
-		case 'not_ou';
-		$aux1 = new Formula();
-		$aux2 = new Formula();
-		$aux1->setConectivo('not');
-		$aux1->setDireito($raiz->getEsquerdo());
-		$aux2->setConectivo('not');
-		$aux2->setDireito($raiz->getDireito());
-		return array($aux1,$aux2);
-		//Regra 7
-		case 'not_implica';
-		$aux1 = new Formula();
-		$aux1->setConectivo('not');
-		$aux1->setDireito($raiz->getDireito());
-		return array($raiz->getEsquerdo(),$aux1);
-		default:
-			# Tratamento de um poss�vel erro
-			break;
-	}
-}
-//Função fork para
-function forkArv(&$arvore,&$retorno,$indice){
-	global $fork;
-	global $hash;
-	
-	if($fork == true){
-		foreach ($retorno as $chave => $valor) {
-			$arvore['fork'][] = $valor;
-			$arvore[$indice]->usaFormula();
-			//Se for um array, significa que é uma fórmula. Se não for um array, significa que é um átomo
-			if(!is_object($valor)){
-				$hash[$valor][] = 'positivo';
-			}
-		}
-		$fork = false;
-	}
-	else{
-		if (is_array($retorno) || is_object($retorno)){
-			foreach ($retorno as $chave => $valor) {
-				$arvore[$indice]->usaFormula();
-				$arvore[] = $valor;
-			}
-		}
-	}
-}
-
 //Função recebe um ponteiro para uma String fórmula e converte
 //Seus conectivos para símbolos
 function converteConectivoSimbolo(&$form){
@@ -329,7 +233,16 @@ function resolveParenteses2($form){
 	//Se não for átomo, caso mais geral
 	for ($i=0; $i<strlen($form); $i++){
 		//Caso notnotnot
-		if($form[$i]=='!' && $form[$i+1]=='!' && $form[$i+2]=='!'){
+		if($form[$i]=='!' && $form[$i+1]=='!' && $form[$i+2]=='!' && ($i==0 || $i==1)){
+			//Correções específicas para o caso em que notnot está entre parênteses
+			if ($form[0]=='(') {
+				$form=substr($form, 1);
+				$form=substr($form, 0, strlen($form)-1);
+			}
+
+			if ($auxForm['esquerdo']=='(') {
+				$auxForm['esquerdo']=NULL;
+			}
 			$form=substr($form, 4);		
 			$form=substr($form, 0, strlen($form)-1);
 			$auxForm['direito']=$form;
@@ -337,7 +250,17 @@ function resolveParenteses2($form){
 			return $auxForm;
 		}
 		//Caso notnot
-		if($form[$i]=='!' && $form[$i+1]=='!'){
+		if($form[$i]=='!' && $form[$i+1]=='!' && ($i==0 || $i==1)){
+			//Correções específicas para o caso em que notnot está entre parênteses
+			if ($form[0]=='(') {
+				$form=substr($form, 1);
+				$form=substr($form, 0, strlen($form)-1);
+			}
+
+			if ($auxForm['esquerdo']=='(') {
+				$auxForm['esquerdo']=NULL;
+			}
+
 			$form=substr($form, 3);		
 			$form=substr($form, 0, strlen($form)-1);
 			$auxForm['direito']=$form;
@@ -351,7 +274,21 @@ function resolveParenteses2($form){
 		//Mas preciso me certificar de que não é um átomo negativo, então verifico se o próximo elemento
 		//é a abertura de um parenteses
 		if($form[$i]=='!' && $form[$i+1]=='('){
-			$not=true;
+			//Se for um átomo, não sinaliza a flag not
+			if ($form[$i+3]==')') {
+			//faça nada			
+						
+			}
+			//Se o not for para uma fórmula mais interna e não para fórmula externa como um todo
+			//Melhor tratar aqui
+			
+
+			elseif ($abreFormula==false && $contador==0) {
+				$not=true;
+			}
+				
+			
+			
 		}
 		if($form[$i]=='('){
 			$abreFormula=true;
@@ -366,7 +303,7 @@ function resolveParenteses2($form){
 			
 		}
 		if($abreFormula==true){
-			if((in_array($form[$i],$listaConectivos)) && ($contador==1)){
+			if((in_array($form[$i],$listaConectivos)) && ($contador==1) && $form[$i]!='!'){
 				if($not==true){
 					$aux=$form[$i];
 					converteConectivoNot($aux);
@@ -392,6 +329,87 @@ function resolveParenteses2($form){
 	}
 	$auxForm['esquerdo']=substr($auxForm['esquerdo'], 1);
 	$auxForm['direito']=substr($auxForm['direito'], 1);
+	//Correções de parênteses excedentes antes de retornar a fórmula
+	//Caso 1 - Átomo positivo
+	
+	if (strlen($auxForm['esquerdo'])==3 && @$auxForm['esquerdo'][0]=='(' ) {
+		$auxForm['esquerdo']=substr($auxForm['esquerdo'], 1);
+		$auxForm['esquerdo']=substr($auxForm['esquerdo'], 0, strlen($auxForm['esquerdo'])-1);
+	}
+	if (strlen($auxForm['direito'])==3 && @$auxForm['direito'][0]=='(' ) {
+		$auxForm['direito']=substr($auxForm['direito'], 1);
+		$auxForm['direito']=substr($auxForm['direito'], 0, strlen($auxForm['direito'])-1);
+	}
+	//Caso 2 - Átomo negativo
+	
+	if (strlen($auxForm['esquerdo'])==6 && @$auxForm['esquerdo'][0]=='(' &&  @$auxForm['esquerdo'][1]=='!' ) {
+		$auxForm['esquerdo']=substr($auxForm['esquerdo'], 1);
+		$auxForm['esquerdo']=substr($auxForm['esquerdo'], 0, strlen($auxForm['esquerdo'])-1);
+	}
+	if (strlen($auxForm['direito'])==6 && @$auxForm['direito'][0]=='(' &&  @$auxForm['direito'][1]=='!') {
+		$auxForm['direito']=substr($auxForm['direito'], 1);
+		$auxForm['direito']=substr($auxForm['direito'], 0, strlen($auxForm['direito'])-1);
+	}
+	
+	$auxiliar=$auxForm['esquerdo'];
+	$conectivo=false;
+	$contador=0;
+	for ($i=0; $i<strlen($auxiliar); $i++){
+		if($auxiliar[$i]=='('){
+			$abreFormula=true;
+			$contador++;
+			
+		}
+		if($auxiliar[$i]==')'){
+			$contador-=1;
+			if($contador==0){
+				$abreFormula=False;
+			}
+			
+		}
+		if($abreFormula==true){
+			if((in_array($auxiliar[$i],$listaConectivos)) && ($contador==1) && $auxiliar[$i]!='!'){
+				$conectivo=true;
+				
+			}
+		}
+	}
+	if (!$conectivo) {
+		if (@$auxForm['esquerdo'][0]=='(' && @$auxForm['esquerdo'][strlen($auxForm['esquerdo'])-1]==')') {
+			$auxForm['esquerdo']=substr($auxForm['esquerdo'], 1);
+			$auxForm['esquerdo']=substr($auxForm['esquerdo'], 0, strlen($auxForm['esquerdo'])-1);
+		}
+	}
+	$contador=0;
+	$auxiliar=$auxForm['direito'];
+	$conectivo=false;
+	for ($i=0; $i<strlen($auxiliar); $i++){
+		if($auxiliar[$i]=='('){
+			$abreFormula=true;
+			$contador++;
+			
+		}
+		if($auxiliar[$i]==')'){
+			$contador-=1;
+			if($contador==0){
+				$abreFormula=False;
+			}
+			
+		}
+		if($abreFormula==true){
+			if((in_array($auxiliar[$i],$listaConectivos)) && ($contador==1) && $auxiliar[$i]!='!'){
+				$conectivo=true;
+				
+			}
+		}
+	}
+	if (!$conectivo) {
+		if (@$auxForm['direito'][0]=='(' && @$auxForm['direito'][strlen($auxForm['direito'])-1]==')') {
+			$auxForm['direito']=substr($auxForm['direito'], 1);
+			$auxForm['direito']=substr($auxForm['direito'], 0, strlen($auxForm['direito'])-1);
+		}
+	}
+	
 	return $auxForm;
 }
 
