@@ -31,7 +31,7 @@ class Exercicios extends Model
     }
 
     public function getExercicioAleatorio(){
-    	$aleatorio = rand(1,count($this->listaExercicios[$this->metodo]));
+    	$aleatorio = rand(0,count($this->listaExercicios[$this->metodo]));
     	return $this->listaExercicios['resolucao'][$aleatorio];
     }
 
@@ -53,44 +53,64 @@ class Exercicios extends Model
 		//------------------------------------------------------------------------------------------------------------------------------
 
 		//Lista de DN sem Negação
-		$this->listaExercicios['resolucao'][1] = array ("(AouB)","(Bimplica(notnot(C)))","((AimplicaC)implicaC)");
-		$this->listaExercicios['resolucao'][2] = array ("(AimplicaB)","(BimplicaC)","(Aimplica(BeC))");
-		$this->listaExercicios['resolucao'][3] = array ("(AimplicaB)","(BimplicaC)","(A)","(C)");
-		$this->listaExercicios['resolucao'][4] = array ("(AimplicaB)","(BimplicaC)","(AimplicaC)");
-		$this->listaExercicios['resolucao'][5] = array ("((PouQ)implicaR)","(Pimplica(QimplicaR))");
-		$this->listaExercicios['resolucao'][6] = array ("((PeQ)implicaR)","(Pimplica(QimplicaR))");
-		$this->listaExercicios['resolucao'][7] = array ("(Pimplica(QimplicaR))","((PeQ)implicaR)");
-		$this->listaExercicios['resolucao'][8] = array ("(Bimplica(CeA))","(AimplicaD)","(BeC)","(D)");
-		$this->listaExercicios['resolucao'][9] = array ("((AouB)implicaC)","(Cimplica(DeE))","(A)","(EouF)");
-		$this->listaExercicios['resolucao'][10] = array ("((AouB)implicaC)","(DimplicaA)","(DimplicaC)");
+		$this->listaExercicios['resolucao'][] = array ("(AouB)","(Bimplica(notnot(C)))","((AimplicaC)implicaC)");
+		$this->listaExercicios['resolucao'][] = array ("(AimplicaB)","(BimplicaC)","(Aimplica(BeC))");
+		$this->listaExercicios['resolucao'][] = array ("(AimplicaB)","(BimplicaC)","(A)","(C)");
+		$this->listaExercicios['resolucao'][] = array ("(AimplicaB)","(BimplicaC)","(AimplicaC)");
+		$this->listaExercicios['resolucao'][] = array ("((PouQ)implicaR)","(Pimplica(QimplicaR))");
+		$this->listaExercicios['resolucao'][] = array ("((PeQ)implicaR)","(Pimplica(QimplicaR))");
+		$this->listaExercicios['resolucao'][] = array ("(Pimplica(QimplicaR))","((PeQ)implicaR)");
+		$this->listaExercicios['resolucao'][] = array ("(Bimplica(CeA))","(AimplicaD)","(BeC)","(D)");
+		$this->listaExercicios['resolucao'][] = array ("((AouB)implicaC)","(Cimplica(DeE))","(A)","(EouF)");
+		$this->listaExercicios['resolucao'][] = array ("((AouB)implicaC)","(DimplicaA)","(DimplicaC)");
 
 		//Lista de DN com Negação
-		$this->listaExercicios['resolucao'][11] = array ("(AimplicaB)","(BimplicaC)","(A)","(C)");
-		$this->listaExercicios['resolucao'][12] = array ("(Pimplica(QeR))","((PeQ)implicaR)");
-		$this->listaExercicios['resolucao'][13] = array ("(PimplicaQ)","not(Q)","not(P)");
-		$this->listaExercicios['resolucao'][14] = array ("(AimplicaB)","(BimplicaC)","(AimplicaC)");
-		$this->listaExercicios['resolucao'][15] = array ("((PouQ)implicaR)","(Pimplica(QimplicaR))"); //testar depois
-		$this->listaExercicios['resolucao'][16] = array ("(Bimplica(CeA))","(AimplicaD)","(BeC)","(D)");
-		$this->listaExercicios['resolucao'][17] = array ("((AouB)implicaC)","(DimplicaA)","(DimplicaC)");
-		$this->listaExercicios['resolucao'][18] = array ("(AimplicaB)","(BimplicaC)","(C)","(Aimplica(BeC))");
-		$this->listaExercicios['resolucao'][19] = array ("(PouQ)","(PimplicaR)","(QimplicaR)","(R)");
-		$this->listaExercicios['resolucao'][20] = array ("(Aimplica(BeC))","((DeF)implicaA)","(DeF)","(BeF)");
-		$this->listaExercicios['resolucao'][21] = array ("(AouB)","(Cimplica(not(A)))","(CeD)","(BouA)");
-		$this->listaExercicios['resolucao'][22] = array ("((AouB)implicaC)","(Cimplica(DeF))","(A)","(FouE)");
-		$this->listaExercicios['resolucao'][23] = array ("((AeB)implicaC)","((CouD)implicaE)","((AeB)implica(EouF))");
-		$this->listaExercicios['resolucao'][24] = array ("(AeB)","not(C)","((AeB)implica(CouD))","(DouE)");
-		$this->listaExercicios['resolucao'][25] = array ("(D)","(I)","((DeA)implica(not(C)))","(IimplicaM)","(MimplicaA)","not(P)");
-		$this->listaExercicios['resolucao'][26] = array ("((AouB)implicaC)","(CimplicaD)","((AeB)implica(CeD))");
-		$this->listaExercicios['resolucao'][27] = array ("((not(P))implicaQ))","(PouQ)");
-		$this->listaExercicios['resolucao'][28] = array ("(AouB)","((AouC)implicaD)","(Bimplica(DeC))","(D)");
-		$this->listaExercicios['resolucao'][29] = array ("((not(AeB))implica((not(A))ou(not(B)))");
-		$this->listaExercicios['resolucao'][30] = array ("not(Pe(not(P)))");
-		$this->listaExercicios['resolucao'][31] = array ("(not(PimplicaQ)implicaP)");
-		$this->listaExercicios['resolucao'][32] = array ("(not(PimplicaQ)implica(not(Q)))");
-		$this->listaExercicios['resolucao'][33] = array ("((Pimplica(not(P)))implica(not(P)))");
-		$this->listaExercicios['resolucao'][34] = array ("((not(P)implicaP)implicaP)");
-		$this->listaExercicios['resolucao'][35] = array ("((PeQ)implica(not((not(P))ou(not(Q)))))");
-		$this->listaExercicios['resolucao'][36] = array ("(Aimplica(BouC))","(BimplicaD)","(Fimplica(DeE))","(AouF)","((CimplicaD)implicaD)");
+		$this->listaExercicios['resolucao'][] = array ("(AimplicaB)","(BimplicaC)","(A)","(C)");
+		$this->listaExercicios['resolucao'][] = array ("(Pimplica(QeR))","((PeQ)implicaR)");
+		$this->listaExercicios['resolucao'][] = array ("(PimplicaQ)","not(Q)","not(P)");
+		$this->listaExercicios['resolucao'][] = array ("(AimplicaB)","(BimplicaC)","(AimplicaC)");
+		$this->listaExercicios['resolucao'][] = array ("((PouQ)implicaR)","(Pimplica(QimplicaR))"); //testar depois
+		$this->listaExercicios['resolucao'][] = array ("(Bimplica(CeA))","(AimplicaD)","(BeC)","(D)");
+		$this->listaExercicios['resolucao'][] = array ("((AouB)implicaC)","(DimplicaA)","(DimplicaC)");
+		$this->listaExercicios['resolucao'][] = array ("(AimplicaB)","(BimplicaC)","(C)","(Aimplica(BeC))");
+		$this->listaExercicios['resolucao'][] = array ("(PouQ)","(PimplicaR)","(QimplicaR)","(R)");
+		$this->listaExercicios['resolucao'][] = array ("(Aimplica(BeC))","((DeF)implicaA)","(DeF)","(BeF)");
+		$this->listaExercicios['resolucao'][] = array ("(AouB)","(Cimplica(not(A)))","(CeD)","(BouA)");
+		$this->listaExercicios['resolucao'][] = array ("((AouB)implicaC)","(Cimplica(DeF))","(A)","(FouE)");
+		$this->listaExercicios['resolucao'][] = array ("((AeB)implicaC)","((CouD)implicaE)","((AeB)implica(EouF))");
+		$this->listaExercicios['resolucao'][] = array ("(AeB)","not(C)","((AeB)implica(CouD))","(DouE)");
+		$this->listaExercicios['resolucao'][] = array ("(D)","(I)","((DeA)implica(not(C)))","(IimplicaM)","(MimplicaA)","not(P)");
+		$this->listaExercicios['resolucao'][] = array ("((AouB)implicaC)","(CimplicaD)","((AeB)implica(CeD))");
+		$this->listaExercicios['resolucao'][] = array ("((not(P))implicaQ))","(PouQ)");
+		$this->listaExercicios['resolucao'][] = array ("(AouB)","((AouC)implicaD)","(Bimplica(DeC))","(D)");
+		$this->listaExercicios['resolucao'][] = array ("((not(AeB))implica((not(A))ou(not(B)))");
+		$this->listaExercicios['resolucao'][] = array ("not(Pe(not(P)))");
+		$this->listaExercicios['resolucao'][] = array ("(not(PimplicaQ)implicaP)");
+		$this->listaExercicios['resolucao'][] = array ("(not(PimplicaQ)implica(not(Q)))");
+		$this->listaExercicios['resolucao'][] = array ("((Pimplica(not(P)))implica(not(P)))");
+		$this->listaExercicios['resolucao'][] = array ("((not(P)implicaP)implicaP)");
+		$this->listaExercicios['resolucao'][] = array ("((PeQ)implica(not((not(P))ou(not(Q)))))");
+		$this->listaExercicios['resolucao'][] = array ("(Aimplica(BouC))","(BimplicaD)","(Fimplica(DeE))","(AouF)","((CimplicaD)implicaD)");
+		$this->listaExercicios['resolucao'][] = array ("((AouB)ouC)","(Aou(BouC))");
+		$this->listaExercicios['resolucao'][] = array ("(((AimplicaB)implicaA)implicaA)");
+		$this->listaExercicios['resolucao'][] = array ("(AouB)","(not(B)eD)","((AeD)ouC)","((AeD)implicaE)","(CimplicaE)","(E)");
+		$this->listaExercicios['resolucao'][] = array ("(not(A)ouB)","not(Be(not(C)))","(CimplicaD)","(not(A)ouD)");
+		$this->listaExercicios['resolucao'][] = array ("(B)","((RouS)implicaA)","(RouS)","((AeR)implicaC)","((BeS)implicaC)","(C)");
+		$this->listaExercicios['resolucao'][] = array ("(Aimplica(BouC))","(Bimplica(DeF))","((CeA)implicaD)","(AimplicaD)");
+		$this->listaExercicios['resolucao'][] = array ("((not(C))implica((not(A))e(not(B))))","((CouD)implicaE)","(B)","((not(E))implica(not(A)))");
+		$this->listaExercicios['resolucao'][] = array ("((AimplicaB)implicaB)","(AimplicaC)","(BimplicaC)","(C)");
+		$this->listaExercicios['resolucao'][] = array ("((CimplicaA)implicaB)", "(Cimplica(AeD))","((BeD)implica(EeF))","(FimplicaG)","(DimplicaG)");
+		$this->listaExercicios['resolucao'][] = array ("((PimplicaQ)implicaQ)","(QimplicaP)","(P)");
+		$this->listaExercicios['resolucao'][] = array ("(B)","((AeB)implica(CouD))","((CeA)implicaE)","(Dimplica(EeF))","(AimplicaE)");
+		$this->listaExercicios['resolucao'][] = array ("((PimplicaQ)implicaQ)","(QimplicaP)","(P)");
+		$this->listaExercicios['resolucao'][] = array ("(AeB)","((Cimplica(AouD))implicaE)","(EeB)");
+		$this->listaExercicios['resolucao'][] = "Questão insolúvel";
+		$this->listaExercicios['resolucao'][] = array ("((AimplicaB)implicaB)","((BimplicaA)implicaA)");
+		$this->listaExercicios['resolucao'][] = array ("(Aimplica(not(B)))","(BouC)","((AimplicaC)implica(not(C)))","((DeB)implicaE)","(Eimplica(FeG))","(DimplicaF)");
+		$this->listaExercicios['resolucao'][] = array ("(B)","(((AeB)e(not(A)))implicaD)","((CeA)implicaE)","(DimplicaE)","(DimplicaF)","(AimplicaE)");
+		$this->listaExercicios['resolucao'][] = array ("((not(P))implica(((PouQ)implicaQ)e(Qimplica(PouQ))))");
+		$this->listaExercicios['resolucao'][] = array ("(Pimplica(not(Q)))","(not(not(P)ou(not(Q)))ouR)","(Rimplica(not(AeB)ou(not(S))))","(Sou(not(CouD)))","(((not(A))ou(not(B)))implicaE)","(((not(C))e(not(D)))implicaE)","(E)");
+		$this->listaExercicios['resolucao'][] = array ("not(Aimplica(not(B)))","(CouD)","((CeA)implica(FouG))","(FimplicaH)","(((not(H))ou(not(I)))implica(not(G)))","(HimplicaK)","(DimplicaJ)","((JeB)implicaK)","(K)");
     }
 
 }
