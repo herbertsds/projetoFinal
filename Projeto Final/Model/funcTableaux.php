@@ -48,7 +48,17 @@ function resolveParentesesTableaux($form){
 	//Se não for átomo, caso mais geral
 	for ($i=0; $i<strlen($form); $i++){
 		//Caso notnotnot
-		if($form[$i]=='!' && $form[$i+1]=='!' && $form[$i+2]=='!'){
+		if($form[$i]=='!' && $form[$i+1]=='!' && $form[$i+2]=='!' && ($i==0 || $i==1)){
+			//Correções específicas para o caso em que notnot está entre parênteses
+			if ($form[0]=='(') {
+				$form=substr($form, 1);
+				$form=substr($form, 0, strlen($form)-1);
+			}
+
+			if ($auxForm['info']['esquerdo']=='(') {
+				$auxForm['info']['esquerdo']=NULL;
+			}
+
 			$form=substr($form, 4);		
 			$form=substr($form, 0, strlen($form)-1);
 			$auxForm['info']['direito']=$form;
@@ -56,7 +66,17 @@ function resolveParentesesTableaux($form){
 			return $auxForm;
 		}
 		//Caso notnot
-		if($form[$i]=='!' && $form[$i+1]=='!'){
+		if($form[$i]=='!' && $form[$i+1]=='!' && ($i==0 || $i==1)){
+			//Correções específicas para o caso em que notnot está entre parênteses
+			if ($form[0]=='(') {
+				$form=substr($form, 1);
+				$form=substr($form, 0, strlen($form)-1);
+			}
+
+			if ($auxForm['info']['esquerdo']=='(') {
+				$auxForm['info']['esquerdo']=NULL;
+			}
+
 			$form=substr($form, 3);		
 			$form=substr($form, 0, strlen($form)-1);
 			$auxForm['info']['direito']=$form;
@@ -70,7 +90,14 @@ function resolveParentesesTableaux($form){
 		//Mas preciso me certificar de que não é um átomo negativo, então verifico se o próximo elemento
 		//é a abertura de um parenteses
 		if($form[$i]=='!' && $form[$i+1]=='(' && $abreFormula==false){
-			$not=true;
+			//Se for um átomo, não sinaliza a flag not
+			if ($form[$i+3]==')') {
+			//faça nada			
+						
+			}
+			elseif ($abreFormula==false && $contador==0) {
+				$not=true;
+			}
 		}
 		if($form[$i]=='('){
 			$abreFormula=true;
@@ -85,7 +112,7 @@ function resolveParentesesTableaux($form){
 			
 		}
 		if($abreFormula==true){
-			if((in_array($form[$i],$listaConectivos)) && ($contador==1)){
+			if((in_array($form[$i],$listaConectivos)) && ($contador==1) && $form[$i]!='!'){
 				if($not==true){
 					$aux=$form[$i];
 					converteConectivoNot($aux);
@@ -111,6 +138,86 @@ function resolveParentesesTableaux($form){
 	}
 	$auxForm['info']['esquerdo']=substr($auxForm['info']['esquerdo'], 1);
 	$auxForm['info']['direito']=substr($auxForm['info']['direito'], 1);
+	//Correções de parênteses excedentes antes de retornar a fórmula
+	//Caso 1 - Átomo positivo
+	
+	if (strlen($auxForm['info']['esquerdo'])==3 && @$auxForm['info']['esquerdo'][0]=='(' ) {
+		$auxForm['info']['esquerdo']=substr($auxForm['info']['esquerdo'], 1);
+		$auxForm['info']['esquerdo']=substr($auxForm['info']['esquerdo'], 0, strlen($auxForm['info']['esquerdo'])-1);
+	}
+	if (strlen($auxForm['info']['direito'])==3 && @$auxForm['info']['direito'][0]=='(' ) {
+		$auxForm['info']['direito']=substr($auxForm['info']['direito'], 1);
+		$auxForm['info']['direito']=substr($auxForm['info']['direito'], 0, strlen($auxForm['info']['direito'])-1);
+	}
+	//Caso 2 - Átomo negativo
+	
+	if (strlen($auxForm['info']['esquerdo'])==6 && @$auxForm['info']['esquerdo'][0]=='(' &&  @$auxForm['info']['esquerdo'][1]=='!' ) {
+		$auxForm['info']['esquerdo']=substr($auxForm['info']['esquerdo'], 1);
+		$auxForm['info']['esquerdo']=substr($auxForm['info']['esquerdo'], 0, strlen($auxForm['info']['esquerdo'])-1);
+	}
+	if (strlen($auxForm['info']['direito'])==6 && @$auxForm['info']['direito'][0]=='(' &&  @$auxForm['info']['direito'][1]=='!') {
+		$auxForm['info']['direito']=substr($auxForm['info']['direito'], 1);
+		$auxForm['info']['direito']=substr($auxForm['info']['direito'], 0, strlen($auxForm['info']['direito'])-1);
+	}
+	
+	$auxiliar=$auxForm['info']['esquerdo'];
+	$conectivo=false;
+	$contador=0;
+	for ($i=0; $i<strlen($auxiliar); $i++){
+		if($auxiliar[$i]=='('){
+			$abreFormula=true;
+			$contador++;
+			
+		}
+		if($auxiliar[$i]==')'){
+			$contador-=1;
+			if($contador==0){
+				$abreFormula=False;
+			}
+			
+		}
+		if($abreFormula==true){
+			if((in_array($auxiliar[$i],$listaConectivos)) && ($contador==1) && $auxiliar[$i]!='!'){
+				$conectivo=true;
+				
+			}
+		}
+	}
+	if (!$conectivo) {
+		if (@$auxForm['info']['esquerdo'][0]=='(' && @$auxForm['info']['esquerdo'][strlen($auxForm['info']['esquerdo'])-1]==')') {
+			$auxForm['info']['esquerdo']=substr($auxForm['info']['esquerdo'], 1);
+			$auxForm['info']['esquerdo']=substr($auxForm['info']['esquerdo'], 0, strlen($auxForm['info']['esquerdo'])-1);
+		}
+	}
+	$contador=0;
+	$auxiliar=$auxForm['info']['direito'];
+	$conectivo=false;
+	for ($i=0; $i<strlen($auxiliar); $i++){
+		if($auxiliar[$i]=='('){
+			$abreFormula=true;
+			$contador++;
+			
+		}
+		if($auxiliar[$i]==')'){
+			$contador-=1;
+			if($contador==0){
+				$abreFormula=False;
+			}
+			
+		}
+		if($abreFormula==true){
+			if((in_array($auxiliar[$i],$listaConectivos)) && ($contador==1) && $auxiliar[$i]!='!'){
+				$conectivo=true;
+				
+			}
+		}
+	}
+	if (!$conectivo) {
+		if (@$auxForm['info']['direito'][0]=='(' && @$auxForm['info']['direito'][strlen($auxForm['info']['direito'])-1]==')') {
+			$auxForm['info']['direito']=substr($auxForm['info']['direito'], 1);
+			$auxForm['info']['direito']=substr($auxForm['info']['direito'], 0, strlen($auxForm['info']['direito'])-1);
+		}
+	}
 	return $auxForm;
 }
 function escolhaEficiente(&$listaFormulasDisponiveis,&$hashInicial,&$nosFolha,&$historicoVariaveis){
@@ -194,6 +301,8 @@ function escolhaEficiente(&$listaFormulasDisponiveis,&$hashInicial,&$nosFolha,&$
 				if (in_array($formDispAtual['info']['conectivo'],$conectivosEficientes)){
 					print "<br>Aplicando regra em<br>";
 					print_r($formDispAtual['info']);
+					print "<br>Com nó pai sendo<br>";
+					print_r(@$nosFolha[$key]['info']);
 					aplicaRegra($formDispAtual,$nosFolha[$key],$nosFolha);
 					removerFormula($listaFormulasDisponiveis,$formDispAtual['info']);
 					armazenaHistorico($historicoVariaveis,$nosFolha,$raiz,$contador+1,$listaFormulasDisponiveis);
@@ -248,7 +357,8 @@ function escolhaEficiente(&$listaFormulasDisponiveis,&$hashInicial,&$nosFolha,&$
 			}
 		}	
 	}	
-	print "<br>Erro, não houve nó para aplicar a fórmula<br>Verificar se todas as fórmulas estão fechadas<br>";	return;
+	print "<br>Erro, não houve nó para aplicar a fórmula<br>Verificar se todas as fórmulas estão fechadas<br>";	
+	return;
 }
 function escolhaUsuario(&$listaFormulasDisponiveis,&$hashInicial,$formEscolhida,&$nosFolha,&$noFolhaEscolhido=NULL){
 	global $contador;
@@ -492,6 +602,7 @@ function aplicaRegra(&$form,&$pai,&$nosFolha){
 			elseif(!checaAtomico($noAuxDir['info'])) {
 				array_push($noAuxDir['formDisponiveis'], $noAuxDir);
 			}
+
 			removerFormula($noAuxEsq['formDisponiveis'],$form['info']);
 			removerFormula($noAuxDir['formDisponiveis'],$form['info']);	
 			adicionaArray($nosFolha, $noAuxEsq);
@@ -659,6 +770,8 @@ function aplicaRegra(&$form,&$pai,&$nosFolha){
 			$noAuxCen1['hashAtomos']=$pai['hashAtomos'];
 			$noAuxCen2['hashAtomos']=$pai['hashAtomos'];
 
+			
+
 			//Correções na estrutura de dados
 			
 			corrigeArrays($noAuxCen1);			
@@ -699,6 +812,7 @@ function aplicaRegra(&$form,&$pai,&$nosFolha){
 			}
 			
 
+
 			//Se a fórmula for atômica eu adiciono átomo gerado na hash da mesma
 			//Se não for átomo, então é uma fórmula e adiciono a fórmula gerada na lista de fórmulas desse elemento
 			//Como noAuxCen1 e noAuxCen2 estão no mesmo ramo, estes devem compartilhar as informações
@@ -725,6 +839,7 @@ function aplicaRegra(&$form,&$pai,&$nosFolha){
 				array_push($noAuxCen1['formDisponiveis'], $noAuxCen2);
 				array_push($noAuxCen2['formDisponiveis'], $noAuxCen2);
 			}
+
 
 			removerFormula($noAuxCen1['formDisponiveis'],$form['info']);
 			removerFormula($noAuxCen2['formDisponiveis'],$form['info']);
@@ -806,6 +921,7 @@ function aplicaRegra(&$form,&$pai,&$nosFolha){
 			removerFormula($noAuxCen2['formDisponiveis'],$form['info']);
 				
 			adicionaArray($nosFolha, $noAuxCen2);
+
 			return;
 		//Caso extra
 		case 'not':
@@ -828,6 +944,18 @@ function aplicaRegra(&$form,&$pai,&$nosFolha){
 			foreach ($pai['formDisponiveis'] as $key => $value) {
 				print_r($pai['formDisponiveis'][$key]['info']);
 			}*/
+			return;
+		case null:
+			//Se for atômico devemos adicionar na hash e verificar se casa com alguma fórmula
+			if(checaAtomico($pai['info'])){
+				if(casarFormula($pai['hashAtomos'],$pai['info'])){
+					$pai['filhoCentral']='fechado';
+				}
+				$pai['hashAtomos'][$pai['info']['direito']]=$pai['info']['conectivo'] == 'not' ? '0':'1';	
+			}
+			
+			removerFormula($pai['formDisponiveis'],$form['info']);
+			
 			return;
 		default:
 			print_r($form['hashAtomos']);
@@ -868,8 +996,13 @@ function removerFormula(&$listaFormulas,$form){
 }
 function adicionaArray(&$array,&$valor){
 	$tam=count($array);
+	$soma=1;
 	if ($tam!=0) {
-		$array[$tam+1]=&$valor;
+		//Consertar o índice do array para evitar sobreposição
+		while (@$array[$tam+$soma]!=null) {
+			$soma++;
+		}
+		$array[$tam+$soma]=&$valor;
 	}
 	else{
 		$array[0]=&$valor;
@@ -962,12 +1095,12 @@ function formataFormulasTableaux(&$form){
 	if(@strlen(@$form['info']['esquerdo'])>3){
 		$aux=resolveParentesesTableaux($form['info']['esquerdo']);
 		$form['info']['esquerdo']=$aux;
-		formataFormulas($form['info']['esquerdo']);
+		formataFormulasTableaux($form['info']['esquerdo']);
 	}
 	if(@strlen(@$form['info']['direito'])>3){
 		$aux=resolveParentesesTableaux($form['info']['direito']);
 		$form['info']['direito']=$aux;
-		formataFormulas($form['info']['direito']);
+		formataFormulasTableaux($form['info']['direito']);
 	}
 }
 //Função que corrige casos em que temos um campo array do tipo fórmula dentro de outro

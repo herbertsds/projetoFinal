@@ -3,96 +3,56 @@ require_once("funcAuxiliares.php");
 require_once("funcTableaux.php");
 echo "<pre>";
 $listaConectivos=array("^","v","-","!");
-$form="not(AouB)";
-converteConectivoSimbolo($form);
-print "<br>".$form."<br>";
-$negaFormula=false;
-if ($form[0]=='!' || $form[1=='!']) {
-		$negaFormula=true;
+$form1=criaFormulaTableaux();
+$form2=criaFormulaTableaux();
+$form3=criaFormulaTableaux();
+
+$form3['info']['esquerdo']='E';
+$form3['info']['conectivo']='e';
+$form3['info']['direito']='F';
+
+$form2['info']['esquerdo']='C';
+$form2['info']['conectivo']='e';
+$form2['info']['direito']='D';
+$form2['filhoCentral']=$form3;
+
+$form1['info']['esquerdo']='A';
+$form1['info']['conectivo']='e';
+$form1['info']['direito']='B';
+$form1['filhoDireito']=$form2;
+
+$noFolha=$form3['info'];
+
+
+
+
+print_r($form1);
+
+deletaFilho($form1,$noFolha);
+print_r($form1);
+
+function deletaFilho(&$form,$noFolha){
+	if ($form['filhoCentral']) {
+		if ($noFolha==$form['filhoCentral']['info']) {
+			$form['filhoCentral']=null;
+			return;
+		}
+		deletaFilho($form['filhoCentral'],$noFolha);
 	}
-for($i=0; $i<strlen($form); $i++){
-	if ($negaFormula) {
-		converteConectivoNot($form);
+	if ($form['filhoEsquerdo']) {
+		if ($noFolha==$form['filhoEsquerdo']['info']) {
+			$form['filhoEsquerdo']=null;
+			return;
+		}
+		deletaFilho($form['filhoEsquerdo'],$noFolha);
 	}
+	if ($form['filhoDireito']) {
+		if ($noFolha==$form['filhoDireito']['info']) {
+			$form['filhoDireito']=null;
+			return;
+		}
+		deletaFilho($form['filhoDireito'],$noFolha);
+	}
+
 }
-$form=resolveParenteses2($form);
-print_r($form);
-
-
-//Correções de parênteses excedentes antes de retornar a fórmula
-	//Caso 1 - Átomo positivo
-	if (strlen($auxForm['esquerdo'])==3 && @$auxForm['esquerdo'][0]=='(' ) {
-		$auxForm['esquerdo']=substr($auxForm['esquerdo'], 1);
-		$auxForm['esquerdo']=substr($auxForm['esquerdo'], 0, strlen($auxForm['esquerdo'])-1);
-	}
-	if (strlen($auxForm['direito'])==3 && @$auxForm['direito'][0]=='(' ) {
-		$auxForm['direito']=substr($auxForm['direito'], 1);
-		$auxForm['direito']=substr($auxForm['direito'], 0, strlen($auxForm['direito'])-1);
-	}
-	//Caso 2 - Átomo negativo
-	if (strlen($auxForm['esquerdo'])==5 && @$auxForm['esquerdo'][0]=='('  @$auxForm['esquerdo'][1]=='!' ) {
-		$auxForm['esquerdo']=substr($auxForm['esquerdo'], 1);
-		$auxForm['esquerdo']=substr($auxForm['esquerdo'], 0, strlen($auxForm['esquerdo'])-1);
-	}
-	if (strlen($auxForm['direito'])==5 && @$auxForm['direito'][0]=='('  @$auxForm['direito'][1]=='!') {
-		$auxForm['direito']=substr($auxForm['direito'], 1);
-		$auxForm['direito']=substr($auxForm['direito'], 0, strlen($auxForm['direito'])-1);
-	}
-	$auxiliar=$auxForm['esquerdo'];
-	$conectivo=false;
-	for ($i=0; $i<strlen($auxForm['esquerdo']); $i++){
-		if($form[$i]=='('){
-			$abreFormula=true;
-			$contador++;
-			
-		}
-		if($form[$i]==')'){
-			$contador-=1;
-			if($contador==0){
-				$abreFormula=False;
-			}
-			
-		}
-		if($abreFormula==true){
-			if((in_array($form[$i],$listaConectivos)) && ($contador==1)){
-				$conectivo=true;
-				
-			}
-		}
-	}
-	if ($conectivo) {
-		if (@$auxForm['esquerdo'][0]==  && @$auxForm['esquerdo'][0]== @$auxForm['esquerdo'][0]=='(' && @$auxForm['esquerdo'][strlen($auxForm['esquerdo'])-1]==')') {
-			$auxForm['esquerdo']=substr($auxForm['esquerdo'], 1);
-			$auxForm['esquerdo']=substr($auxForm['esquerdo'], 0, strlen($auxForm['esquerdo'])-1);
-		}
-	}
-	
-	$auxiliar=$auxForm['direito'];
-	$conectivo=false;
-	for ($i=0; $i<strlen($auxForm['direito']); $i++){
-		if($form[$i]=='('){
-			$abreFormula=true;
-			$contador++;
-			
-		}
-		if($form[$i]==')'){
-			$contador-=1;
-			if($contador==0){
-				$abreFormula=False;
-			}
-			
-		}
-		if($abreFormula==true){
-			if((in_array($form[$i],$listaConectivos)) && ($contador==1)){
-				$conectivo=true;
-				
-			}
-		}
-	}
-	if ($conectivo) {
-		if (@$auxForm['direito'][0]==  && @$auxForm['direito'][0]== @$auxForm['direito'][0]=='(' && @$auxForm['direito'][strlen($auxForm['direito'])-1]==')') {
-			$auxForm['direito']=substr($auxForm['direito'], 1);
-			$auxForm['direito']=substr($auxForm['direito'], 0, strlen($auxForm['direito'])-1);
-		}
-	}
 ?>

@@ -1,5 +1,4 @@
 <?php 
-require_once("formula.php");
 require_once("funcAuxiliares.php");
 require_once("exerciciosListas.php");
 require_once("funcTableaux.php");
@@ -52,7 +51,7 @@ Colocar aqui como vou receber do front-end
 .
 */
 
-$entradaTeste=$DNNquestao5;
+$entradaTeste=$DNNquestao12;
 $tamanho=count($entradaTeste);
 
 //Passo 2
@@ -69,7 +68,6 @@ foreach ($entradaTeste as $key => $value) {
 		$hashInicial[$value['info']['direito']]=$value['info']['conectivo'] == "not" ? 0:1;
 	}
 }
-
 
 print_r($listaFormulasDisponiveis);
 print_r($hashInicial);
@@ -112,7 +110,7 @@ $contador++;
 
 
 
-while (!(todasFechadas($nosFolha)) && ($contador<10)) {
+while (!(todasFechadas($nosFolha)) && ($contador<100)) {
 	//Recebe do front-end o critério para escolha de fórmula
 	////////////////////////////////
 	//.
@@ -152,6 +150,7 @@ while (!(todasFechadas($nosFolha)) && ($contador<10)) {
 			print "<br>";
 		}
 		escolhaEficiente($listaFormulasDisponiveis,$hashInicial,$nosFolha,$historicoVariaveis);
+		
 		if (todasFechadas($nosFolha)) {
 			//print "<br>Todos os ramos já estão fechados<br>";
 			//print $contador."<br>";
@@ -168,6 +167,7 @@ while (!(todasFechadas($nosFolha)) && ($contador<10)) {
 
 	$contador++;
 }
+
 
 if (todasFechadas($nosFolha)) {
 	print "<br>Todos os ramos foram fechados com sucesso<br>";
