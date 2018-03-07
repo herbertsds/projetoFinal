@@ -6,13 +6,16 @@ use Illuminate\Http\Request;
 
 use App\Exercicios; 
 
+use App\Resolucao;
+
 class ResolucaoController extends Controller
 {
     public function index(Request $numeroExercicio){
 
     	$exercicioLista = new Exercicios('resolucao',$numeroExercicio->exercicio);
-    	$exercicioEscolhido = $exercicioLista->getExercicio();
-    	return $exercicioEscolhido;
+    	$resposta = new Resolucao($exercicioLista->getExercicio());
 
+    	return $resposta->fullSteps();
+    
     }
 }

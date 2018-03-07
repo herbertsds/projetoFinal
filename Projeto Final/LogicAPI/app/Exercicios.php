@@ -31,7 +31,7 @@ class Exercicios extends Model
     }
 
     public function getExercicioAleatorio(){
-    	$aleatorio = rand(0,count($this->listaExercicios[$this->metodo]));
+    	$aleatorio = rand(0,count($this->listaExercicios[$this->metodo])-1);
     	return $this->listaExercicios['resolucao'][$aleatorio];
     }
 
