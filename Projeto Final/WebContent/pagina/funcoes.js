@@ -20,7 +20,7 @@ ser montada dinamicamente */
 	var formulas_JSON;
 	var transformados_FNC;
 	var cont =0;
-	
+	var perguntaNegada = false;
 	// funcao apenas para testes de eventos
 	function teste(){
 		
@@ -51,8 +51,9 @@ ser montada dinamicamente */
 	
 // ------------ Escolha do tipo de Ex / carregamento da ultima tela -------------------
 	$(document).ready(function() {
-	
 
+		
+	    $('#algoritmo').tooltip({title: "Algoritmo Base<ol><li>Negar a pergunta</li><li>Passar todas as fórmulas e a pergunta para FNC</li><li>Separar todos os 'e', ou seja, cada 'e' vira uma fórmula (ou linha) independente.</li><li>Verificar se há 'átomos', havendo, confrontar átomos para ver se a resolução fecha, por exemplo A e ¬A são átomos que se contradizem e portanto fecharia a resolução.</li><li>Se não fechar, vá para a próxima etapa.  Fazer as simplificações do 'ou', se possível. Se Av¬B e AvB então A. Se Av¬B e B então A</li><li>Verificar se há átomos, havendo, confrontar átomos para ver se a resolução fecha.</li><li>Se não fechar após este último passo, o problema não é possível de resolver.</li></ol>", delay: 0}); 
 // FORMULAS -------------------------------------------------------------------------------------------------------------------		
 		// DESTAQUE AO SELECIONAR FORMULA
         $('#divFormulas').on('click', 'p',  function(e) {
@@ -272,11 +273,7 @@ ser montada dinamicamente */
 				$('#buttonPergunta').hide();
 				atualizaTela(tipoEx);
 				$('#tabExecucao').click();
-				if(regras == 0){
-					$('#1').html('');
-					$('#alertResolucao').attr("style", 'display:none');
-					// mudando a cor do campo
-				}
+				
 				//CHAMAR PASSAR PRA FNC(vet_regras)############################################################################
 			}
 		}
@@ -294,81 +291,74 @@ ser montada dinamicamente */
 		//VERIFICAR OBRIGATORIEDADE DA SEQUENCIA
 		switch(passoId){
 			case 'passo1':
-				if(formulaId=='finalVetor'){
-					alert("Atenção!\nPasse todas as fórmulas do banco para FNC.");
+				if(formulaId!='finalVetor'){
+					alert("Atenção!\nSelecione a Pergunta para ser negada.");
 				}
 				else{
-					cont++;
-					regras--;
-					$('#divFormulas').append("<p id='" + cont+ "'>Formula " + $("[id^= '0']").text() + " em FNC</p>");
-					//console.log($("p[id^='formulaId']"));
-//					.css({
-//						    'text-decoration': 'line-through'
-//
-//					});
-//					$('#divFormulas').append("<p id='" + cont+ "'>" + transformados_FNC[formulaId] + "</p>" );
-					if(regras == 0){
-						$('#passo1').off();
-
-						$('#passo1').css({
+					perguntaNegada = true;
+					// NEGAR A PERGUNTA
+//					$('#divFormulas').append("<p id='" + cont+ "'>" + perguntaNegada[] + "</p>" );
+					$('#passo1').off();
+					$('#passo1').css({
 						    'text-decoration': 'line-through',
-
 						});
-						$('#alertResolucao').fadeOut();
-						passoId = "passo2";
-						formulaId = "";
+					passoId = "passo2";
+					formulaId = "";
 					}
-				}
+				
 				break;
 			
 			case 'passo2':
-					if(regras>0){
-						alert("Atenção!\nPasse todas as fórmulas do banco para FNC.");
+					
+					if(perguntaNegada == false){
+						alert("Atenção! Deve-se negar a pergunta como primeiro passo!");
 
 					}
-					else if(formulaId == "finalVetor"){
-						perguntaFNC = true;
-						$('#divFormulas').append("<p id='" + cont+ "'>Pergunta " + $('#finalVetor').text() + " em FNC</p>");
-
-						
-						$('#passo2').off();
-						$('#finalVetor').unbind();
-
-						$('#passo2').css({
-						    'text-decoration': 'line-through'
+					else{
+						regras --;
+						cont++;
+						// PASSAR VET_REGRAS[FORMULAID] PARA FNC
+						$('#divFormulas').append("<p id='" + cont+ "'>Formula " + $('#0').text() + " em FNC</p>");
+//						$('#formulaId').off();
+//						
+//						
+//						$('#formulaId').css({
+//						    'text-decoration': 'line-through'
+//							
+//						});
+						formulaId = "";
+						if(regras ==0){
+							$('#alertResolucao').fadeOut();
+							$('#passo2').off();
 							
-						});
-
-							$('#finalVetor').css({
-
+	
+							$('#passo2').css({
 							    'text-decoration': 'line-through'
 								
 							});
-							
-						}										
+									
+						}							
+					}										
 
 						
-						
-					else{
-						alert("Selecione a pergunta!");
-						}
 				
 				break;
-			case 'passo3':
-				if(regras>0){
-					alert("Atenção!\nPasse todas as fórmulas do banco para FNC.");
-
-				}
-				else{
-					if(perguntaFNC == false){
-						alert("Atenção!\nPasse a pergunta para FNC.")
-						break;
-					}
-					else{
-						console.log("ok");
-					}//exibir pergunta negada
-				}
-				break;
+				
+//			case 'passo3':
+//				if(regras>0 || perguntaNegada == false){
+//					alert("Atenção!\nExecute os passos anteriores antes de começar o terceiro passo.");
+//
+//				}
+//				else{
+//					if(perguntaFNC == false){
+//						alert("Atenção!\nPasse a pergunta para FNC.")
+//						break;
+//					}
+//					else{
+//						console.log("ok");
+//					}//exibir pergunta negada
+//				}
+//				break;
 			default: 
 
 					break;
