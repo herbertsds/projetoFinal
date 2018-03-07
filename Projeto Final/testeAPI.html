@@ -6,7 +6,7 @@
 $(document).ready(function(){
     $("button").click(function(){
     	var myData = {
-	        'exercicio' : 5
+	        'exercicio' : 8
 	    };
         $.ajax({
 
@@ -15,7 +15,7 @@ $(document).ready(function(){
 	        callback: '?',
 	        data: myData,
 	        datatype: 'application/json',
-	        success: function(teste) { console.log(teste); },
+	        success: function(teste) { document.write(teste); },
 	        error: function() { alert('Failed!'); },
 	    });
     });

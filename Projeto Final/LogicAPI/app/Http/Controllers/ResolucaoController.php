@@ -15,7 +15,12 @@ class ResolucaoController extends Controller
     	$exercicioLista = new Exercicios('resolucao',$numeroExercicio->exercicio);
     	$resposta = new Resolucao($exercicioLista->getExercicio());
 
-    	return $resposta->fullSteps();
+    	$header = array (
+            'Content-Type' => 'application/json; charset=UTF-8',
+            'charset' => 'utf-8'
+        );
+
+    	return json_encode($resposta->fullSteps(), JSON_UNESCAPED_UNICODE);
     
     }
 }
