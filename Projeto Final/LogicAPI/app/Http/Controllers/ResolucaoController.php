@@ -13,14 +13,11 @@ class ResolucaoController extends Controller
     public function index(Request $numeroExercicio){
 
     	$exercicioLista = new Exercicios('resolucao',$numeroExercicio->exercicio);
+    	// $exercicioLista = new Exercicios('resolucao');
     	$resposta = new Resolucao($exercicioLista->getExercicio());
 
-    	$header = array (
-            'Content-Type' => 'application/json; charset=UTF-8',
-            'charset' => 'utf-8'
-        );
-
     	return json_encode($resposta->fullSteps(), JSON_UNESCAPED_UNICODE);
+    	// dd($resposta->fullSteps());
     
     }
 }
