@@ -61,27 +61,67 @@ function converteFNC(&$form){
 
 	do{
 		if(@$aux1['conectivo']=='not_e'){
-			$aux1['direito']="!(".$aux1['direito'].")";
+			if (is_array($aux1['esquerdo']) && $aux1['esquerdo']['conectivo']=='not') {
+				$aux1['esquerdo']=$aux1['esquerdo']['direito'];
+			}
+			else{
+				$aux1['esquerdo']="!(".$aux1['esquerdo'].")";
+			}
+			if (is_array($aux1['direito']) && $aux1['direito']['conectivo']=='not') {
+				$aux1['direito']=$aux1['direito']['direito'];
+			}
+			else{
+				$aux1['direito']="!(".$aux1['direito'].")";
 			$aux1['conectivo']='ou';
-			$aux1['esquerdo']="!(".$aux1['esquerdo'].")";
 		}
 
 		if(@$aux1['conectivo']=='not_ou'){
-			$aux1['direito']="!(".$aux1['direito'].")";
+			if (is_array($aux1['esquerdo']) && $aux1['esquerdo']['conectivo']=='not') {
+				$aux1['esquerdo']=$aux1['esquerdo']['direito'];
+			}
+			else{
+				$aux1['esquerdo']="!(".$aux1['esquerdo'].")";
+			}
+			if (is_array($aux1['direito']) && $aux1['direito']['conectivo']=='not') {
+				$aux1['direito']=$aux1['direito']['direito'];
+			}
+			else{
+				$aux1['direito']="!(".$aux1['direito'].")";
+			}
 			$aux1['conectivo']='e';
-			$aux1['esquerdo']="!(".$aux1['esquerdo'].")";
 		}
 
 		if(@$aux2['conectivo']=='not_e'){
-			$aux2['direito']="!(".$aux2['direito'].")";
+			if (is_array($aux2['esquerdo']) && $aux2['esquerdo']['conectivo']=='not') {
+				$aux2['esquerdo']=$aux2['esquerdo']['direito'];
+			}
+			else{
+				$aux2['esquerdo']="!(".$aux2['esquerdo'].")";
+			}
+			if (is_array($aux2['direito']) && $aux2['direito']['conectivo']=='not') {
+				$aux2['direito']=$aux2['direito']['direito'];
+			}
+			else{
+				$aux2['direito']="!(".$aux2['direito'].")";
+			}
 			$aux2['conectivo']='ou';
-			$aux2['esquerdo']="!(".$aux2['esquerdo'].")";
 		}
-
 		if(@$aux2['conectivo']=='not_ou'){
-			$aux2['direito']="!(".$aux2['direito'].")";
+			if (is_array($aux2['direito']) && $aux2['direito']['conectivo']=='not') {
+				$aux2['direito']=$aux2['direito']['direito'];
+			}
+			else{
+				$aux2['direito']="!(".$aux2['direito'].")";
+			}
+			
 			$aux2['conectivo']='e';
-			$aux2['esquerdo']="!(".$aux2['esquerdo'].")";
+			if (is_array($aux2['esquerdo']) && $aux2['esquerdo']['conectivo']=='not') {
+				$aux2['esquerdo']=$aux2['esquerdo']['direito'];
+			}
+			else{
+				$aux2['esquerdo']="!(".$aux2['esquerdo'].")";
+			}
+			
 		}
 		if(@is_array($aux1['esquerdo'])){
 			$array1=$aux1;
