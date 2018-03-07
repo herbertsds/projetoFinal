@@ -22,16 +22,15 @@ class Exercicios extends Model
      */
     public function getExercicio()
     {
-        if ($this->numeroExercicio == NULL){
+        if ($this->numeroExercicio === NULL){
         	return $this->getExercicioAleatorio();
         }else{
-
         	return $this->listaExercicios[$this->metodo][$this->numeroExercicio];
         }
     }
 
     public function getExercicioAleatorio(){
-    	$aleatorio = rand(0,count($this->listaExercicios[$this->metodo]));
+    	$aleatorio = rand(0,count($this->listaExercicios[$this->metodo])-1);
     	return $this->listaExercicios['resolucao'][$aleatorio];
     }
 

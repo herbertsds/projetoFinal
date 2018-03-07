@@ -26,7 +26,11 @@ $tamanho=0;
 //Passos 1 e 2
 
 //Entrada
+<<<<<<< HEAD
 $entradaTeste= $DNNquestao19;
+=======
+$entradaTeste= $DNNquestao5;
+>>>>>>> f844bf67dfaa7d26e9d36185de8c54b2db98cf81
 $tamanho=count($entradaTeste);
 
 //Receber a entrada do Front-End
