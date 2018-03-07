@@ -243,6 +243,7 @@ function resolveParenteses2($form){
 			if ($auxForm['esquerdo']=='(') {
 				$auxForm['esquerdo']=NULL;
 			}
+
 			$form=substr($form, 4);		
 			$form=substr($form, 0, strlen($form)-1);
 			$auxForm['direito']=$form;
@@ -279,15 +280,9 @@ function resolveParenteses2($form){
 			//faça nada			
 						
 			}
-			//Se o not for para uma fórmula mais interna e não para fórmula externa como um todo
-			//Melhor tratar aqui
-			
-
 			elseif ($abreFormula==false && $contador==0) {
 				$not=true;
 			}
-				
-			
 			
 		}
 		if($form[$i]=='('){

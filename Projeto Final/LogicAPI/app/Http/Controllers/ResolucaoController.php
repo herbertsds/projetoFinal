@@ -12,6 +12,7 @@ class ResolucaoController extends Controller
 {
     public function index(Request $numeroExercicio){
 
+
     	$exercicioLista = new Exercicios('resolucao',$numeroExercicio->exercicio);
     	// $exercicioLista = new Exercicios('resolucao');
     	$resposta = new Resolucao($exercicioLista->getExercicio());

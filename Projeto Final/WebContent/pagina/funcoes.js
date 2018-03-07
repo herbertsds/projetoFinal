@@ -1,3 +1,4 @@
+// BLOQUEAR ULTIMA ABA ATE EXERCICIO SER ESCOLHIDO
 // Separar as funcoes dos diferentes tipos em js diferentes
 // ao clicar em + armazernar as regras e a pergunta em um vetor - ok
 // ir apresentando dinamicamente as regras ja adicionadas em uma area na lateral direita - ok 
@@ -52,9 +53,10 @@ ser montada dinamicamente */
 // ------------ Escolha do tipo de Ex / carregamento da ultima tela -------------------
 	$(document).ready(function() {
 
-		
-	    $('#algoritmo').tooltip({title: "Algoritmo Base<ol><li>Negar a pergunta</li><li>Passar todas as fórmulas e a pergunta para FNC</li><li>Separar todos os 'e', ou seja, cada 'e' vira uma fórmula (ou linha) independente.</li><li>Verificar se há 'átomos', havendo, confrontar átomos para ver se a resolução fecha, por exemplo A e ¬A são átomos que se contradizem e portanto fecharia a resolução.</li><li>Se não fechar, vá para a próxima etapa.  Fazer as simplificações do 'ou', se possível. Se Av¬B e AvB então A. Se Av¬B e B então A</li><li>Verificar se há átomos, havendo, confrontar átomos para ver se a resolução fecha.</li><li>Se não fechar após este último passo, o problema não é possível de resolver.</li></ol>", delay: 0}); 
-// FORMULAS -------------------------------------------------------------------------------------------------------------------		
+		 $('[data-toggle="popover"]').popover();
+
+		 
+		 // FORMULAS -------------------------------------------------------------------------------------------------------------------		
 		// DESTAQUE AO SELECIONAR FORMULA
         $('#divFormulas').on('click', 'p',  function(e) {
         	$('p').css({
@@ -228,10 +230,12 @@ ser montada dinamicamente */
 			
 			case "resolucao":
 				  for (cont = 0; cont in vet_regras; cont++){
-						$('#divFormulas').append("<p id='" + cont+ "'>" + vet_regras[cont] + "</p>" );
+					  numLinha = cont+1;
+						$('#divFormulas').append(numLinha + ": " + "<p id='" + cont+ "'>" + vet_regras[cont] + "</p>" );
 	
 				  }
-				$('#divFormulas').append("<p id='finalVetor'>" + pergunta + "</p>" );
+				  numLinha++;
+				$('#divFormulas').append(numLinha + " - Pergunta - : " + "<p id='finalVetor'>" + pergunta + "</p>" );
 				
 			break;
 			case "deducao":
@@ -380,10 +384,58 @@ ser montada dinamicamente */
 	}
 	// ######################################################################################################
 	
+	function f_Gabarito(){
 		
+		alert('gabarito');
+		console.log("aqui");
+	}
 	
+	function f_Next(){
+		alert("next");
+	}
 	
-	
-	
+	function f_buscaExercicio(){
+    	var numExercicio = $('#numExercicio').val();
+		$('#regrasAdicionadas').text("");
+		$('#perguntaAdicionada').text("");
+		$('#divFormulas').empty();
+
+		vet_regras = [];
+		var myData = {
+    	        'exercicio' : numExercicio
+    	    };
+            $.ajax({
+
+    	        url: 'http://127.0.0.1:8000/api/resolucao',
+    	        type: 'GET',
+    	        callback: '?',
+    	        data: myData,
+    	        datatype: 'application/json',
+    	        success: function(teste) {
+//    	        	console.log(teste); 
+    				$('#regra').prop('disabled', true);
+    				$('#pergunta').prop('disabled', true);
+    				$('#buttonRegra').hide();
+    				$('#buttonPergunta').hide();
+    				var limiteFormulas = ((teste.length) -1);
+//    				console.log(limiteFormulas);
+    				for (var data = 0; data < limiteFormulas; data++) {
+    					  
+    					  
+    						vet_regras.push(teste[data]);
+    						adicionadas = teste[data];
+    						
+    						$('#regrasAdicionadas').append("<br/>" + adicionadas );
+    						regras++;   					  
+    					  
+    					}
+    				pergunta = teste[limiteFormulas];
+//    				console.log(pergunta);
+    				$('#perguntaAdicionada').append("<br/>" + teste[limiteFormulas] );
+    				atualizaTela(tipoEx);
+    	        },
+    	        error: function() { alert('Failed!'); },
+    	    });
+	}
 	
 	

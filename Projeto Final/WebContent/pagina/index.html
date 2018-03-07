@@ -29,7 +29,23 @@
   <script src="funcoes.js" type="text/javascript"></script>
   <script src="teste.js" type="text/javascript"></script>
 	
-	
+		<style>
+		 .popover-content {
+		      background-color: PaleGoldenRod ;
+		      color: #000000;
+		      padding: 15px;
+		  }
+		 .popover-title {
+		    background-color: GoldenRod ;
+		    color: #000000;
+		    font-size: 14px;
+		    text-align:center;
+		}
+		.popover {
+			border: 1px solid #C0C0C0;
+		 }
+				
+		 </style>	
 
 </head>
 
@@ -86,16 +102,16 @@
 		                                                <input type="radio" name="escolha" value="tableaux">
 		                    
 		                                                <div class="icon" id="botaoTableaux">
-		                                                    <i class="material-icons">weekend</i>
+		                                                    <i class="material-icons">call_split</i>
 		                                                </div>
 		                                                <h6>Tableaux</h6>
 		                                            </div>
 		                                        </div>
 		                                        <div class="col-sm-4">
 		                                            <div class="choice" data-toggle="wizard-radio" rel="tooltip" title="Método de Resolução">
-		                                                <input type="radio" name="escoha" value="resolucao">
+		                                                <input type="radio" name="escolha" value="resolucao">
 		                                                <div class="icon" id="botaoResolucao">
-		                                                    <i class="material-icons">home</i>
+		                                                    <i class="material-icons">live_tv</i>
 		                                                </div>
 		                                                <h6>Resolução</h6>
 		                                            </div>
@@ -104,7 +120,7 @@
 		                                            <div class="choice" data-toggle="wizard-radio" rel="tooltip" title="Método de Dedução Natural">
 		                                                <input type="radio" name="escolha" value="deducao">
 		                                                <div class="icon" id="botaoDeducao">
-		                                                    <i class="material-icons">business</i>
+		                                                    <i class="material-icons">search</i>
 		                                                </div>
 		                                                <h6>Deducao Natural</h6>
 		                                            </div>
@@ -118,30 +134,40 @@
 		                  
 		                            <div class="tab-pane" id="exercicio" style="display: none">
 		                            	<div class="row">
+		                            	
 		                                	<div class="col-sm-6 col-sm-offset-0">
-												<div class="dropdown">
-												  <button class="btn btn-info btn-sm dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-												    Listas de Exercícíos
-												  </button>
-												  <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
-												    <h6 class="dropdown-header">Lista 1</h6>
-												    <button class="dropdown-item" type="button">Ex.1</button>
-												    <button class="dropdown-item" type="button">Ex.2</button>
-												    <h6 class="dropdown-header">Lista 2</h6>
-												    <button class="dropdown-item" type="button">Ex.1</button>
-												    <button class="dropdown-item" type="button">Ex.2</button>
-												    <button class="dropdown-item" type="button">Ex.3</button>
-												    <h6 class="dropdown-header">Lista 3</h6>
-												    <button class="dropdown-item" type="button">Ex.1</button>
-												    <button class="dropdown-item" type="button">Ex.2</button>
+<!-- 												<div class="dropdown"> -->
+<!-- 												  <button class="btn btn-info btn-sm dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> -->
+<!-- 												    Listas de Exercícíos -->
+<!-- 												  </button> -->
+<!-- 												  <div class="dropdown-menu" aria-labelledby="dropdownMenu2"> -->
+<!-- 												    <h6 class="dropdown-header">Lista 1</h6> -->
+<!-- 												    <button class="dropdown-item" type="button">Ex.1</button> -->
+<!-- 												    <button class="dropdown-item" type="button">Ex.2</button> -->
+<!-- 												    <h6 class="dropdown-header">Lista 2</h6> -->
+<!-- 												    <button class="dropdown-item" type="button">Ex.1</button> -->
+<!-- 												    <button class="dropdown-item" type="button">Ex.2</button> -->
+<!-- 												    <button class="dropdown-item" type="button">Ex.3</button> -->
+<!-- 												    <h6 class="dropdown-header">Lista 3</h6> -->
+<!-- 												    <button class="dropdown-item" type="button">Ex.1</button> -->
+<!-- 												    <button class="dropdown-item" type="button">Ex.2</button> -->
 												    
-												  </div>
+<!-- 												  </div> -->
+<!-- 												</div> -->
+												<div class="input-group">
+													
+													<div class="form-group label-floating">
+			                                          	<label class="control-label">Número do Exercício</label>
+			                                          	<input name="numExercicio" id="numExercicio" type="text" class="form-control">
+			                                          	<button class='btn btn-info btn-xs' type="button" id="buttonBuscaExercicio" onclick="f_buscaExercicio()">Buscar exercício</button>
+			                                        </div>
 												</div>
+												
 												<div class="input-group">											
 													<div class="form-group label-floating">
 			                                          	<label class="control-label">Regra</label>
 			                                          	<input name="regra" id="regra" 	type="text" class="form-control">
-			                                          	<button type="button" id="buttonRegra" onClick="f_AddRegra()"> + </button>
+			                                          	<button class='btn btn-info btn-xs' type="button" id="buttonRegra" onClick="f_AddRegra()"> Adicionar regra </button>
 			                                        </div>
 												</div>
 
@@ -150,7 +176,7 @@
 													<div class="form-group label-floating">
 			                                          	<label class="control-label">Pergunta</label>
 			                                          	<input name="pergunta" id="pergunta" type="text" class="form-control">
-			                                          	<button type="button" id="buttonPergunta" onclick="f_AddPergunta()"> + </button>
+			                                          	<button class='btn btn-info btn-xs' type="button" id="buttonPergunta" onclick="f_AddPergunta()"> Adicionar pergunta </button>
 			                                        </div>
 												</div>
 											</div>		
@@ -199,10 +225,8 @@
 														<span id='passo2'>- Passar todas as fórmulas e a Pergunta para FNC</span> </br>
 														
 														<article id='passo3'>- Desenvolver o exercício até encontrar o absurdo ▭ </article> </br> 
-														
-														<article class="d-inline-block" tabindex="0" data-toggle="tooltip" id='algoritmo' data-placement="left" data-html="true" >
-														  <button class="btn btn-success btn-sm" style="pointer-events: none;" type="button" disabled>Algoritmo completo aqui</button>		
-														</article>
+														<button type="button"  class="btn btn-success btn-sm" data-trigger="focus" data-toggle="popover" data-placement="left" data-content="<ol><li>Negar a pergunta</li><li>Passar todas as fórmulas e a pergunta para FNC</li><li>Separar todos os 'e', ou seja, cada 'e' vira uma fórmula (ou linha) independente.</li><li>Verificar se há 'átomos', havendo, confrontar átomos para ver se a resolução fecha, por exemplo A e ¬A são átomos que se contradizem e portanto fecharia a resolução.</li><li>Se não fechar, vá para a próxima etapa.  Fazer as simplificações do 'ou', se possível. Se Av¬B e AvB então A. Se Av¬B e B então A</li><li>Verificar se há átomos, havendo, confrontar átomos para ver se a resolução fecha.</li><li>Se não fechar após este último passo, o problema não é possível de resolver.</li></ol>" data-html="true"  title="Algoritmo Base" data-content="">Algoritmo completo aqui</button>
+					
 													</div>
 												
 													<div class="inicioEx">
@@ -212,8 +236,9 @@
 														<div  id="divFormulas">
 													
 														</div>	
-														<input type="button" id="simplificarRegra" class="btn btn-info btn-sm"  onclick='simplificar()' value='Simplificar Regras' />			
-													
+														<button type="button" id="simplificarRegra" class="btn btn-info btn-sm"  onclick='simplificar()' >Simplificar Regras</button>			
+														<button type="button" id="btn_ProximoPasso" class="btn btn-danger btn-sm"  onclick='f_Next()' >Próximo passo </button>			
+																											
 													</div>
 												</div>
 												
@@ -243,7 +268,7 @@
 	                        	<div class="wizard-footer">
 	                            	<div class="pull-right">
 	                                    <input disabled type='button' class='btn btn-next btn-fill btn-danger btn-wd' id="next" name='next' value='Next'  />
-	                                    <input type='button' class='btn btn-finish btn-fill btn-danger btn-wd' id="finish" name='finish' value='Finish' />
+	                                    <input type='button' class='btn btn-finish btn-fill btn-warning btn-wd' id="gabarito" name='gabarito' value='Gabarito' onclick='f_Gabarito()' />
 	                                </div>
 	                                <div class="pull-left">
 	                                    <input type='button' class='btn btn-previous btn-fill btn-default btn-wd' id="previous" name='previous' value='Previous' />
