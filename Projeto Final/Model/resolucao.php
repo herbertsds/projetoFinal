@@ -27,7 +27,7 @@ $tamanho=0;
 
 //Entrada
 
-$entradaTeste= $DNNquestao50;
+$entradaTeste= $DNNquestao40;
 
 $tamanho=count($entradaTeste);
 
@@ -94,8 +94,18 @@ print_r($entradaConvertida);
 $contador=0;
 $flag=false;
 while ($contador <= 10){
-	
+	if ($contador==0) {
+		print "<br>Correção nos arrays<br>";
 
+			foreach ($entradaConvertida as $key => $value) {
+				print_r($entradaConvertida[$key]);
+				corrigeArrays($entradaConvertida[$key]);
+				corrigeAtomos($entradaConvertida[$key]);
+				
+				
+			}
+	}
+	
 	//Passo 4
 	$aux1['esquerdo']=NULL;
 	$aux1['conectivo']=NULL;
@@ -138,8 +148,8 @@ while ($contador <= 10){
 
 	foreach ($arrayFormulas as $key => $value) {
 		corrigeArrays($arrayFormulas[$key]);
-		corrigeAtomos($corrigeAtomos[$key]['esquerdo']);
-		corrigeAtomos($corrigeAtomos[$key]['direito']);
+		corrigeAtomos($arrayFormulas[$key]['esquerdo']);
+		corrigeAtomos($arrayFormulas[$key]['direito']);
 	}
 
 	//Passo 5 - REPETIÇÃO

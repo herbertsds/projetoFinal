@@ -252,6 +252,8 @@ function resolveImplicacoes(&$form){
 	//Caso de implicação dentro de um not
 	implica:
 	while($flag){
+		//print "<br>Fórmula<br>";
+		//print_r($form);
 		if($form['conectivo']=="not_implica"){
 			//Se já houver um "not", remove
 			if ($form['direito'][0]=='!') {
@@ -267,6 +269,7 @@ function resolveImplicacoes(&$form){
 			
 			$form['conectivo']="e";
 		}
+		
 		//Caso de implicação sem not
 		elseif($form['conectivo']=="implica"){
 			//Se já houver um "not", remove
