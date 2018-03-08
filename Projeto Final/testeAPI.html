@@ -15,7 +15,11 @@ $(document).ready(function(){
 	        callback: '?',
 	        data: myData,
 	        datatype: 'application/json',
-	        success: function(teste) { console.log(teste); },
+	        success: function(teste) { 
+	        console.log(teste);
+	        var obj = JSON.parse(teste);
+	        console.log(obj[0]);
+	        },
 	        error: function() { alert('Failed!'); },
 	    });
     });
