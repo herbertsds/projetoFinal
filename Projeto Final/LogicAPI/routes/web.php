@@ -14,13 +14,14 @@ Route::group(['prefix' => 'api'], function(){
 	
 	Route::group(['prefix' => 'tableaux', 'middleware' => 'cors'], function(){
 		
-		Route::get('/', function () {
+		Route::get('/', 'TableauxController@index');
+		/*Route::get('/', function () {
 		    return 'Recebe uma nova proposição';
 		});
 
 		Route::post('', function () {
 		    return request();
-		});
+		});*/
 
 	});
 
