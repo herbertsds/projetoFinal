@@ -28,6 +28,8 @@ Route::group(['prefix' => 'api'], function(){
 		
 		Route::get('/', 'ResolucaoController@index');
 
+		Route::get('/exercicio', 'ResolucaoController@exercicio');
+
 		Route::post('', function () {
 		    return 'Resolucao';
 		});

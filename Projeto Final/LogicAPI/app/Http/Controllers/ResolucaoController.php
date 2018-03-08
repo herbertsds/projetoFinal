@@ -21,4 +21,11 @@ class ResolucaoController extends Controller
     	// dd($resposta->fullSteps());
     
     }
+
+    public function exercicio(Request $numeroExercicio){
+    	$exercicioLista = new Exercicios('resolucao',$numeroExercicio->exercicio);
+    	$resposta = $exercicioLista->getExercicio();
+
+    	return json_encode($resposta, JSON_UNESCAPED_UNICODE);
+    }
 }

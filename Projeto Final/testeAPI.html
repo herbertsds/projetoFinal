@@ -10,12 +10,12 @@ $(document).ready(function(){
 	    };
         $.ajax({
 
-	        url: 'http://127.0.0.1:8000/api/resolucao',
+	        url: 'http://127.0.0.1:8000/api/resolucao/exercicio',
 	        type: 'GET',
 	        callback: '?',
 	        data: myData,
 	        datatype: 'application/json',
-	        success: function(teste) { document.write(teste); },
+	        success: function(teste) { console.log(teste); },
 	        error: function() { alert('Failed!'); },
 	    });
     });
