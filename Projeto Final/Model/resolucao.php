@@ -26,7 +26,9 @@ $tamanho=0;
 //Passos 1 e 2
 
 //Entrada
-$entradaTeste= $DNNquestao5;
+
+$entradaTeste= $DNNquestao40;
+
 $tamanho=count($entradaTeste);
 
 //Receber a entrada do Front-End
@@ -92,8 +94,18 @@ print_r($entradaConvertida);
 $contador=0;
 $flag=false;
 while ($contador <= 10){
-	
+	if ($contador==0) {
+		print "<br>Correção nos arrays<br>";
 
+			foreach ($entradaConvertida as $key => $value) {
+				print_r($entradaConvertida[$key]);
+				corrigeArrays($entradaConvertida[$key]);
+				corrigeAtomos($entradaConvertida[$key]);
+				
+				
+			}
+	}
+	
 	//Passo 4
 	$aux1['esquerdo']=NULL;
 	$aux1['conectivo']=NULL;
@@ -123,6 +135,10 @@ while ($contador <= 10){
 		print_r($arrayFormulas);
 		print_r($hashResolucao);
 
+	foreach ($arrayFormulas as $key => $value) {
+		corrigeArrays($arrayFormulas[$key]);
+	}
+
 	//Simplificação do tipo: Se Av¬B e AvB então A.
 	separarOU2($arrayFormulas);
 
@@ -130,6 +146,11 @@ while ($contador <= 10){
 		print_r($arrayFormulas);
 		print_r($hashResolucao);	
 
+	foreach ($arrayFormulas as $key => $value) {
+		corrigeArrays($arrayFormulas[$key]);
+		corrigeAtomos($arrayFormulas[$key]['esquerdo']);
+		corrigeAtomos($arrayFormulas[$key]['direito']);
+	}
 
 	//Passo 5 - REPETIÇÃO
 	confrontaAtomos($arrayFormulas,$hashResolucao,$flag);
