@@ -37,9 +37,9 @@ function converteFNC(&$form){
 	//Primeiro, remover a implicação, se houver
 	
 	resolveImplicacoes($form);
-	//print "PRIMEIRO PASSO CONCLUÍDO";
+	//print "<br>PRIMEIRO PASSO CONCLUÍDO<br>";
+	//print_r($form);
 
-		
 	//Segundo Passar todos os not fora de parênteses para dentro
 
 	formataFormulas($form);
@@ -58,7 +58,7 @@ function converteFNC(&$form){
 		$form['conectivo']='e';
 		$form['esquerdo']="!(".$form['esquerdo'].")";
 	}
-
+	
 	do{
 		if(@$aux1['conectivo']=='not_e'){
 			if (is_array($aux1['esquerdo']) && $aux1['esquerdo']['conectivo']=='not') {
@@ -73,6 +73,7 @@ function converteFNC(&$form){
 			else{
 				$aux1['direito']="!(".$aux1['direito'].")";
 			$aux1['conectivo']='ou';
+			}
 		}
 
 		if(@$aux1['conectivo']=='not_ou'){
@@ -106,6 +107,7 @@ function converteFNC(&$form){
 			}
 			$aux2['conectivo']='ou';
 		}
+		
 		if(@$aux2['conectivo']=='not_ou'){
 			if (is_array($aux2['direito']) && $aux2['direito']['conectivo']=='not') {
 				$aux2['direito']=$aux2['direito']['direito'];
@@ -123,14 +125,14 @@ function converteFNC(&$form){
 			}
 			
 		}
-		if(@is_array($aux1['esquerdo'])){
+		if(@is_array($aux1['esquerdo']) && $aux1['esquerdo']['conectivo']!='not'){
 			$array1=$aux1;
 			$aux1=$aux1['esquerdo'];
 		}
-		else{
-			break;
-		}
-		if(@is_array($aux2['direito'])){
+		//else{
+		//	break;
+		//}
+		if(@is_array($aux2['direito']) && $aux1['esquerdo']['conectivo']!='not'){
 			$array2=$aux2;
 			$aux2=$aux2['direito'];
 		}
@@ -140,6 +142,8 @@ function converteFNC(&$form){
 		$c++;
 	}while ($array1['esquerdo'] || $array1['direito'] || $array2['esquerdo'] || $array2['direito']);
 
+	//print "<br>SEGUNDO PASSO CONCLUÍDO<BR>";
+	//print_r($form);
 	
 
 
@@ -248,10 +252,13 @@ function resolveImplicacoes(&$form){
 	//Caso de implicação dentro de um not
 	implica:
 	while($flag){
-		//print "<br>Fórmula<br>";
-		//print_r($form);
 		if($form['conectivo']=="not_implica"){
-			if(@strlen($form['direito'])==1){
+			//Se já houver um "not", remove
+			if ($form['direito'][0]=='!') {
+				$form['direito']=substr($form['direito'], 1);
+			}
+
+			elseif(@strlen($form['direito'])==1){
 				$form['direito']="!(".$form['direito'].")";
 			}
 			else{
@@ -262,7 +269,12 @@ function resolveImplicacoes(&$form){
 		}
 		//Caso de implicação sem not
 		elseif($form['conectivo']=="implica"){
-			if(@strlen($form['esquerdo'])==1){
+			//Se já houver um "not", remove
+			if ($form['esquerdo'][0]=='!') {
+				$form['esquerdo']=substr($form, 1);
+			}
+
+			elseif(@strlen($form['esquerdo'])==1){
 				$form['esquerdo']="!(".$form['esquerdo'].")";
 			}
 			else{
@@ -637,5 +649,32 @@ function corrigeAtomos(&$form){
 			$form['direito']=$form['direito']['direito'];
 		}
 	}
+	
+	if (@strlen(@$form['esquerdo'])==3 && @$form['esquerdo'][0]=='(' ) {
+		$form['esquerdo']=substr($form['esquerdo'], 1);
+		$form['esquerdo']=substr($form['esquerdo'], 0, strlen($form['esquerdo'])-1);
+		//$form['esquerdo']=$form;
+	}
+	if (@strlen(@$form['direito'])==3 && @$form['direito'][0]=='(' ) {
+		$form['direito']=substr($form['direito'], 1);
+		$form['direito']=substr($form['direito'], 0, strlen($form['direito'])-1);
+		//$form['direito']=$form['direito'];
+	}
+}
+function corrigeArrays(&$form){
+	if (@$form['esquerdo']==NULL && @is_array($form['direito'])) {
+		$aux1=$form['direito'];
+		$form['esquerdo']=$aux1['esquerdo'];
+		$form['conectivo']=$aux1['conectivo'];
+		$form['direito']=$aux1['direito'];
+		return;
+	}
+	if (@$form['direito']==NULL && @is_array($form['esquerdo'])) {
+		$aux1=$form['esquerdo'];
+		$form['esquerdo']=$aux1['esquerdo'];
+		$form['conectivo']=$aux1['conectivo'];
+		$form['direito']=$aux1['direito'];
+	}
+	return;
 }
 ?>

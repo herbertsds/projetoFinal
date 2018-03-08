@@ -26,11 +26,9 @@ $tamanho=0;
 //Passos 1 e 2
 
 //Entrada
-<<<<<<< HEAD
-$entradaTeste= $DNNquestao19;
-=======
-$entradaTeste= $DNNquestao5;
->>>>>>> f844bf67dfaa7d26e9d36185de8c54b2db98cf81
+
+$entradaTeste= $DNNquestao50;
+
 $tamanho=count($entradaTeste);
 
 //Receber a entrada do Front-End
@@ -127,6 +125,10 @@ while ($contador <= 10){
 		print_r($arrayFormulas);
 		print_r($hashResolucao);
 
+	foreach ($arrayFormulas as $key => $value) {
+		corrigeArrays($arrayFormulas[$key]);
+	}
+
 	//Simplificação do tipo: Se Av¬B e AvB então A.
 	separarOU2($arrayFormulas);
 
@@ -134,6 +136,11 @@ while ($contador <= 10){
 		print_r($arrayFormulas);
 		print_r($hashResolucao);	
 
+	foreach ($arrayFormulas as $key => $value) {
+		corrigeArrays($arrayFormulas[$key]);
+		corrigeAtomos($corrigeAtomos[$key]['esquerdo']);
+		corrigeAtomos($corrigeAtomos[$key]['direito']);
+	}
 
 	//Passo 5 - REPETIÇÃO
 	confrontaAtomos($arrayFormulas,$hashResolucao,$flag);
