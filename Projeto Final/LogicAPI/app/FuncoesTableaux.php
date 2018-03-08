@@ -232,7 +232,7 @@ class FuncoesTableaux extends Model
 	public static function escolhaEficiente(&$listaFormulasDisponiveis,&$hashInicial,&$nosFolha,&$historicoVariaveis,&$raiz,&$contador){
 		//Verificação para saber se a função foi chamada mesmo
 		//que todas os ramos já estejam fechados
-		if (FuncoesTableaux::todasFechadas($nosFolha)) {
+		if (FuncoesTableaux::todasFechadas($nosFolha,$contador)) {
 			print "<br>Todos os ramos já estão fechados<br>";
 			print $contador."<br>";
 			return;
@@ -258,7 +258,7 @@ class FuncoesTableaux extends Model
 					$raiz['hashAtomos']=$hashInicial;
 					print "<br>Aplicando regra em<br>";
 					print_r($raiz['info']);
-					FuncoesTableaux::aplicaRegra($raiz,$raiz,$nosFolha);
+					FuncoesTableaux::aplicaRegra($raiz,$raiz,$nosFolha,$contador);
 					FuncoesTableaux::removerFormula($listaFormulasDisponiveis,$raiz['info']);
 					FuncoesTableaux::armazenaHistorico($historicoVariaveis,$nosFolha,$raiz,$contador+1,$listaFormulasDisponiveis);
 					return;
@@ -277,7 +277,7 @@ class FuncoesTableaux extends Model
 			
 			$raiz['formDisponiveis']=$listaFormulasDisponiveis;
 			$raiz['hashAtomos']=$hashInicial;
-			FuncoesTableaux::aplicaRegra($raiz,$raiz,$nosFolha);
+			FuncoesTableaux::aplicaRegra($raiz,$raiz,$nosFolha,$contador);
 			print "<br>Aplicando regra em<br>";
 			print_r($raiz['info']);
 			FuncoesTableaux::removerFormula($listaFormulasDisponiveis,$raiz['info']);
@@ -310,13 +310,13 @@ class FuncoesTableaux extends Model
 						print_r($formDispAtual['info']);
 						print "<br>Com nó pai sendo<br>";
 						print_r(@$nosFolha[$key]['info']);
-						FuncoesTableaux::aplicaRegra($formDispAtual,$nosFolha[$key],$nosFolha);
+						FuncoesTableaux::aplicaRegra($formDispAtual,$nosFolha[$key],$nosFolha,$contador);
 						FuncoesTableaux::removerFormula($listaFormulasDisponiveis,$formDispAtual['info']);
 						FuncoesTableaux::armazenaHistorico($historicoVariaveis,$nosFolha,$raiz,$contador+1,$listaFormulasDisponiveis);
 						//OTIMIZAR - NÃO PODE ACONTECER
 						//Verificação para saber se a função foi chamada mesmo
 						//que todas os ramos já estejam fechados
-						if (FuncoesTableaux::todasFechadas($nosFolha)) {
+						if (FuncoesTableaux::todasFechadas($nosFolha,$contador)) {
 							print "<br>Todos os ramos já estão fechados<br>";
 							print $contador."<br>";
 							return;
@@ -348,13 +348,13 @@ class FuncoesTableaux extends Model
 					print_r($formDispAtual['info']);
 					print "<br>Com nó pai sendo<br>";
 					print_r($nosFolha[$key]['info']);
-					FuncoesTableaux::aplicaRegra($formDispAtual,$nosFolha[$key],$nosFolha);
+					FuncoesTableaux::aplicaRegra($formDispAtual,$nosFolha[$key],$nosFolha,$contador);
 					FuncoesTableaux::removerFormula($listaFormulasDisponiveis,$formDispAtual['info']);
 					FuncoesTableaux::armazenaHistorico($historicoVariaveis,$nosFolha,$raiz,$contador+1,$listaFormulasDisponiveis);
 					//OTIMIZAR - NÃO PODE ACONTECER
 					//Verificação para saber se a função foi chamada mesmo
 					//que todas os ramos já estejam fechados
-					if (FuncoesTableaux::todasFechadas($nosFolha)) {
+					if (FuncoesTableaux::todasFechadas($nosFolha,$contador)) {
 						print "<br>Todos os ramos já estão fechados<br>";
 						print $contador."<br>";
 						return;
@@ -373,12 +373,12 @@ class FuncoesTableaux extends Model
 			$raiz=$formEscolhida;
 			$raiz['formDisponiveis']=$listaFormulasDisponiveis;
 			$raiz['hashAtomos']=$hashInicial;
-			FuncoesTableaux::aplicaRegra($raiz,$raiz,$nosFolha);
+			FuncoesTableaux::aplicaRegra($raiz,$raiz,$nosFolha,$contador);
 			FuncoesTableaux::removerFormula($listaFormulasDisponiveis,$formEscolhida['info']);
 			return;
 		}
 		else{
-			FuncoesTableaux::aplicaRegra($formEscolhida,$noFolhaEscolhido,$nosFolha);
+			FuncoesTableaux::aplicaRegra($formEscolhida,$noFolhaEscolhido,$nosFolha,$contador);
 			FuncoesTableaux::removerFormula($listaFormulasDisponiveis,$formEscolhida['info']);
 			return;
 		}
@@ -400,8 +400,7 @@ class FuncoesTableaux extends Model
 		return $auxForm;
 
 	}
-	public static function aplicaRegra(&$form,&$pai,&$nosFolha){
-		global $contador;
+	public static function aplicaRegra(&$form,&$pai,&$nosFolha,&$contador){
 		//Inicializando variáveis auxiliares com suas respectivas estruturas de dados
 		$noAuxCen1=FuncoesTableaux::criaFormulaTableaux();
 		$noAuxCen1['atualCentral']=true;
@@ -1043,8 +1042,7 @@ class FuncoesTableaux extends Model
 			array_push($array1, $arrayAux[$key]);
 		}
 	}
-	public static function todasFechadas($nosFolha){
-		global $contador;
+	public static function todasFechadas($nosFolha,&$contador){
 		$total=count($nosFolha);
 		$total2=0;
 		foreach ($nosFolha as $key => $value) {

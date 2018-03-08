@@ -132,7 +132,7 @@ class Tableaux extends Model
 
 
 
-		while (!(FuncoesTableaux::todasFechadas($nosFolha)) && ($contador<100)) {
+		while (!(FuncoesTableaux::todasFechadas($nosFolha,$contador)) && ($contador<100)) {
 			//Recebe do front-end o critério para escolha de fórmula
 			////////////////////////////////
 			//.
@@ -173,7 +173,7 @@ class Tableaux extends Model
 				}
 				FuncoesTableaux::escolhaEficiente($this->listaFormulasDisponiveis,$this->hashInicial,$nosFolha,$historicoVariaveis,$raiz,$contador);
 				
-				if (FuncoesTableaux::todasFechadas($nosFolha)) {
+				if (FuncoesTableaux::todasFechadas($nosFolha,$contador)) {
 					//print "<br>Todos os ramos já estão fechados<br>";
 					//print $contador."<br>";
 					break;
@@ -191,7 +191,7 @@ class Tableaux extends Model
 		}
 
 
-		if (FuncoesTableaux::todasFechadas($nosFolha)) {
+		if (FuncoesTableaux::todasFechadas($nosFolha,$contador)) {
 			print "<br>Todos os ramos foram fechados com sucesso<br>";
 			print $contador."<br>";
 		}
