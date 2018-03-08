@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 use App\FuncoesTableaux;
 
+echo "<pre>";
+
 class Tableaux extends Model
 {
     private $exercicioEscolhido;
@@ -169,7 +171,7 @@ class Tableaux extends Model
 					print_r($value['info']);
 					print "<br>";
 				}
-				FuncoesTableaux::escolhaEficiente($this->listaFormulasDisponiveis,$this->hashInicial,$nosFolha,$historicoVariaveis);
+				FuncoesTableaux::escolhaEficiente($this->listaFormulasDisponiveis,$this->hashInicial,$nosFolha,$historicoVariaveis,$raiz,$contador);
 				
 				if (FuncoesTableaux::todasFechadas($nosFolha)) {
 					//print "<br>Todos os ramos já estão fechados<br>";

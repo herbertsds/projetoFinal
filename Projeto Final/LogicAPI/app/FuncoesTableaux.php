@@ -229,9 +229,7 @@ class FuncoesTableaux extends Model
 		}
 		return $auxForm;
 	}
-	public static function escolhaEficiente(&$listaFormulasDisponiveis,&$hashInicial,&$nosFolha,&$historicoVariaveis){
-		global $contador;
-		global $raiz;
+	public static function escolhaEficiente(&$listaFormulasDisponiveis,&$hashInicial,&$nosFolha,&$historicoVariaveis,&$raiz,&$contador){
 		//Verificação para saber se a função foi chamada mesmo
 		//que todas os ramos já estejam fechados
 		if (FuncoesTableaux::todasFechadas($nosFolha)) {
@@ -369,9 +367,7 @@ class FuncoesTableaux extends Model
 		print "<br>Erro, não houve nó para aplicar a fórmula<br>Verificar se todas as fórmulas estão fechadas<br>";	
 		return;
 	}
-	public static function escolhaUsuario(&$listaFormulasDisponiveis,&$hashInicial,$formEscolhida,&$nosFolha,&$noFolhaEscolhido=NULL){
-		global $contador;
-		global $raiz;
+	public static function escolhaUsuario(&$listaFormulasDisponiveis,&$hashInicial,$formEscolhida,&$nosFolha,&$raiz,&$contador,&$noFolhaEscolhido=NULL){
 
 		if ($contador==0) {
 			$raiz=$formEscolhida;
