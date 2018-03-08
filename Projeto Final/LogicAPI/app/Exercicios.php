@@ -109,6 +109,9 @@ class Exercicios extends Model
 		$this->listaExercicios['resolucao'][] = array ("((not(P))implica(((PouQ)implicaQ)e(Qimplica(PouQ))))");
 		$this->listaExercicios['resolucao'][] = array ("(Pimplica(not(Q)))","(not(not(P)ou(not(Q)))ouR)","(Rimplica(not(AeB)ou(not(S))))","(Sou(not(CouD)))","(((not(A))ou(not(B)))implicaE)","(((not(C))e(not(D)))implicaE)","(E)");
 		$this->listaExercicios['resolucao'][] = array ("not(Aimplica(not(B)))","(CouD)","((CeA)implica(FouG))","(FimplicaH)","(((not(H))ou(not(I)))implica(not(G)))","(HimplicaK)","(DimplicaJ)","((JeB)implicaK)","(K)");
+
+		//Copia o array de resolução para o array do tableaux
+		$this->listaExercicios['tableaux'] = $this->listaExercicios['resolucao'];
     }
 
 }
