@@ -1,12 +1,3 @@
-// BLOQUEAR ULTIMA ABA ATE EXERCICIO SER ESCOLHIDO
-// Separar as funcoes dos diferentes tipos em js diferentes
-// ao clicar em + armazernar as regras e a pergunta em um vetor - ok
-// ir apresentando dinamicamente as regras ja adicionadas em uma area na lateral direita - ok 
-// ao clicar em next passar para a tela de selecao de metodo - ok
-// ao selecionar o metodo, dar algum destaque a ele - ok
-/* ao clicar em next, passar para a tela de exercicio, apresentando as regras aplicaveis e uma area para a arvore
-ser montada dinamicamente */ 
-// nao permitir usar regras repetidas ou invalidas 
 
 
 	var vet_regras = [];
@@ -262,7 +253,7 @@ ser montada dinamicamente */
 	
 				  }
 				  numLinha++;
-				$('#divFormulas').append("<p id='finalVetor'>"+ numLinha +": " + pergunta + " ## Pergunta </p>" );
+				$('#divFormulas').append("<p id='finalVetor'>"+ numLinha +": " + pergunta + " # Pergunta </p>" );
 				if(regras==0){
 					$('#alertResolucao').fadeOut();
 

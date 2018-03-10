@@ -1,6 +1,6 @@
 var perguntaFNC=false;
 var negadaIndice;
-
+var numExercicio;
 
 	function f_Transformar(){
 		
@@ -24,7 +24,7 @@ var negadaIndice;
 						
 						numLinha++;
 						
-						$('#divFormulas').append("<p id='" + cont +"'>"+ numLinha + ": "  + pergunta +" ## pergunta negada </p>" );
+						$('#divFormulas').append("<p id='" + cont +"'>"+ numLinha + ": "  + pergunta +" # pergunta negada </p>" );
 						$('#divFormulas').append("<article> --------------------------------------------------------- </article>" );
 						
 						$('#finalVetor').off();
@@ -137,17 +137,15 @@ var negadaIndice;
 		
 				console.log("teste");
 				
-				var myData = {
-		    	        'exercicio' : 1
-	    	    };
+				
 				console.log("Vetor: " + vet_regras);
-				console.log("JSON: " + myData);
+				
 				$.ajax({
 		    		
 			        url: 'http://127.0.0.1:8000/api/resolucao/',
 			    	type: 'GET',
 			        callback: '?',
-			        data: myData,
+			        data: numExercicio,
 			        datatype: 'application/json',
 			        success: function(retorno) {
 			        	console.log(retorno);
@@ -176,7 +174,7 @@ var negadaIndice;
 		}
 		else{
 				regras = 0;
-		    	var numExercicio = $('#numExercicio').val();
+		    	numExercicio = $('#numExercicio').val();
 				$('#regrasAdicionadas').text("");
 				$('#perguntaAdicionada').text("");
 				$('#divFormulas').empty();
