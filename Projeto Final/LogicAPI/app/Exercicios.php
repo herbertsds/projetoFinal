@@ -80,15 +80,19 @@ class Exercicios extends Model
 		$this->listaExercicios['resolucao'][] = array ("(AeB)","not(C)","((AeB)implica(CouD))","(DouE)");
 		$this->listaExercicios['resolucao'][] = array ("(D)","(I)","((DeA)implica(not(C)))","(IimplicaM)","(MimplicaA)","not(P)");
 		$this->listaExercicios['resolucao'][] = array ("((AouB)implicaC)","(CimplicaD)","((AeB)implica(CeD))");
-		$this->listaExercicios['resolucao'][] = array ("((not(P))implicaQ))","(PouQ)");
+		$this->listaExercicios['resolucao'][] = array ("((not(P))implicaQ)","(PouQ)");
 		$this->listaExercicios['resolucao'][] = array ("(AouB)","((AouC)implicaD)","(Bimplica(DeC))","(D)");
-		$this->listaExercicios['resolucao'][] = array ("((not(AeB))implica((not(A))ou(not(B)))");
+		$this->listaExercicios['resolucao'][] = array ("((not(AeB))implica((not(A))ou(not(B))))");
 		$this->listaExercicios['resolucao'][] = array ("not(Pe(not(P)))");
 		$this->listaExercicios['resolucao'][] = array ("(not(PimplicaQ)implicaP)");
 		$this->listaExercicios['resolucao'][] = array ("(not(PimplicaQ)implica(not(Q)))");
 		$this->listaExercicios['resolucao'][] = array ("((Pimplica(not(P)))implica(not(P)))");
 		$this->listaExercicios['resolucao'][] = array ("((not(P)implicaP)implicaP)");
 		$this->listaExercicios['resolucao'][] = array ("((PeQ)implica(not((not(P))ou(not(Q)))))");
+		$this->listaExercicios['resolucao'][] = array ("(Aimplica(not(B)implica(not(A)implica(B))))");
+		$this->listaExercicios['resolucao'][] = array ("(Bou(BimplicaC))");
+		$this->listaExercicios['resolucao'][] = array ("((not(A)e(not(B)))implica(not(AouB)))");
+		$this->listaExercicios['resolucao'][] = array ("(Aimplica(BeC))","((BimplicaC)implicaD)","(Aimplica(BeD))");
 		$this->listaExercicios['resolucao'][] = array ("(Aimplica(BouC))","(BimplicaD)","(Fimplica(DeE))","(AouF)","((CimplicaD)implicaD)");
 		$this->listaExercicios['resolucao'][] = array ("((AouB)ouC)","(Aou(BouC))");
 		$this->listaExercicios['resolucao'][] = array ("(((AimplicaB)implicaA)implicaA)");
@@ -110,6 +114,9 @@ class Exercicios extends Model
 		$this->listaExercicios['resolucao'][] = array ("((not(P))implica(((PouQ)implicaQ)e(Qimplica(PouQ))))");
 		$this->listaExercicios['resolucao'][] = array ("(Pimplica(not(Q)))","(not(not(P)ou(not(Q)))ouR)","(Rimplica(not(AeB)ou(not(S))))","(Sou(not(CouD)))","(((not(A))ou(not(B)))implicaE)","(((not(C))e(not(D)))implicaE)","(E)");
 		$this->listaExercicios['resolucao'][] = array ("not(Aimplica(not(B)))","(CouD)","((CeA)implica(FouG))","(FimplicaH)","(((not(H))ou(not(I)))implica(not(G)))","(HimplicaK)","(DimplicaJ)","((JeB)implicaK)","(K)");
+
+		//Copia o array de resolução para o array do tableaux
+		$this->listaExercicios['tableaux'] = $this->listaExercicios['resolucao'];
     }
 
 }

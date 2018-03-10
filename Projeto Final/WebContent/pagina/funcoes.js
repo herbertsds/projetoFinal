@@ -13,7 +13,10 @@
 	var cont =0;
 	var perguntaNegada = false;
 	var numLinha = 0;
+<<<<<<< HEAD
 	var numExercicio = "";
+=======
+>>>>>>> feature-Tableaux-Laravel
 	// funcao apenas para testes de eventos
 	function teste(){
 		
@@ -44,8 +47,12 @@
 	
 // ------------ Escolha do tipo de Ex / carregamento da ultima tela -------------------
 	$(document).ready(function() {
+<<<<<<< HEAD
 		
 		
+=======
+
+>>>>>>> feature-Tableaux-Laravel
 		$('#btn_ConfrontarRegra').hide();
 		$('#btn_TransformarRegra').show();
 		

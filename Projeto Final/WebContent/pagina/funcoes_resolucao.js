@@ -74,17 +74,24 @@ var numExercicio;
 								$('#btn_TransformarRegra').hide();
 								
 								$("#divFormulas").unbind();
+<<<<<<< HEAD
 					        	$('span').css({
 				   					'color':'black'
 					        	});	
 					        	$('p').css({
 				   					'color':'black'
 					        	});	
+=======
+>>>>>>> feature-Tableaux-Laravel
 								$('#alertResolucao').fadeOut();
 
 								$('#passo2').off();
 								$('#passo2').append(" &#10004;");
+<<<<<<< HEAD
 								
+=======
+
+>>>>>>> feature-Tableaux-Laravel
 										
 							}							
 						}
@@ -129,6 +136,7 @@ var numExercicio;
 	
 	function f_Gabarito(){
 		
+<<<<<<< HEAD
 		switch(tipoEx){
 		
 		case "tableaux":
@@ -162,6 +170,10 @@ var numExercicio;
 			break;
 		}
 			
+=======
+		alert('gabarito');
+		console.log("aqui");
+>>>>>>> feature-Tableaux-Laravel
 	}
 	
 	function f_Next(){
