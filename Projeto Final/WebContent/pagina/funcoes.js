@@ -17,11 +17,11 @@ ser montada dinamicamente */
 	var formulaSimplificar ="";
 	var formulaId="";
 	var regras = 0;
-	var perguntaFNC=false;
 	var formulas_JSON;
 	var transformados_FNC;
 	var cont =0;
 	var perguntaNegada = false;
+	var numLinha = 0;
 	// funcao apenas para testes de eventos
 	function teste(){
 		
@@ -53,7 +53,11 @@ ser montada dinamicamente */
 // ------------ Escolha do tipo de Ex / carregamento da ultima tela -------------------
 	$(document).ready(function() {
 
-		 $('[data-toggle="popover"]').popover();
+		$('#btn_ConfrontarRegra').hide();
+		$('#btn_TransformarRegra').show();
+		
+		
+		$('[data-toggle="popover"]').popover();
 
 		 
 		 // FORMULAS -------------------------------------------------------------------------------------------------------------------		
@@ -94,7 +98,28 @@ ser montada dinamicamente */
          });
          
         });
+        
+        $('#divFormulas').on('click', 'p',  function(e) {
+        	$('p').css({
+					'color':'black',
+//					'background':'none',
+					'font-weight': 100
+
+        	});
+			  
+        	$(e.target).css({
+					'color':'red',
+					'font-weight': 900
+					
+        	});;
+        	//formulaSimplificar = $(e.target).text();
+			formulaId = this.id;
+			
+			  
+        });
  
+        //DESTAQUE MOUSE SOBRE
+
 // --------------------------------------------------------------------------------------------------------------------------        
 // PASSOS -------------------------------------------------------------------------------------------------------------------
 		// DESTAQUE AO SELECIONAR PASSO
@@ -231,11 +256,15 @@ ser montada dinamicamente */
 			case "resolucao":
 				  for (cont = 0; cont in vet_regras; cont++){
 					  numLinha = cont+1;
-						$('#divFormulas').append(numLinha + ": " + "<p id='" + cont+ "'>" + vet_regras[cont] + "</p>" );
+						$('#divFormulas').append("<p id='" + cont+ "'>"+ numLinha +": " + vet_regras[cont] + "</p>" );
 	
 				  }
 				  numLinha++;
-				$('#divFormulas').append(numLinha + " - Pergunta - : " + "<p id='finalVetor'>" + pergunta + "</p>" );
+				$('#divFormulas').append("<p id='finalVetor'>"+ numLinha +": " + pergunta + " ## Pergunta </p>" );
+				if(regras==0){
+					$('#alertResolucao').fadeOut();
+
+				}
 				
 			break;
 			case "deducao":
@@ -251,12 +280,14 @@ ser montada dinamicamente */
 			alert("Regra inválida!");
 		}
 		else{
+
+			regras++;
+
 			vet_regras.push($('#regra').val().replace(/\s/gi, ''));
 			adicionadas = $('#regra').val();
 			
-			$('#regrasAdicionadas').append("<br/>" + adicionadas );
+			$('#regrasAdicionadas').append("<br/>" + regras + ": " + adicionadas );
 			$('#regra').val("");
-			regras++;
 		}
 	} 
 	
@@ -267,9 +298,9 @@ ser montada dinamicamente */
 		else{
 			encerrado = confirm("Tem certeza que todas as regras do BD foram adicionadas?");
 			if(encerrado){
-		
+				linhaPerg = regras + 1;
 				pergunta = $('#pergunta').val().replace(/\s/gi, '');
-				$('#perguntaAdicionada').append("<br/>" + $('#pergunta').val() );
+				$('#perguntaAdicionada').append("<br/>" +linhaPerg + ": " + $('#pergunta').val() );
 				$('#pergunta').val("Pergunta Adicionada!!");
 				$('#regra').prop('disabled', true);
 				$('#pergunta').prop('disabled', true);
@@ -287,155 +318,3 @@ ser montada dinamicamente */
 	// FALTA PERMITIR EXCLUSAO/ALTERACAO DA PERGUNTA E DE REGRAS
 	
 
-	// ######################################################################################################
-	
-	// ######### EXECUCAO DO EXERCICIO ######################################################################
-	function simplificar(){
-		
-		//VERIFICAR OBRIGATORIEDADE DA SEQUENCIA
-		switch(passoId){
-			case 'passo1':
-				if(formulaId!='finalVetor'){
-					alert("Atenção!\nSelecione a Pergunta para ser negada.");
-				}
-				else{
-					perguntaNegada = true;
-					// NEGAR A PERGUNTA
-//					$('#divFormulas').append("<p id='" + cont+ "'>" + perguntaNegada[] + "</p>" );
-					$('#passo1').off();
-					$('#passo1').css({
-						    'text-decoration': 'line-through',
-						});
-					passoId = "passo2";
-					formulaId = "";
-					}
-				
-				break;
-			
-			case 'passo2':
-					
-					if(perguntaNegada == false){
-						alert("Atenção! Deve-se negar a pergunta como primeiro passo!");
-
-					}
-					else{
-						regras --;
-						cont++;
-						// PASSAR VET_REGRAS[FORMULAID] PARA FNC
-						$('#divFormulas').append("<p id='" + cont+ "'>Formula " + $('#0').text() + " em FNC</p>");
-//						$('#formulaId').off();
-//						
-//						
-//						$('#formulaId').css({
-//						    'text-decoration': 'line-through'
-//							
-//						});
-						formulaId = "";
-						if(regras ==0){
-							$('#alertResolucao').fadeOut();
-							$('#passo2').off();
-							
-	
-							$('#passo2').css({
-							    'text-decoration': 'line-through'
-								
-							});
-									
-						}							
-					}										
-
-						
-				
-				break;
-				
-//			case 'passo3':
-//				if(regras>0 || perguntaNegada == false){
-//					alert("Atenção!\nExecute os passos anteriores antes de começar o terceiro passo.");
-//
-//				}
-//				else{
-//					if(perguntaFNC == false){
-//						alert("Atenção!\nPasse a pergunta para FNC.")
-//						break;
-//					}
-//					else{
-//						console.log("ok");
-//					}//exibir pergunta negada
-//				}
-//				break;
-			default: 
-
-					break;
-		}
-		
-		
-		 
-	}
-	// abrir a formula para fnc
-	function f_FNC(){
-		
-		// chamar a funcao php que transforma fnc
-
-	
-	}
-	//bater duas fórmulas diferentes para gerar uma nova
-	function f_ComparaRegra(){
-		// chamar a funcao php que executa o passo da resolucao
-	}
-	// ######################################################################################################
-	
-	function f_Gabarito(){
-		
-		alert('gabarito');
-		console.log("aqui");
-	}
-	
-	function f_Next(){
-		alert("next");
-	}
-	
-	function f_buscaExercicio(){
-    	var numExercicio = $('#numExercicio').val();
-		$('#regrasAdicionadas').text("");
-		$('#perguntaAdicionada').text("");
-		$('#divFormulas').empty();
-
-		vet_regras = [];
-		var myData = {
-    	        'exercicio' : numExercicio
-    	    };
-            $.ajax({
-
-    	        url: 'http://127.0.0.1:8000/api/resolucao',
-    	        type: 'GET',
-    	        callback: '?',
-    	        data: myData,
-    	        datatype: 'application/json',
-    	        success: function(teste) {
-//    	        	console.log(teste); 
-    				$('#regra').prop('disabled', true);
-    				$('#pergunta').prop('disabled', true);
-    				$('#buttonRegra').hide();
-    				$('#buttonPergunta').hide();
-    				var limiteFormulas = ((teste.length) -1);
-//    				console.log(limiteFormulas);
-    				for (var data = 0; data < limiteFormulas; data++) {
-    					  
-    					  
-    						vet_regras.push(teste[data]);
-    						adicionadas = teste[data];
-    						
-    						$('#regrasAdicionadas').append("<br/>" + adicionadas );
-    						regras++;   					  
-    					  
-    					}
-    				pergunta = teste[limiteFormulas];
-//    				console.log(pergunta);
-    				$('#perguntaAdicionada').append("<br/>" + teste[limiteFormulas] );
-    				atualizaTela(tipoEx);
-    	        },
-    	        error: function() { alert('Failed!'); },
-    	    });
-	}
-	
-	
