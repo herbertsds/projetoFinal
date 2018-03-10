@@ -74,11 +74,17 @@ var negadaIndice;
 								$('#btn_TransformarRegra').hide();
 								
 								$("#divFormulas").unbind();
+					        	$('span').css({
+				   					'color':'black'
+					        	});	
+					        	$('p').css({
+				   					'color':'black'
+					        	});	
 								$('#alertResolucao').fadeOut();
 
 								$('#passo2').off();
 								$('#passo2').append(" &#10004;");
-
+								
 										
 							}							
 						}
@@ -123,8 +129,39 @@ var negadaIndice;
 	
 	function f_Gabarito(){
 		
-		alert('gabarito');
-		console.log("aqui");
+		switch(tipoEx){
+		
+		case "tableaux":
+			break;
+		case "resolucao":
+		
+				console.log("aqui");
+				
+				var myData = JSON.stringify(vet_regras);
+				console.log("Vetor: " + vet_regras);
+				console.log("JSON: " + myData);
+				$.ajax({
+		    		
+			        url: 'http://127.0.0.1:8000/api/resolucao/',
+			    	type: 'GET',
+			        callback: '?',
+			        data: myData,
+			        datatype: 'application/json',
+			        success: function(retorno) {
+			        	console.log(retorno);
+			        	gabaritoBuscado = JSON.parse(retorno);
+			        	console.log(gabaritoBuscado); 
+		
+						
+			        },
+			        error: function() { alert('Erro na chamada'); },
+			    });
+				
+				break;
+		case "deducao":
+			break;
+		}
+			
 	}
 	
 	function f_Next(){

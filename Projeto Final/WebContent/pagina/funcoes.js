@@ -22,6 +22,7 @@ ser montada dinamicamente */
 	var cont =0;
 	var perguntaNegada = false;
 	var numLinha = 0;
+	var numExercicio = "";
 	// funcao apenas para testes de eventos
 	function teste(){
 		
@@ -52,7 +53,8 @@ ser montada dinamicamente */
 	
 // ------------ Escolha do tipo de Ex / carregamento da ultima tela -------------------
 	$(document).ready(function() {
-
+		
+		
 		$('#btn_ConfrontarRegra').hide();
 		$('#btn_TransformarRegra').show();
 		
@@ -174,7 +176,7 @@ ser montada dinamicamente */
 				tipoEx = "tableaux";
 			
 				carregaTela("tableaux");
-				$("#next").removeAttr("disabled");
+				$("#proximo").removeAttr("disabled");
 		      
 		    }
 		 );
@@ -185,7 +187,7 @@ ser montada dinamicamente */
 					tipoEx = "resolucao";
 					carregaTela("resolucao");
 					
-					$("#next").removeAttr("disabled");
+					$("#proximo").removeAttr("disabled");
 					
 			      
 			    }
@@ -195,7 +197,7 @@ ser montada dinamicamente */
 					tipoEx = "deducao";
 					
 					carregaTela("deducao");
-					$("#next").removeAttr("disabled");
+					$("#proximo").removeAttr("disabled");
 			      
 			    }
 			 );

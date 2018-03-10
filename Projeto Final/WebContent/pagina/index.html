@@ -52,7 +52,7 @@
 
 <body onload="load()">
 
-	    <a href="http://creative-tim.com">
+	    <a href="https://ufrj.br/">
 	         <div class="logo-container">
 	            <div class="logo">
 	                <img src="assets/ufrj.jpg">
@@ -203,15 +203,18 @@
 		                               	
 										<div class="row">
 										
-											<div class="col-sm-6 col-sm-offset-3">
 											<!--  DIV PARA TABLEAUX -->
-											<div class="regrasTableaux" id='divTableaux' style="display: none">											
-												<h4 class="info-text"> Execução do Tableaux...</h4>
-												<article id="formulas"></article>
+											<div class="col-sm-8 col-sm-offset-2">
 												
+												<div class="regrasTableaux" id='divTableaux' style="display: none">											
+													<h4 class="info-text"> Execução do Tableaux...</h4>
+													<article id="formulas"></article>
+													
+												</div>
 											</div>
-											
 											<!--  DIV PARA RESOLUCAO -->
+											<div class="col-sm-8 col-sm-offset-2">
+											
 												<div class="regrasResolucao" id='divResolucao' style="display: none">											
 													<div class="alert alert-info alert-dismissible" id='alertResolucao' >
 													    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
@@ -225,18 +228,18 @@
 																													
 														<span id='passo2'>- Passar todas as fórmulas e a pergunta negada para FNC</span> </br>
 														
-														<article id='passo3'>- Desenvolver o exercício até encontrar o absurdo ▭ </article> </br> 
+														<article id='passo3'>- Desenvolver o exercício até encontrar o absurdo &#10066; </article> </br> 
 														<button type="button"  class="btn btn-success btn-sm" data-trigger="focus" data-toggle="popover" data-placement="left" data-content="<ol><li>Negar a pergunta</li><li>Passar todas as fórmulas e a pergunta para FNC</li><li>Separar todos os 'e', ou seja, cada 'e' vira uma fórmula (ou linha) independente.</li><li>Verificar se há 'átomos', havendo, confrontar átomos para ver se a resolução fecha, por exemplo A e ¬A são átomos que se contradizem e portanto fecharia a resolução.</li><li>Se não fechar, vá para a próxima etapa.  Fazer as simplificações do 'ou', se possível. Se Av¬B e AvB então A. Se Av¬B e B então A</li><li>Verificar se há átomos, havendo, confrontar átomos para ver se a resolução fecha.</li><li>Se não fechar após este último passo, o problema não é possível de resolver.</li></ol>" data-html="true"  title="Algoritmo Base" data-content="">Algoritmo completo aqui</button>
 					
 													</div>
-												
+									<!-- ############################################################################################### -->			
 													<div class="inicioEx">
 														<h4><strong>> Início do Exercício</strong> </h4>
 														
-<!-- 														<p>teste mouse over/enter/click</p> -->
 														<div  id="divFormulas">
 													
 														</div>	
+									<!-- ############################################################################################### -->					
 														<div  class="form-check"  id="divNovasFormulas">
 														
 														</div>
@@ -247,23 +250,20 @@
 																											
 													</div>
 												</div>
-												
+											</div> <!--FIM RESOLUCAO	-->
 												
 												<!--  DIV PARA DEDUCAO NATURAL-->
-											<div class="regrasDeducao" id='divDeducao' style="display: none">		
-												<h4 class="info-text"> Execução da Dedução Natural...</h4>
-												<article id="formulas"></article>
-	
-	
-																				
-											</div>
-												
-												
-											</div>
-										
+												<div class="col-sm-8 col-sm-offset-2">
+					
+													<div class="regrasDeducao" id='divDeducao' style="display: none">		
+														<h4 class="info-text"> Execução da Dedução Natural...</h4>
+														<article id="formulas"></article>
+																						
+													</div>
+												</div> <!--FIM DEDUCAO	-->											
 											
-										</div>
-		                            </div>
+										</div> <!-- FIM ROW -->
+		                            </div> <!--  FIM TAB EXERCICIO -->
 <!-- fechando div do tabpane -->				    				
 		                        </div>
 <!--------------------------------------------------------------------------------------------------------------------->         
@@ -273,11 +273,11 @@
 		                        
 	                        	<div class="wizard-footer">
 	                            	<div class="pull-right">
-	                                    <input disabled type='button' class='btn btn-next btn-fill btn-danger btn-wd' id="next" name='next' value='Next'  />
+	                                    <input disabled type='button' class='btn btn-next btn-fill btn-danger btn-wd' id="proximo" name='proximo' value='Próximo'  />
 	                                    <input type='button' class='btn btn-finish btn-fill btn-warning btn-wd' id="gabarito" name='gabarito' value='Gabarito' onclick='f_Gabarito()' />
 	                                </div>
 	                                <div class="pull-left">
-	                                    <input type='button' class='btn btn-previous btn-fill btn-default btn-wd' id="previous" name='previous' value='Previous' />
+	                                    <input type='button' class='btn btn-previous btn-fill btn-default btn-wd' id="anterior" name='anterior' value='Anterior' />
 
 
 	                                </div>
