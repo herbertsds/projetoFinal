@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 use App\FuncoesResolucao;
 use App\Formula;
 
+
+//Remover a repetição das fórmulas em cada passo
 class Resolucao extends Model
 {
 	private $exercicioEscolhido;
@@ -19,6 +21,9 @@ class Resolucao extends Model
 		$entradaTeste = $this->exercicioEscolhido;
 		$tamanho=count($entradaTeste);
 
+		$mudancaArray;
+		$mudancaHash=[];
+
 		//Receber a entrada do Front-End
 
 		//Negação da pergunta+Validação
@@ -26,17 +31,39 @@ class Resolucao extends Model
 
 		//Constrói o retorno
 		$resposta[] = "<br>Entrada Recebida<br>";
+		$resposta[] = $entradaConvertida;
+		$mudancaArray=$entradaConvertida;
 
 		//Print, pré-processa os notnot
 		foreach ($entradaTeste as $key => $value) {
 			if ($entradaConvertida[$key]['conectivo']=='notnot') {
 				$entradaConvertida[$key]['conectivo']=NULL;
+			}
+			if (!is_array($entradaConvertida[$key]['direito']) && $entradaConvertida[$key]['direito']!=NULL && strlen($entradaConvertida[$key]['direito'])>4 ) {
+				if ($entradaConvertida[$key]['direito'][0]!='(' && ($entradaConvertida[$key]['direito'][0]!='!' && $entradaConvertida[$key]['direito'][1]!='(' )) {
+					$entradaConvertida[$key]['direito']="(".$entradaConvertida[$key]['direito'];
+					$entradaConvertida[$key]['direito']=$entradaConvertida[$key]['direito'].")";
+				}
+			}
+
+			if (!is_array($entradaConvertida[$key]['esquerdo']) && $entradaConvertida[$key]['esquerdo']!=NULL && strlen($entradaConvertida[$key]['esquerdo'])>4 ) {
+				if ($entradaConvertida[$key]['esquerdo'][0]!='(' && ($entradaConvertida[$key]['esquerdo'][0]!='!' && $entradaConvertida[$key]['esquerdo'][1]!='(' )) {
+					$entradaConvertida[$key]['esquerdo']="(".$entradaConvertida['esquerdo'];
+					$entradaConvertida[$key]['esquerdo']=$entradaConvertida[$key]['esquerdo'].")";
+				}
 			}	
 		}
 
 		//Constrói o retorno
-		$resposta[] = "<br>Após o processamento dos notnot: <br>";
-		$resposta[] = $entradaConvertida;
+		
+		if ($entradaConvertida!=$mudancaArray) {
+			$resposta[] = "<br>Após o processamento dos notnot: <br>";
+			$resposta[] = $entradaConvertida;
+			$mudancaArray=$entradaConvertida;
+		}
+
+
+		
 
 		//Se houver digitação incorreta vai haver um aviso. Para o front-end adicionar uma flag (valor "1")
 		//A flag vai indicar que a fórmula está incorreta e ficar pedindo a digitação correta para o front-end
@@ -47,10 +74,13 @@ class Resolucao extends Model
 		foreach ($entradaConvertida as $key => $value) {
 			FuncoesResolucao::converteFNC($entradaConvertida[$key]);
 		}
+		if ($entradaConvertida!=$mudancaArray) {
+			$resposta[] = "<br>Após FNC<br>";
+			$resposta[] = $entradaConvertida;
+			$mudancaArray=$entradaConvertida;
+		}
 
-
-		$resposta[] = "<br>Após FNC<br>";
-		$resposta[] = $entradaConvertida;
+		
 
 		//Loop para tranfosformar em arrays as fórmulas mais internas, por exemplo
 		//Nesta etapa um Av(BeC) é representado como
@@ -68,19 +98,52 @@ class Resolucao extends Model
 			}	
 		}
 
-		$resposta[] = "<br>Após a formatação<br>";
-		$resposta[] = $entradaConvertida;
+		foreach ($entradaConvertida as $key => $value) {
+			FuncoesAuxiliares::formataFormulas($entradaConvertida[$key]);
+			if (@is_array($entradaConvertida[$key]['esquerdo']['esquerdo'])) {
+				FuncoesAuxiliares::formataFormulas($entradaConvertida[$key]['esquerdo']['esquerdo']);
+			}
+			if (@is_array($entradaConvertida[$key]['esquerdo']['direito'])) {
+				FuncoesAuxiliares::formataFormulas($entradaConvertida[$key]['esquerdo']['direito']);
+			}
+			if (@is_array($entradaConvertida[$key]['direito']['esquerdo'])) {
+				FuncoesAuxiliares::formataFormulas($entradaConvertida[$key]['direito']['esquerdo']);
+			}
+			if (@is_array($entradaConvertida[$key]['direito']['direito'])) {
+				FuncoesAuxiliares::formataFormulas($entradaConvertida[$key]['direito']['direito']);
+			}
+		}
 
+		if ($entradaConvertida!=$mudancaArray) {
+			$resposta[] = "<br>Após a formatação<br>";
+			$resposta[] = $entradaConvertida;
+			$mudancaArray=$entradaConvertida;
+		}
 
+		
 
-		$resposta[] = "<br>Após o tratamento dos átomos<br>";
-		$resposta[] = $entradaConvertida;
+		foreach ($entradaConvertida as $key => $value) {
+			FuncoesResolucao::corrigeArrays($entradaConvertida[$key]);
+		}
+
+		if ($entradaConvertida!=$mudancaArray) {
+			$resposta[] = "<br>Após o tratamento dos átomos<br>";
+			$resposta[] = $entradaConvertida;
+			$mudancaArray=$entradaConvertida;
+		}
+
+		
 
 		//Os próximos passos precisam ser repetidos afim de extrair os arrays mais internos de fórmulas mais complexas
 		$contador=0;
 		$flag=false;
 		while ($contador <= 10){
-			
+			if ($contador==0) {
+				foreach ($entradaConvertida as $key => $value) {
+					FuncoesResolucao::corrigeArrays($entradaConvertida[$key]);
+					FuncoesResolucao::corrigeAtomos($entradaConvertida[$key]);
+				}
+			}
 
 			//Passo 4
 			$aux1['esquerdo']=NULL;
@@ -91,8 +154,12 @@ class Resolucao extends Model
 			$aux2['direito']=NULL;
 
 			FuncoesResolucao::separarE($arrayFormulas,$entradaConvertida,$aux1,$aux2,$contador);
-			$resposta[] = "<br> FÓRMULAS APÓS SEPARAÇÃO DO E<BR>";
-			$resposta[] = $arrayFormulas;
+			if ($entradaConvertida!=$arrayFormulas) {
+				$resposta[] = "<br> FÓRMULAS APÓS SEPARAÇÃO DO E<BR>";
+				$resposta[] = $arrayFormulas;
+				$mudancaArray=$arrayFormulas;
+			}
+			
 
 			//Passo 5
 			$hashResolucao=array();
@@ -100,23 +167,40 @@ class Resolucao extends Model
 			if($flag){
 				goto fim;
 			}
-			$resposta[] = "HASH<BR>";
-			$resposta[] = $hashResolucao;
+			/*
+			if ($hashResolucao!=$mudancaHash) {
+				$resposta[] = "HASH<BR>";
+				$resposta[] = $hashResolucao;
+			}*/
+			
 
 
 			//Passo 6
 			//
 			FuncoesResolucao::separarOU1($arrayFormulas,$hashResolucao);
-			$resposta[] = "<br>APÓS A SIMPLIFICAÇÃO DE 'OU' SIMPLES<BR>";
-			$resposta[] = $arrayFormulas;
-			$resposta[] = $hashResolucao;
+			if ($arrayFormulas!=$mudancaArray) {
+				$resposta[] = "<br>APÓS A SIMPLIFICAÇÃO DE 'OU' SIMPLES<BR>";
+				$resposta[] = $arrayFormulas;
+				//$resposta[] = $hashResolucao;
+				$mudancaArray=$arrayFormulas;
+				$mudancaHash=$hashResolucao;
+			}
+			
 
 			//Simplificação do tipo: Se Av¬B e AvB então A.
 			FuncoesResolucao::separarOU2($arrayFormulas);
+			if ($arrayFormulas!=$mudancaArray) {
+				$resposta[] = "<br>APÓS A SIMPLIFICAÇÃO DE 'OU' COMPOSTO<BR>";
+				$resposta[] = $arrayFormulas;
+				//$resposta[] = $hashResolucao;
+				$mudancaArray=$arrayFormulas;
+				$mudancaHash=$hashResolucao;
+			}
 
-			$resposta[] = "<br>APÓS A SIMPLIFICAÇÃO DE 'OU' COMPOSTO<BR>";
-			$resposta[] = $arrayFormulas;
-			$resposta[] = $hashResolucao;	
+			foreach ($arrayFormulas as $key => $value) {
+		 		FuncoesResolucao::corrigeArrays($arrayFormulas[$key]);
+				FuncoesResolucao::corrigeAtomos($arrayFormulas[$key]);
+		 	}	
 
 
 			//Passo 5 - REPETIÇÃO

@@ -11,7 +11,7 @@ use App\Tableaux;
 class TableauxController extends Controller
 {
     public function index(Request $numeroExercicio){
-    	$exercicioLista = new Exercicios('tableaux',$numeroExercicio->exercicio);
+    	$exercicioLista = new Exercicios('tableaux',5);
     	// $exercicioLista = new Exercicios('resolucao');
 
     	$exercicio = $exercicioLista->getExercicio();
