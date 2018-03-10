@@ -51,7 +51,11 @@ Colocar aqui como vou receber do front-end
 .
 */
 
+<<<<<<< HEAD
 $entradaTeste=$DNNquestao50;
+=======
+$entradaTeste=$DNNquestao20;
+>>>>>>> feature-Tableaux-Laravel
 $tamanho=count($entradaTeste);
 
 //Passo 2
