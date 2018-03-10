@@ -24,6 +24,12 @@ class Resolucao extends Model
 		$mudancaArray;
 		$mudancaHash=[];
 
+		$formAntesDoE=[];
+		$formAntesDoOu=[];
+		$formsDepoisDoE=[];
+		$formsDepoisDoOu=[];
+		$statusFechado='Não fechado';
+
 		//Receber a entrada do Front-End
 
 		//Negação da pergunta+Validação
@@ -31,8 +37,8 @@ class Resolucao extends Model
 
 		//Constrói o retorno
 
-		$resposta[] = "<br>Entrada Recebida<br>";
-		$resposta[] = $entradaConvertida;
+		//$resposta[] = "<br>Entrada Recebida<br>";
+		//$resposta[] = $entradaConvertida;
 		$mudancaArray=$entradaConvertida;
 
 
@@ -59,8 +65,19 @@ class Resolucao extends Model
 		//Constrói o retorno
 		
 		if ($entradaConvertida!=$mudancaArray) {
-			$resposta[] = "<br>Após o processamento dos notnot: <br>";
-			$resposta[] = $entradaConvertida;
+			foreach ($entradaConvertida as $key => $value) {
+				if ($entradaConvertida[$key]!=$mudancaArray[$key]) {
+					//Fórmula nova
+					$resposta[] = $entradaConvertida[$key];
+					//Fórmula antiga
+					$resposta[] = $mudancaArray[$key];
+					//Regra
+					$resposta[] = "Remove os notnot";
+
+				}
+			}
+			//$resposta[] = "<br>Após o processamento dos notnot: <br>";
+			//$resposta[] = $entradaConvertida;
 			$mudancaArray=$entradaConvertida;
 		}
 
@@ -77,8 +94,19 @@ class Resolucao extends Model
 			FuncoesResolucao::converteFNC($entradaConvertida[$key]);
 		}
 		if ($entradaConvertida!=$mudancaArray) {
-			$resposta[] = "<br>Após FNC<br>";
-			$resposta[] = $entradaConvertida;
+			foreach ($entradaConvertida as $key => $value) {
+				if ($entradaConvertida[$key]!=$mudancaArray[$key]) {
+					//Fórmula nova
+					$resposta[] = $entradaConvertida[$key];
+					//Fórmula antiga
+					$resposta[] = $mudancaArray[$key];
+					//Regra
+					$resposta[] = "Fórmula em FNC";
+
+				}
+			}
+			//$resposta[] = "<br>Após FNC<br>";
+			//$resposta[] = $entradaConvertida;
 			$mudancaArray=$entradaConvertida;
 		}
 
@@ -114,10 +142,11 @@ class Resolucao extends Model
 			}
 		}
 
-
+		//Formatação de array para controle interno
+		//Não é necessário mostrar
 		if ($entradaConvertida!=$mudancaArray) {
-			$resposta[] = "<br>Após a formatação<br>";
-			$resposta[] = $entradaConvertida;
+			//$resposta[] = "<br>Após a formatação<br>";
+			//$resposta[] = $entradaConvertida;
 			$mudancaArray=$entradaConvertida;
 		}
 
@@ -128,9 +157,10 @@ class Resolucao extends Model
 			FuncoesResolucao::corrigeArrays($entradaConvertida[$key]);
 		}
 
+		//Correção de átomos para controle interno
 		if ($entradaConvertida!=$mudancaArray) {
-			$resposta[] = "<br>Após o tratamento dos átomos<br>";
-			$resposta[] = $entradaConvertida;
+			//$resposta[] = "<br>Após o tratamento dos átomos<br>";
+			//$resposta[] = $entradaConvertida;
 			$mudancaArray=$entradaConvertida;
 		}
 
@@ -145,6 +175,10 @@ class Resolucao extends Model
 					FuncoesResolucao::corrigeArrays($entradaConvertida[$key]);
 					FuncoesResolucao::corrigeAtomos($entradaConvertida[$key]);
 				}
+				//Correção de átomos para controle interno
+				if ($entradaConvertida!=$mudancaArray) {
+					$mudancaArray=$entradaConvertida;
+				}
 			}
 
 			//Passo 4
@@ -155,18 +189,32 @@ class Resolucao extends Model
 			$aux2['conectivo']=NULL;
 			$aux2['direito']=NULL;
 
-			FuncoesResolucao::separarE($arrayFormulas,$entradaConvertida,$aux1,$aux2,$contador);
+			FuncoesResolucao::separarE($arrayFormulas,$entradaConvertida,$aux1,$aux2,$contador,$formAntesDoE,$formsDepoisDoE);
 
-			if ($entradaConvertida!=$arrayFormulas) {
-				$resposta[] = "<br> FÓRMULAS APÓS SEPARAÇÃO DO E<BR>";
-				$resposta[] = $arrayFormulas;
-				$mudancaArray=$arrayFormulas;
+			if ($arrayFormulas!=$mudancaArray) {
+				$key2=0;
+				foreach ($formAntesDoE as $key => $value) {
+						//Fórmula nova
+						$resposta[] = $formsDepoisDoE[$key2];
+						$resposta[] = $formsDepoisDoE[$key2+1];
+						//Fórmula antiga
+						$resposta[] = $formAntesDoE[$key];
+
+						//Regra
+						$resposta[] = "Separação do E";
+						$key2+=2;
+				}
 			}
+				//$resposta[] = "<br> FÓRMULAS APÓS SEPARAÇÃO DO E<BR>";
+				//$resposta[] = $arrayFormulas;
+				$mudancaArray=$arrayFormulas;
+				$formAntesDoE=[];
+				$formsDepoisDoE=[];
 			
 
 			//Passo 5
 			$hashResolucao=array();
-			FuncoesResolucao::confrontaAtomos($arrayFormulas,$hashResolucao,$flag);
+			FuncoesResolucao::confrontaAtomos($arrayFormulas,$hashResolucao,$flag,$statusFechado);
 			if($flag){
 				goto fim;
 			}
@@ -181,35 +229,57 @@ class Resolucao extends Model
 
 			//Passo 6
 			//
-			FuncoesResolucao::separarOU1($arrayFormulas,$hashResolucao);
+			FuncoesResolucao::separarOU1($arrayFormulas,$hashResolucao,$formAntesDoOu,$formsDepoisDoOu);
 
 			if ($arrayFormulas!=$mudancaArray) {
-				$resposta[] = "<br>APÓS A SIMPLIFICAÇÃO DE 'OU' SIMPLES<BR>";
-				$resposta[] = $arrayFormulas;
-				//$resposta[] = $hashResolucao;
+				foreach ($formAntesDoOu as $key => $value) {
+						//Fórmula nova
+						$resposta[] = $formsDepoisDoOu[$key];
+						//Fórmula antiga
+						$resposta[] = $formAntesDoOu[$key];
+
+
+						//Regra
+						$resposta[] = "Separação do Ou";
+				}
+
 				$mudancaArray=$arrayFormulas;
-				$mudancaHash=$hashResolucao;
+				$formAntesDoE=[];
+				$formsDepoisDoE=[];
 			}
+
 			
 
 			//Simplificação do tipo: Se Av¬B e AvB então A.
-			FuncoesResolucao::separarOU2($arrayFormulas);
+			FuncoesResolucao::separarOU2($arrayFormulas,$formAntesDoOu,$formsDepoisDoOu);
 			if ($arrayFormulas!=$mudancaArray) {
-				$resposta[] = "<br>APÓS A SIMPLIFICAÇÃO DE 'OU' COMPOSTO<BR>";
-				$resposta[] = $arrayFormulas;
-				//$resposta[] = $hashResolucao;
+				foreach ($formAntesDoOu as $key => $value) {
+						//Fórmula nova
+						$resposta[] = $formsDepoisDoOu[$key];
+						//Fórmula antiga
+						$resposta[] = $formAntesDoOu[$key];
+
+						//Regra
+						$resposta[] = "Separação do Ou";
+				}
+
 				$mudancaArray=$arrayFormulas;
-				$mudancaHash=$hashResolucao;
+				$formAntesDoE=[];
+				$formsDepoisDoE=[];
 			}
 
 			foreach ($arrayFormulas as $key => $value) {
 		 		FuncoesResolucao::corrigeArrays($arrayFormulas[$key]);
 				FuncoesResolucao::corrigeAtomos($arrayFormulas[$key]);
-		 	}	
+		 	}
+		 	//Atualização de mudancaArray para evitar erros
+		 	if ($entradaConvertida!=$mudancaArray) {
+					$mudancaArray=$entradaConvertida;
+			}	
 
 
 			//Passo 5 - REPETIÇÃO
-			FuncoesResolucao::confrontaAtomos($arrayFormulas,$hashResolucao,$flag);
+			FuncoesResolucao::confrontaAtomos($arrayFormulas,$hashResolucao,$flag,$statusFechado);
 			if($flag){
 				goto fim;
 			}
@@ -225,7 +295,7 @@ class Resolucao extends Model
 		}
 
 		fim:
-// 		$resposta[] = "<br>Encerra processamento<br>";
+ 		$resposta[] = $statusFechado;
 
 		return $resposta;
     }
