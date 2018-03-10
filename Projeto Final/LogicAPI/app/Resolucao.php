@@ -25,7 +25,7 @@ class Resolucao extends Model
 		$entradaConvertida=FuncoesResolucao::negaPergunta($entradaTeste,$tamanho);
 
 		//Constrói o retorno
-		$resposta[] = "<br>Entrada Recebida<br>";
+// 		$resposta[] = "<br>Entrada Recebida<br>";
 
 		//Print, pré-processa os notnot
 		foreach ($entradaTeste as $key => $value) {
@@ -35,7 +35,7 @@ class Resolucao extends Model
 		}
 
 		//Constrói o retorno
-		$resposta[] = "<br>Após o processamento dos notnot: <br>";
+// 		$resposta[] = "<br>Após o processamento dos notnot: <br>";
 		$resposta[] = $entradaConvertida;
 
 		//Se houver digitação incorreta vai haver um aviso. Para o front-end adicionar uma flag (valor "1")
@@ -49,7 +49,7 @@ class Resolucao extends Model
 		}
 
 
-		$resposta[] = "<br>Após FNC<br>";
+// 		$resposta[] = "<br>Após FNC<br>";
 		$resposta[] = $entradaConvertida;
 
 		//Loop para tranfosformar em arrays as fórmulas mais internas, por exemplo
@@ -68,12 +68,12 @@ class Resolucao extends Model
 			}	
 		}
 
-		$resposta[] = "<br>Após a formatação<br>";
+// 		$resposta[] = "<br>Após a formatação<br>";
 		$resposta[] = $entradaConvertida;
 
 
 
-		$resposta[] = "<br>Após o tratamento dos átomos<br>";
+// 		$resposta[] = "<br>Após o tratamento dos átomos<br>";
 		$resposta[] = $entradaConvertida;
 
 		//Os próximos passos precisam ser repetidos afim de extrair os arrays mais internos de fórmulas mais complexas
@@ -91,7 +91,7 @@ class Resolucao extends Model
 			$aux2['direito']=NULL;
 
 			FuncoesResolucao::separarE($arrayFormulas,$entradaConvertida,$aux1,$aux2,$contador);
-			$resposta[] = "<br> FÓRMULAS APÓS SEPARAÇÃO DO E<BR>";
+// 			$resposta[] = "<br> FÓRMULAS APÓS SEPARAÇÃO DO E<BR>";
 			$resposta[] = $arrayFormulas;
 
 			//Passo 5
@@ -100,21 +100,21 @@ class Resolucao extends Model
 			if($flag){
 				goto fim;
 			}
-			$resposta[] = "HASH<BR>";
+// 			$resposta[] = "HASH<BR>";
 			$resposta[] = $hashResolucao;
 
 
 			//Passo 6
 			//
 			FuncoesResolucao::separarOU1($arrayFormulas,$hashResolucao);
-			$resposta[] = "<br>APÓS A SIMPLIFICAÇÃO DE 'OU' SIMPLES<BR>";
+// 			$resposta[] = "<br>APÓS A SIMPLIFICAÇÃO DE 'OU' SIMPLES<BR>";
 			$resposta[] = $arrayFormulas;
 			$resposta[] = $hashResolucao;
 
 			//Simplificação do tipo: Se Av¬B e AvB então A.
 			FuncoesResolucao::separarOU2($arrayFormulas);
 
-			$resposta[] = "<br>APÓS A SIMPLIFICAÇÃO DE 'OU' COMPOSTO<BR>";
+// 			$resposta[] = "<br>APÓS A SIMPLIFICAÇÃO DE 'OU' COMPOSTO<BR>";
 			$resposta[] = $arrayFormulas;
 			$resposta[] = $hashResolucao;	
 
@@ -126,17 +126,17 @@ class Resolucao extends Model
 			}
 
 			if(!FuncoesResolucao::checaExisteArray($arrayFormulas)){
-				$resposta[] = "<br>Não existem mais array, saindo do loop<br><br>";
+// 				$resposta[] = "<br>Não existem mais array, saindo do loop<br><br>";
 				break;
 			}
 			else{
-				$resposta[] = "<br>Ainda existe array, próxima iteração<br><br>";
+// 				$resposta[] = "<br>Ainda existe array, próxima iteração<br><br>";
 			}
 			$contador++;
 		}
 
 		fim:
-		$resposta[] = "<br>Encerra processamento<br>";
+// 		$resposta[] = "<br>Encerra processamento<br>";
 
 		return $resposta;
     }

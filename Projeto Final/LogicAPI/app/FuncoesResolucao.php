@@ -43,7 +43,7 @@ class FuncoesResolucao extends Model
 		//Primeiro, remover a implicação, se houver
 		
 		FuncoesResolucao::resolveImplicacoes($form);
-		//print "PRIMEIRO PASSO CONCLUÍDO";
+		////print "PRIMEIRO PASSO CONCLUÍDO";
 
 			
 		//Segundo Passar todos os not fora de parênteses para dentro
@@ -214,8 +214,8 @@ class FuncoesResolucao extends Model
 		//Caso de implicação dentro de um not
 		implica:
 		while($flag){
-			//print "<br>Fórmula<br>";
-			//print_r($form);
+			////print "<br>Fórmula<br>";
+			////print_r($form);
 			if($form['conectivo']=="not_implica"){
 				if(@strlen($form['direito'])==1){
 					$form['direito']="!(".$form['direito'].")";
@@ -240,17 +240,17 @@ class FuncoesResolucao extends Model
 				$form=$form3;
 			}
 			if(is_array($form['esquerdo']) && FuncoesResolucao::checaImplica($form['esquerdo'])){
-				print "<BR>PASSEI<BR>";
+				//print "<BR>PASSEI<BR>";
 				$form=&$form['esquerdo'];
 			}
 			elseif(is_array($form['direito']) && FuncoesResolucao::checaImplica($form['direito'])){
-				print "<BR>PASSEI<BR>";
+				//print "<BR>PASSEI<BR>";
 				$form=&$form['direito'];
 			}
 			else{
 				$flag=FuncoesResolucao::checaImplica($form);
 			}
-			print "<br>";
+			//print "<br>";
 
 		}
 		FuncoesAuxiliares::formataFormulas($form);
@@ -347,9 +347,9 @@ class FuncoesResolucao extends Model
 			if (is_array($value['esquerdo']) && @$value['esquerdo']['esquerdo']==NULL && @$value['direito']==NULL) {
 				//Se o atomo que está chegando casar com algum já existente, então fechamos a resolução
 				if(FuncoesResolucao::casarAtomo($hashResolucao,$value['esquerdo']['direito'],$value['esquerdo']['conectivo'])){
-					print "<br>Fechou, contradição com o átomo abaixo<br>";
-					print_r($value['esquerdo']['direito']);
-					//print "<br>primeira condição<br>";
+// 					//print "<br>Fechou, contradição com o átomo abaixo<br>";
+// 					//print_r($value['esquerdo']['direito']);
+// 					////print "<br>primeira condição<br>";
 					$flag=true;
 					break;
 				}
@@ -358,9 +358,9 @@ class FuncoesResolucao extends Model
 
 			if (is_array($value['direito']) && @$value['direito']['esquerdo']==NULL && @$value['esquerdo']==NULL) {
 				if(FuncoesResolucao::casarAtomo($hashResolucao,$value['direito']['direito'],$value['direito']['conectivo'])){
-					print "<br>Fechou, contradição com o átomo abaixo<br>";
-					print_r($value['direito']['direito']);
-					//print "<br>Segunda condição<br>";
+// 					//print "<br>Fechou, contradição com o átomo abaixo<br>";
+// 					//print_r($value['direito']['direito']);
+// 					////print "<br>Segunda condição<br>";
 					$flag=true;
 					break;
 				}
@@ -368,9 +368,9 @@ class FuncoesResolucao extends Model
 			}
 			if ($value['esquerdo']==NULL) {
 				if(FuncoesResolucao::casarAtomo($hashResolucao,$value['direito'],$value['conectivo'])){
-					print "<br>Fechou, contradição com o átomo abaixo<br>";
-					print_r($value['direito']);
-					//print "<br>Terceira condição<br>";
+// 					//print "<br>Fechou, contradição com o átomo abaixo<br>";
+// 					//print_r($value['direito']);
+// 					////print "<br>Terceira condição<br>";
 					$flag=true;
 					break;
 				}
@@ -484,10 +484,10 @@ class FuncoesResolucao extends Model
 					if(!is_array($value['direito'])){
 						//Pode acontecer de não existir o cara na hash ainda, então o @ é pra omitir este aviso desnecessário
 						if(@$hashResolucao[$value['direito']]=='0'){
-							//print "<br>Formula completa<br>";
-							//print_r($value['direito']);
-							//print "<br>hash<br>";
-							//print_r($hashResolucao);
+							////print "<br>Formula completa<br>";
+							////print_r($value['direito']);
+							////print "<br>hash<br>";
+							////print_r($hashResolucao);
 							//O cara que vai sobrar do "ou" pode ser adicionado na hash caso seja átomo
 							if (!is_array($value['esquerdo'])) {
 								$hashResolucao[$value['esquerdo']]='1';
@@ -524,7 +524,7 @@ class FuncoesResolucao extends Model
 				foreach ($arrayFormulas as $key2 => $value2) {
 					//Se alfa e beta forem iguais, pode pular esse processamento
 					if ($value==$value2) {
-						print "Os dois lados são iguais<br><br>";
+// 						//print "Os dois lados são iguais<br><br>";
 						break;
 					}
 					//Haverão 4 possibilidades

@@ -135,9 +135,11 @@ var negadaIndice;
 			break;
 		case "resolucao":
 		
-				console.log("aqui");
+				console.log("teste");
 				
-				var myData = JSON.stringify(vet_regras);
+				var myData = {
+		    	        'exercicio' : 1
+	    	    };
 				console.log("Vetor: " + vet_regras);
 				console.log("JSON: " + myData);
 				$.ajax({
