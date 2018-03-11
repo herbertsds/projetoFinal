@@ -36,9 +36,10 @@ class Resolucao extends Model
 
 		//Negação da pergunta+Validação
 		$entradaConvertida=FuncoesResolucao::negaPergunta($entradaTeste,$tamanho,$perguntaAntesNegar,$perguntaDepoisNegar);
+		$resposta[] = "Negação da pergunta";
 		$resposta[] = $perguntaDepoisNegar;
 		$resposta[] = $perguntaAntesNegar;
-		$resposta[] = "Negação da pergunta";
+		
 
 		//Constrói o retorno
 
@@ -72,12 +73,13 @@ class Resolucao extends Model
 		if ($entradaConvertida!=$mudancaArray) {
 			foreach ($entradaConvertida as $key => $value) {
 				if ($entradaConvertida[$key]!=$mudancaArray[$key]) {
+					//Regra
+					$resposta[] = "Remove os notnot";
 					//Fórmula nova
 					$resposta[] = $entradaConvertida[$key];
 					//Fórmula antiga
 					$resposta[] = $mudancaArray[$key];
-					//Regra
-					$resposta[] = "Remove os notnot";
+					
 
 				}
 			}
@@ -101,12 +103,13 @@ class Resolucao extends Model
 		if ($entradaConvertida!=$mudancaArray) {
 			foreach ($entradaConvertida as $key => $value) {
 				if ($entradaConvertida[$key]!=$mudancaArray[$key]) {
+					//Regra
+					$resposta[] = "Fórmula em FNC";
 					//Fórmula nova
 					$resposta[] = $entradaConvertida[$key];
 					//Fórmula antiga
 					$resposta[] = $mudancaArray[$key];
-					//Regra
-					$resposta[] = "Fórmula em FNC";
+					
 
 				}
 			}
@@ -199,14 +202,15 @@ class Resolucao extends Model
 			if ($arrayFormulas!=$mudancaArray) {
 				$key2=0;
 				foreach ($formAntesDoE as $key => $value) {
+						//Regra
+						$resposta[] = "Separação do E";
 						//Fórmula nova
 						$resposta[] = $formsDepoisDoE[$key2];
 						$resposta[] = $formsDepoisDoE[$key2+1];
 						//Fórmula antiga
 						$resposta[] = $formAntesDoE[$key];
 
-						//Regra
-						$resposta[] = "Separação do E";
+						
 						$key2+=2;
 				}
 			}
@@ -238,14 +242,15 @@ class Resolucao extends Model
 
 			if ($arrayFormulas!=$mudancaArray) {
 				foreach ($formAntesDoOu as $key => $value) {
+
+						//Regra
+						$resposta[] = "Separação do Ou";
 						//Fórmula nova
 						$resposta[] = $formsDepoisDoOu[$key];
 						//Fórmula antiga
 						$resposta[] = $formAntesDoOu[$key];
 
 
-						//Regra
-						$resposta[] = "Separação do Ou";
 				}
 
 				$mudancaArray=$arrayFormulas;
@@ -259,13 +264,14 @@ class Resolucao extends Model
 			FuncoesResolucao::separarOU2($arrayFormulas,$formAntesDoOu,$formsDepoisDoOu);
 			if ($arrayFormulas!=$mudancaArray) {
 				foreach ($formAntesDoOu as $key => $value) {
+						//Regra
+						$resposta[] = "Separação do Ou";
 						//Fórmula nova
 						$resposta[] = $formsDepoisDoOu[$key];
 						//Fórmula antiga
 						$resposta[] = $formAntesDoOu[$key];
 
-						//Regra
-						$resposta[] = "Separação do Ou";
+						
 				}
 
 				$mudancaArray=$arrayFormulas;
