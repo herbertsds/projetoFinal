@@ -7,13 +7,12 @@ use Illuminate\Http\Request;
 use App\Exercicios; 
 
 use App\Resolucao;
-echo "<pre>";
 class ResolucaoController extends Controller
 {
     public function index(Request $numeroExercicio){
 
     	//Exercício 10 equivale ao 1 da lista de DN com negação
-    	$exercicioLista = new Exercicios('resolucao',40);
+        $exercicioLista = new Exercicios('resolucao',1);
     	// $exercicioLista = new Exercicios('resolucao');
     	$resposta = new Resolucao($exercicioLista->getExercicio());
 

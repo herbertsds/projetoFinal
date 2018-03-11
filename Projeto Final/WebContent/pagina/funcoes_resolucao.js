@@ -1,6 +1,8 @@
 var perguntaFNC=false;
 var negadaIndice;
 var numExercicio;
+var gabaritoBuscado;
+
 
 	function f_Transformar(){
 		
@@ -25,7 +27,7 @@ var numExercicio;
 						numLinha++;
 						
 						$('#divFormulas').append("<p id='" + cont +"'>"+ numLinha + ": "  + pergunta +" # pergunta negada </p>" );
-						$('#divFormulas').append("<article> --------------------------------------------------------- </article>" );
+						$('#divNovasFormulas').append("<article> --------------------------------------------------------- </article>" );
 						
 						$('#finalVetor').off();
 						$('#finalVetor').append(" &#10004;");
@@ -74,24 +76,17 @@ var numExercicio;
 								$('#btn_TransformarRegra').hide();
 								
 								$("#divFormulas").unbind();
-<<<<<<< HEAD
 					        	$('span').css({
 				   					'color':'black'
 					        	});	
 					        	$('p').css({
 				   					'color':'black'
 					        	});	
-=======
->>>>>>> feature-Tableaux-Laravel
 								$('#alertResolucao').fadeOut();
 
 								$('#passo2').off();
 								$('#passo2').append(" &#10004;");
-<<<<<<< HEAD
 								
-=======
-
->>>>>>> feature-Tableaux-Laravel
 										
 							}							
 						}
@@ -136,17 +131,12 @@ var numExercicio;
 	
 	function f_Gabarito(){
 		
-<<<<<<< HEAD
 		switch(tipoEx){
 		
 		case "tableaux":
 			break;
 		case "resolucao":
-		
-				console.log("teste");
-				
-				
-				console.log("Vetor: " + vet_regras);
+				$('#divNovasFormulas').text("");
 				
 				$.ajax({
 		    		
@@ -155,25 +145,129 @@ var numExercicio;
 			        callback: '?',
 			        data: numExercicio,
 			        datatype: 'application/json',
+			       
 			        success: function(retorno) {
-			        	console.log(retorno);
+				        console.log(numExercicio);
+
 			        	gabaritoBuscado = JSON.parse(retorno);
 			        	console.log(gabaritoBuscado); 
-		
+						limiteGabarito = gabaritoBuscado.length;
+						//console.log(limiteGabarito);
+						//var data = 0;
+						$('#divNovasFormulas').append("<article> --------------------------------------------------------- </article>" );
+						
+						for(var data=0; data < limiteGabarito; data++) {
+							
+
+
+
+							switch (gabaritoBuscado[data]){
+								case "Negação da pergunta": 
+									cont++;
+									numLinha++;
+									$('#divNovasFormulas').append("<p id='" + cont+ "' data-html='true'  data-trigger='click' data-toggle='popover' data-placement='right' title='Negação da pergunta' data-content='Fórmula usada:<ul><li>"+ gabaritoBuscado[data+2]+"</li></ul>'>" + numLinha +": " + gabaritoBuscado[data+1] + "</p>");
+
+									data = data + 2;
+									
+									break;
+									
+								case "Fórmula em FNC":
+									cont++;
+									numLinha++;
+									$('#divNovasFormulas').append("<p id='" + cont+ "' data-html='true'  data-trigger='click' data-toggle='popover' data-placement='right' title='Fórmula em FNC' data-content='Fórmulas usadas:\n<ul><li>"+ gabaritoBuscado[data+2]+"</li></ul>'>" + numLinha +": " + gabaritoBuscado[data+1] + "</p>" );
+									data = data + 1;
+									break;
+								
+								case "Separação do E":
+									cont++;
+									numLinha++;
+									$('#divNovasFormulas').append("<p id='" + cont+ "' data-html='true'  data-trigger='click' data-toggle='popover' data-placement='right' title='Separação do E' data-content='Fórmulas usadas:\n<ul><li>"+ gabaritoBuscado[data+3]+"</li></ul>'>"+ numLinha +": " + gabaritoBuscado[data+1] + "</p>" );
+									cont++;
+									numLinha++;
+									$('#divNovasFormulas').append("<p id='" + cont+ "' data-html='true'  data-trigger='click' data-toggle='popover' data-placement='right' title='Separação do E' data-content='Fórmulas usadas:\n<ul><li>"+ gabaritoBuscado[data+3]+"</li></ul>'>"+ numLinha +": " + gabaritoBuscado[data+2] + "</p>" );
+									data = data +2;
+									
+									break;
+								
+								case "Separação do Ou":
+									cont++;
+									numLinha++;
+									$('#divNovasFormulas').append("<p id='" + cont+ "' data-html='true'  data-trigger='click' data-toggle='popover' data-placement='right' title='Separação do OU' data-content='Fórmulas usadas:\n<ul><li>"+ gabaritoBuscado[data+2]+"</li></ul>'>"+ numLinha +": " + gabaritoBuscado[data+1] + "</p>" );
+									data = data+2;
+									
+									
+									break;
+								
+								case "Remove os notnot":
+									cont++;
+									numLinha++;
+									$('#divNovasFormulas').append("<p id='" + cont+ "' data-html='true'  data-trigger='click' data-toggle='popover' data-placement='right' title='Remove os notnot' data-content='Fórmulas usadas:\n<ul><li>"+ gabaritoBuscado[data+2]+"</li></ul>'>"+ numLinha +": " + gabaritoBuscado[data+1] + "</p>" );
+									data = data+2;
+									
+									break;
+									
+								case "Fechado":
+									cont++;
+									numLinha++;
+									$('#divNovasFormulas').append("<p id='" + cont +"'>"  + numLinha +"<b>: &#10066; Contradição Encontrada!</b> </p>" );
+									$('#divNovasFormulas').append("<article><b> Fim do Exercício</b></article>");
+									$('#btn_TransformarRegra').hide();
+									$('#btn_ProximoPasso').hide();
+									$('#btn_gabarito').attr('disabled',true);
+									$("#divFormulas").unbind();
+									$("#passos").off();
+						        	$('span').css({
+					   					'color':'black'
+						        	});	
+						        	$('p').css({
+					   					'color':'black'
+						        	});	
+									$('#alertResolucao').fadeOut();
+									console.log("resolvido!");
+									break;
+								default: 
+									console.log("nenhum case");
+									break;
+
+							}
+						}
+						
+				        //DESTAQUE MOUSE SOBRE
+				        $('#divNovasFormulas').on('mouseenter','p', function(e) {
+				        	
+
+						$('[data-toggle="popover"]').popover();
+				        	$(e.target).css({
+				        		'cursor':'pointer',
+
+				   				'font-weight': 900	        			
+				        });
+				         $('#divNovasFormulas').on('mouseout','p', function(e) {
+							$('[data-toggle="popover"]').popover('hide');
+
+				        	 $('p').css({
+									'font-weight': 100,
+				        	 });	
+				        	 $(e.target).css({
+				 	        		'cursor':'text'
+				        	 });;
+				         });
+				         
+				        });
+				        
+
+
 						
 			        },
 			        error: function() { alert('Erro na chamada'); },
 			    });
+
 				
 				break;
 		case "deducao":
 			break;
 		}
 			
-=======
-		alert('gabarito');
-		console.log("aqui");
->>>>>>> feature-Tableaux-Laravel
 	}
 	
 	function f_Next(){
@@ -204,6 +298,7 @@ var numExercicio;
 		    	        data: myData,
 		    	        datatype: 'application/json',
 		    	        success: function(retorno) {
+		    	        	console.log(retorno);
 		    	        	exercicioBuscado = JSON.parse(retorno);
 		    	        	 
 		    				$('#regra').prop('disabled', true);

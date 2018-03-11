@@ -3,13 +3,13 @@
 <head>
 	<meta charset="utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-	<title>Sistema de Lógica</title>
+	<title>Sistema de Aprendizado de Lógica</title>
 
 	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
     <meta name="viewport" content="width=device-width" />
 
-	<link rel="apple-touch-icon" sizes="76x76" href="assets/img/apple-icon.png" />
-	<link rel="icon" type="image/png" href="assets/img/favicon.png" />
+<!-- 	<link rel="apple-touch-icon" sizes="76x76" href="assets/mBranca.png" /> -->
+	<link rel="icon" type="image/png" href="assets/mBranca.png" />
 
 	<!--     Fonts and icons     -->
 	<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
@@ -43,19 +43,19 @@
 		    text-align:center;
 		}
 		.popover {
-			border: 1px solid #C0C0C0;
+			border: 2	px solid #C0C0C0;
 		 }
-				
+
 		 </style>	
 
 </head>
 
 <body onload="load()">
 
-	    <a href="https://ufrj.br/">
+	    <a target="_blank" href="https://ufrj.br/">
 	         <div class="logo-container">
 	            <div class="logo">
-	                <img src="assets/ufrj.jpg">
+	                <img src="assets/mBranca.png">
 	            </div>
 	            <div class="brand">
 	                Universidade Federal do Rio de Janeiro
@@ -76,7 +76,7 @@
 
 		                    	<div class="wizard-header">
 		                        	<h3 class="wizard-title">
-		                        		Sistema de Lógica
+		                        		Sistema de Aprendizado de Lógica
 		                        	</h3>
 									<h5>Ambiente para prática de exercícios de lógica.</h5>
 		                    	</div>
@@ -229,20 +229,20 @@
 														<span id='passo2'>- Passar todas as fórmulas e a pergunta negada para FNC</span> </br>
 														
 														<article id='passo3'>- Desenvolver o exercício até encontrar o absurdo &#10066; </article> </br> 
-														<button type="button"  class="btn btn-success btn-sm" data-trigger="focus" data-toggle="popover" data-placement="left" data-content="<ol><li>Negar a pergunta</li><li>Passar todas as fórmulas e a pergunta para FNC</li><li>Separar todos os 'e', ou seja, cada 'e' vira uma fórmula (ou linha) independente.</li><li>Verificar se há 'átomos', havendo, confrontar átomos para ver se a resolução fecha, por exemplo A e ¬A são átomos que se contradizem e portanto fecharia a resolução.</li><li>Se não fechar, vá para a próxima etapa.  Fazer as simplificações do 'ou', se possível. Se Av¬B e AvB então A. Se Av¬B e B então A</li><li>Verificar se há átomos, havendo, confrontar átomos para ver se a resolução fecha.</li><li>Se não fechar após este último passo, o problema não é possível de resolver.</li></ol>" data-html="true"  title="Algoritmo Base" data-content="">Algoritmo completo aqui</button>
+														<button type="button"  class="btn btn-success btn-sm" data-trigger="focus" data-toggle="popover" data-placement="left" data-content="<ol><li>Negar a pergunta</li><li>Passar todas as fórmulas e a pergunta para FNC</li><li>Separar todos os 'e', ou seja, cada 'e' vira uma fórmula (ou linha) independente.</li><li>Verificar se há 'átomos', havendo, confrontar átomos para ver se a resolução fecha, por exemplo A e ¬A são átomos que se contradizem e portanto fecharia a resolução.</li><li>Se não fechar, vá para a próxima etapa.  Fazer as simplificações do 'ou', se possível. Se Av¬B e AvB então A. Se Av¬B e B então A</li><li>Verificar se há átomos, havendo, confrontar átomos para ver se a resolução fecha.</li><li>Se não fechar após este último passo, o problema não é possível de resolver.</li></ol>" data-html="true"  title="Algoritmo Base" >Algoritmo completo aqui</button>
 					
 													</div>
 									<!-- ############################################################################################### -->			
 													<div class="inicioEx">
 														<h4><strong>> Início do Exercício</strong> </h4>
 														
+														<div class="col-sm-8 col-sm-offset-0">
+														
 														<div  id="divFormulas">
-													
+				
+													</style>
 														</div>	
-<<<<<<< HEAD
 									<!-- ############################################################################################### -->					
-=======
->>>>>>> feature-Tableaux-Laravel
 														<div  class="form-check"  id="divNovasFormulas">
 														
 														</div>
@@ -277,7 +277,7 @@
 	                        	<div class="wizard-footer">
 	                            	<div class="pull-right">
 	                                    <input disabled type='button' class='btn btn-next btn-fill btn-danger btn-wd' id="proximo" name='proximo' value='Próximo'  />
-	                                    <input type='button' class='btn btn-finish btn-fill btn-warning btn-wd' id="gabarito" name='gabarito' value='Gabarito' onclick='f_Gabarito()' />
+	                                    <input type='button' class='btn btn-finish btn-fill btn-warning btn-wd' id="btn_gabarito" name='gabarito' value='Gabarito' onclick='f_Gabarito()' />
 	                                </div>
 	                                <div class="pull-left">
 	                                    <input type='button' class='btn btn-previous btn-fill btn-default btn-wd' id="anterior" name='anterior' value='Anterior' />
@@ -299,6 +299,7 @@
 	             <b>Orientador: Mário Benevides.</b>
 	        </div>
 	    </div>
+	    
 	</div>
 </body>
 
