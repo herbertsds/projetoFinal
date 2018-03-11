@@ -28,12 +28,17 @@ class Resolucao extends Model
 		$formAntesDoOu=[];
 		$formsDepoisDoE=[];
 		$formsDepoisDoOu=[];
+		$perguntaAntesNegar=null;
+		$perguntaDepoisNegar=null;
 		$statusFechado='Não fechado';
 
 		//Receber a entrada do Front-End
 
 		//Negação da pergunta+Validação
-		$entradaConvertida=FuncoesResolucao::negaPergunta($entradaTeste,$tamanho);
+		$entradaConvertida=FuncoesResolucao::negaPergunta($entradaTeste,$tamanho,$perguntaAntesNegar,$perguntaDepoisNegar);
+		$resposta[] = $perguntaDepoisNegar;
+		$resposta[] = $perguntaAntesNegar;
+		$resposta[] = "Negação da pergunta";
 
 		//Constrói o retorno
 
@@ -297,6 +302,11 @@ class Resolucao extends Model
 		fim:
  		$resposta[] = $statusFechado;
 
+ 		foreach ($resposta as $key => $value) {
+ 			if (is_array($value)) {
+ 				FuncoesResolucao::converteFormulaString($resposta[$key]);
+ 			}
+ 		}
 		return $resposta;
     }
 }

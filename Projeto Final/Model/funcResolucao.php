@@ -34,10 +34,7 @@ function converteFNC(&$form){
 	resolveImplicacoes($form);
 	//print "<br>PRIMEIRO PASSO CONCLUÍDO<br>";
 	//print_r($form);
-<<<<<<< HEAD
 
-=======
->>>>>>> feature-Tableaux-Laravel
 	//Segundo Passar todos os not fora de parênteses para dentro
 	formataFormulas($form);
 	$aux1=&$form['esquerdo'];
@@ -255,10 +252,7 @@ function converteFNC(&$form){
 		}
 		$c++;
 	}while ($array1['esquerdo'] || $array1['direito'] || $array2['esquerdo'] || $array2['direito']);
-<<<<<<< HEAD
 
-=======
->>>>>>> feature-Tableaux-Laravel
 	//print "<br>SEGUNDO PASSO CONCLUÍDO<BR>";
 	//print_r($form);
 	
@@ -350,25 +344,7 @@ function checaImplica(&$form){
 	}
 }
 function resolveImplicacoes(&$form){
-<<<<<<< HEAD
-	$flag=true;
-	$form3=$form;
-	
-	//VAI MUDAR PARA O CASO GERAL (IDEIA: USAR WHILE)
-	//Caso de implicação dentro de um not
-	implica:
-	while($flag){
-		//print "<br>Fórmula<br>";
-		//print_r($form);
-		if($form['conectivo']=="not_implica"){
-			//Se já houver um "not", remove
-			if ($form['direito'][0]=='!') {
-				$form['direito']=substr($form['direito'], 1);
-			}
 
-			elseif(@strlen($form['direito'])==1){
-				$form['direito']="!(".$form['direito'].")";
-=======
 		$flag=true;
 		$form3=&$form;
 
@@ -396,7 +372,7 @@ function resolveImplicacoes(&$form){
 				}
 				
 				$form['conectivo']="e";
->>>>>>> feature-Tableaux-Laravel
+
 			}
 			elseif(is_array($form['direito'])){
 				//Se já houver um "not", remove
@@ -439,15 +415,7 @@ function resolveImplicacoes(&$form){
 		
 		//Caso de implicação sem not
 		elseif($form['conectivo']=="implica"){
-<<<<<<< HEAD
-			//Se já houver um "not", remove
-			if ($form['esquerdo'][0]=='!') {
-				$form['esquerdo']=substr($form, 1);
-			}
 
-			elseif(@strlen($form['esquerdo'])==1){
-				$form['esquerdo']="!(".$form['esquerdo'].")";
-=======
 			if (!is_array($form['esquerdo'])) {
 				//Se já houver um "not", remove
 				if ($form['esquerdo'][0]=='!') {
@@ -463,7 +431,7 @@ function resolveImplicacoes(&$form){
 				//print_r($form);
 				
 				$form['conectivo']="ou";
->>>>>>> feature-Tableaux-Laravel
+
 			}
 			elseif(is_array($form['esquerdo'])){
 				//Se já houver um "not", remove
@@ -880,11 +848,10 @@ function corrigeAtomos(&$form){
 		//$form['direito']=$form['direito'];
 	}
 }
-<<<<<<< HEAD
-=======
+
 //Função que corrige casos em que temos um campo array do tipo fórmula dentro de outro
 //array do tipo fórmula com um dos campos (esquerdo ou direito) vazio
->>>>>>> feature-Tableaux-Laravel
+
 function corrigeArrays(&$form){
 	if (@$form['esquerdo']==NULL && @is_array($form['direito'])) {
 		$aux1=$form['direito'];
@@ -898,11 +865,6 @@ function corrigeArrays(&$form){
 		$form['esquerdo']=$aux1['esquerdo'];
 		$form['conectivo']=$aux1['conectivo'];
 		$form['direito']=$aux1['direito'];
-<<<<<<< HEAD
-	}
-	return;
-=======
-		return;
 	}
 	//Correção para caso haja um átomo sendo tratado como array
 	//dentro de um array, por exemplo form[esquerdo][esquerdo]==null e form[esquerdo][direito]==algumacoisa
@@ -920,6 +882,5 @@ function corrigeArrays(&$form){
 	}
 	return;
 	
->>>>>>> feature-Tableaux-Laravel
 }
 ?>

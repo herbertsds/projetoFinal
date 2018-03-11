@@ -13,15 +13,16 @@ class FuncoesResolucao extends Model
 	//Recebe um array de fórmulas, verifica se a digitação está correta e 
 	//devolve um array com a pergunta negada.
 	//Se houver digitação incorreta gera uma exceção (trabalhar na exceção depois)
-	public static function negaPergunta($listaFormulas,$tamanho){
+	public static function negaPergunta($listaFormulas,$tamanho,&$perguntaAntesNegar,&$perguntaDepoisNegar){
 		//Nega a pergunta
+		$perguntaAntesNegar=FuncoesAuxiliares::resolveParenteses2($listaFormulas[$tamanho-1]);
 		$listaFormulas[$tamanho-1]="not".$listaFormulas[$tamanho-1];
 		//Tratar a entrada, verificação de digitação correta
 		foreach ($listaFormulas as $key => $value) {
 			FuncoesAuxiliares::verificaFormulaCorreta($listaFormulas[$key]);
 			$entradaConvertida[$key]=FuncoesAuxiliares::resolveParenteses2($listaFormulas[$key]);
 		}
-		
+		$perguntaDepoisNegar=$entradaConvertida[$tamanho-1];
 		return $entradaConvertida;
 	}
 
@@ -938,6 +939,139 @@ class FuncoesResolucao extends Model
 		}
 		if (is_array(@$form['direito']['direito']) && @$form['direito']['direito']['esquerdo']==NULL && @$form['direito']['direito']['conectivo']==NULL) {
 			$form['direito']['direito']=$form['direito']['direito']['direito'];
+			return;
+		}
+	}
+	public static function converteFormulaString(&$form){
+		while (@is_array($form['esquerdo']) || @is_array($form['direito']) || is_array($form)) {
+			FuncoesResolucao::reverteFormatacao($form);
+		}
+
+		if (strlen($form)==1) {
+			$form="(".$form.")";
+		}
+	}
+
+	public static function reverteFormatacao(&$form){
+		if (@is_array($form['esquerdo'])) {
+			FuncoesResolucao::reverteFormatacao($form['esquerdo']);
+		}
+		elseif (@!is_array($form['esquerdo']) ) {
+			FuncoesResolucao::colocaParenteses($form);
+		}
+		if (@is_array($form['direito'])) {
+			FuncoesResolucao::reverteFormatacao($form['direito']);
+		}
+		elseif (@!is_array($form['direito']) ) {
+			FuncoesResolucao::colocaParenteses($form);
+		}
+	}
+	public static function colocaParenteses(&$form){
+		if (@is_array($form['esquerdo']) && @!is_array($form['direito'])) {
+			if ($form['conectivo']=='not') {
+				if (FuncoesResolucao::checaAtomico($form)) {
+					$aux=$form['conectivo'];
+					$aux=$aux."(".$form['direito']."))";
+				}
+			}
+			if ($form['conectivo']=='not_ou') {
+				$form['esquerdo']="not(".$form['esquerdo'];
+				$aux=$aux."ou";
+				$aux=$aux.$form['direito']."))";
+				$form=$aux;
+				return;
+			}
+			if ($form['conectivo']=='not_e') {
+				$form['esquerdo']="not(".$form['esquerdo'];
+				$aux=$aux."e";
+				$aux=$aux.$form['direito']."))";
+				$form=$aux;
+				return;
+			}
+			if ($form['conectivo']=='not_implica') {
+				$form['esquerdo']="not(".$form['esquerdo'];
+				$aux=$aux."implica";
+				$aux=$aux.$form['direito']."))";
+				$form=$aux;
+				return;
+			}
+			$aux=$form['conectivo'];
+			$aux=$aux.$form['direito'].")";
+			$form['direito']=$aux;
+			return;
+
+		}
+		elseif (@!is_array($form['esquerdo']) && @is_array($form['direito'])) {
+			$aux="(";
+			$aux=$aux.$form['esquerdo'];
+			$form['esquerdo']=$aux;
+			return;
+		}
+		elseif(is_array($form)){
+
+			if ($form['conectivo']=='not_ou') {
+				
+				if ($form['esquerdo'][0]=="(") {
+					$aux="not";
+					$aux=$aux.$form['esquerdo'];
+					$aux=$aux."ou";
+					$aux=$aux.$form['direito'].")";
+				}
+				else{
+					$aux="not(";
+					$aux=$aux.$form['esquerdo'];
+					$aux=$aux."ou";
+					$aux=$aux.$form['direito']."))";
+				}
+				$form=$aux;
+				return;
+			}
+			if ($form['conectivo']=='not_e') {
+				if ($form['esquerdo'][0]=="(") {
+					$aux="not";
+					$aux=$aux.$form['esquerdo'];
+					$aux=$aux."e";
+					$aux=$aux.$form['direito'].")";
+				}
+				else{
+					$aux="not(";
+					$aux=$aux.$form['esquerdo'];
+					$aux=$aux."e";
+					$aux=$aux.$form['direito']."))";
+				}
+				$form=$aux;
+				return;
+			}
+			if ($form['conectivo']=='not_implica') {
+				if ($form['esquerdo'][0]=="(") {
+					$aux="not";
+					$aux=$aux.$form['esquerdo'];
+					$aux=$aux."implica";
+					$aux=$aux.$form['direito'].")";
+				}
+				else{
+					$aux="not(";
+					$aux=$aux.$form['esquerdo'];
+					$aux=$aux."implica";
+					$aux=$aux.$form['direito']."))";
+				}			
+				$form=$aux;
+				return;
+			}
+			$aux="(";
+			$aux=$aux.$form['esquerdo'];
+			if ($form['conectivo']=='not') {
+				if (FuncoesResolucao::checaAtomico($form)) {
+					$aux=$aux.$form['conectivo'];
+					$aux=$aux."(".$form['direito']."))";
+					$form=$aux;
+					return;
+				}
+			}
+
+			$aux=$aux.$form['conectivo'];
+			$aux=$aux.$form['direito'].")";
+			$form=$aux;
 			return;
 		}
 	}
