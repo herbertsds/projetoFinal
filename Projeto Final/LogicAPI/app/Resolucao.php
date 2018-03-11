@@ -302,6 +302,11 @@ class Resolucao extends Model
 		fim:
  		$resposta[] = $statusFechado;
 
+ 		foreach ($resposta as $key => $value) {
+ 			if (is_array($value)) {
+ 				FuncoesResolucao::converteFormulaString($resposta[$key]);
+ 			}
+ 		}
 		return $resposta;
     }
 }
