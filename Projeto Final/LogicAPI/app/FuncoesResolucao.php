@@ -13,15 +13,16 @@ class FuncoesResolucao extends Model
 	//Recebe um array de fórmulas, verifica se a digitação está correta e 
 	//devolve um array com a pergunta negada.
 	//Se houver digitação incorreta gera uma exceção (trabalhar na exceção depois)
-	public static function negaPergunta($listaFormulas,$tamanho){
+	public static function negaPergunta($listaFormulas,$tamanho,&$perguntaAntesNegar,&$perguntaDepoisNegar){
 		//Nega a pergunta
+		$perguntaAntesNegar=FuncoesAuxiliares::resolveParenteses2($listaFormulas[$tamanho-1]);
 		$listaFormulas[$tamanho-1]="not".$listaFormulas[$tamanho-1];
 		//Tratar a entrada, verificação de digitação correta
 		foreach ($listaFormulas as $key => $value) {
 			FuncoesAuxiliares::verificaFormulaCorreta($listaFormulas[$key]);
 			$entradaConvertida[$key]=FuncoesAuxiliares::resolveParenteses2($listaFormulas[$key]);
 		}
-		
+		$perguntaDepoisNegar=$entradaConvertida[$tamanho-1];
 		return $entradaConvertida;
 	}
 
