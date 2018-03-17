@@ -68,9 +68,9 @@ class FuncoesAuxiliares extends Model
 				if($contador<0){
 					#Criar um tratamento aqui
 					//Se o usuário digitar a entrada vamos precisar usar uma rotina de correção e chamar verifica recursivamente
-					print "Fórmula com digitação incorreta<br>";
-					print $form;
-					print "<br>";
+					//print "Fórmula com digitação incorreta<br>";
+					//print $form;
+					//print "<br>";
 					exit(1);
 				}
 				
@@ -84,12 +84,12 @@ class FuncoesAuxiliares extends Model
 		if($contador!=0){
 			#Criar um tratamento aqui
 			//Se o usuário digitar a entrada vamos precisar usar uma rotina de correção e chamar verifica recursivamente
-			print $form;
-			print "<br>";
-		    print "Fórmula com digitação incorreta";
+			//print $form;
+			//print "<br>";
+		    //print "Fórmula com digitação incorreta";
 			exit(1);
 		}
-		print "Fórmula Ok<br>";
+		//print "Fórmula Ok<br>";
 		
 	}
 
@@ -107,7 +107,7 @@ class FuncoesAuxiliares extends Model
 		$not=false;
 
 		converteConectivoSimbolo($form);
-		//print "<br> Teste".$form;
+		////print "<br> Teste".$form;
 		//Se for um átomo positivo
 		//OBS: Talvez haja uma maneira mais apropriada de tratar isto
 		//Em caso de erro nos cálculos, checar esta etapa
@@ -214,7 +214,7 @@ class FuncoesAuxiliares extends Model
 		$not=false;
 
 		FuncoesAuxiliares::converteConectivoSimbolo($form);
-		//print "<br> Teste".$form;
+		////print "<br> Teste".$form;
 		//Se for um átomo positivo
 		//OBS: Talvez haja uma maneira mais apropriada de tratar isto
 		//Em caso de erro nos cálculos, checar esta etapa
@@ -433,13 +433,13 @@ class FuncoesAuxiliares extends Model
 		$objForm=FuncoesResolucao::resolveParenteses($form);    
 	}
 	//Recebe um array de Strings formula e os adiciona na árvore para inicializar o processamento
-	//Um print está sendo colocado para controle interno, mas possivelmente será retirado na versão final
+	//Um //print está sendo colocado para controle interno, mas possivelmente será retirado na versão final
 	//Faz a negação da pergunta, que é sempre o último elemento do array
 	public static function inicializaArvore(&$arrayForm,&$arvore){
 
 		for ($i=0; $i < count($arrayForm); $i++) { 
 			FuncoesAuxiliares::converteConectivoSimbolo($arrayForm[$i]);
-			print "Processando etapa ".$i."... ".$arrayForm[$i]."<br><br>";
+			//print "Processando etapa ".$i."... ".$arrayForm[$i]."<br><br>";
 
 			//Nega a pergunta
 			if(($i+1)==count($arrayForm)){
@@ -456,9 +456,9 @@ class FuncoesAuxiliares extends Model
 
 	public static function imprime_r($array){
 		for ($i=0; $i < count($array) ; $i++) {
-			print "Formula ".$i." - "; 
-			print_r($array[$i]);
-			print "<br>";
+			//print "Formula ".$i." - "; 
+			//print_r($array[$i]);
+			//print "<br>";
 		}
 	}
 
@@ -467,7 +467,7 @@ class FuncoesAuxiliares extends Model
 	public static function imprimeDescendo($no){
 
 
-		print_r($no->info);
+		//print_r($no->info);
 		verificaStatusNo($no);
 
 		if($no->filhoCentral){
@@ -486,26 +486,26 @@ class FuncoesAuxiliares extends Model
 	public static function verificaStatusNo($no){
 		switch($no){
 			case $no->central:
-				print "  Central <br>";
+				//print "  Central <br>";
 				break;
 			case $no->esquerda:
-				print "  Esquerda ------ ";
+				//print "  Esquerda ------ ";
 				break;
 			case $no->direita:
-				print "  Direita <br>";
+				//print "  Direita <br>";
 				break;
 			default:
 				if($no->info=="fechado"){
 					break;
 				}
-				print "Nó não categorizado";
+				//print "Nó não categorizado";
 		}
 	}
 	*/
 	public static function imprimeArvoreRaiz($arv){
 		foreach ($arv as $key => $value) {
-			print "BD".$key." - ";
-			print_r($arv[$key]->info);
+			//print "BD".$key." - ";
+			//print_r($arv[$key]->info);
 
 		}
 	}

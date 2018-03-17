@@ -1,12 +1,3 @@
-// BLOQUEAR ULTIMA ABA ATE EXERCICIO SER ESCOLHIDO
-// Separar as funcoes dos diferentes tipos em js diferentes
-// ao clicar em + armazernar as regras e a pergunta em um vetor - ok
-// ir apresentando dinamicamente as regras ja adicionadas em uma area na lateral direita - ok 
-// ao clicar em next passar para a tela de selecao de metodo - ok
-// ao selecionar o metodo, dar algum destaque a ele - ok
-/* ao clicar em next, passar para a tela de exercicio, apresentando as regras aplicaveis e uma area para a arvore
-ser montada dinamicamente */ 
-// nao permitir usar regras repetidas ou invalidas 
 
 
 	var vet_regras = [];
@@ -17,13 +8,15 @@ ser montada dinamicamente */
 	var formulaSimplificar ="";
 	var formulaId="";
 	var regras = 0;
-	var perguntaFNC=false;
 	var formulas_JSON;
 	var transformados_FNC;
 	var cont =0;
 	var perguntaNegada = false;
 	var numLinha = 0;
+	var numExercicio = "";
+	var gabaritoBuscado;
 	// funcao apenas para testes de eventos
+	
 	function teste(){
 		
 		alert("teste");
@@ -36,7 +29,7 @@ ser montada dinamicamente */
 		$('#regra').val("");
 		$('#pergunta').val("");
     	//alert("onload ok");
-    
+
           	
 	}
 	
@@ -53,13 +46,18 @@ ser montada dinamicamente */
 	
 // ------------ Escolha do tipo de Ex / carregamento da ultima tela -------------------
 	$(document).ready(function() {
-
-		 $('[data-toggle="popover"]').popover();
+		
+		
+		$('#btn_ConfrontarRegra').hide();
+		$('#btn_TransformarRegra').show();
+		
+		
+		$('[data-toggle="popover"]').popover();
 
 		 
 		 // FORMULAS -------------------------------------------------------------------------------------------------------------------		
 		// DESTAQUE AO SELECIONAR FORMULA
-        $('#divFormulas').on('click', 'p',  function(e) {
+        $('#r_divFormulas').on('click', 'p',  function(e) {
         	$('p').css({
 					'color':'black',
 //					'background':'none',
@@ -79,13 +77,13 @@ ser montada dinamicamente */
         });
  
         //DESTAQUE MOUSE SOBRE
-        $('#divFormulas').on('mouseenter','p', function(e) {
+        $('#r_divFormulas').on('mouseenter','p', function(e) {
         	$(e.target).css({
         		'cursor':'pointer',
 
    				'font-weight': 900	        			
         });
-         $('#divFormulas').on('mouseout','p', function(e) {
+         $('#r_divFormulas').on('mouseout','p', function(e) {
         	 $('p').css({
 					'font-weight': 100,
         	 });	
@@ -96,7 +94,7 @@ ser montada dinamicamente */
          
         });
         
-        $('#divFormulas').on('click', 'p',  function(e) {
+        $('#r_divFormulas').on('click', 'p',  function(e) {
         	$('p').css({
 					'color':'black',
 //					'background':'none',
@@ -116,42 +114,7 @@ ser montada dinamicamente */
         });
  
         //DESTAQUE MOUSE SOBRE
-        $('#divNovasFormulas').on('mouseenter','p', function(e) {
-        	$(e.target).css({
-        		'cursor':'pointer',
 
-   				'font-weight': 900	        			
-        });
-         $('#divNovasFormulas').on('mouseout','p', function(e) {
-        	 $('p').css({
-					'font-weight': 100,
-        	 });	
-        	 $(e.target).css({
- 	        		'cursor':'text'
-        	 });;
-         });
-         
-        });
- 
-        $('#divNovasFormulas').on('click', 'p',  function(e) {
-        	$('p').css({
-					'color':'black',
-//					'background':'none',
-					'font-weight': 100
-
-        	});
-			  
-        	$(e.target).css({
-					'color':'red',
-					'font-weight': 900
-					
-        	});;
-        	//formulaSimplificar = $(e.target).text();
-			formulaId = this.id;
-			
-			  
-        });
- 
 // --------------------------------------------------------------------------------------------------------------------------        
 // PASSOS -------------------------------------------------------------------------------------------------------------------
 		// DESTAQUE AO SELECIONAR PASSO
@@ -206,7 +169,7 @@ ser montada dinamicamente */
 				tipoEx = "tableaux";
 			
 				carregaTela("tableaux");
-				$("#next").removeAttr("disabled");
+				$("#proximo").removeAttr("disabled");
 		      
 		    }
 		 );
@@ -217,7 +180,7 @@ ser montada dinamicamente */
 					tipoEx = "resolucao";
 					carregaTela("resolucao");
 					
-					$("#next").removeAttr("disabled");
+					$("#proximo").removeAttr("disabled");
 					
 			      
 			    }
@@ -227,7 +190,7 @@ ser montada dinamicamente */
 					tipoEx = "deducao";
 					
 					carregaTela("deducao");
-					$("#next").removeAttr("disabled");
+					$("#proximo").removeAttr("disabled");
 			      
 			    }
 			 );
@@ -281,20 +244,27 @@ ser montada dinamicamente */
 		switch(tipoEx){
 		
 			case "tableaux":
-				$('#formulas').append("<br/>" + pergunta );
-			
+				  for (cont = 0; cont in vet_regras; cont++){
+					  numLinha = cont+1;
+						$('#t_divFormulas').append("<p id='" + cont+ "'>"+ numLinha +": " + vet_regras[cont] + "</p>" );
+	
+				  }
+				  numLinha++;
+				$('#t_divFormulas').append("<p id='finalVetor'>"+ numLinha +": " + pergunta + " # Pergunta </p>" );
 				break;
 			
 			case "resolucao":
 				  for (cont = 0; cont in vet_regras; cont++){
 					  numLinha = cont+1;
-						$('#divFormulas').append("<p id='" + cont+ "'>"+ numLinha +": " + vet_regras[cont] + "</p>" );
+						$('#r_divFormulas').append("<p id='" + cont+ "'>"+ numLinha +": " + vet_regras[cont] + "</p>" );
 	
 				  }
 				  numLinha++;
-				$('#divFormulas').append("<p id='finalVetor'>"+ numLinha +": " + pergunta + "</p>" );
-				$('#divFormulas').append("<article> --------------------------------------------------------- </article>" );
+				$('#r_divFormulas').append("<p id='finalVetor'>"+ numLinha +": " + pergunta + " # Pergunta </p>" );
+				if(regras==0){
+					$('#alertResolucao').fadeOut();
 
+				}
 				
 			break;
 			case "deducao":
@@ -310,12 +280,14 @@ ser montada dinamicamente */
 			alert("Regra inválida!");
 		}
 		else{
+
+			regras++;
+
 			vet_regras.push($('#regra').val().replace(/\s/gi, ''));
 			adicionadas = $('#regra').val();
 			
-			$('#regrasAdicionadas').append("<br/>" + adicionadas );
+			$('#regrasAdicionadas').append("<br/>" + regras + ": " + adicionadas );
 			$('#regra').val("");
-			regras++;
 		}
 	} 
 	
@@ -326,9 +298,9 @@ ser montada dinamicamente */
 		else{
 			encerrado = confirm("Tem certeza que todas as regras do BD foram adicionadas?");
 			if(encerrado){
-		
+				linhaPerg = regras + 1;
 				pergunta = $('#pergunta').val().replace(/\s/gi, '');
-				$('#perguntaAdicionada').append("<br/>" + $('#pergunta').val() );
+				$('#perguntaAdicionada').append("<br/>" +linhaPerg + ": " + $('#pergunta').val() );
 				$('#pergunta').val("Pergunta Adicionada!!");
 				$('#regra').prop('disabled', true);
 				$('#pergunta').prop('disabled', true);
@@ -337,7 +309,6 @@ ser montada dinamicamente */
 				atualizaTela(tipoEx);
 				$('#tabExecucao').click();
 				
-				//CHAMAR PASSAR PRA FNC(vet_regras)############################################################################
 			}
 		}
 		
@@ -345,174 +316,208 @@ ser montada dinamicamente */
 	
 	// FALTA PERMITIR EXCLUSAO/ALTERACAO DA PERGUNTA E DE REGRAS
 	
-
-	// ######################################################################################################
-	
-	// ######### EXECUCAO DO EXERCICIO ######################################################################
-	function simplificar(){
-		
-		//VERIFICAR OBRIGATORIEDADE DA SEQUENCIA
-		if(formulaId == ""){
-				alert("Selecione uma fórmula.");
-		}
-		else{
-		
-			switch(passoId){
-			
-				case 'passo1':
-					if(formulaId!='finalVetor'){
-						alert("Atenção!\nSelecione a Pergunta para ser negada.");
-					}
-					else{
-						perguntaNegada = true;
-						// NEGAR A PERGUNTA
-						numLinha++;
-						$('#divNovasFormulas').append("<p id='" + cont+ "'>"  + numLinha +": Pergunta " + pergunta + " negada</p>");
-						$('#passo1').off();
-						$('#passo1').css({
-							    'text-decoration': 'line-through',
-							});
-						passoId = "";
-						formulaId = "";
-						vet_regras[cont]= "perguntaNegada";
-						}
-					
-					break;
-				
-				case 'passo2':
-						
-					if(perguntaNegada == false){
-							alert("Atenção! Deve-se negar a pergunta como primeiro passo!");
-	
-						}
-					else{
-							regras --;
-							cont++;
-							numLinha++;
-							// PASSAR VET_REGRAS[FORMULAID] PARA FNC
-							$('#divNovasFormulas').append("<p id='" + cont+ "'> " + numLinha +": Formula " + vet_regras[formulaId] + " em FNC</p>");
-							vet_regras[cont]= "novaRegra";
-	
-							$('#formulaId').unbind();
-							
-							
-							$("#formulaId").prop("disabled", true);
-							formulaId = "";
-							if(regras ==0){
-								passoId = "";
-								$("#divFormulas").unbind();
-								$('#alertResolucao').fadeOut();
-								$('#passo2').unbind();
-								
-		
-								$('#passo2').css({
-								    'text-decoration': 'line-through'
-									
-								});
-										
-							}							
-						}
-						break;
-				
-				case "":
-
-					alert("Passo selecionado inválido!");
-
-					break;
-				
-//			case 'passo3':
-//				if(regras>0 || perguntaNegada == false){
-//					alert("Atenção!\nExecute os passos anteriores antes de começar o terceiro passo.");
-//
-//				}
-//				else{
-//					if(perguntaFNC == false){
-//						alert("Atenção!\nPasse a pergunta para FNC.")
-//						break;
-//					}
-//					else{
-//						console.log("ok");
-//					}//exibir pergunta negada
-//				}
-//				break;
-				default: 
-				
-					break;
-			}
-		}
-		
-		 
-	}
-	// abrir a formula para fnc
-	function f_FNC(){
-		
-		// chamar a funcao php que transforma fnc
-
-	
-	}
-	//bater duas fórmulas diferentes para gerar uma nova
-	function f_ComparaRegra(){
-		// chamar a funcao php que executa o passo da resolucao
-	}
-	// ######################################################################################################
-	
-	function f_Gabarito(){
-		
-		alert('gabarito');
-		console.log("aqui");
-	}
-	
-	function f_Next(){
-		alert("next");
-	}
-	
 	function f_buscaExercicio(){
 		if($('#numExercicio').val() == ""){
 			alert("Escreva o número de um exercícío!");
 		}
 		else{
-		    	var numExercicio = $('#numExercicio').val();
+				regras = 0;
+		    	numExercicio = $('#numExercicio').val();
 				$('#regrasAdicionadas').text("");
 				$('#perguntaAdicionada').text("");
-				$('#divFormulas').empty();
-		
+				$('#r_divFormulas').text("");
+				$('#r_divNovasFormulas').text("");
+				
 				vet_regras = [];
 				var myData = {
 		    	        'exercicio' : numExercicio
 		    	    };
 		            $.ajax({
 		
-		    	        url: 'http://127.0.0.1:8000/api/resolucao',
+		    	        url: 'http://127.0.0.1:8000/api/resolucao/exercicio',
 		    	        type: 'GET',
 		    	        callback: '?',
 		    	        data: myData,
 		    	        datatype: 'application/json',
-		    	        success: function(teste) {
-		//    	        	console.log(teste); 
+		    	        success: function(retorno) {
+		    	        	console.log(retorno);
+		    	        	exercicioBuscado = JSON.parse(retorno);
+		    	        	 
 		    				$('#regra').prop('disabled', true);
 		    				$('#pergunta').prop('disabled', true);
 		    				$('#buttonRegra').hide();
 		    				$('#buttonPergunta').hide();
-		    				var limiteFormulas = ((teste.length) -1);
-		//    				console.log(limiteFormulas);
+		    				
+		    				var limiteFormulas = ((exercicioBuscado.length) -1);
+
 		    				for (var data = 0; data < limiteFormulas; data++) {
 		    					  
+		    					regras++;   					  
 		    					  
-		    						vet_regras.push(teste[data]);
-		    						adicionadas = teste[data];
+		    					vet_regras.push(exercicioBuscado[data]);
+		    					adicionadas = exercicioBuscado[data];
+		    				
+		    					$('#regrasAdicionadas').append("<br/>" + regras + ": " + adicionadas );
 		    						
-		    						$('#regrasAdicionadas').append("<br/>" + adicionadas );
-		    						regras++;   					  
-		    					  
-		    					}
-		    				pergunta = teste[limiteFormulas];
-		//    				console.log(pergunta);
-		    				$('#perguntaAdicionada').append("<br/>" + teste[limiteFormulas] );
+		    				}
+		    				pergunta = exercicioBuscado[limiteFormulas];
+		    				linhaPerg = regras+1;
+
+		    				$('#perguntaAdicionada').append("<br/>" +linhaPerg + ": " + exercicioBuscado[limiteFormulas] );
 		    				atualizaTela(tipoEx);
+		    				
 		    	        },
-		    	        error: function() { alert('Failed!'); },
+		    	        error: function() { alert('Exercício inválido!'); },
 		    	    });
 		}
 	}
 	
+	function f_Next(){
+		alert("next");
+	}
+	
+	
+	function f_Gabarito(){
+		
+		switch(tipoEx){
+		
+		case "tableaux":
+			break;
+		case "resolucao":
+				$('#r_divNovasFormulas').text("");
+				
+				$.ajax({
+		    		
+			        url: 'http://127.0.0.1:8000/api/resolucao/',
+			    	type: 'GET',
+			        callback: '?',
+			        data: numExercicio,
+			        datatype: 'application/json',
+			       
+			        success: function(retorno) {
+				        console.log(numExercicio);
+
+			        	gabaritoBuscado = JSON.parse(retorno);
+			        	console.log(gabaritoBuscado); 
+						limiteGabarito = gabaritoBuscado.length;
+						//console.log(limiteGabarito);
+						//var data = 0;
+						$('#r_divNovasFormulas').append("<article> --------------------------------------------------------- </article>" );
+						
+						for(var data=0; data < limiteGabarito; data++) {
+							
+
+
+
+							switch (gabaritoBuscado[data]){
+								case "Negação da pergunta": 
+									cont++;
+									numLinha++;
+									$('#r_divNovasFormulas').append("<p id='" + cont+ "' data-html='true'  data-trigger='click' data-toggle='popover' data-placement='right' title='Negação da pergunta' data-content='Fórmula usada:<ul><li>"+ gabaritoBuscado[data+2]+"</li></ul>'>" + numLinha +": " + gabaritoBuscado[data+1] + "</p>");
+
+									data = data + 2;
+									
+									break;
+									
+								case "Fórmula em FNC":
+									cont++;
+									numLinha++;
+									$('#r_divNovasFormulas').append("<p id='" + cont+ "' data-html='true'  data-trigger='click' data-toggle='popover' data-placement='right' title='Fórmula em FNC' data-content='Fórmulas usadas:\n<ul><li>"+ gabaritoBuscado[data+2]+"</li></ul>'>" + numLinha +": " + gabaritoBuscado[data+1] + "</p>" );
+									data = data + 1;
+									break;
+								
+								case "Separação do E":
+									cont++;
+									numLinha++;
+									$('#r_divNovasFormulas').append("<p id='" + cont+ "' data-html='true'  data-trigger='click' data-toggle='popover' data-placement='right' title='Separação do E' data-content='Fórmulas usadas:\n<ul><li>"+ gabaritoBuscado[data+3]+"</li></ul>'>"+ numLinha +": " + gabaritoBuscado[data+1] + "</p>" );
+									cont++;
+									numLinha++;
+									$('#r_divNovasFormulas').append("<p id='" + cont+ "' data-html='true'  data-trigger='click' data-toggle='popover' data-placement='right' title='Separação do E' data-content='Fórmulas usadas:\n<ul><li>"+ gabaritoBuscado[data+3]+"</li></ul>'>"+ numLinha +": " + gabaritoBuscado[data+2] + "</p>" );
+									data = data +2;
+									
+									break;
+								
+								case "Separação do Ou":
+									cont++;
+									numLinha++;
+									$('#r_divNovasFormulas').append("<p id='" + cont+ "' data-html='true'  data-trigger='click' data-toggle='popover' data-placement='right' title='Separação do OU' data-content='Fórmulas usadas:\n<ul><li>"+ gabaritoBuscado[data+2]+"</li></ul>'>"+ numLinha +": " + gabaritoBuscado[data+1] + "</p>" );
+									data = data+2;
+									
+									
+									break;
+								
+								case "Remove os notnot":
+									cont++;
+									numLinha++;
+									$('#r_divNovasFormulas').append("<p id='" + cont+ "' data-html='true'  data-trigger='click' data-toggle='popover' data-placement='right' title='Remove os notnot' data-content='Fórmulas usadas:\n<ul><li>"+ gabaritoBuscado[data+2]+"</li></ul>'>"+ numLinha +": " + gabaritoBuscado[data+1] + "</p>" );
+									data = data+2;
+									
+									break;
+									
+								case "Fechado":
+									cont++;
+									numLinha++;
+									$('#r_divNovasFormulas').append("<p id='" + cont +"'>"  + numLinha +"<b>: &#10066; Contradição Encontrada!</b> </p>" );
+									$('#r_divNovasFormulas').append("<article><b> Fim do Exercício</b></article>");
+									$('#btn_TransformarRegra').hide();
+									$('#btn_ProximoPasso').hide();
+									//$('#btn_gabarito').attr('disabled',true);
+									$("#r_divFormulas").unbind();
+									$("#r_passos").off();
+						        	$('span').css({
+					   					'color':'black'
+						        	});	
+						        	$('p').css({
+					   					'color':'black'
+						        	});	
+									$('#alertResolucao').fadeOut();
+									console.log("resolvido!");
+									break;
+								default: 
+									console.log("fim do gabarito");
+									break;
+
+							}
+						}
+						
+				        //DESTAQUE MOUSE SOBRE
+				        $('#r_divNovasFormulas').on('mouseenter','p', function(e) {
+				        	
+
+						$('[data-toggle="popover"]').popover();
+				        	$(e.target).css({
+				        		'cursor':'pointer',
+
+				   				'font-weight': 900	        			
+				        });
+				         $('#r_divNovasFormulas').on('mouseout','p', function(e) {
+							$('[data-toggle="popover"]').popover('hide');
+
+				        	 $('p').css({
+									'font-weight': 100,
+				        	 });	
+				        	 $(e.target).css({
+				 	        		'cursor':'text'
+				        	 });;
+				         });
+				         
+				        });
+				        
+
+
+						
+			        },
+			        error: function() { alert('Erro na chamada'); },
+			    });
+
+				
+				break;
+		case "deducao":
+			break;
+		}
+			
+	}
+	
+
+
 	

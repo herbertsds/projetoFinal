@@ -1,7 +1,5 @@
 <?php 
-
 echo "<pre>";
-
 //Variáveis Globais
 //$listaConectivos=array("^","v","-","!");
 //Recebe um array de fórmulas, verifica se a digitação está correta e 
@@ -18,9 +16,7 @@ function negaPergunta($listaFormulas,$tamanho){
 	
 	return $entradaConvertida;
 }
-
 function converteFNC(&$form){
-
 	//Se for átomo, então sai
 	if (!is_array($form)) {
 		if (strlen($form)<=2) {
@@ -33,7 +29,6 @@ function converteFNC(&$form){
 		}
 	}
 	
-
 	//Primeiro, remover a implicação, se houver
 	
 	resolveImplicacoes($form);
@@ -41,22 +36,140 @@ function converteFNC(&$form){
 	//print_r($form);
 
 	//Segundo Passar todos os not fora de parênteses para dentro
-
 	formataFormulas($form);
 	$aux1=&$form['esquerdo'];
 	$aux2=&$form['direito'];
 	$c=0;
-	
-	if($form['conectivo']=='not_e'){
-		$form['direito']="!(".$form['direito'].")";
-		$form['conectivo']='ou';
-		$form['esquerdo']="!(".$form['esquerdo'].")";
-	}
 
+	//Se for not_e ao passar o not para dentro, vira um ou
+	if($form['conectivo']=='not_e'){
+		//Se os 2 lados não forem arrays, o tratamento é simples
+		if (!is_array($form['direito']) && !is_array($form['direito']) ) {
+			$form['direito']="!(".$form['direito'].")";
+			$form['esquerdo']="!(".$form['esquerdo'].")";
+		}
+		//Se o lado direito for array, preciso negar apenas o conectivo
+		if (is_array($form['direito'])) {
+			if ($form['direito']['conectivo']=='not') {
+				$form['direito']['conectivo']=NULL;
+			}
+			elseif ($form['direito']['conectivo']=='e') {
+				$form['direito']['conectivo']='not_e';
+			}
+			elseif ($form['direito']['conectivo']=='not_e') {
+				$form['direito']['conectivo']='e';
+			}
+			elseif ($form['direito']['conectivo']=='ou') {
+				$form['direito']['conectivo']='not_ou';
+			}
+			elseif ($form['direito']['conectivo']=='not_ou') {
+				$form['direito']['conectivo']='ou';
+			}
+			elseif ($form['direito']['conectivo']=='implica') {
+				$form['direito']['conectivo']='not_implica';
+			}
+			elseif ($form['direito']['conectivo']=='not_implica') {
+				$form['direito']['conectivo']='implica';
+			}
+		}
+		//Caso os dois lados não sejam array, mas só direito seja, devo tratá-lo
+		else{
+			$form['direito']="!(".$form['direito'].")";
+		}
+		//Se o lado esquerdo for array, preciso negar apenas o conectivo
+		if (is_array($form['esquerdo'])) {
+			if ($form['esquerdo']['conectivo']=='not') {
+				$form['esquerdo']['conectivo']=NULL;
+			}
+			elseif ($form['esquerdo']['conectivo']=='e') {
+				$form['esquerdo']['conectivo']='not_e';
+			}
+			elseif ($form['esquerdo']['conectivo']=='not_e') {
+				$form['esquerdo']['conectivo']='e';
+			}
+			elseif ($form['esquerdo']['conectivo']=='ou') {
+				$form['esquerdo']['conectivo']='not_ou';
+			}
+			elseif ($form['esquerdo']['conectivo']=='not_ou') {
+				$form['esquerdo']['conectivo']='ou';
+			}
+			elseif ($form['esquerdo']['conectivo']=='implica') {
+				$form['esquerdo']['conectivo']='not_implica';
+			}
+			elseif ($form['esquerdo']['conectivo']=='not_implica') {
+				$form['esquerdo']['conectivo']='implica';
+			}
+		}
+		//Caso os dois lados não sejam array, mas só esquerdo seja, devo tratá-lo
+		else{
+			$form['esquerdo']="!(".$form['esquerdo'].")";
+		}
+		$form['conectivo']='ou';
+		
+	}
 	if($form['conectivo']=='not_ou'){
-		$form['direito']="!(".$form['direito'].")";
+		//Se os 2 lados não forem arrays, o tratamento é simples
+		if (!is_array($form['direito']) && !is_array($form['direito']) ) {
+			$form['direito']="!(".$form['direito'].")";
+			$form['esquerdo']="!(".$form['esquerdo'].")";
+		}
+		//Se o lado direito for array, preciso negar apenas o conectivo
+		if (is_array($form['direito'])) {
+			if ($form['direito']['conectivo']=='not') {
+				$form['direito']['conectivo']=NULL;
+			}
+			elseif ($form['direito']['conectivo']=='e') {
+				$form['direito']['conectivo']='not_e';
+			}
+			elseif ($form['direito']['conectivo']=='not_e') {
+				$form['direito']['conectivo']='e';
+			}
+			elseif ($form['direito']['conectivo']=='ou') {
+				$form['direito']['conectivo']='not_ou';
+			}
+			elseif ($form['direito']['conectivo']=='not_ou') {
+				$form['direito']['conectivo']='ou';
+			}
+			elseif ($form['direito']['conectivo']=='implica') {
+				$form['direito']['conectivo']='not_implica';
+			}
+			elseif ($form['direito']['conectivo']=='not_implica') {
+				$form['direito']['conectivo']='implica';
+			}
+		}
+		//Caso os dois lados não sejam array, mas só direito seja, devo tratá-lo
+		else{
+			$form['direito']="!(".$form['direito'].")";
+		}
+		//Se o lado esquerdo for array, preciso negar apenas o conectivo
+		if (is_array($form['esquerdo'])) {
+			if ($form['esquerdo']['conectivo']=='not') {
+				$form['esquerdo']['conectivo']=NULL;
+			}
+			elseif ($form['esquerdo']['conectivo']=='e') {
+				$form['esquerdo']['conectivo']='not_e';
+			}
+			elseif ($form['esquerdo']['conectivo']=='not_e') {
+				$form['esquerdo']['conectivo']='e';
+			}
+			elseif ($form['esquerdo']['conectivo']=='ou') {
+				$form['esquerdo']['conectivo']='not_ou';
+			}
+			elseif ($form['esquerdo']['conectivo']=='not_ou') {
+				$form['esquerdo']['conectivo']='ou';
+			}
+			elseif ($form['esquerdo']['conectivo']=='implica') {
+				$form['esquerdo']['conectivo']='not_implica';
+			}
+			elseif ($form['esquerdo']['conectivo']=='not_implica') {
+				$form['esquerdo']['conectivo']='implica';
+			}
+		}
+		//Caso os dois lados não sejam array, mas só esquerdo seja, devo tratá-lo
+		else{
+			$form['esquerdo']="!(".$form['esquerdo'].")";
+		}
 		$form['conectivo']='e';
-		$form['esquerdo']="!(".$form['esquerdo'].")";
 	}
 	
 	do{
@@ -75,7 +188,6 @@ function converteFNC(&$form){
 			$aux1['conectivo']='ou';
 			}
 		}
-
 		if(@$aux1['conectivo']=='not_ou'){
 			if (is_array($aux1['esquerdo']) && $aux1['esquerdo']['conectivo']=='not') {
 				$aux1['esquerdo']=$aux1['esquerdo']['direito'];
@@ -91,7 +203,6 @@ function converteFNC(&$form){
 			}
 			$aux1['conectivo']='e';
 		}
-
 		if(@$aux2['conectivo']=='not_e'){
 			if (is_array($aux2['esquerdo']) && $aux2['esquerdo']['conectivo']=='not') {
 				$aux2['esquerdo']=$aux2['esquerdo']['direito'];
@@ -127,14 +238,14 @@ function converteFNC(&$form){
 		}
 		if(@is_array($aux1['esquerdo']) && $aux1['esquerdo']['conectivo']!='not'){
 			$array1=$aux1;
-			$aux1=$aux1['esquerdo'];
+			$aux1=&$aux1['esquerdo'];
 		}
 		//else{
 		//	break;
 		//}
 		if(@is_array($aux2['direito']) && $aux1['esquerdo']['conectivo']!='not'){
 			$array2=$aux2;
-			$aux2=$aux2['direito'];
+			$aux2=&$aux2['direito'];
 		}
 		else{
 			break;
@@ -145,26 +256,19 @@ function converteFNC(&$form){
 	//print "<br>SEGUNDO PASSO CONCLUÍDO<BR>";
 	//print_r($form);
 	
-
-
 	//Terceira, aplicar a distributiva, formalizar o "e" de "ou"
-
-
 	if($form['conectivo']=='ou'){
 		if(is_array($form['esquerdo']) && $form['esquerdo']['conectivo']=='e'){
-
 			$aux1=&$form['esquerdo'];
 			$auxilia['esquerdo']=NULL;
 			$auxilia['conectivo']=NULL;
 			$auxilia['direito']=NULL;
-
 			if(!is_array($form['direito'])){
 				$aux3=$aux1['direito'];
 				$aux1['direito']=$form['direito'];
 				$aux1['conectivo']="ou";
 				$form['direito']=array('esquerdo' => $aux3 , 'conectivo' => "ou" , 'direito' => $form['direito'] );
 				$form['conectivo']='e';
-
 			}
 			elseif(is_array($form['direito'])){
 				$aux3=$aux1['direito'];
@@ -176,8 +280,6 @@ function converteFNC(&$form){
 		}
 	
 		elseif(is_array($form['direito']) && $form['direito']['conectivo']=='e'){
-
-
 			$aux2=&$form['direito'];
 			if(!is_array($form['esquerdo'])){
 				$aux3=$aux2['esquerdo'];
@@ -185,7 +287,6 @@ function converteFNC(&$form){
 				$aux2['conectivo']="ou";
 				$form['esquerdo']=array('esquerdo' => $aux3 , 'conectivo' => "ou" , 'direito' => $form['esquerdo'] );
 				$form['conectivo']='e';
-
 			}
 			elseif(is_array($form['esquerdo'])){
 				$aux3=$aux2['esquerdo'];
@@ -197,10 +298,9 @@ function converteFNC(&$form){
 		}
 	}
 }
-
 function casarAtomo($hash,$aux,$sinal){
 	$aux2=$sinal == "not" ? 0:1;
-	if (count($hash)<=1) {
+	if (count($hash)<1) {
 		return false;
 	}
 	foreach ($hash as $key => $value) {			
@@ -242,73 +342,167 @@ function checaImplica(&$form){
 			}
 		}
 	}
-
 }
 function resolveImplicacoes(&$form){
-	$flag=true;
-	$form3=$form;
-	
-	//VAI MUDAR PARA O CASO GERAL (IDEIA: USAR WHILE)
-	//Caso de implicação dentro de um not
-	implica:
-	while($flag){
-		//print "<br>Fórmula<br>";
-		//print_r($form);
-		if($form['conectivo']=="not_implica"){
-			//Se já houver um "not", remove
-			if ($form['direito'][0]=='!') {
-				$form['direito']=substr($form['direito'], 1);
-			}
 
-			elseif(@strlen($form['direito'])==1){
-				$form['direito']="!(".$form['direito'].")";
+		$flag=true;
+		$form3=&$form;
+
+
+		
+		//VAI MUDAR PARA O CASO GERAL (IDEIA: USAR WHILE)
+		//Caso de implicação dentro de um not
+		implica:
+		while($flag){
+			//print "<br>Fórmula<br>";
+			//print_r($form);
+			if($form['conectivo']=="not_implica"){
+			if (!is_array($form['direito'])) {
+				//Se já houver um "not", remove
+				if ($form['direito'][0]=='!') {
+					$form['direito']=substr($form['direito'], 1);
+				}
+
+
+				elseif(@strlen($form['direito'])==1){
+					$form['direito']="!(".$form['direito'].")";
+				}
+				else{
+					$form['direito']="!".$form['direito'];
+				}
+				
+				$form['conectivo']="e";
+
 			}
-			else{
-				$form['direito']="!".$form['direito'];
+			elseif(is_array($form['direito'])){
+				//Se já houver um "not", remove
+
+				if (checaAtomico($form['direito'])) {
+					//Pode ser um átomo, neste caso eu devo simplesmente tratar o not
+					if ($form['direito']['conectivo']=='not') {
+						$form['direito']['conectivo']=NULL;
+					}
+					elseif($form['direito']['conectivo']==NULL) {
+						$form['direito']['conectivo']='not';
+					}
+				}
+				elseif (!checaAtomico($form['direito'])) {
+					//Caso não seja átomo eu preciso negar o conectivo externo da fórmula,
+					//que seria equivalente a pôr um not no exterior do parênteses
+					if ($form['direito']['conectivo']=='e') {
+						$form['direito']['conectivo']='not_e';
+					}
+					elseif ($form['direito']['conectivo']=='not_e') {
+						$form['direito']['conectivo']='e';
+					}
+					elseif ($form['direito']['conectivo']=='ou') {
+						$form['direito']['conectivo']='not_ou';
+					}
+					elseif ($form['direito']['conectivo']=='not_ou') {
+						$form['direito']['conectivo']='ou';
+					}
+					elseif ($form['direito']['conectivo']=='implica') {
+						$form['direito']['conectivo']='not_implica';
+					}
+					elseif ($form['direito']['conectivo']=='not_implica') {
+						$form['direito']['conectivo']='implica';
+					}
+				}				
+				$form['conectivo']="e";
 			}
 			
-			$form['conectivo']="e";
 		}
 		
 		//Caso de implicação sem not
 		elseif($form['conectivo']=="implica"){
-			//Se já houver um "not", remove
-			if ($form['esquerdo'][0]=='!') {
-				$form['esquerdo']=substr($form, 1);
-			}
 
-			elseif(@strlen($form['esquerdo'])==1){
-				$form['esquerdo']="!(".$form['esquerdo'].")";
-			}
-			else{
-				$form['esquerdo']="!".$form['esquerdo'];
-			}
-			$form['conectivo']="ou";
-		}
-		elseif(!(is_array($form['esquerdo'])) && !(is_array($form['direito']))){
-			$form=$form3;
-		}
-		if(is_array($form['esquerdo']) && checaImplica($form['esquerdo'])){
-			print "<BR>PASSEI<BR>";
-			$form=&$form['esquerdo'];
-		}
-		elseif(is_array($form['direito']) && checaImplica($form['direito'])){
-			print "<BR>PASSEI<BR>";
-			$form=&$form['direito'];
-		}
-		else{
-			$flag=checaImplica($form);
-		}
-		print "<br>";
+			if (!is_array($form['esquerdo'])) {
+				//Se já houver um "not", remove
+				if ($form['esquerdo'][0]=='!') {
+					$form['esquerdo']=substr($form['esquerdo'], 1);
+				}
+				elseif(@strlen($form['esquerdo'])==1){
+					$form['esquerdo']="!(".$form['esquerdo'].")";
+				}
+				else{
+					$form['esquerdo']="!".$form['esquerdo'];
+				}
+				//print "<br>Esquerdo<br>";
+				//print_r($form);
+				
+				$form['conectivo']="ou";
 
+			}
+			elseif(is_array($form['esquerdo'])){
+				//Se já houver um "not", remove
+				if (checaAtomico($form['esquerdo'])) {
+					//Pode ser um átomo, neste caso eu devo simplesmente tratar o not
+					if ($form['esquerdo']['conectivo']=='not') {
+						$form['esquerdo']['conectivo']=NULL;
+					}
+					elseif($form['esquerdo']['conectivo']==NULL) {
+						$form['esquerdo']['conectivo']='not';
+					}
+				}
+				elseif (!checaAtomico($form['direito'])) {
+					//Caso não seja átomo eu preciso negar o conectivo externo da fórmula,
+					//que seria equivalente a pôr um not no exterior do parênteses
+					if ($form['esquerdo']['conectivo']=='e') {
+						$form['esquerdo']['conectivo']='not_e';
+					}
+					elseif ($form['esquerdo']['conectivo']=='not_e') {
+						$form['esquerdo']['conectivo']='e';
+					}
+					elseif ($form['esquerdo']['conectivo']=='ou') {
+						$form['esquerdo']['conectivo']='not_ou';
+					}
+					elseif ($form['esquerdo']['conectivo']=='not_ou') {
+						$form['esquerdo']['conectivo']='ou';
+					}
+					elseif ($form['esquerdo']['conectivo']=='implica') {
+						$form['esquerdo']['conectivo']='not_implica';
+					}
+					elseif ($form['esquerdo']['conectivo']=='not_implica') {
+						$form['esquerdo']['conectivo']='implica';
+					}
+				}
+				
+				$form['conectivo']="ou";
+			}
+		}
+			formataFormulas($form);
+			if (checaImplica($form['esquerdo'])) {
+				$form=&$form['esquerdo'];
+				break;
+			}
+			if (checaImplica($form['direito'])) {
+				$form=&$form['direito'];
+				break;
+			}
+			if ($form!=$form3) {
+				$form=&$form3;
+			}
+			if ($form==$form3) {
+				$flag=false;
+			}
+			print "<br>";
+
+		}
+		//formataFormulas($form);
+		if (checaImplica($form)) {
+			$flag=true;
+			goto implica;
+		}
 	}
-	formataFormulas($form);
-	if (checaImplica($form)) {
-		$flag=true;
-		goto implica;
+function checaAtomico($form){
+	//@ colocado para previnir que fórmulas não instanciadas deem warning
+	if (@$form['esquerdo']==NULL && (@$form['conectivo']==NULL || @$form['conectivo']='not')) {
+		return true;
 	}
+	else{
+		return false;
+	}	
 }
-
 function checaExisteArray($listaFormulas){
 	foreach ($listaFormulas as $key => $value) {
 		if (is_array($listaFormulas[$key])) {
@@ -335,7 +529,6 @@ function checaExisteArray($listaFormulas){
 	}
 	return false;
 }
-
 function separarE(&$arrayFormulas,&$entradaConvertida,&$aux1,&$aux2,$contador){
 	if ($contador==0) {
 		$arrayFormulas=array();
@@ -360,7 +553,6 @@ function separarE(&$arrayFormulas,&$entradaConvertida,&$aux1,&$aux2,$contador){
 			else{
 				array_push($arrayFormulas, $value);
 			}
-
 		}
 	}
 	else{
@@ -386,7 +578,6 @@ function separarE(&$arrayFormulas,&$entradaConvertida,&$aux1,&$aux2,$contador){
 				}
 				unset($arrayFormulas[$key]);
 			}
-
 		}
 	}
 }
@@ -404,7 +595,6 @@ function confrontaAtomos(&$arrayFormulas,&$hashResolucao,&$flag){
 			}
 			$hashResolucao[$value['esquerdo']['direito']]=$value['esquerdo']['conectivo'] == "not" ? '0':'1';
 		}
-
 		if (is_array($value['direito']) && @$value['direito']['esquerdo']==NULL && @$value['esquerdo']==NULL) {
 			if(casarAtomo($hashResolucao,$value['direito']['direito'],$value['direito']['conectivo'])){
 				print "<br>Fechou, contradição com o átomo abaixo<br>";
@@ -427,7 +617,6 @@ function confrontaAtomos(&$arrayFormulas,&$hashResolucao,&$flag){
 		}
 	}
 }
-
 function separarOU1(&$arrayFormulas,&$hashResolucao){
 	foreach ($arrayFormulas as $key => $value) {
 		//Simplificação do tipo: Se Av¬B e B então A
@@ -473,7 +662,6 @@ function separarOU1(&$arrayFormulas,&$hashResolucao){
 							$arrayFormulas[$key]['esquerdo']=NULL;
 							break;
 						}
-
 						elseif(!is_array($value['esquerdo'])){
 							//CHECAR CASO DÊ ERRO
 							//Todo átomo deve ser mantido do lado direito
@@ -512,7 +700,6 @@ function separarOU1(&$arrayFormulas,&$hashResolucao){
 				//Neste caso, temos que verificar, se há algum correspondente na hash com valor 0
 				//Se houver significa que podemos cortar esse cara do "ou"
 				if(!is_array($value['esquerdo'])){
-
 					//Pode acontecer de não existir o cara na hash ainda, então o @ é pra omitir este aviso desnecessário
 					if(@$hashResolucao[$value['esquerdo']]=='0'){
 						//O cara que vai sobrar do "ou" pode ser adicionado na hash caso seja átomo
@@ -561,8 +748,6 @@ function separarOU1(&$arrayFormulas,&$hashResolucao){
 		corrigeAtomos($arrayFormulas[$key]);
 	}
 }
-
-
 function separarOU2(&$arrayFormulas){
 	foreach ($arrayFormulas as $key => $value) {
 		//Para reduzir um pouco o processamento que é de ordem quadrática, só entro no segundo loop
@@ -644,7 +829,6 @@ function separarOU2(&$arrayFormulas){
 		}		
 	}
 }
-
 function corrigeAtomos(&$form){
 	if(@$form['esquerdo']==NULL && @is_array($form['direito'])){
 		if (@$form['direito']['esquerdo']==NULL) {
@@ -664,6 +848,10 @@ function corrigeAtomos(&$form){
 		//$form['direito']=$form['direito'];
 	}
 }
+
+//Função que corrige casos em que temos um campo array do tipo fórmula dentro de outro
+//array do tipo fórmula com um dos campos (esquerdo ou direito) vazio
+
 function corrigeArrays(&$form){
 	if (@$form['esquerdo']==NULL && @is_array($form['direito'])) {
 		$aux1=$form['direito'];
@@ -678,6 +866,21 @@ function corrigeArrays(&$form){
 		$form['conectivo']=$aux1['conectivo'];
 		$form['direito']=$aux1['direito'];
 	}
+	//Correção para caso haja um átomo sendo tratado como array
+	//dentro de um array, por exemplo form[esquerdo][esquerdo]==null e form[esquerdo][direito]==algumacoisa
+	if (is_array(@$form['esquerdo']['esquerdo']) && @$form['esquerdo']['esquerdo']['esquerdo']==NULL && @$form['esquerdo']['esquerdo']['conectivo']==NULL) {
+		$form['esquerdo']['esquerdo']=$form['esquerdo']['esquerdo']['direito'];
+		return;
+	}
+	if (is_array(@$form['esquerdo']['direito']) && @$form['esquerdo']['direito']['esquerdo']==NULL && @$form['esquerdo']['direito']['conectivo']==NULL) {
+		$form['esquerdo']['direito']=$form['esquerdo']['direito']['direito'];
+		return;
+	}
+	if (is_array(@$form['direito']['direito']) && @$form['direito']['direito']['esquerdo']==NULL && @$form['direito']['direito']['conectivo']==NULL) {
+		$form['direito']['direito']=$form['direito']['direito']['direito'];
+		return;
+	}
 	return;
+	
 }
 ?>
