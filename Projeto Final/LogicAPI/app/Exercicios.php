@@ -89,7 +89,7 @@ class Exercicios extends Model
 		$this->listaExercicios['resolucao'][] = array ("((Pimplica(not(P)))implica(not(P)))");
 		$this->listaExercicios['resolucao'][] = array ("((not(P)implicaP)implicaP)");
 		$this->listaExercicios['resolucao'][] = array ("((PeQ)implica(not((not(P))ou(not(Q)))))");
-		$this->listaExercicios['resolucao'][] = array ("(Aimplica(not(B)implica(not(A)implica(B))))");
+		$this->listaExercicios['resolucao'][] = array ("(Aimplica(not(B)implica(not(Aimplica(B)))))");
 		$this->listaExercicios['resolucao'][] = array ("(Bou(BimplicaC))");
 		$this->listaExercicios['resolucao'][] = array ("((not(A)e(not(B)))implica(not(AouB)))");
 		$this->listaExercicios['resolucao'][] = array ("(Aimplica(BeC))","((BimplicaC)implicaD)","(Aimplica(BeD))");

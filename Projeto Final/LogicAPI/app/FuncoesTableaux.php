@@ -89,6 +89,9 @@ class FuncoesTableaux extends Model
 				$form=substr($form, 3);		
 				$form=substr($form, 0, strlen($form)-1);
 				$auxForm['info']['direito']=$form;
+				if ($auxForm['info']['direito'][0]!='(') {
+					$auxForm['info']['direito']="(".$auxForm['info']['direito'].")";
+				}
 				$auxForm['info']['conectivo']='notnot';
 				return $auxForm;
 			}
@@ -242,8 +245,10 @@ class FuncoesTableaux extends Model
 
 		foreach ($listaFormulasDisponiveis as $key => $value) {
 			FuncoesTableaux::formataFormulasTableaux($listaFormulasDisponiveis[$key]);
+			//print_r($listaFormulasDisponiveis[$key]['info']);
 
 		}
+
 
 		//Aplicação na raiz
 		//-------------------------------------------------------------------
@@ -486,7 +491,10 @@ class FuncoesTableaux extends Model
 				FuncoesTableaux::removerFormula($noAuxCen1['formDisponiveis'],$form['info']);
 				FuncoesTableaux::removerFormula($noAuxCen2['formDisponiveis'],$form['info']);
 					
-				FuncoesTableaux::adicionaArray($nosFolha, $noAuxCen2);
+				if (@$noAuxCen2['filhoCentral']!='fechado') {
+						FuncoesTableaux::adicionaArray($nosFolha, $noAuxCen2);
+				}
+	
 				return;
 
 			//Regra 2
@@ -538,8 +546,12 @@ class FuncoesTableaux extends Model
 				}
 				FuncoesTableaux::removerFormula($noAuxEsq['formDisponiveis'],$form['info']);
 				FuncoesTableaux::removerFormula($noAuxDir['formDisponiveis'],$form['info']);	
-				FuncoesTableaux::adicionaArray($nosFolha, $noAuxEsq);
-				FuncoesTableaux::adicionaArray($nosFolha, $noAuxDir);
+				if (@$noAuxEsq['filhoCentral']!='fechado') {
+						FuncoesTableaux::adicionaArray($nosFolha, $noAuxEsq);
+				}
+				if (@$noAuxDir['filhoCentral']!='fechado') {
+						FuncoesTableaux::adicionaArray($nosFolha, $noAuxDir);
+				}	
 				return;		
 			case 'implica':
 				//Com exceção da raiz, todo o no que é pai neste momento, deixará de ser nó folha.
@@ -590,6 +602,8 @@ class FuncoesTableaux extends Model
 				if(FuncoesTableaux::checaAtomico($noAuxEsq['info'])){
 					if (FuncoesTableaux::casarFormula($noAuxEsq['hashAtomos'],$noAuxEsq['info'])) {
 						$noAuxEsq['filhoCentral']='fechado';
+						print "<br>FECHADO<br>";
+						print_r($noAuxEsq['info']);
 					}
 					$noAuxEsq['hashAtomos'][$noAuxEsq['info']['direito']]=$noAuxEsq['info']['conectivo'] == 'not' ? '0':'1';	
 				}
@@ -600,17 +614,43 @@ class FuncoesTableaux extends Model
 				if(FuncoesTableaux::checaAtomico($noAuxDir['info'])){
 					if (FuncoesTableaux::casarFormula($noAuxDir['hashAtomos'],$noAuxDir['info'])) {
 						$noAuxDir['filhoCentral']='fechado';
+						print "<br>FECHADO<br>";
+						print_r($noAuxDir['info']);
 					}
 					$noAuxDir['hashAtomos'][$noAuxDir['info']['direito']]=$noAuxDir['info']['conectivo'] == 'not' ? '0':'1';	
 				}
 				elseif(!FuncoesTableaux::checaAtomico($noAuxDir['info'])) {
 					array_push($noAuxDir['formDisponiveis'], $noAuxDir);
+				}/*
+				print "<br>Fórmulas Disponíveis<br>";
+				foreach ($noAuxDir['formDisponiveis'] as $key => $value) {
+					print_r($noAuxDir['formDisponiveis'][$key]['info']);
+				}*/
+				
+				print "<br>Nós filho<br>";
+			
+					print_r($noAuxEsq['info']);
+					print_r($noAuxDir['info']);
+
+				print "<br>Nós folha<br>";
+				foreach ($nosFolha as $key => $value) {
+					print_r($nosFolha[$key]['info']);
 				}
 
 				FuncoesTableaux::removerFormula($noAuxEsq['formDisponiveis'],$form['info']);
-				FuncoesTableaux::removerFormula($noAuxDir['formDisponiveis'],$form['info']);	
-				FuncoesTableaux::adicionaArray($nosFolha, $noAuxEsq);
-				FuncoesTableaux::adicionaArray($nosFolha, $noAuxDir);
+				FuncoesTableaux::removerFormula($noAuxDir['formDisponiveis'],$form['info']);
+				if (@$noAuxEsq['filhoCentral']!='fechado') {
+						FuncoesTableaux::adicionaArray($nosFolha, $noAuxEsq);
+				}
+				if (@$noAuxDir['filhoCentral']!='fechado') {
+						FuncoesTableaux::adicionaArray($nosFolha, $noAuxDir);
+				}	
+				
+				
+				print "<br>Nós folha<br>";
+				foreach ($nosFolha as $key => $value) {
+					print_r($nosFolha[$key]['info']);
+				}
 				return;		
 			//Regra 4
 			case 'notnot':
@@ -752,8 +792,12 @@ class FuncoesTableaux extends Model
 				}
 				FuncoesTableaux::removerFormula($noAuxEsq['formDisponiveis'],$form['info']);
 				FuncoesTableaux::removerFormula($noAuxDir['formDisponiveis'],$form['info']);	
-				FuncoesTableaux::adicionaArray($nosFolha, $noAuxEsq);
-				FuncoesTableaux::adicionaArray($nosFolha, $noAuxDir);
+				if (@$noAuxEsq['filhoCentral']!='fechado') {
+						FuncoesTableaux::adicionaArray($nosFolha, $noAuxEsq);
+				}
+				if (@$noAuxDir['filhoCentral']!='fechado') {
+						FuncoesTableaux::adicionaArray($nosFolha, $noAuxDir);
+				}	
 				return;	
 			
 			case 'not_ou':
@@ -848,7 +892,9 @@ class FuncoesTableaux extends Model
 				FuncoesTableaux::removerFormula($noAuxCen1['formDisponiveis'],$form['info']);
 				FuncoesTableaux::removerFormula($noAuxCen2['formDisponiveis'],$form['info']);
 					
-				FuncoesTableaux::adicionaArray($nosFolha, $noAuxCen2);
+				if (@$noAuxCen2['filhoCentral']!='fechado') {
+						FuncoesTableaux::adicionaArray($nosFolha, $noAuxCen2);
+				}
 				return;
 			
 			case 'not_implica':
@@ -924,7 +970,9 @@ class FuncoesTableaux extends Model
 				FuncoesTableaux::removerFormula($noAuxCen1['formDisponiveis'],$form['info']);
 				FuncoesTableaux::removerFormula($noAuxCen2['formDisponiveis'],$form['info']);
 					
-				FuncoesTableaux::adicionaArray($nosFolha, $noAuxCen2);
+				if (@$noAuxCen2['filhoCentral']!='fechado') {
+						FuncoesTableaux::adicionaArray($nosFolha, $noAuxCen2);
+				}
 
 				return;
 			//Caso extra
