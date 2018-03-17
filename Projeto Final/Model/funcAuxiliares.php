@@ -259,12 +259,16 @@ function resolveParenteses2($form){
 			}
 
 			if ($auxForm['esquerdo']=='(') {
-				$auxForm['esquerdo']=NULL;
+				//$auxForm['esquerdo']=NULL;
 			}
+			
 
 			$form=substr($form, 3);		
 			$form=substr($form, 0, strlen($form)-1);
 			$auxForm['direito']=$form;
+			if ($auxForm['direito'][0]!='(') {
+				$auxForm['direito']="(".$auxForm['direito'].")";
+			}
 			$auxForm['conectivo']='notnot';
 			return $auxForm;
 		}

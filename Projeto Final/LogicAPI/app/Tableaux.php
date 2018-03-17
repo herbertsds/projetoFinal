@@ -167,15 +167,13 @@ class Tableaux extends Model
 				# Chama a função de escolha eficiente
 				print "<br>Chamando a função de escolha eficiente<br>";
 				foreach ($this->listaFormulasDisponiveis as $key => $value) {
-					print "key ".$key."<br>";
-					print_r($value['info']);
-					print "<br>";
+					//print "key ".$key."<br>";
+					//print_r($value['info']);
+					//print "<br>";
 				}
 				FuncoesTableaux::escolhaEficiente($this->listaFormulasDisponiveis,$this->hashInicial,$nosFolha,$historicoVariaveis,$raiz,$contador);
 				
 				if (FuncoesTableaux::todasFechadas($nosFolha,$contador)) {
-					//print "<br>Todos os ramos já estão fechados<br>";
-					//print $contador."<br>";
 					break;
 				}
 				print "<br>Contador ".$contador."<br>";

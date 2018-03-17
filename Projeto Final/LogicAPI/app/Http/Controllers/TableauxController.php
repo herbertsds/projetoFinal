@@ -11,6 +11,7 @@ use App\Tableaux;
 class TableauxController extends Controller
 {
     public function index(Request $numeroExercicio){
+
     	
         $exercicio = Exercicios::getExercicio($numeroExercicio);
 

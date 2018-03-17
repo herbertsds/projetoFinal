@@ -7,7 +7,7 @@ echo "<pre>";
 $listaConectivos=array("^","v","-","!");
 $listaFormulasDisponiveis=array();
 
-$form= "not(Aimplica(BeC))";
+$form= "(((AeB)e(not(A)))implicaD)";
 //$form = "((PeQ)implica(not((not(P))ou(not(Q)))))";
 //(((PeQ)implica((not(P))not_ou(not(Q))))
 //$form = "((BimplicaC)implicaD)";
@@ -20,10 +20,10 @@ print_r($form);
 
 //$acumulada="";
 
-
+/*
 while (@is_array($form['esquerdo']) || @is_array($form['direito']) || is_array($form)) {
 	reverteFormatacao($form);
-}
+}*/
 print_r($form);
 function reverteFormatacao(&$form){
 	if (@is_array($form['esquerdo'])) {
