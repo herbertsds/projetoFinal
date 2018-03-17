@@ -16,7 +16,7 @@ class ResolucaoController extends Controller
 	//Resolve um exercício específico
     public function index(Request $numeroExercicio){
 
-    	$exercicio = Exercicios::getExercicio($numeroExercicio->exercicio);
+    	$exercicio = Exercicios::getExercicio($numeroExercicio);
 
     	// $exercicioLista = new Exercicios('resolucao');
     	$resposta = new Resolucao($exercicio);
@@ -34,8 +34,9 @@ class ResolucaoController extends Controller
 
    	//Pega um exercício
     public function exercicio(Request $numeroExercicio){
+   
+    	$exercicio = Exercicios::getExercicio($numeroExercicio);
 
-    	$exercicio = Exercicios::getExercicio($numeroExercicio->exercicio);
     	    		   	
     	$resposta = explode(',',$exercicioLista->sentenca);
 

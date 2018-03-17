@@ -6,11 +6,11 @@
 $(document).ready(function(){
     $("button").click(function(){
     	var myData = {
-	        'exercicio' : 8
+	        'exercicio' : 1
 	    };
         $.ajax({
 
-	        url: 'http://127.0.0.1:8000/api/resolucao/exercicio',
+	        url: 'http://127.0.0.1:8000/api/resolucao',
 	        type: 'GET',
 	        callback: '?',
 	        data: myData,

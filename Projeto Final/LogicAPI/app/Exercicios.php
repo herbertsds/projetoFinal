@@ -24,8 +24,9 @@ class Exercicios extends Model
     }
 
     public static function getExercicio($numeroExercicio=NULL){
-    	if($numeroExercicio->exercicio !== NULL)
-            $exercicioLista = Exercicios::find($numeroExercicio);
+
+    	if($numeroExercicio->exercicio != NULL)
+            $exercicioLista = Exercicios::find($numeroExercicio->exercicio);
         else
             $exercicioLista = Exercicios::find(rand(1,Exercicios::contar('tableaux')));
                 
