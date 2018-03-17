@@ -15,13 +15,10 @@ Route::group(['prefix' => 'api'], function(){
 	Route::group(['prefix' => 'tableaux', 'middleware' => 'cors'], function(){
 		
 		Route::get('/', 'TableauxController@index');
-		/*Route::get('/', function () {
-		    return 'Recebe uma nova proposição';
-		});
 
 		Route::post('', function () {
 		    return request();
-		});*/
+		});
 
 	});
 
@@ -30,6 +27,8 @@ Route::group(['prefix' => 'api'], function(){
 		Route::get('/', 'ResolucaoController@index');
 
 		Route::get('/exercicio', 'ResolucaoController@exercicio');
+		
+		Route::get('/teste', 'ResolucaoController@teste');
 
 		Route::post('', function () {
 		    return 'Resolucao';

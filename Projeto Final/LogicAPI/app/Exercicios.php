@@ -3,38 +3,40 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Categorias;
 
 class Exercicios extends Model
 {
-    private $numeroExercicio;
-    private $listaExercicios;
-    private $metodo;
+    protected $fillable = ['sentença','lista'];
 
-    public function __construct($metodo, $numeroExercicio=NULL){
-    	$this->numeroExercicio = $numeroExercicio;
-    	$this->metodo = $metodo;
-    	$this->setListaExercicios();
+    public function categorias(){
+    	return $this->belongsToMany('App\Categorias');
+    }
+
+    //Buscar dados com condição no relacionamento many-to-many
+	public static function where_related($classe,$coluna,$valor){
+		$novaClasse = "App\\".$classe;
+		return $novaClasse::condicao($coluna,$valor)->exercicios;
+	}
+	
+    public static function contar($tipo){
+    	return Exercicios::where_related('Categorias','tipo',$tipo)->count();
+    }
+
+    public static function getExercicio($numeroExercicio=NULL){
+    	if($numeroExercicio->exercicio !== NULL)
+            $exercicioLista = Exercicios::find($numeroExercicio);
+        else
+            $exercicioLista = Exercicios::find(rand(1,Exercicios::contar('tableaux')));
+                
+        $exercicio = explode(',',$exercicioLista->sentenca);
+
+        return $exercicio;
     }
 
 
-    /**
-     * @return mixed
-     */
-    public function getExercicio()
-    {
-        if ($this->numeroExercicio === NULL){
-        	return $this->getExercicioAleatorio();
-        }else{
-        	return $this->listaExercicios[$this->metodo][$this->numeroExercicio];
-        }
-    }
 
-    public function getExercicioAleatorio(){
-    	$aleatorio = rand(0,count($this->listaExercicios[$this->metodo])-1);
-    	return $this->listaExercicios['resolucao'][$aleatorio];
-    }
-
-    private function setListaExercicios(){
+    /*private function setListaExercicios(){
     	//Aqui será um "banco de dados" com todos os exercícios de todas as listas
 		//Como muitos métodos utilizam os mesmos exercícios, fica fácil chamá-los a partir daqui
 
@@ -80,19 +82,21 @@ class Exercicios extends Model
 		$this->listaExercicios['resolucao'][] = array ("(AeB)","not(C)","((AeB)implica(CouD))","(DouE)");
 		$this->listaExercicios['resolucao'][] = array ("(D)","(I)","((DeA)implica(not(C)))","(IimplicaM)","(MimplicaA)","not(P)");
 		$this->listaExercicios['resolucao'][] = array ("((AouB)implicaC)","(CimplicaD)","((AeB)implica(CeD))");
-		$this->listaExercicios['resolucao'][] = array ("((not(P))implicaQ)","(PouQ)");
+		$this->listaExercicios['resolucao'][] = array ("((not(P))implicaQ))","(PouQ)");
 		$this->listaExercicios['resolucao'][] = array ("(AouB)","((AouC)implicaD)","(Bimplica(DeC))","(D)");
-		$this->listaExercicios['resolucao'][] = array ("((not(AeB))implica((not(A))ou(not(B))))");
+		$this->listaExercicios['resolucao'][] = array ("((not(AeB))implica((not(A))ou(not(B)))");
 		$this->listaExercicios['resolucao'][] = array ("not(Pe(not(P)))");
 		$this->listaExercicios['resolucao'][] = array ("(not(PimplicaQ)implicaP)");
 		$this->listaExercicios['resolucao'][] = array ("(not(PimplicaQ)implica(not(Q)))");
 		$this->listaExercicios['resolucao'][] = array ("((Pimplica(not(P)))implica(not(P)))");
 		$this->listaExercicios['resolucao'][] = array ("((not(P)implicaP)implicaP)");
 		$this->listaExercicios['resolucao'][] = array ("((PeQ)implica(not((not(P))ou(not(Q)))))");
+		
 		$this->listaExercicios['resolucao'][] = array ("(Aimplica(not(B)implica(not(Aimplica(B)))))");
 		$this->listaExercicios['resolucao'][] = array ("(Bou(BimplicaC))");
 		$this->listaExercicios['resolucao'][] = array ("((not(A)e(not(B)))implica(not(AouB)))");
 		$this->listaExercicios['resolucao'][] = array ("(Aimplica(BeC))","((BimplicaC)implicaD)","(Aimplica(BeD))");
+
 		$this->listaExercicios['resolucao'][] = array ("(Aimplica(BouC))","(BimplicaD)","(Fimplica(DeE))","(AouF)","((CimplicaD)implicaD)");
 		$this->listaExercicios['resolucao'][] = array ("((AouB)ouC)","(Aou(BouC))");
 		$this->listaExercicios['resolucao'][] = array ("(((AimplicaB)implicaA)implicaA)");
@@ -114,9 +118,6 @@ class Exercicios extends Model
 		$this->listaExercicios['resolucao'][] = array ("((not(P))implica(((PouQ)implicaQ)e(Qimplica(PouQ))))");
 		$this->listaExercicios['resolucao'][] = array ("(Pimplica(not(Q)))","(not(not(P)ou(not(Q)))ouR)","(Rimplica(not(AeB)ou(not(S))))","(Sou(not(CouD)))","(((not(A))ou(not(B)))implicaE)","(((not(C))e(not(D)))implicaE)","(E)");
 		$this->listaExercicios['resolucao'][] = array ("not(Aimplica(not(B)))","(CouD)","((CeA)implica(FouG))","(FimplicaH)","(((not(H))ou(not(I)))implica(not(G)))","(HimplicaK)","(DimplicaJ)","((JeB)implicaK)","(K)");
-
-		//Copia o array de resolução para o array do tableaux
-		$this->listaExercicios['tableaux'] = $this->listaExercicios['resolucao'];
-    }
+    }*/
 
 }
