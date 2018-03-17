@@ -37,10 +37,7 @@ class ResolucaoController extends Controller
    
     	$exercicio = Exercicios::getExercicio($numeroExercicio);
 
-    	    		   	
-    	$resposta = explode(',',$exercicioLista->sentenca);
-
     	// return json_encode($resposta, JSON_UNESCAPED_UNICODE);
-    	return json_encode($resposta, JSON_UNESCAPED_UNICODE);
+    	return json_encode($exercicio, JSON_UNESCAPED_UNICODE);
     }
 }
