@@ -25,10 +25,15 @@ class Exercicios extends Model
 
     public static function getExercicio($numeroExercicio=NULL){
 
-    	if($numeroExercicio->exercicio != NULL)
-            $exercicioLista = Exercicios::find($numeroExercicio->exercicio);
-        else
-            $exercicioLista = Exercicios::find(rand(1,Exercicios::contar('tableaux')));
+    	if($numeroExercicio!=NULL){
+    		if(is_int($numeroExercicio))
+    			$exercicioLista = Exercicios::find($numeroExercicio);
+    		else if($numeroExercicio->exercicio != NULL)
+            	$exercicioLista = Exercicios::find($numeroExercicio->exercicio);
+	        else
+	            $exercicioLista = Exercicios::find(rand(1,Exercicios::contar('tableaux')));
+    	}
+    	
                 
         $exercicio = explode(',',$exercicioLista->sentenca);
 
