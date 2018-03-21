@@ -1,4 +1,4 @@
-
+// problemas:  passo a passo + gabarito gera numLinha errado
 
 	var vet_regras = [];
 	var pergunta;
@@ -50,7 +50,8 @@
 		
 		$('#btn_ConfrontarRegra').hide();
 		$('#btn_TransformarRegra').show();
-		
+		$('#btn_SepararE').hide();
+		$('#btn_SepararOU').hide();
 		
 		$('[data-toggle="popover"]').popover();
 
@@ -330,7 +331,7 @@
 				
 				vet_regras = [];
 				var myData = { 'exercicio' : parseInt(numExercicio)};
-				console.log("myData = " + myData);
+				//console.log("myData = " + myData);
 		            $.ajax({
 		
 		    	        url: 'http://127.0.0.1:8000/api/resolucao/exercicio',
@@ -339,7 +340,7 @@
 		    	        data: myData,
 		    	        datatype: 'application/json',
 		    	        success: function(retorno) {
-		    	        	console.log(retorno);
+		    	        	console.log("exercicio buscado "+ numExercicio + " = " + retorno);
 		    	        	exercicioBuscado = JSON.parse(retorno);
 		    	        	 
 		    				$('#regra').prop('disabled', true);
@@ -395,15 +396,21 @@
 			        datatype: 'application/json',
 			       
 			        success: function(retorno) {
-				        console.log(numExercicio);
+				        //console.log(numExercicio);
 
 			        	gabaritoBuscado = JSON.parse(retorno);
-			        	console.log(gabaritoBuscado); 
+			        	//console.log(gabaritoBuscado); 
 						limiteGabarito = gabaritoBuscado.length;
 						//console.log(limiteGabarito);
 						//var data = 0;
 						$('#r_divNovasFormulas').append("<article> --------------------------------------------------------- </article>" );
+
 						
+						// traduzir para o usuário o retorno  
+
+						
+						
+						// apresentar o gabarito na tela
 						for(var data=0; data < limiteGabarito; data++) {
 							
 
@@ -472,6 +479,11 @@
 						        	});	
 									$('#alertResolucao').fadeOut();
 									console.log("resolvido!");
+									$('#r_passo1').off();
+									$('#r_passo2').off();
+
+									$('#r_passo3').append(" &#10004;");
+
 									break;
 								default: 
 									console.log("fim do gabarito");
@@ -507,7 +519,7 @@
 
 						
 			        },
-			        error: function() { alert('Erro na chamada'); },
+			        error: function() { alert('Gabarito não encontrado!'); },
 			    });
 
 				
