@@ -329,9 +329,8 @@
 				$('#r_divNovasFormulas').text("");
 				
 				vet_regras = [];
-				var myData = {
-		    	        'exercicio' : numExercicio
-		    	    };
+				var myData = { 'exercicio' : parseInt(numExercicio)};
+				console.log("myData = " + myData);
 		            $.ajax({
 		
 		    	        url: 'http://127.0.0.1:8000/api/resolucao/exercicio',
@@ -385,13 +384,14 @@
 			break;
 		case "resolucao":
 				$('#r_divNovasFormulas').text("");
-				
+				var myData = { 'exercicio' : parseInt(numExercicio)};
+
 				$.ajax({
 		    		
 			        url: 'http://127.0.0.1:8000/api/resolucao/',
 			    	type: 'GET',
 			        callback: '?',
-			        data: numExercicio,
+			        data: myData, 
 			        datatype: 'application/json',
 			       
 			        success: function(retorno) {

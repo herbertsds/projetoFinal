@@ -33,7 +33,6 @@ class Exercicios extends Model
 	        else
 	            $exercicioLista = Exercicios::find(rand(1,Exercicios::contar('tableaux')));
     	}
-    	
                 
         $exercicio = explode(',',$exercicioLista->sentenca);
 
