@@ -119,12 +119,21 @@ var selecionadas =0;
 	function f_FNC(formula){
 		
 		// chamar a funcao php que transforma fnc
+		vet_Entrada = [];
+		vet_Entrada[0] = "FNC";
+		vet_Entrada[1] = 1;
+		vet_Entrada[2] = formula;
+		console.log(vet_Entrada);
 		return formula;
 	
 	}
 	
 	function f_Negar(formula){
-		
+		vet_Entrada = [];
+		vet_Entrada[0] = "negPergunta";
+		vet_Entrada[1] = 1;
+		vet_Entrada[2] = formula;
+		console.log(vet_Entrada);
 		return formula;
 	}
 	
@@ -136,9 +145,13 @@ var selecionadas =0;
 		$("input[type=checkbox][name='ck_novasFormulas']:checked").each(function(){
 		    camposMarcados.push($(this).val());
 		});
-		// mostra a saída
-		console.log("Selecionados:" + camposMarcados );
+		if(selecionadas == 0){
+			alert("Número inválido de fórmulas para Confrontar!");
+		}
 		
+		else{// mostra a saída
+			console.log("Selecionados:" + camposMarcados );
+		}
 	}
 	function f_SepararE(){
 			selecionadas = 0;
@@ -149,15 +162,23 @@ var selecionadas =0;
 			    selecionadas++;
 			});
 			
-			// mostra a saída
-			console.log("Selecionados:" + camposMarcados );
-			vet_Entrada[0] = "separaE";
-			vet_Entrada[1] = selecionadas;
-			vet_Entrada[2] = camposMarcados;
-			console.log(vet_Entrada);
+			if(selecionadas == 0){
+				alert("Número inválido de fórmulas para separação do E!");
+			}
+			
+			else{
+				// mostra a saída
+				console.log("Selecionados:" + camposMarcados );
+				vet_Entrada[0] = "separaE";
+				vet_Entrada[1] = selecionadas;
+				vet_Entrada[2] = camposMarcados;
+				console.log(vet_Entrada);
+			}
 		}
 	
 	function f_SepararOU(){
+		
+		
 		selecionadas = 0;
 		vet_Entrada = [];		
 		camposMarcados = new Array();
