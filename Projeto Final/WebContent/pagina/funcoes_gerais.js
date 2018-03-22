@@ -1,10 +1,10 @@
 // problemas:  passo a passo + gabarito gera numLinha errado
+// permitir selecionar mais de uma formula para passar para fnc
 
 	var vet_regras = [];
 	var pergunta;
 	var tipoEx = "";
 	var adicionadas="";
-	var passoId = "";
 	var formulaSimplificar ="";
 	var formulaId="";
 	var regras = 0;
@@ -15,8 +15,8 @@
 	var numLinha = 0;
 	var numExercicio = "";
 	var gabaritoBuscado;
+
 	// funcao apenas para testes de eventos
-	
 	function teste(){
 		
 		alert("teste");
@@ -33,17 +33,7 @@
           	
 	}
 	
-//	function RefreshEventListener() {
-//        // Remove handler from existing elements
-//        $(".testeFormula").off(); 
-//
-//        // Re-add event handler for all matching elements
-//        $(".testeFormula").on("click", function(e) {
-//        	 var txt = $(e.target).text();
-//			  console.log(txt);
-//        })
-//    }
-	
+
 // ------------ Escolha do tipo de Ex / carregamento da ultima tela -------------------
 	$(document).ready(function() {
 		
@@ -118,48 +108,48 @@
 
 // --------------------------------------------------------------------------------------------------------------------------        
 // PASSOS -------------------------------------------------------------------------------------------------------------------
-		// DESTAQUE AO SELECIONAR PASSO
-	        $('span').on('click', function(e) {
-	          	 $('span').css({
-	   					'color':'black',
-	   					//'background':'none',
-						'font-weight': 100,
-						'border' : 'none'
-
-	          	 });
-	   			  
-	          	 $(e.target).css({
-	          		 	//'border': '1px dashed',
-	   					'color':'darkgreen',
-	   					//'background':'LightGreen ',
-	   					'font-weight': 900
-	          	 });;
-	          	passoId = this.id;
-          });
-	        
-	        //destaque mouse sobre
-	        $('span').on('mouseenter', function(e) {
-	        	$(e.target).css({
-	        		'cursor':'pointer',
-	   				//'color':'green',
-	   				//'background':'LightGreen ',
-	   				'font-weight': 900	        			
-	        	});
-	        $('span').on('mouseout', function(e) {
-	        	$('span').css({
-	   					//'color':'black',
-	   					//'background':'none',
-						'font-weight': 100,
-	        	});	
-	        	$(e.target).css({
-	   					//'color':'black',
-	   					//'background':'none',
-						//'font-weight': 100,
-	 	        		'cursor':'text'
-	        	});;
-	         });
-    
-	        });
+//		// DESTAQUE AO SELECIONAR PASSO
+//	        $('span').on('click', function(e) {
+//	          	 $('span').css({
+//	   					'color':'black',
+//	   					//'background':'none',
+//						'font-weight': 100,
+//						'border' : 'none'
+//
+//	          	 });
+//	   			  
+//	          	 $(e.target).css({
+//	          		 	//'border': '1px dashed',
+//	   					'color':'darkgreen',
+//	   					//'background':'LightGreen ',
+//	   					'font-weight': 900
+//	          	 });;
+//	          	passoId = this.id;
+//          });
+//	        
+//	        //destaque mouse sobre
+//	        $('span').on('mouseenter', function(e) {
+//	        	$(e.target).css({
+//	        		'cursor':'pointer',
+//	   				//'color':'green',
+//	   				//'background':'LightGreen ',
+//	   				'font-weight': 900	        			
+//	        	});
+//	        $('span').on('mouseout', function(e) {
+//	        	$('span').css({
+//	   					//'color':'black',
+//	   					//'background':'none',
+//						'font-weight': 100,
+//	        	});	
+//	        	$(e.target).css({
+//	   					//'color':'black',
+//	   					//'background':'none',
+//						//'font-weight': 100,
+//	 	        		'cursor':'text'
+//	        	});;
+//	         });
+//    
+//	        });
 
 //--------------------------------------------------------------------------------------------------------------------------                
 
@@ -385,6 +375,8 @@
 			break;
 		case "resolucao":
 				$('#r_divNovasFormulas').text("");
+				$('#' + idPergNegada).text("");
+				
 				var myData = { 'exercicio' : parseInt(numExercicio)};
 
 				$.ajax({
@@ -402,14 +394,10 @@
 			        	//console.log(gabaritoBuscado); 
 						limiteGabarito = gabaritoBuscado.length;
 						//console.log(limiteGabarito);
-						//var data = 0;
 						$('#r_divNovasFormulas').append("<article> --------------------------------------------------------- </article>" );
-
+						numLinha = numLinha-linhasGab;
 						
 						// traduzir para o usuário o retorno  
-
-						
-						
 						// apresentar o gabarito na tela
 						for(var data=0; data < limiteGabarito; data++) {
 							
@@ -468,10 +456,11 @@
 									$('#r_divNovasFormulas').append("<article><b> Fim do Exercício</b></article>");
 									$('#btn_TransformarRegra').hide();
 									$('#btn_ProximoPasso').hide();
-									//$('#btn_gabarito').attr('disabled',true);
+									$('#btn_ConfrontarRegra').hide();
+									$('#btn_SepararE').hide();
+									$('#btn_SepararOU').hide();
 									$("#r_divFormulas").unbind();
-									$("#r_passos").off();
-						        	$('span').css({
+									$('span').css({
 					   					'color':'black'
 						        	});	
 						        	$('p').css({
@@ -479,11 +468,9 @@
 						        	});	
 									$('#alertResolucao').fadeOut();
 									console.log("resolvido!");
-									$('#r_passo1').off();
-									$('#r_passo2').off();
 
 									$('#r_passo3').append(" &#10004;");
-
+									
 									break;
 								default: 
 									console.log("fim do gabarito");

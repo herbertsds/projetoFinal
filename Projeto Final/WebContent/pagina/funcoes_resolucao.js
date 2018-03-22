@@ -2,7 +2,8 @@ var perguntaFNC=false;
 var negadaIndice;
 var vet_Entrada = [];
 var selecionadas =0;
-
+var linhasGab =0;
+var idPergNegada;
 	function f_Transformar(){
 		
 	//VERIFICAR OBRIGATORIEDADE DA SEQUENCIA
@@ -11,9 +12,9 @@ var selecionadas =0;
 		}
 		else{
 		
-			switch(passoId){
+			switch($('#btn_TransformarRegra').text()){
 			
-				case 'r_passo1':
+				case 'Negar Pergunta':
 					if(formulaId!='finalVetor'){
 						alert("Atenção!\nSelecione a Pergunta para ser negada.");
 					}
@@ -24,19 +25,20 @@ var selecionadas =0;
 		//// NEGAR A PERGUNTA
 						resposta = f_Negar(pergunta);
 						numLinha++;
-						
+						linhasGab++;
+						idPergNegada = cont;
 						$('#r_divFormulas').append("<p id='" + cont +"'>"+ numLinha + ": "  + pergunta +" # pergunta negada </p>" );
 						$('#r_divNovasFormulas').append("<article> --------------------------------------------------------- </article>" );
 						
 						$('#finalVetor').off();
 						$('#finalVetor').append(" &#10004;");
 						
-						$('#r_passo1').off();
+//						$('#r_passo1').off();
 						$('#r_passo1').append(" &#10004;");
 
-						passoId = "";
+//						passoId = "";
 						formulaId = "";
-						vet_regras[cont]= "perguntaNegada";
+						vet_regras[cont]= resposta;
 						negadaIndice == cont;
 						regras++;
 						perguntaFNC = true;
@@ -47,7 +49,7 @@ var selecionadas =0;
 					
 					break;
 				
-				case 'r_passo2':
+				case 'Passar para FNC':
 						
 					if(perguntaNegada == false){
 							alert("Atenção! Deve-se negar a pergunta como primeiro passo!");
@@ -57,7 +59,7 @@ var selecionadas =0;
 							regras --;
 							cont++;
 							numLinha++;
-
+							linhasGab++;
 			// PASSAR VET_REGRAS[FORMULAID] PARA FNC ################################################################################
 							resposta = f_FNC(vet_regras[formulaId]);
 							$('#r_divNovasFormulas').append("<input disabled type='checkbox' class='form-check-input' data-color = 'purple' name='ck_novasFormulas' id='" + cont +"' value='" + vet_regras[formulaId] +"'> "+ numLinha + ": "  + resposta +" em FNC </br>"  );
@@ -72,7 +74,7 @@ var selecionadas =0;
 							formulaId = "";
 							if(regras ==0 && perguntaFNC == true){
 								
-								passoId = "";
+//								passoId = "";
 								$('#btn_ConfrontarRegra').show();
 								$('#btn_SepararE').show();
 								$('#btn_SepararOU').show();
@@ -90,7 +92,7 @@ var selecionadas =0;
 					        	});	
 								$('#alertResolucao').fadeOut();
 
-								$('#r_passo2').off();
+//								$('#r_passo2').off();
 								$('#r_passo2').append(" &#10004;");
 								$(":checkbox").prop("disabled", false);
 
@@ -99,11 +101,7 @@ var selecionadas =0;
 						}
 						break;
 				
-				case "":
 
-					alert("Passo selecionado inválido!");
-
-					break;
 				
 				default: 
 				
