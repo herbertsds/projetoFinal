@@ -16,8 +16,8 @@ class ResolucaoController extends Controller
 	//Resolve um exercício específico
     public function index(Request $numeroExercicio){
 
-    	$exercicio = Exercicios::getExercicio($numeroExercicio);
-
+    	//$exercicio = Exercicios::getExercicio($numeroExercicio);
+        $exercicio = Exercicios::getExercicio(10);
     	// $exercicioLista = new Exercicios('resolucao');
     	$resposta = new Resolucao($exercicio);
 

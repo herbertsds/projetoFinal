@@ -91,8 +91,8 @@ class Tableaux extends Model
 			}
 		}
 
-		print_r($this->listaFormulasDisponiveis);
-		print_r($this->hashInicial);
+		//print_r($this->listaFormulasDisponiveis);
+		//print_r($this->hashInicial);
 
 		//Passo 5
 		$flagFechou=false;
@@ -112,16 +112,16 @@ class Tableaux extends Model
 		$historicoVariaveis[0]['numPasso']=0;
 
 		/*
-		print "<br>Modo de Usuário escolhe a fórmula<br>";
+		//print "<br>Modo de Usuário escolhe a fórmula<br>";
 		escolhaUsuario($this->listaFormulasDisponiveis,$this->hashInicial,$this->listaFormulasDisponiveis[0],$nosFolha);
 		$contador++;
 
 
+		////print "<br>Imprime raiz<br>";
+		////print_r($raiz);
+		escolhaUsuario($this->listaFormulasDisponiveis,$this->hashInicial,$this->listaFormulasDisponiveis[1],$nosFolha,$nosFolha[0]);
 		//print "<br>Imprime raiz<br>";
 		//print_r($raiz);
-		escolhaUsuario($this->listaFormulasDisponiveis,$this->hashInicial,$this->listaFormulasDisponiveis[1],$nosFolha,$nosFolha[0]);
-		print "<br>Imprime raiz<br>";
-		print_r($raiz);
 		$contador++;
 
 		//escolhaUsuario($this->listaFormulasDisponiveis,$this->hashInicial,$this->listaFormulasDisponiveis[2],$nosFolha,$raiz,$nosFolha[0]);
@@ -153,7 +153,7 @@ class Tableaux extends Model
 			
 			if ($escolhaAleatoria) {
 				# Chama a função de escolha aleatória
-				print "<br>Não está feito ainda a função de escolha aleatória<br>";
+				//print "<br>Não está feito ainda a função de escolha aleatória<br>";
 				break;
 			}
 			elseif ($escolhaEficiente) {
@@ -165,23 +165,23 @@ class Tableaux extends Model
 				//.
 				////////////////////
 				# Chama a função de escolha eficiente
-				print "<br>Chamando a função de escolha eficiente<br>";
+				//print "<br>Chamando a função de escolha eficiente<br>";
 				foreach ($this->listaFormulasDisponiveis as $key => $value) {
-					//print "key ".$key."<br>";
-					//print_r($value['info']);
-					//print "<br>";
+					////print "key ".$key."<br>";
+					////print_r($value['info']);
+					////print "<br>";
 				}
 				FuncoesTableaux::escolhaEficiente($this->listaFormulasDisponiveis,$this->hashInicial,$nosFolha,$historicoVariaveis,$raiz,$contador);
 				
 				if (FuncoesTableaux::todasFechadas($nosFolha,$contador)) {
 					break;
 				}
-				print "<br>Contador ".$contador."<br>";
+				//print "<br>Contador ".$contador."<br>";
 				
 			}
 			elseif ($escolhaUsuario) {
 				# Chama a função de escolha do usuário
-				print "<br>Não está feito ainda a função de escolha do usuário<br>";
+				//print "<br>Não está feito ainda a função de escolha do usuário<br>";
 				break;
 			}
 
@@ -190,13 +190,13 @@ class Tableaux extends Model
 
 
 		if (FuncoesTableaux::todasFechadas($nosFolha,$contador)) {
-			print "<br>Todos os ramos foram fechados com sucesso<br>";
-			print $contador."<br>";
+			//print "<br>Todos os ramos foram fechados com sucesso<br>";
+			//print $contador."<br>";
 		}
 		else{
-			print "<br>Nem todos os ramos foram fechados<br>Este Tableaux não fecha<br>";
+			//print "<br>Nem todos os ramos foram fechados<br>Este Tableaux não fecha<br>";
 		}
-		print "<br>Árvore a partir da raiz<br>";
+		//print "<br>Árvore a partir da raiz<br>";
 		FuncoesTableaux::imprimeArvore($raiz);
     }
 }
