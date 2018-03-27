@@ -444,7 +444,7 @@ class Resolucao extends Model
 	 				ParsingFormulas::converteFormulaString($resposta[$key]);
 	 			}
  			}
- 			return $resposta[];
+ 			return $resposta;
 
 		}		
 
