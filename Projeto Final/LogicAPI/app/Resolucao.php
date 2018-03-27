@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\FuncoesResolucao;
 use App\Formula;
 use App\ParsingFormulas;
-echo "<pre>";
+// echo "<pre>";
 
 
 //Remover a repetição das fórmulas em cada passo
@@ -366,8 +366,8 @@ class Resolucao extends Model
 
  	
  		foreach ($resposta as $key => $value) {
- 			print "<br>";
- 			print_r($resposta[$key]);
+ 			//print "<br>";
+ 			//print_r($resposta[$key]);
  		}
 
  		foreach ($resposta as $key => $value) {
@@ -731,8 +731,6 @@ class Resolucao extends Model
 			if($flag){
 				goto fim;
 			}
-
-
 		}
 
 

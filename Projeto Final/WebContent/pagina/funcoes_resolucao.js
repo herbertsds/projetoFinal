@@ -121,7 +121,7 @@ var idPergNegada;
 		vet_Entrada[0] = "FNC";
 		vet_Entrada[1] = 1;
 		vet_Entrada[2] = formula;
-		console.log(vet_Entrada);
+		console.log("Entrada enviada:"+vet_Entrada);
 		return formula;
 	
 	}
@@ -129,9 +129,38 @@ var idPergNegada;
 	function f_Negar(formula){
 		vet_Entrada = [];
 		vet_Entrada[0] = "negPergunta";
-		vet_Entrada[1] = 1;
-		vet_Entrada[2] = formula;
+		vet_Entrada[1] = vet_regras.length +1;
+		vet_todasFormulas = vet_regras;
+		vet_todasFormulas[vet_todasFormulas.length] = pergunta;
+		//console.log("todas = " + vet_todasFormulas);
+		vet_Entrada[2] = vet_todasFormulas;
 		console.log(vet_Entrada);
+		
+		// CHAMAR PHP ENVIAR JSON
+//		var myData = { 'operacao' : vet_entrada[0],
+//						'qtd_formulasSelecionadas' : vet_entrada[1],
+//						'formulas' : vet_entrada[2]
+//	
+//	};
+//
+//		$.ajax({
+//    		
+//	        url: 'http://127.0.0.1:8000/api/resolucao/',
+//	    	type: 'GET',
+//	        callback: '?',
+//	        data: myData, 
+//	        datatype: 'application/json',
+//	       
+//	        success: function(retorno) {
+//		        //console.log(numExercicio);
+//
+//	        	gabaritoBuscado = JSON.parse(retorno);
+//
+		
+		
+		
+		
+		
 		return formula;
 	}
 	
@@ -170,7 +199,7 @@ var idPergNegada;
 				vet_Entrada[0] = "separaE";
 				vet_Entrada[1] = selecionadas;
 				vet_Entrada[2] = camposMarcados;
-				console.log(vet_Entrada);
+				console.log("Entrada enviada:"+vet_Entrada);
 			}
 		}
 	
