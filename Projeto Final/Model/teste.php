@@ -9,7 +9,17 @@ $listaFormulasDisponiveis=array();
 
 //Print parsing funcionando até o exemplo 12, corrigir o formata fórmulas e testar mais exemplos antes de passar
 //Para para a classe principal no laravel
-
+$hash=[];
+$teste=array("(AouB)","(A)","(B)","(C)");
+$tamanho=count($teste);
+//Receber a entrada do Front-End
+//Negação da pergunta+Validação
+$entradaConvertida=negaPergunta($teste,$tamanho);
+print "<br>Entrada recebida<br>";
+print_r($entradaConvertida);
+$hash=inicializaHash($entradaConvertida);
+print_r($hash);
+/*
 $form= "not(paraTodox(not(F(a))))";
 //$form = "((PeQ)implica(not((not(P))ou(not(Q)))))";
 $form2['esquerdo']='B';
@@ -24,7 +34,7 @@ if (!is_array($form2['direito']) && !is_array($form2['direito']) ) {
 print_r($form2);
 formataFormulas($form2);
 print_r($form2);
-
+*/
 
 /*
 verificaFormulaCorreta($form);
@@ -320,6 +330,16 @@ function formataFormulas2(&$form){
 		formataFormulas($form['direito']);
 	}
 
+}
+
+function inicializaHash(&$array){
+	$hash=[];
+	foreach ($array as $key => $value) {
+		if (checaAtomico($value)) {
+			$hash[$value['direito']]= $value['conectivo']=='not' ? 0:1;
+		}
+	}
+	return $hash;
 }
 
 	

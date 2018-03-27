@@ -841,7 +841,7 @@ class FuncoesResolucao extends Model
 	}
 
 
-	public static function separarOU2(&$arrayFormulas,&$formAntesDoOu,&$formsDepoisDoOu){
+	public static function separarOU2(&$arrayFormulas,&$formAntesDoOu1, &$formAntesDoOu2, &$formsDepoisDoOu){
 		foreach ($arrayFormulas as $key => $value) {
 			//Para reduzir um pouco o processamento que é de ordem quadrática, só entro no segundo loop
 			//após achar uma fórmula que tenha ou como conectivo externo, no melhor caso esse processamento
@@ -865,7 +865,8 @@ class FuncoesResolucao extends Model
 							//Se o not estiver no beta da primeira fórmula
 							if (is_array($value['direito']) && $value['direito']['conectivo']=='not') {
 								if ((is_array($value2['direito']) && $value2['direito']['conectivo']==NULL && $value['direito']['direito']==$value2['direito']['direito']) || $value['direito']==$value2['direito'] ) {
-									array_push($formAntesDoOu, $arrayFormulas[$key]);
+									array_push($formAntesDoOu1, $arrayFormulas[$key]);
+									array_push($formAntesDoOu2, $arrayFormulas[$key2]);
 									$arrayFormulas[$key]['direito']=NULL;
 									//Se o esquerdo for átomo, vou corrigir e passar pra direita
 									if($value['esquerdo']) {
@@ -884,7 +885,8 @@ class FuncoesResolucao extends Model
 							//Se o not estiver no beta da segunda fórmula
 							if (is_array($value2['direito']) && $value2['direito']['conectivo']=='not') {
 								if ((is_array($value['direito']) && $value['direito']['conectivo']==NULL && $value2['direito']['direito']==$value2['direito']['direito']) || $value['direito']==$value2['direito'] ) {
-									array_push($formAntesDoOu, $arrayFormulas[$key]);
+									array_push($formAntesDoOu1, $arrayFormulas[$key]);
+									array_push($formAntesDoOu2, $arrayFormulas[$key2]);
 									$arrayFormulas[$key]['direito']=NULL;
 									//Se o esquerdo for átomo, vou corrigir e passar pra direita
 									if(!is_array($value['esquerdo'])) {
@@ -909,7 +911,8 @@ class FuncoesResolucao extends Model
 							//Se o not estiver no primeiro alfa
 							if (is_array($value['esquerdo']) && $value['esquerdo']['conectivo']=='not') {
 								if ((is_array($value2['esquerdo']) && $value2['esquerdo']['conectivo']==NULL && $value['esquerdo']['direito']==$value2['esquerdo']['direito']) || $value['esquerdo']==$value2['esquerdo'] ) {
-									array_push($formAntesDoOu, $arrayFormulas[$key]);
+									array_push($formAntesDoOu1, $arrayFormulas[$key]);
+									array_push($formAntesDoOu2, $arrayFormulas[$key2]);
 									$arrayFormulas[$key]['esquerdo']=NULL;
 									array_push($formsDepoisDoOu, $arrayFormulas[$key]);				
 								}
@@ -917,7 +920,8 @@ class FuncoesResolucao extends Model
 							//Se o not estiver no segundo alfa
 							if (is_array($value2['esquerdo']) && $value2['esquerdo']['conectivo']=='not') {
 								if ((is_array($value['esquerdo']) && $value['esquerdo']['conectivo']==NULL && $value['esquerdo']['direito']==$value2['esquerdo']['direito']) || $value['esquerdo']==$value2['esquerdo'] ) {
-									array_push($formAntesDoOu, $arrayFormulas[$key]);
+									array_push($formAntesDoOu1, $arrayFormulas[$key]);
+									array_push($formAntesDoOu2, $arrayFormulas[$key2]);
 									$arrayFormulas[$key]['esquerdo']=NULL;	
 									array_push($formsDepoisDoOu, $arrayFormulas[$key]);		
 								}
@@ -1045,5 +1049,14 @@ class FuncoesResolucao extends Model
 				$hashResolucao[$arrayFormulas[$key]['direito']]='0';
 			}
 		}
+	}
+	public static function inicializaHash(&$array){
+		$hash=[];
+		foreach ($array as $key => $value) {
+			if (checaAtomico($value)) {
+				$hash[$value['direito']]= $value['conectivo']=='not' ? 0:1;
+			}
+		}
+		return $hash;
 	}
 }
