@@ -37,7 +37,10 @@
 // ------------ Escolha do tipo de Ex / carregamento da ultima tela -------------------
 	$(document).ready(function() {
 		
-		
+    	$('#dcc').css({
+			'float':'right'
+	});
+
 		$('#btn_ConfrontarRegra').hide();
 		$('#btn_TransformarRegra').show();
 		$('#btn_SepararE').hide();
@@ -339,7 +342,7 @@
 		    				$('#buttonPergunta').hide();
 		    				
 		    				var limiteFormulas = ((exercicioBuscado.length) -1);
-
+		    				//console.log(limiteFormulas);
 		    				for (var data = 0; data < limiteFormulas; data++) {
 		    					  
 		    					regras++;   					  
@@ -388,10 +391,10 @@
 			        datatype: 'application/json',
 			       
 			        success: function(retorno) {
-				        //console.log(numExercicio);
+				        console.log(retorno);
 
 			        	gabaritoBuscado = JSON.parse(retorno);
-			        	//console.log(gabaritoBuscado); 
+			        	console.log(gabaritoBuscado); 
 						limiteGabarito = gabaritoBuscado.length;
 						//console.log(limiteGabarito);
 						$('#r_divNovasFormulas').append("<article> --------------------------------------------------------- </article>" );
@@ -418,7 +421,7 @@
 									cont++;
 									numLinha++;
 									$('#r_divNovasFormulas').append("<p id='" + cont+ "' data-html='true'  data-trigger='click' data-toggle='popover' data-placement='right' title='Fórmula em FNC' data-content='Fórmulas usadas:\n<ul><li>"+ gabaritoBuscado[data+2]+"</li></ul>'>" + numLinha +": " + gabaritoBuscado[data+1] + "</p>" );
-									data = data + 1;
+									data = data + 2;
 									break;
 								
 								case "Separação do E":
@@ -428,15 +431,15 @@
 									cont++;
 									numLinha++;
 									$('#r_divNovasFormulas').append("<p id='" + cont+ "' data-html='true'  data-trigger='click' data-toggle='popover' data-placement='right' title='Separação do E' data-content='Fórmulas usadas:\n<ul><li>"+ gabaritoBuscado[data+3]+"</li></ul>'>"+ numLinha +": " + gabaritoBuscado[data+2] + "</p>" );
-									data = data +2;
+									data = data +3;
 									
 									break;
 								
 								case "Separação do Ou":
 									cont++;
 									numLinha++;
-									$('#r_divNovasFormulas').append("<p id='" + cont+ "' data-html='true'  data-trigger='click' data-toggle='popover' data-placement='right' title='Separação do OU' data-content='Fórmulas usadas:\n<ul><li>"+ gabaritoBuscado[data+2]+"</li></ul>'>"+ numLinha +": " + gabaritoBuscado[data+1] + "</p>" );
-									data = data+2;
+									$('#r_divNovasFormulas').append("<p id='" + cont+ "' data-html='true'  data-trigger='click' data-toggle='popover' data-placement='right' title='Separação do OU' data-content='Fórmulas usadas:\n<ul><li>"+ gabaritoBuscado[data+2]+"</li><li>"+ gabaritoBuscado[data+3]+"</li></ul>'>"+ numLinha +": " + gabaritoBuscado[data+1] + "</p>" );
+									data = data+3;
 									
 									
 									break;
@@ -474,6 +477,7 @@
 									break;
 								default: 
 									console.log("fim do gabarito");
+
 									break;
 
 							}

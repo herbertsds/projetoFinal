@@ -16,15 +16,15 @@ class ResolucaoController extends Controller
 	//Resolve um exercício específico
     public function index(Request $numeroExercicio){
 
-    	//$exercicio = Exercicios::getExercicio($numeroExercicio);
-      $exercicio = Exercicios::getExercicio(40);
+    	$exercicio = Exercicios::getExercicio($numeroExercicio);
+     // $exercicio = Exercicios::getExercicio(40);
 
     	// $exercicioLista = new Exercicios('resolucao');
     	$resposta = new Resolucao($exercicio);
 
-    	//return json_encode($resposta->fullSteps(), JSON_UNESCAPED_UNICODE);
+    	return json_encode($resposta->fullSteps(), JSON_UNESCAPED_UNICODE);
     	//print_r($resposta->fullSteps());
-    	 dd($resposta->fullSteps());
+    	// dd($resposta->fullSteps());
     
     }
     //Função de teste do relacionamento
