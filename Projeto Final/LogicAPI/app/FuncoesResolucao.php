@@ -15,12 +15,12 @@ class FuncoesResolucao extends Model
 	//Se houver digitação incorreta gera uma exceção (trabalhar na exceção depois)
 	public static function negaPergunta($listaFormulas,$tamanho,&$perguntaAntesNegar,&$perguntaDepoisNegar){
 		//Nega a pergunta
-		$perguntaAntesNegar=FuncoesAuxiliares::resolveParenteses2($listaFormulas[$tamanho-1]);
+		$perguntaAntesNegar=ParsingFormulas::resolveParenteses($listaFormulas[$tamanho-1]);
 		$listaFormulas[$tamanho-1]="not".$listaFormulas[$tamanho-1];
 		//Tratar a entrada, verificação de digitação correta
 		foreach ($listaFormulas as $key => $value) {
 			FuncoesAuxiliares::verificaFormulaCorreta($listaFormulas[$key]);
-			$entradaConvertida[$key]=FuncoesAuxiliares::resolveParenteses2($listaFormulas[$key]);
+			$entradaConvertida[$key]=ParsingFormulas::resolveParenteses($listaFormulas[$key]);
 		}
 		$perguntaDepoisNegar=$entradaConvertida[$tamanho-1];
 		return $entradaConvertida;
@@ -49,20 +49,22 @@ class FuncoesResolucao extends Model
 			
 		//Segundo Passar todos os not fora de parênteses para dentro
 
-		FuncoesAuxiliares::formataFormulas($form);
+		ParsingFormulas::formataFormulas($form);
 		$aux1=&$form['esquerdo'];
 		$aux2=&$form['direito'];
 		$c=0;
 		
 		//Se for not_e ao passar o not para dentro, vira um ou
+		
 		if($form['conectivo']=='not_e'){
+
 			//Se os 2 lados não forem arrays, o tratamento é simples
-			if (!is_array($form['direito']) && !is_array($form['direito']) ) {
+			if (!is_array($form['direito']) && !is_array($form['esquerdo']) ) {
 				$form['direito']="!(".$form['direito'].")";
 				$form['esquerdo']="!(".$form['esquerdo'].")";
 			}
 			//Se o lado direito for array, preciso negar apenas o conectivo
-			if (is_array($form['direito'])) {
+			elseif (is_array($form['direito'])) {
 				if ($form['direito']['conectivo']=='not') {
 					$form['direito']['conectivo']=NULL;
 				}
@@ -86,9 +88,10 @@ class FuncoesResolucao extends Model
 				}
 			}
 			//Caso os dois lados não sejam array, mas só direito seja, devo tratá-lo
-			else{
+			if (!is_array($form['direito']) && is_array($form['esquerdo'])) {
 				$form['direito']="!(".$form['direito'].")";
 			}
+				
 			//Se o lado esquerdo for array, preciso negar apenas o conectivo
 			if (is_array($form['esquerdo'])) {
 				if ($form['esquerdo']['conectivo']=='not') {
@@ -114,15 +117,16 @@ class FuncoesResolucao extends Model
 				}
 			}
 			//Caso os dois lados não sejam array, mas só esquerdo seja, devo tratá-lo
-			else{
+			if(!is_array($form['esquerdo']) && is_array($form['direito'])){
 				$form['esquerdo']="!(".$form['esquerdo'].")";
 			}
 			$form['conectivo']='ou';
 			
 		}
+
 		if($form['conectivo']=='not_ou'){
 			//Se os 2 lados não forem arrays, o tratamento é simples
-			if (!is_array($form['direito']) && !is_array($form['direito']) ) {
+			if (!is_array($form['direito']) && !is_array($form['esquerdo']) ) {
 				$form['direito']="!(".$form['direito'].")";
 				$form['esquerdo']="!(".$form['esquerdo'].")";
 			}
@@ -151,7 +155,7 @@ class FuncoesResolucao extends Model
 				}
 			}
 			//Caso os dois lados não sejam array, mas só direito seja, devo tratá-lo
-			else{
+			if(is_array($form['esquerdo']) && !is_array($form['direito'])){
 				$form['direito']="!(".$form['direito'].")";
 			}
 			//Se o lado esquerdo for array, preciso negar apenas o conectivo
@@ -179,11 +183,12 @@ class FuncoesResolucao extends Model
 				}
 			}
 			//Caso os dois lados não sejam array, mas só esquerdo seja, devo tratá-lo
-			else{
+			if(!is_array($form['esquerdo']) && is_array($form['direito'])){
 				$form['esquerdo']="!(".$form['esquerdo'].")";
 			}
 			$form['conectivo']='e';
 		}
+
 
 		do{
 			if(@$aux1['conectivo']=='not_e'){
@@ -490,7 +495,7 @@ class FuncoesResolucao extends Model
 			}
 
 		}
-			FuncoesAuxiliares::formataFormulas($form);
+			ParsingFormulas::formataFormulas($form);
 
 			if (FuncoesResolucao::checaImplica($form['esquerdo'])) {
 				$form=&$form['esquerdo'];
@@ -615,13 +620,11 @@ class FuncoesResolucao extends Model
 	}
 	//Faz uma checagem nos arrays e na hash para saber se há algum átomo fechando
 	public static function confrontaAtomos(&$arrayFormulas,&$hashResolucao,&$flag,&$statusFechado){
+
 		foreach ($arrayFormulas as $key => $value) {
 			if (is_array($value['esquerdo']) && @$value['esquerdo']['esquerdo']==NULL && @$value['direito']==NULL) {
 				//Se o atomo que está chegando casar com algum já existente, então fechamos a resolução
 				if(FuncoesResolucao::casarAtomo($hashResolucao,$value['esquerdo']['direito'],$value['esquerdo']['conectivo'])){
-// 					//print "<br>Fechou, contradição com o átomo abaixo<br>";
-// 					//print_r($value['esquerdo']['direito']);
-// 					////print "<br>primeira condição<br>";
 					$statusFechado='Fechado';
 					$flag=true;
 					break;
@@ -631,9 +634,6 @@ class FuncoesResolucao extends Model
 
 			if (is_array($value['direito']) && @$value['direito']['esquerdo']==NULL && @$value['esquerdo']==NULL) {
 				if(FuncoesResolucao::casarAtomo($hashResolucao,$value['direito']['direito'],$value['direito']['conectivo'])){
-// 					//print "<br>Fechou, contradição com o átomo abaixo<br>";
-// 					//print_r($value['direito']['direito']);
-// 					////print "<br>Segunda condição<br>";
 					$flag=true;
 					$statusFechado='Fechado';
 					break;
@@ -642,9 +642,6 @@ class FuncoesResolucao extends Model
 			}
 			if ($value['esquerdo']==NULL) {
 				if(FuncoesResolucao::casarAtomo($hashResolucao,$value['direito'],$value['conectivo'])){
-// 					//print "<br>Fechou, contradição com o átomo abaixo<br>";
-// 					//print_r($value['direito']);
-// 					////print "<br>Terceira condição<br>";
 					$flag=true;
 					$statusFechado='Fechado';
 					break;
@@ -654,7 +651,7 @@ class FuncoesResolucao extends Model
 		}
 	}
 
-	public static function separarOU1(&$arrayFormulas,&$hashResolucao,&$formAntesDoOu,&$formsDepoisDoOu){
+	public static function separarOU1(&$arrayFormulas,&$hashResolucao,&$formAntesDoOu1, &$formAntesDoOu2, &$formsDepoisDoOu){
 		foreach ($arrayFormulas as $key => $value) {
 			//Simplificação do tipo: Se Av¬B e B então A
 			foreach ($hashResolucao as $key2 => $value2) {
@@ -668,7 +665,8 @@ class FuncoesResolucao extends Model
 							//O lado direito também pode ser array, porém não importa o que ele contém. Será verdade
 							if(is_array($value['direito'])){
 								array_push($formsDepoisDoOu,$value['direito']);
-								array_push($formAntesDoOu,$value);
+								array_push($formAntesDoOu1,$value);
+								array_push($formAntesDoOu2,$value['esquerdo']['direito']);
 								$arrayFormulas[$key]['esquerdo']=$arrayFormulas[$key]['direito']['esquerdo'];
 								$arrayFormulas[$key]['conectivo']=$arrayFormulas[$key]['direito']['conectivo'];
 								$arrayFormulas[$key]['direito']=$arrayFormulas[$key]['direito']['direito'];
@@ -677,7 +675,8 @@ class FuncoesResolucao extends Model
 							}
 							elseif(!is_array($value['direito'])){
 								array_push($formsDepoisDoOu,$value['direito']);
-								array_push($formAntesDoOu,$value);
+								array_push($formAntesDoOu1,$value);
+								array_push($formAntesDoOu2,$value['esquerdo']['direito']);
 								$arrayFormulas[$key]['esquerdo']=NULL;					
 								$hashResolucao[$arrayFormulas[$key]['direito']]=$value['conectivo'] == "not" ? '0':'1';
 								$arrayFormulas[$key]['conectivo']=NULL;
@@ -688,12 +687,25 @@ class FuncoesResolucao extends Model
 					//Se for um array atômico, pode ser not
 					//Sendo not, se houver o mesmo átomo positivo na hash, ou seja átomo==1
 					//Significa que esse membro é falso e eu posso isolar o lado direito do "ou"
-					if(is_array($value['direito']) && $value['direito']['esquerdo']==NULL && $value['direito']['conectivo']=='not'){								
+					if(is_array($value['direito']) && $value['direito']['esquerdo']==NULL && $value['direito']['conectivo']=='not'){		
 						if(@$hashResolucao[$value['direito']['direito']]=='1'){
 							//O lado direito também pode ser array, porém não importa o que ele contém. Será verdade
 							if(is_array($value['esquerdo']) && $value['esquerdo']['conectivo']!='not'){
 								array_push($formsDepoisDoOu,$value['esquerdo']);
-								array_push($formAntesDoOu,$value);
+
+
+								if (!is_array($value)) {
+									ParsingFormulas::corrigeAtomos($value);
+									$aux['esquerdo']=null;
+									$aux['conectivo']=null;
+									$aux['direito']=$value;
+									array_push($formAntesDoOu1,$aux);
+								}
+								else{
+									array_push($formAntesDoOu1,$value);
+								}
+								array_push($formAntesDoOu2,$value['direito']['direito']);
+								
 								$arrayFormulas[$key]['esquerdo']=$arrayFormulas[$key]['esquerdo']['esquerdo'];
 								$arrayFormulas[$key]['conectivo']=$arrayFormulas[$key]['esquerdo']['conectivo'];
 								$arrayFormulas[$key]['direito']=$arrayFormulas[$key]['esquerdo']['direito'];
@@ -701,7 +713,17 @@ class FuncoesResolucao extends Model
 							}
 							elseif(is_array($value['esquerdo']) && $value['esquerdo']['conectivo']=='not'){
 								array_push($formsDepoisDoOu,$value['esquerdo']);
-								array_push($formAntesDoOu,$value);
+								if (!is_array($value)) {
+									ParsingFormulas::corrigeAtomos($value);
+									$aux['esquerdo']=null;
+									$aux['conectivo']=null;
+									$aux['direito']=$value;
+									array_push($formAntesDoOu1,$aux);
+								}
+								else{
+									array_push($formAntesDoOu1,$value);
+								}
+								array_push($formAntesDoOu2,$value['direito']['direito']);
 								$arrayFormulas[$key]['conectivo']=$arrayFormulas[$key]['esquerdo']['conectivo'];
 								$arrayFormulas[$key]['direito']=$arrayFormulas[$key]['esquerdo']['direito'];
 								$arrayFormulas[$key]['esquerdo']=NULL;
@@ -710,7 +732,17 @@ class FuncoesResolucao extends Model
 
 							elseif(!is_array($value['esquerdo'])){
 								array_push($formsDepoisDoOu,$value['esquerdo']);
-								array_push($formAntesDoOu,$value);
+								if (!is_array($value)) {
+									ParsingFormulas::corrigeAtomos($value);
+									$aux['esquerdo']=null;
+									$aux['conectivo']=null;
+									$aux['direito']=$value;
+									array_push($formAntesDoOu1,$aux);
+								}
+								else{
+									array_push($formAntesDoOu1,$value);
+								}
+								array_push($formAntesDoOu2,$value['direito']['direito']);
 								//CHECAR CASO DÊ ERRO
 								//Todo átomo deve ser mantido do lado direito
 								$arrayFormulas[$key]['direito']=$value['esquerdo'];
@@ -727,7 +759,6 @@ class FuncoesResolucao extends Model
 					//Se houver significa que podemos cortar esse cara do "ou"
 					if((is_array($value['esquerdo']) && $value['esquerdo']['conectivo']==NULL)){
 						if(@$hashResolucao[$value['esquerdo']['direito']]=='0'){
-							//$value['esquerdo']=NULL;
 							//garantidamente se o átomo não é array ele é positivo, então recebe 1
 							$hashResolucao[$value['esquerdo']['direito']]='1';
 							//$value['conectivo']=NULL;
@@ -737,7 +768,6 @@ class FuncoesResolucao extends Model
 					if((is_array($value['direito']) && $value['direito']['conectivo']==NULL)){
 						//Pode acontecer de não existir o cara na hash ainda, então o @ é pra omitir este aviso desnecessário
 						if(@$hashResolucao[$value['direito']['direito']]=='0'){
-							//$value['esquerdo']=NULL;
 							//garantidamente se o átomo não é array ele é positivo, então recebe 1
 							$hashResolucao[$value['direito']['direito']]='1';
 							//$value['conectivo']=NULL;
@@ -762,19 +792,22 @@ class FuncoesResolucao extends Model
 							$aux['esquerdo']=NULL;
 							$aux['conectivo']=NULL;
 							$aux['direito']=$value['direito'];
+							$aux2['esquerdo']=null;
+							$aux2['conectivo']='not';
+							$aux2['direito']=$value['esquerdo'];
+							ParsingFormulas::corrigeAtomos($aux);
 							array_push($formsDepoisDoOu,$aux);
-							array_push($formAntesDoOu,$value);
+							array_push($formAntesDoOu1,$value);
+							array_push($formAntesDoOu2,$aux2);
 							$arrayFormulas[$key]=$aux;
 							break;
 						}
 					}
+					//Se o lado direito for um átomo positivo ao entrar verificar se ele está na hash como negativo
+					//Se estiver, ocorrerá uma simplificação
 					if(!is_array($value['direito'])){
 						//Pode acontecer de não existir o cara na hash ainda, então o @ é pra omitir este aviso desnecessário
 						if(@$hashResolucao[$value['direito']]=='0'){
-							////print "<br>Formula completa<br>";
-							////print_r($value['direito']);
-							////print "<br>hash<br>";
-							////print_r($hashResolucao);
 							//O cara que vai sobrar do "ou" pode ser adicionado na hash caso seja átomo
 							if (!is_array($value['esquerdo'])) {
 								$hashResolucao[$value['esquerdo']]='1';
@@ -785,8 +818,13 @@ class FuncoesResolucao extends Model
 							$aux['esquerdo']=NULL;
 							$aux['conectivo']=NULL;
 							$aux['direito']=$value['esquerdo'];
-							array_push($formsDepoisDoOu,$value['direito']);
-							array_push($formAntesDoOu,$value);
+							ParsingFormulas::corrigeAtomos($aux);
+							$aux2['esquerdo']=null;
+							$aux2['conectivo']='not';
+							$aux2['direito']=$value['direito'];
+							array_push($formsDepoisDoOu,$aux);
+							array_push($formAntesDoOu1,$value);
+							array_push($formAntesDoOu2,$aux2);
 							$arrayFormulas[$key]=$aux;
 							break;
 						}
@@ -798,7 +836,7 @@ class FuncoesResolucao extends Model
 		//Correção de átomos
 		//Átomos que virarem array(array(direiro=>X)) passam a ser array(direito=>X)
 		foreach ($arrayFormulas as $key => $value) {
-			FuncoesResolucao::corrigeAtomos($arrayFormulas[$key]);
+			ParsingFormulas::corrigeAtomos($arrayFormulas[$key]);
 		}
 	}
 
@@ -892,187 +930,120 @@ class FuncoesResolucao extends Model
 			}		
 		}
 	}
+	public static function separarOU3(&$arrayFormulas,&$hashResolucao,&$formAntesDoOu1, &$formAntesDoOu2, &$formsDepoisDoOu){
+		//Caso complexo simplificação por partes
+		//Se eu tiver um array grande de ou, vou pegar cada átomo disponível e diminuí-lo
+		foreach ($arrayFormulas as $key => $value) {
+			if ($arrayFormulas[$key]['conectivo']=='ou') {
+				//Checar se os dois lados são arrays
+				if (is_array($value['esquerdo']) && is_array($value['direito'])) {
+					//Checar se esquerdo e direito são arrays compostos de 'ou'
+					if ($value['esquerdo']['conectivo']=='ou' && $value['direito']['conectivo']=='ou') {
+						foreach ($hashResolucao as $key2 => $value2) {
+							if ($key2==$value['esquerdo']['esquerdo']) {
+								$aux['esquerdo']=null;
+								$aux['conectivo']='not';
+								$aux['direito']=$key2;
+								//Se esquerdo esquerdo for átomo positivo, corta com o da hash
+								if ($value2=='0' && !is_array($value['esquerdo']['esquerdo'])) {
+									array_push($formAntesDoOu1, $value);
+									array_push($formAntesDoOu2, $aux);
+									$arrayFormulas[$key]['esquerdo']['esquerdo']=null;
+								}
+								elseif ($value2=='1' && @$value['esquerdo']['esquerdo']['conectivo']=='not') {
+									array_push($formAntesDoOu1, $value['esquerdo']['esquerdo']);
+									array_push($formAntesDoOu2, $key2);
+									$arrayFormulas[$key]['esquerdo']['esquerdo']=null;
+								}
+								break;
+							}
 
-	public static function corrigeAtomos(&$form){
-		if(@$form['esquerdo']==NULL && @is_array($form['direito'])){
-			if (@$form['direito']['esquerdo']==NULL) {
-				$form['conectivo']=$form['direito']['conectivo'];
-				$form['direito']=$form['direito']['direito'];
+							if ($key2==$value['esquerdo']['direito']) {
+								$aux['esquerdo']=null;
+								$aux['conectivo']='not';
+								$aux['direito']=$key2;
+								//Se esquerdo esquerdo for átomo positivo, corta com o da hash
+								if ($value2=='0' && !is_array($value['esquerdo']['direito'])) {
+									array_push($formAntesDoOu1, $value);
+									array_push($formAntesDoOu2, $aux);
+									$arrayFormulas[$key]['esquerdo']['direito']=null;
+								}
+								elseif ($value2=='1' && @$value['esquerdo']['direito']['conectivo']=='not') {
+									array_push($formAntesDoOu1, $value['esquerdo']['direito']);
+									array_push($formAntesDoOu2, $key2);
+									$arrayFormulas[$key]['esquerdo']['direito']=null;
+								}
+								break;
+							}
+
+							if ($key2==$value['direito']['esquerdo']) {
+								$aux['esquerdo']=null;
+								$aux['conectivo']='not';
+								$aux['direito']=$key2;
+								//Se esquerdo esquerdo for átomo positivo, corta com o da hash
+								if ($value2=='0' && !is_array($value['direito']['esquerdo'])) {
+									array_push($formAntesDoOu1, $value);
+									array_push($formAntesDoOu2, $aux);
+									$arrayFormulas[$key]['direito']['esquerdo']=null;
+								}
+								elseif ($value2=='1' && @$value['direito']['esquerdo']['conectivo']=='not') {
+									array_push($formAntesDoOu1, $value['direito']['esquerdo']);
+									array_push($formAntesDoOu2, $key2);
+									$arrayFormulas[$key]['direito']['esquerdo']=null;
+								}
+								break;
+							}
+
+							if ($key2==$value['direito']['direito']) {
+								$aux['esquerdo']=null;
+								$aux['conectivo']='not';
+								$aux['direito']=$key2;
+								//Se esquerdo esquerdo for átomo positivo, corta com o da hash
+								if ($value2=='0' && !is_array($value['direito']['direito'])) {
+									array_push($formAntesDoOu1, $value);
+									array_push($formAntesDoOu2, $aux);
+									$arrayFormulas[$key]['direito']['direito']=null;
+								}
+								elseif ($value2=='1' && @$value['direito']['direito']['conectivo']=='not') {
+									array_push($formAntesDoOu1, $value['direito']['direito']);
+									array_push($formAntesDoOu2, $key2);
+									$arrayFormulas[$key]['direito']['direito']=null;
+								}
+								break;
+							}
+						}
+					}
+				}
 			}
-		}
+
+			//Correções no array
+			if (@$arrayFormulas[$key]['esquerdo']['esquerdo']==null && @$arrayFormulas[$key]['esquerdo']['conectivo']=='ou') {
+				$arrayFormulas[$key]['esquerdo']=$arrayFormulas[$key]['esquerdo']['direito'];
+				array_push($formsDepoisDoOu,$arrayFormulas[$key]);
+			}
+			elseif (@$arrayFormulas[$key]['esquerdo']['direito']==null && @$arrayFormulas[$key]['esquerdo']['conectivo']=='ou') {
+				$arrayFormulas[$key]['esquerdo']=$arrayFormulas[$key]['esquerdo']['esquerdo'];
+				array_push($formsDepoisDoOu,$arrayFormulas[$key]);
+			}
+			elseif (@$arrayFormulas[$key]['direito']['esquerdo']==null && @$arrayFormulas[$key]['direito']['conectivo']=='ou') {
+				$arrayFormulas[$key]['direito']=$arrayFormulas[$key]['direito']['direito'];
+				array_push($formsDepoisDoOu,$arrayFormulas[$key]);
+			}
+			elseif (@$arrayFormulas[$key]['direito']['direito']==null && @$arrayFormulas[$key]['direito']['conectivo']=='ou') {
+				$arrayFormulas[$key]['direito']=$arrayFormulas[$key]['direito']['esquerdo'];
+				array_push($formsDepoisDoOu,$arrayFormulas[$key]);
+			}
+			//corrigeArrays($arrayFormulas[$key]['esquerdo']);
+			//corrigeArrays($arrayFormulas[$key]['direito']);
+			//corrigeAtomos($arrayFormulas[$key]['direito']);
+			//corrigeAtomos($arrayFormulas[$key]['esquerdo']);
 		
-		if (@strlen(@$form['esquerdo'])==3 && @$form['esquerdo'][0]=='(' ) {
-			$form['esquerdo']=substr($form['esquerdo'], 1);
-			$form['esquerdo']=substr($form['esquerdo'], 0, strlen($form['esquerdo'])-1);
-			//$form['esquerdo']=$form;
-		}
-		if (@strlen(@$form['direito'])==3 && @$form['direito'][0]=='(' ) {
-			$form['direito']=substr($form['direito'], 1);
-			$form['direito']=substr($form['direito'], 0, strlen($form['direito'])-1);
-			//$form['direito']=$form['direito'];
-		}
-	}
-	public static function corrigeArrays(&$form){
-		if (@$form['esquerdo']==NULL && @is_array($form['direito'])) {
-			$aux1=$form['direito'];
-			$form['esquerdo']=$aux1['esquerdo'];
-			$form['conectivo']=$aux1['conectivo'];
-			$form['direito']=$aux1['direito'];
-			return;
-		}
-		if (@$form['direito']==NULL && @is_array($form['esquerdo'])) {
-			$aux1=$form['esquerdo'];
-			$form['esquerdo']=$aux1['esquerdo'];
-			$form['conectivo']=$aux1['conectivo'];
-			$form['direito']=$aux1['direito'];
-		}
-
-		//Correção para caso haja um átomo sendo tratado como array
-		//dentro de um array, por exemplo form[esquerdo][esquerdo]==null e form[esquerdo][direito]==algumacoisa
-		if (is_array(@$form['esquerdo']['esquerdo']) && @$form['esquerdo']['esquerdo']['esquerdo']==NULL && @$form['esquerdo']['esquerdo']['conectivo']==NULL) {
-			$form['esquerdo']['esquerdo']=$form['esquerdo']['esquerdo']['direito'];
-			return;
-		}
-		if (is_array(@$form['esquerdo']['direito']) && @$form['esquerdo']['direito']['esquerdo']==NULL && @$form['esquerdo']['direito']['conectivo']==NULL) {
-			$form['esquerdo']['direito']=$form['esquerdo']['direito']['direito'];
-			return;
-		}
-		if (is_array(@$form['direito']['direito']) && @$form['direito']['direito']['esquerdo']==NULL && @$form['direito']['direito']['conectivo']==NULL) {
-			$form['direito']['direito']=$form['direito']['direito']['direito'];
-			return;
-		}
-	}
-	public static function converteFormulaString(&$form){
-		while (@is_array($form['esquerdo']) || @is_array($form['direito']) || is_array($form)) {
-			FuncoesResolucao::reverteFormatacao($form);
-		}
-
-		if (strlen($form)==1) {
-			$form="(".$form.")";
-		}
-	}
-
-	public static function reverteFormatacao(&$form){
-		if (@is_array($form['esquerdo'])) {
-			FuncoesResolucao::reverteFormatacao($form['esquerdo']);
-		}
-		elseif (@!is_array($form['esquerdo']) ) {
-			FuncoesResolucao::colocaParenteses($form);
-		}
-		if (@is_array($form['direito'])) {
-			FuncoesResolucao::reverteFormatacao($form['direito']);
-		}
-		elseif (@!is_array($form['direito']) ) {
-			FuncoesResolucao::colocaParenteses($form);
-		}
-	}
-	public static function colocaParenteses(&$form){
-		if (@is_array($form['esquerdo']) && @!is_array($form['direito'])) {
-			if ($form['conectivo']=='not') {
-				if (FuncoesResolucao::checaAtomico($form)) {
-					$aux=$form['conectivo'];
-					$aux=$aux."(".$form['direito']."))";
-				}
+			if (!is_array($arrayFormulas[$key])) {
+				$hashResolucao[$arrayFormulas[$key]['direito']]='1';
 			}
-			if ($form['conectivo']=='not_ou') {
-				$form['esquerdo']="not(".$form['esquerdo'];
-				$aux=$aux."ou";
-				$aux=$aux.$form['direito']."))";
-				$form=$aux;
-				return;
+			elseif(is_array($arrayFormulas[$key]) && $arrayFormulas[$key]['conectivo']=='not') {
+				$hashResolucao[$arrayFormulas[$key]['direito']]='0';
 			}
-			if ($form['conectivo']=='not_e') {
-				$form['esquerdo']="not(".$form['esquerdo'];
-				$aux=$aux."e";
-				$aux=$aux.$form['direito']."))";
-				$form=$aux;
-				return;
-			}
-			if ($form['conectivo']=='not_implica') {
-				$form['esquerdo']="not(".$form['esquerdo'];
-				$aux=$aux."implica";
-				$aux=$aux.$form['direito']."))";
-				$form=$aux;
-				return;
-			}
-			$aux=$form['conectivo'];
-			$aux=$aux.$form['direito'].")";
-			$form['direito']=$aux;
-			return;
-
-		}
-		elseif (@!is_array($form['esquerdo']) && @is_array($form['direito'])) {
-			$aux="(";
-			$aux=$aux.$form['esquerdo'];
-			$form['esquerdo']=$aux;
-			return;
-		}
-		elseif(is_array($form)){
-
-			if ($form['conectivo']=='not_ou') {
-				
-				if ($form['esquerdo'][0]=="(") {
-					$aux="not";
-					$aux=$aux.$form['esquerdo'];
-					$aux=$aux."ou";
-					$aux=$aux.$form['direito'].")";
-				}
-				else{
-					$aux="not(";
-					$aux=$aux.$form['esquerdo'];
-					$aux=$aux."ou";
-					$aux=$aux.$form['direito']."))";
-				}
-				$form=$aux;
-				return;
-			}
-			if ($form['conectivo']=='not_e') {
-				if ($form['esquerdo'][0]=="(") {
-					$aux="not";
-					$aux=$aux.$form['esquerdo'];
-					$aux=$aux."e";
-					$aux=$aux.$form['direito'].")";
-				}
-				else{
-					$aux="not(";
-					$aux=$aux.$form['esquerdo'];
-					$aux=$aux."e";
-					$aux=$aux.$form['direito']."))";
-				}
-				$form=$aux;
-				return;
-			}
-			if ($form['conectivo']=='not_implica') {
-				if ($form['esquerdo'][0]=="(") {
-					$aux="not";
-					$aux=$aux.$form['esquerdo'];
-					$aux=$aux."implica";
-					$aux=$aux.$form['direito'].")";
-				}
-				else{
-					$aux="not(";
-					$aux=$aux.$form['esquerdo'];
-					$aux=$aux."implica";
-					$aux=$aux.$form['direito']."))";
-				}			
-				$form=$aux;
-				return;
-			}
-			$aux="(";
-			$aux=$aux.$form['esquerdo'];
-			if ($form['conectivo']=='not') {
-				if (FuncoesResolucao::checaAtomico($form)) {
-					$aux=$aux.$form['conectivo'];
-					$aux=$aux."(".$form['direito']."))";
-					$form=$aux;
-					return;
-				}
-			}
-
-			$aux=$aux.$form['conectivo'];
-			$aux=$aux.$form['direito'].")";
-			$form=$aux;
-			return;
 		}
 	}
 }

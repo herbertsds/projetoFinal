@@ -22,13 +22,9 @@ $listaFormulasDisponiveis = array();
 $tamanho=0;
 //Passos 1 e 2
 //Entrada
-<<<<<<< HEAD
 
-$entradaTeste= $DNNquestao40;
+$entradaTeste= $DNNquestao41;
 
-=======
-$entradaTeste= $DNNquestao26;
->>>>>>> feature-Tableaux-Laravel
 $tamanho=count($entradaTeste);
 //Receber a entrada do Front-End
 //Negação da pergunta+Validação
@@ -96,19 +92,11 @@ $contador=0;
 $flag=false;
 while ($contador <= 10){
 	if ($contador==0) {
-<<<<<<< HEAD
-		print "<br>Correção nos arrays<br>";
 
-			foreach ($entradaConvertida as $key => $value) {
-				print_r($entradaConvertida[$key]);
-				corrigeArrays($entradaConvertida[$key]);
-				corrigeAtomos($entradaConvertida[$key]);
-				
-=======
 			foreach ($entradaConvertida as $key => $value) {
 				corrigeArrays($entradaConvertida[$key]);
 				corrigeAtomos($entradaConvertida[$key]);	
->>>>>>> feature-Tableaux-Laravel
+
 				
 			}
 	}
@@ -122,6 +110,11 @@ while ($contador <= 10){
 	$aux2['direito']=NULL;
 	separarE($arrayFormulas,$entradaConvertida,$aux1,$aux2,$contador);
 	print "<br> FÓRMULAS APÓS SEPARAÇÃO DO E<BR>";
+	foreach ($arrayFormulas as $key => $value) {
+		corrigeArrays($arrayFormulas[$key]);
+		corrigeAtomos($arrayFormulas[$key]['esquerdo']);
+		corrigeAtomos($arrayFormulas[$key]['direito']);
+	}
 	print_r($arrayFormulas);
 	//Passo 5
 	$hashResolucao=array();
@@ -137,35 +130,35 @@ while ($contador <= 10){
 	print "APÓS A SIMPLIFICAÇÃO DE 'OU' SIMPLES<BR>";
 		print_r($arrayFormulas);
 		print_r($hashResolucao);
-<<<<<<< HEAD
 
 	foreach ($arrayFormulas as $key => $value) {
 		corrigeArrays($arrayFormulas[$key]);
 	}
 
-=======
-	foreach ($arrayFormulas as $key => $value) {
-		corrigeArrays($arrayFormulas[$key]);
-	}
->>>>>>> feature-Tableaux-Laravel
 	//Simplificação do tipo: Se Av¬B e AvB então A.
 	separarOU2($arrayFormulas);
 	print "APÓS A SIMPLIFICAÇÃO DE 'OU' COMPOSTO<BR>";
 		print_r($arrayFormulas);
 		print_r($hashResolucao);	
-<<<<<<< HEAD
 
-=======
->>>>>>> feature-Tableaux-Laravel
+
 	foreach ($arrayFormulas as $key => $value) {
 		corrigeArrays($arrayFormulas[$key]);
 		corrigeAtomos($arrayFormulas[$key]['esquerdo']);
 		corrigeAtomos($arrayFormulas[$key]['direito']);
 	}
-<<<<<<< HEAD
 
-=======
->>>>>>> feature-Tableaux-Laravel
+	separarOU3($arrayFormulas,$hashResolucao);
+	print "APÓS A SIMPLIFICAÇÃO DE 'OU' COMPLEXO 1<BR>";
+		print_r($arrayFormulas);
+		print_r($hashResolucao);	
+
+
+	foreach ($arrayFormulas as $key => $value) {
+		corrigeArrays($arrayFormulas[$key]);
+		corrigeAtomos($arrayFormulas[$key]['esquerdo']);
+		corrigeAtomos($arrayFormulas[$key]['direito']);
+	}
 	//Passo 5 - REPETIÇÃO
 	confrontaAtomos($arrayFormulas,$hashResolucao,$flag);
 	if($flag){

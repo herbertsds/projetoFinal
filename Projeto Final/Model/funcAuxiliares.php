@@ -7,6 +7,8 @@ function converteConectivoSimbolo(&$form){
 	$form=str_replace('ou','v',$form);
 	$form=str_replace('implica','-',$form);
 	$form=str_replace('not','!',$form);
+	$form=str_replace('paraTodo','@',$form);
+	$form=str_replace('xist','&',$form);
 }
 
 //Função recebe um ponteiro para uma String fórmula e converte
@@ -16,6 +18,8 @@ function converteConectivoExtenso(&$form){
 	$form=str_replace('v','ou',$form);
 	$form=str_replace('-','implica',$form);
 	$form=str_replace('!','not',$form);
+	$form=str_replace('&','xist',$form);
+	$form=str_replace('@','paraTodo',$form);
 }
 
 //Função auxiliar para facilitar a extração de conectivos de fórmulas com not
@@ -24,6 +28,8 @@ function converteConectivoNot(&$form){
 	$form=str_replace('^','not_e',$form);
 	$form=str_replace('v','not_ou',$form);
 	$form=str_replace('-','not_implica',$form);
+	$form=str_replace('&','not_xist',$form);
+	$form=str_replace('@','not_paraTodo',$form);
 }
 
 

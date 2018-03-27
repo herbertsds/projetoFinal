@@ -73,9 +73,9 @@ function converteFNC(&$form){
 			}
 		}
 		//Caso os dois lados não sejam array, mas só direito seja, devo tratá-lo
-		else{
-			$form['direito']="!(".$form['direito'].")";
-		}
+		if (!is_array($form['direito']) && is_array($form['esquerdo'])) {
+				$form['direito']="!(".$form['direito'].")";
+			}
 		//Se o lado esquerdo for array, preciso negar apenas o conectivo
 		if (is_array($form['esquerdo'])) {
 			if ($form['esquerdo']['conectivo']=='not') {
@@ -101,15 +101,15 @@ function converteFNC(&$form){
 			}
 		}
 		//Caso os dois lados não sejam array, mas só esquerdo seja, devo tratá-lo
-		else{
-			$form['esquerdo']="!(".$form['esquerdo'].")";
-		}
+		if(!is_array($form['esquerdo']) && is_array($form['direito'])){
+				$form['esquerdo']="!(".$form['esquerdo'].")";
+			}
 		$form['conectivo']='ou';
 		
 	}
 	if($form['conectivo']=='not_ou'){
 		//Se os 2 lados não forem arrays, o tratamento é simples
-		if (!is_array($form['direito']) && !is_array($form['direito']) ) {
+		if (!is_array($form['direito']) && !is_array($form['esquerdo']) ) {
 			$form['direito']="!(".$form['direito'].")";
 			$form['esquerdo']="!(".$form['esquerdo'].")";
 		}
@@ -827,6 +827,92 @@ function separarOU2(&$arrayFormulas){
 				}
 			}
 		}		
+	}
+}
+function separarOU3(&$arrayFormulas,&$hashResolucao){
+	//Caso complexo simplificação por partes
+	//Se eu tiver um array grande de ou, vou pegar cada átomo disponível e diminuí-lo
+	foreach ($arrayFormulas as $key => $value) {
+		if ($arrayFormulas[$key]['conectivo']=='ou') {
+			//Checar se os dois lados são arrays
+			if (is_array($value['esquerdo']) && is_array($value['direito'])) {
+				//Checar se esquerdo e direito são arrays compostos de 'ou'
+				if ($value['esquerdo']['conectivo']=='ou' && $value['direito']['conectivo']=='ou') {
+					foreach ($hashResolucao as $key2 => $value2) {
+						if ($key2==$value['esquerdo']['esquerdo']) {
+							//Se esquerdo esquerdo for átomo positivo, corta com o da hash
+							if ($value2=='0' && !is_array($value['esquerdo']['esquerdo'])) {
+								$arrayFormulas[$key]['esquerdo']['esquerdo']=null;
+							}
+							elseif ($value2=='1' && @$value['esquerdo']['esquerdo']['conectivo']=='not') {
+								$arrayFormulas[$key]['esquerdo']['esquerdo']=null;
+							}
+							break;
+						}
+
+						if ($key2==$value['esquerdo']['direito']) {
+							//Se esquerdo esquerdo for átomo positivo, corta com o da hash
+							if ($value2=='0' && !is_array($value['esquerdo']['direito'])) {
+								$arrayFormulas[$key]['esquerdo']['direito']=null;
+							}
+							elseif ($value2=='1' && @$value['esquerdo']['direito']['conectivo']=='not') {
+								$arrayFormulas[$key]['esquerdo']['direito']=null;
+							}
+							break;
+						}
+
+						if ($key2==$value['direito']['esquerdo']) {
+							//Se esquerdo esquerdo for átomo positivo, corta com o da hash
+							if ($value2=='0' && !is_array($value['direito']['esquerdo'])) {
+								$arrayFormulas[$key]['direito']['esquerdo']=null;
+							}
+							elseif ($value2=='1' && @$value['direito']['esquerdo']['conectivo']=='not') {
+								$arrayFormulas[$key]['direito']['esquerdo']=null;
+							}
+							break;
+						}
+
+						if ($key2==$value['direito']['direito']) {
+							//Se esquerdo esquerdo for átomo positivo, corta com o da hash
+							if ($value2=='0' && !is_array($value['direito']['direito'])) {
+								$arrayFormulas[$key]['direito']['direito']=null;
+							}
+							elseif ($value2=='1' && @$value['direito']['direito']['conectivo']=='not') {
+								$arrayFormulas[$key]['direito']['direito']=null;
+							}
+							break;
+						}
+					}
+				}
+			}
+		}
+
+		//Correções no array
+		if (@$arrayFormulas[$key]['esquerdo']['esquerdo']==null && @$arrayFormulas[$key]['esquerdo']['conectivo']=='ou') {
+			$arrayFormulas[$key]['esquerdo']=$arrayFormulas[$key]['esquerdo']['direito'];
+		}
+		if (@$arrayFormulas[$key]['esquerdo']['direito']==null && @$arrayFormulas[$key]['esquerdo']['conectivo']=='ou') {
+			$arrayFormulas[$key]['esquerdo']=$arrayFormulas[$key]['esquerdo']['esquerdo'];
+		}
+		if (@$arrayFormulas[$key]['direito']['esquerdo']==null && @$arrayFormulas[$key]['direito']['conectivo']=='ou') {
+			$arrayFormulas[$key]['direito']=$arrayFormulas[$key]['direito']['direito'];
+		}
+		if (@$arrayFormulas[$key]['direito']['direito']==null && @$arrayFormulas[$key]['direito']['conectivo']=='ou') {
+			$arrayFormulas[$key]['direito']=$arrayFormulas[$key]['direito']['esquerdo'];
+		}
+		//corrigeArrays($arrayFormulas[$key]['esquerdo']);
+		//corrigeArrays($arrayFormulas[$key]['direito']);
+		//corrigeAtomos($arrayFormulas[$key]['direito']);
+		//corrigeAtomos($arrayFormulas[$key]['esquerdo']);
+	
+		if (!is_array($arrayFormulas[$key])) {
+			$hashResolucao[$arrayFormulas[$key]['direito']]='1';
+		}
+		elseif(is_array($arrayFormulas[$key]) && $arrayFormulas[$key]['conectivo']=='not') {
+			print "<br>Problema<br>";
+			print_r($arrayFormulas[$key]['direito']);
+			$hashResolucao[$arrayFormulas[$key]['direito']]='0';
+		}
 	}
 }
 function corrigeAtomos(&$form){

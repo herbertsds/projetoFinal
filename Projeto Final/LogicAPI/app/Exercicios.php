@@ -3,7 +3,8 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Categorias;
+use App\Formula;
+use App\FuncoesAuxiliares;
 
 class Exercicios extends Model
 {
