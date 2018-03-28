@@ -15,7 +15,7 @@
 	var numLinha = 0;
 	var numExercicio = "";
 	var gabaritoBuscado;
-
+	var exercicioBuscado;
 	// funcao apenas para testes de eventos
 	function teste(){
 		
@@ -66,7 +66,6 @@
         	});;
         	//formulaSimplificar = $(e.target).text();
 			formulaId = this.id;
-			
 			  
         });
  
@@ -213,7 +212,7 @@
 			$("#liExercicio").removeAttr("style");
 			$("#liExecucao").removeAttr("style");
 			$('#tabExercicio').click();
-
+			f_listaEx();
 			break;
 		
 		case "deducao":
@@ -310,13 +309,14 @@
 	
 	// FALTA PERMITIR EXCLUSAO/ALTERACAO DA PERGUNTA E DE REGRAS
 	
-	function f_buscaExercicio(){
-		if($('#numExercicio').val() == ""){
-			alert("Escreva o número de um exercícío!");
-		}
-		else{
+	function f_buscaExercicio(btn_numExercicio){
+//		if($('#numExercicio').val() == ""){
+//			alert("Escreva o número de um exercícío!");
+//		}
+//		else{
+				numExercicio = btn_numExercicio;
 				regras = 0;
-		    	numExercicio = $('#numExercicio').val();
+//		    	numExercicio = $('#numExercicio').val();
 				$('#regrasAdicionadas').text("");
 				$('#perguntaAdicionada').text("");
 				$('#r_divFormulas').text("");
@@ -336,10 +336,10 @@
 		    	        	console.log("exercicio buscado "+ numExercicio + " = " + retorno);
 		    	        	exercicioBuscado = JSON.parse(retorno);
 		    	        	 
-		    				$('#regra').prop('disabled', true);
-		    				$('#pergunta').prop('disabled', true);
-		    				$('#buttonRegra').hide();
-		    				$('#buttonPergunta').hide();
+//		    				$('#regra').prop('disabled', true);
+//		    				$('#pergunta').prop('disabled', true);
+//		    				$('#buttonRegra').hide();
+//		    				$('#buttonPergunta').hide();
 		    				
 		    				var limiteFormulas = ((exercicioBuscado.length) -1);
 		    				//console.log(limiteFormulas);
@@ -362,7 +362,7 @@
 		    	        },
 		    	        error: function() { alert('Exercício inválido!'); },
 		    	    });
-		}
+		
 	}
 	
 	function f_Next(){
@@ -378,7 +378,7 @@
 			break;
 		case "resolucao":
 				$('#r_divNovasFormulas').text("");
-				$('#' + idPergNegada).text("");
+				$("p[id='" + idPergNegada+"']").text("");
 				
 				var myData = { 'exercicio' : parseInt(numExercicio)};
 
@@ -391,7 +391,7 @@
 			        datatype: 'application/json',
 			       
 			        success: function(retorno) {
-				        console.log(retorno);
+				        //console.log(retorno);
 
 			        	gabaritoBuscado = JSON.parse(retorno);
 			        	console.log(gabaritoBuscado); 
@@ -521,6 +521,22 @@
 			
 	}
 	
-
+	
+	function f_listaEx(){
+		
+	for(var i=1;i<56;i++){
+			$("#listaEx").append("<button id='"+ i + "' class='btn btn-info btn-sm dropdown-item' type='button' onclick='f_buscaExercicio(this.id)'>Ex."+ i +"</button>");
+		}	
+	}
+	
+	
+	function sleep(milliseconds) {
+		  var start = new Date().getTime();
+		  for (var i = 0; i < 1e7; i++) {
+		    if ((new Date().getTime() - start) > milliseconds){
+		      break;
+		    }
+		  }
+	}
 
 	

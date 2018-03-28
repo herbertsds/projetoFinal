@@ -1,3 +1,4 @@
+// tic adicionado só na primeira formula obrigatoria 
 var perguntaFNC=false;
 var negadaIndice;
 var vet_Entrada = [];
@@ -65,12 +66,11 @@ var idPergNegada;
 							$('#r_divNovasFormulas').append("<input disabled type='checkbox' class='form-check-input' data-color = 'purple' name='ck_novasFormulas' id='" + cont +"' value='" + vet_regras[formulaId] +"'> "+ numLinha + ": "  + resposta +" em FNC </br>"  );
 
 							vet_regras[cont]= "novaRegra";
-	
-							$('#' + formulaId).off();
-							$('#' + formulaId).append(" &#10004;");
+
+							$("p[id='" + formulaId+"']").append(" &#10004;");
 
 							
-							$("#formulaId").prop("disabled", true);
+							
 							formulaId = "";
 							if(regras ==0 && perguntaFNC == true){
 								
@@ -92,7 +92,6 @@ var idPergNegada;
 					        	});	
 								$('#alertResolucao').fadeOut();
 
-//								$('#r_passo2').off();
 								$('#r_passo2').append(" &#10004;");
 								$(":checkbox").prop("disabled", false);
 
