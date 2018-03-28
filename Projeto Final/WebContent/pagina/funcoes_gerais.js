@@ -16,6 +16,8 @@
 	var numExercicio = "";
 	var gabaritoBuscado;
 	var exercicioBuscado;
+	var vet_exercicios = [];
+	var indice = 0;
 	// funcao apenas para testes de eventos
 	function teste(){
 		
@@ -323,45 +325,45 @@
 				$('#r_divNovasFormulas').text("");
 				
 				vet_regras = [];
-				var myData = { 'exercicio' : parseInt(numExercicio)};
-				//console.log("myData = " + myData);
-		            $.ajax({
-		
-		    	        url: 'http://127.0.0.1:8000/api/resolucao/exercicio',
-		    	        type: 'GET',
-		    	        callback: '?',
-		    	        data: myData,
-		    	        datatype: 'application/json',
-		    	        success: function(retorno) {
-		    	        	console.log("exercicio buscado "+ numExercicio + " = " + retorno);
-		    	        	exercicioBuscado = JSON.parse(retorno);
+//				var myData = { 'exercicio' : numExercicio};
+//				//console.log("myData = " + myData);
+//		            $.ajax({
+//		
+//		    	        url: 'http://127.0.0.1:8000/api/resolucao/exercicio',
+//		    	        type: 'GET',
+//		    	        callback: '?',
+//		    	        data: myData,
+//		    	        datatype: 'application/json',
+//		    	        success: function(retorno) {
+//		    	        	console.log("exercicio buscado "+ numExercicio + " = " + retorno);
+//		    	        	exercicioBuscado = JSON.parse(retorno);
 		    	        	 
 //		    				$('#regra').prop('disabled', true);
 //		    				$('#pergunta').prop('disabled', true);
 //		    				$('#buttonRegra').hide();
 //		    				$('#buttonPergunta').hide();
-		    				
-		    				var limiteFormulas = ((exercicioBuscado.length) -1);
+		    				var exercicio = vet_exercicios[numExercicio];
+		    				var limiteFormulas = ((exercicio.length) -1);
 		    				//console.log(limiteFormulas);
 		    				for (var data = 0; data < limiteFormulas; data++) {
 		    					  
 		    					regras++;   					  
 		    					  
-		    					vet_regras.push(exercicioBuscado[data]);
-		    					adicionadas = exercicioBuscado[data];
+		    					vet_regras.push(exercicio[data]);
+		    					adicionadas = exercicio[data];
 		    				
 		    					$('#regrasAdicionadas').append("<br/>" + regras + ": " + adicionadas );
 		    						
 		    				}
-		    				pergunta = exercicioBuscado[limiteFormulas];
+		    				pergunta = exercicio[limiteFormulas];
 		    				linhaPerg = regras+1;
 
-		    				$('#perguntaAdicionada').append("<br/>" +linhaPerg + ": " + exercicioBuscado[limiteFormulas] );
+		    				$('#perguntaAdicionada').append("<br/>" +linhaPerg + ": " + exercicio[limiteFormulas] );
 		    				atualizaTela(tipoEx);
-		    				
-		    	        },
-		    	        error: function() { alert('Exercício inválido!'); },
-		    	    });
+//		    				
+//		    	        },
+//		    	        error: function() { alert('Exercício inválido!'); },
+//		    	    });
 		
 	}
 	
@@ -523,12 +525,32 @@
 	
 	
 	function f_listaEx(){
-		
+		vet_exercicios[0] = "";
 	for(var i=1;i<56;i++){
-			$("#listaEx").append("<button id='"+ i + "' class='btn btn-info btn-sm dropdown-item' type='button' onclick='f_buscaExercicio(this.id)'>Ex."+ i +"</button>");
-		}	
+			$("#listaEx").append("<button id='"+ i + "' class='btn btn-info btn-sm dropdown-item' type='button' data-toggle='tooltip' data-placement='top' onclick='f_buscaExercicio(this.id)'>Ex."+ i +"</button>");
+		}
+	for(var i=1;i<56;i++){
+		var myData = { 'exercicio' : i};
+		indice = 1;
+		$.ajax({
+    		
+	        url: 'http://127.0.0.1:8000/api/resolucao/exercicio',
+	    	type: 'GET',
+	        callback: '?',
+	        data: myData, 
+	        datatype: 'application/json',
+	       
+	        success: function(retorno) {
+		        //console.log(retorno);
+
+	        	vet_exercicios[indice] = JSON.parse(retorno);
+	        	$("button[id='" + indice + "']").prop('title', retorno);
+	        	indice++;
+	        },
+	        error: function() { alert('Exercicio não encontrado!'); },
+	    });
+		}
 	}
-	
 	
 	function sleep(milliseconds) {
 		  var start = new Date().getTime();
