@@ -318,6 +318,7 @@
 //		else{
 				numExercicio = btn_numExercicio;
 				regras = 0;
+				numLinha = 0;
 //		    	numExercicio = $('#numExercicio').val();
 				$('#regrasAdicionadas').text("");
 				$('#perguntaAdicionada').text("");
@@ -550,6 +551,7 @@
 	        error: function() { alert('Exercicio não encontrado!'); },
 	    });
 		}
+
 	}
 	
 	function sleep(milliseconds) {
