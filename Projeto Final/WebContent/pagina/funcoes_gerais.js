@@ -18,6 +18,8 @@
 	var exercicioBuscado;
 	var vet_exercicios = [];
 	var indice = 0;
+	
+	
 	// funcao apenas para testes de eventos
 	function teste(){
 		
@@ -111,49 +113,6 @@
         //DESTAQUE MOUSE SOBRE
 
 // --------------------------------------------------------------------------------------------------------------------------        
-// PASSOS -------------------------------------------------------------------------------------------------------------------
-//		// DESTAQUE AO SELECIONAR PASSO
-//	        $('span').on('click', function(e) {
-//	          	 $('span').css({
-//	   					'color':'black',
-//	   					//'background':'none',
-//						'font-weight': 100,
-//						'border' : 'none'
-//
-//	          	 });
-//	   			  
-//	          	 $(e.target).css({
-//	          		 	//'border': '1px dashed',
-//	   					'color':'darkgreen',
-//	   					//'background':'LightGreen ',
-//	   					'font-weight': 900
-//	          	 });;
-//	          	passoId = this.id;
-//          });
-//	        
-//	        //destaque mouse sobre
-//	        $('span').on('mouseenter', function(e) {
-//	        	$(e.target).css({
-//	        		'cursor':'pointer',
-//	   				//'color':'green',
-//	   				//'background':'LightGreen ',
-//	   				'font-weight': 900	        			
-//	        	});
-//	        $('span').on('mouseout', function(e) {
-//	        	$('span').css({
-//	   					//'color':'black',
-//	   					//'background':'none',
-//						'font-weight': 100,
-//	        	});	
-//	        	$(e.target).css({
-//	   					//'color':'black',
-//	   					//'background':'none',
-//						//'font-weight': 100,
-//	 	        		'cursor':'text'
-//	        	});;
-//	         });
-//    
-//	        });
 
 //--------------------------------------------------------------------------------------------------------------------------                
 
@@ -251,11 +210,11 @@
 			case "resolucao":
 				  for (cont = 0; cont in vet_regras; cont++){
 					  numLinha = cont+1;
-						$('#r_divFormulas').append("<p id='" + cont+ "'>"+ numLinha +": " + vet_regras[cont] + "</p>" );
+					  $('#r_divFormulas').append("<input  type='checkbox' class='form-check-input'  name='ck_Formulas' id='" + cont +"' value='"+ vet_regras[cont]+"'>"+ numLinha + ": " + vet_regras[cont] + "</input></br>" );
 	
 				  }
 				  numLinha++;
-				$('#r_divFormulas').append("<p id='finalVetor'>"+ numLinha +": " + pergunta + " # Pergunta </p>" );
+				$('#r_divFormulas').append("<input  type='checkbox' class='form-check-input'  name='ck_Formulas' id='finalVetor' value='"+ pergunta + "'>"+ numLinha +": " + pergunta + " # Pergunta </input></br>" );
 				if(regras==0){
 					$('#alertResolucao').fadeOut();
 
@@ -378,147 +337,13 @@
 		switch(tipoEx){
 		
 		case "tableaux":
+			f_GabTableaux();
 			break;
 		case "resolucao":
-				$('#r_divNovasFormulas').text("");
-				$("p[id='" + idPergNegada+"']").text("");
-				
-				var myData = { 'exercicio' : parseInt(numExercicio)};
-
-				$.ajax({
-		    		
-			        url: 'http://127.0.0.1:8000/api/resolucao/',
-			    	type: 'GET',
-			        callback: '?',
-			        data: myData, 
-			        datatype: 'application/json',
-			       
-			        success: function(retorno) {
-				        //console.log(retorno);
-
-			        	gabaritoBuscado = JSON.parse(retorno);
-			        	console.log(gabaritoBuscado); 
-						limiteGabarito = gabaritoBuscado.length;
-						//console.log(limiteGabarito);
-						$('#r_divNovasFormulas').append("<article> --------------------------------------------------------- </article>" );
-						numLinha = numLinha-linhasGab;
-						
-						// traduzir para o usuário o retorno  
-						// apresentar o gabarito na tela
-						for(var data=0; data < limiteGabarito; data++) {
-							
-
-
-
-							switch (gabaritoBuscado[data]){
-								case "Negação da pergunta": 
-									cont++;
-									numLinha++;
-									$('#r_divNovasFormulas').append("<p id='" + cont+ "' data-html='true'  data-trigger='click' data-toggle='popover' data-placement='right' title='Negação da pergunta' data-content='Fórmula usada:<ul><li>"+ gabaritoBuscado[data+2]+"</li></ul>'>" + numLinha +": " + gabaritoBuscado[data+1] + "</p>");
-
-									data = data + 2;
-									
-									break;
-									
-								case "Fórmula em FNC":
-									cont++;
-									numLinha++;
-									$('#r_divNovasFormulas').append("<p id='" + cont+ "' data-html='true'  data-trigger='click' data-toggle='popover' data-placement='right' title='Fórmula em FNC' data-content='Fórmulas usadas:\n<ul><li>"+ gabaritoBuscado[data+2]+"</li></ul>'>" + numLinha +": " + gabaritoBuscado[data+1] + "</p>" );
-									data = data + 2;
-									break;
-								
-								case "Separação do E":
-									cont++;
-									numLinha++;
-									$('#r_divNovasFormulas').append("<p id='" + cont+ "' data-html='true'  data-trigger='click' data-toggle='popover' data-placement='right' title='Separação do E' data-content='Fórmulas usadas:\n<ul><li>"+ gabaritoBuscado[data+3]+"</li></ul>'>"+ numLinha +": " + gabaritoBuscado[data+1] + "</p>" );
-									cont++;
-									numLinha++;
-									$('#r_divNovasFormulas').append("<p id='" + cont+ "' data-html='true'  data-trigger='click' data-toggle='popover' data-placement='right' title='Separação do E' data-content='Fórmulas usadas:\n<ul><li>"+ gabaritoBuscado[data+3]+"</li></ul>'>"+ numLinha +": " + gabaritoBuscado[data+2] + "</p>" );
-									data = data +3;
-									
-									break;
-								
-								case "Separação do Ou":
-									cont++;
-									numLinha++;
-									$('#r_divNovasFormulas').append("<p id='" + cont+ "' data-html='true'  data-trigger='click' data-toggle='popover' data-placement='right' title='Separação do OU' data-content='Fórmulas usadas:\n<ul><li>"+ gabaritoBuscado[data+2]+"</li><li>"+ gabaritoBuscado[data+3]+"</li></ul>'>"+ numLinha +": " + gabaritoBuscado[data+1] + "</p>" );
-									data = data+3;
-									
-									
-									break;
-								
-								case "Remove os notnot":
-									cont++;
-									numLinha++;
-									$('#r_divNovasFormulas').append("<p id='" + cont+ "' data-html='true'  data-trigger='click' data-toggle='popover' data-placement='right' title='Remove os notnot' data-content='Fórmulas usadas:\n<ul><li>"+ gabaritoBuscado[data+2]+"</li></ul>'>"+ numLinha +": " + gabaritoBuscado[data+1] + "</p>" );
-									data = data+2;
-									
-									break;
-									
-								case "Fechado":
-									cont++;
-									numLinha++;
-									$('#r_divNovasFormulas').append("<p id='" + cont +"'>"  + numLinha +"<b>: &#10066; Contradição Encontrada!</b> </p>" );
-									$('#r_divNovasFormulas').append("<article><b> Fim do Exercício</b></article>");
-									$('#btn_TransformarRegra').hide();
-									$('#btn_ProximoPasso').hide();
-									$('#btn_ConfrontarRegra').hide();
-									$('#btn_SepararE').hide();
-									$('#btn_SepararOU').hide();
-									$("#r_divFormulas").unbind();
-									$('span').css({
-					   					'color':'black'
-						        	});	
-						        	$('p').css({
-					   					'color':'black'
-						        	});	
-									$('#alertResolucao').fadeOut();
-									console.log("resolvido!");
-
-									$('#r_passo3').append(" &#10004;");
-									
-									break;
-								default: 
-									console.log("fim do gabarito");
-
-									break;
-
-							}
-						}
-						
-				        //DESTAQUE MOUSE SOBRE
-				        $('#r_divNovasFormulas').on('mouseenter','p', function(e) {
-				        	
-
-						$('[data-toggle="popover"]').popover();
-				        	$(e.target).css({
-				        		'cursor':'pointer',
-
-				   				'font-weight': 900	        			
-				        });
-				         $('#r_divNovasFormulas').on('mouseout','p', function(e) {
-							$('[data-toggle="popover"]').popover('hide');
-
-				        	 $('p').css({
-									'font-weight': 100,
-				        	 });	
-				        	 $(e.target).css({
-				 	        		'cursor':'text'
-				        	 });;
-				         });
-				         
-				        });
-				        
-
-
-						
-			        },
-			        error: function() { alert('Gabarito não encontrado!'); },
-			    });
-
-				
-				break;
+			f_GabResolucao();
+			break;
 		case "deducao":
+			f_gabDeducao();
 			break;
 		}
 			
