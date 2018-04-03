@@ -12,18 +12,11 @@ class categoriasSeeder extends Seeder
     public function run()
     {
         $dados = array(
-		    array('tipo'=>'resolucao'),
-		    array('tipo'=>'tableaux')
+		    array('tipo'=>'Resolução'),
+		    array('tipo'=>'Tableaux')
 		);
 
         App\Categorias::insert($dados);
-
-        // Get all the roles attaching up to 3 random roles to each user
-		$exercicios = App\Exercicios::all();
-
-		// Populate the pivot table
-		App\Categorias::all()->each(function ($categoria) use ($exercicios) { 
-		    $categoria->exercicios()->attach($exercicios); 
-		});
+        
     }
 }

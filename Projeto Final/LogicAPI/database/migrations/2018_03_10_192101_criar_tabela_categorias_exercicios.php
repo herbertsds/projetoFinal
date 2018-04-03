@@ -22,6 +22,10 @@ class CriarTabelaCategoriasExercicios extends Migration
             $table->integer('exercicios_id')->unsigned()->nullable();
             $table->foreign('exercicios_id')->references('id')->on('exercicios')->onDelete('cascade');
 
+            //Cria a relação de exercícios no banco
+            $table->integer('listas_id')->unsigned()->nullable();
+            $table->foreign('listas_id')->references('id')->on('listas')->onDelete('cascade');
+
             $table->integer('dificuldade')->nullable();
 
             

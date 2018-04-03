@@ -10,6 +10,8 @@ use App\Resolucao;
 
 use App\Categorias;
 
+use App\Listas;
+
 
 class ResolucaoController extends Controller
 {
@@ -29,9 +31,11 @@ class ResolucaoController extends Controller
     }
     //Função de teste do relacionamento
    	public function teste(){
-
-   		dd(Exercicios::where_related('Categorias','tipo','resolucao'));
-   	}
+      // dd(Lista::find(1)->exercicios);
+   		// dd(Lista::find(2)->exercicios); 
+      $categoria = Exercicios::find(1)->categorias[0]->tipo;
+      dd($categoria);
+    }   	
 
    	//Pega um exercício
     public function exercicio(Request $numeroExercicio){

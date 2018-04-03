@@ -10,6 +10,10 @@ class Categorias extends Model
     	return $this->belongsToMany('App\Exercicios');
     }
 
+    public function listas(){
+    	return $this->hasMany('App\Listas');
+    }
+
     public static function condicao($coluna, $valor){
     	return Categorias::find(Categorias::where($coluna,$valor)->value('id'));
     }

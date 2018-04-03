@@ -8,10 +8,14 @@ use App\FuncoesAuxiliares;
 
 class Exercicios extends Model
 {
-    protected $fillable = ['sentença','lista'];
+    protected $fillable = ['sentença','listas'];
 
     public function categorias(){
     	return $this->belongsToMany('App\Categorias');
+    }
+
+    public function listas(){
+    	return $this->belongsToMany('App\Listas', 'categorias_exercicios');
     }
 
     //Buscar dados com condição no relacionamento many-to-many
