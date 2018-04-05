@@ -6,14 +6,14 @@
 $(document).ready(function(){
     $("button").click(function(){
     	var myData = {
-	        'id' : 1
+	        'exercicio' : 1
 	    };
         $.ajax({
 
 	        url: 'http://127.0.0.1:8000/api/resolucao/',
 	        type: 'GET',
 	        callback: '?',
-	        // data: myData,
+	        data: myData,
 	        datatype: 'application/json',
 	        success: function(teste) { 
 	        console.log(teste);
