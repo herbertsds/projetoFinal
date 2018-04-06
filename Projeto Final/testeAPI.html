@@ -6,11 +6,13 @@
 $(document).ready(function(){
     $("button").click(function(){
     	var myData = {
-	        'exercicio' : 1
+	        'operacao' : 'negaPergunta',
+	        'qtd_formulasSelecionadas': 2,
+	        'formulas' : ['AeB','AeC']
 	    };
         $.ajax({
 
-	        url: 'http://127.0.0.1:8000/api/resolucao/',
+	        url: 'http://127.0.0.1:8000/api/exercicios/teste',
 	        type: 'GET',
 	        callback: '?',
 	        data: myData,

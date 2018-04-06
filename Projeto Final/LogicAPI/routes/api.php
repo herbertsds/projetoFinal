@@ -39,7 +39,7 @@ Route::group(['prefix' => 'exercicios', 'middleware' => 'cors'], function(){
 	Route::get('/getExercicio', 'ExercicioController@getExercicio');
 
 
-	Route::get('/teste]', 'ExercicioController@teste');
+	Route::get('/teste', 'ExercicioController@teste');
 	
 	Route::post('', function () {
 	    return 'Exercicios';
@@ -58,6 +58,18 @@ Route::group(['prefix' => 'resolucao', 'middleware' => 'cors'], function(){
 
 	Route::post('', function () {
 	    return 'Resolucao ae';
+	});
+
+});
+
+// api/tableaux/
+Route::group(['prefix' => 'tableaux', 'middleware' => 'cors'], function(){
+	
+	//Resolve um exercício específico, rodando o algoritmo inteiro do tableaux(fullSteps)
+	Route::get('/', 'TableauxController@index');
+
+	Route::post('', function () {
+	    return request();
 	});
 
 });
