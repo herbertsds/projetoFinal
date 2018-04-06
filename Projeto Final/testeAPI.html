@@ -6,21 +6,19 @@
 $(document).ready(function(){
     $("button").click(function(){
     	var myData = {
-	        'operacao' : 'negaPergunta',
-	        'qtd_formulasSelecionadas': 2,
-	        'formulas' : ['AeB','AeC']
+	        'lista_id': 2
 	    };
         $.ajax({
 
-	        url: 'http://127.0.0.1:8000/api/exercicios/teste',
+	        url: 'http://127.0.0.1:8000/api/exercicios/listarExercicios',
 	        type: 'GET',
 	        callback: '?',
 	        data: myData,
 	        datatype: 'application/json',
 	        success: function(teste) { 
-	        console.log(teste);
-	        // var obj = JSON.parse(teste);
-	        // console.log(obj[0]);
+	        // console.log(teste);
+	        var obj = JSON.parse(teste);
+	        console.log(obj[0]['sentenca'].split(","));
 	        },
 	        error: function() { alert('Failed!'); },
 	    });
