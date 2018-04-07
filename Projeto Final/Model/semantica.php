@@ -1,17 +1,15 @@
 <?php 
 require_once("funcAuxiliares.php");
 require_once("exerciciosListas.php");
-require_once("funcTableaux.php");
+require_once("funcSemantica.php");
 echo "<pre>";
 //-------------------------------------VARIÁVEIS--GLOBAIS-------------------------------------------
 //
 
-$hashInicial = array();
-$fork = false;
-$listaConectivos=array("^","v","-","!");
-$listaFormulasNaoUsadas = array();
-$listaFormulasDisponiveis = array();
-$nivelG=0;
+$listaConectivos=array("^","v","-","!",'@','&');
+$nosFolha=[];
+$flag=true;
+$contador=0;
 
 //-------------------------------------VARIÁVEIS--GLOBAIS--------------------------------------------
 
@@ -33,134 +31,42 @@ $form = array ('info' => array ('esquerdo' => , 'conectivo' => , 'direito' =>), 
 4. verificar a validade da fórmula
 */
 
+//(paraTodoz(paraTodoy(paraTodox((P(x,y,z))e(Q(x,y,z))))))
+//Passo 1
+//(paraTodox(P(x)eQ(x))implica((paraTodox(P(x)))e(paraTodox(Q(x)))))
+//$entrada = array ("(paraTodox(A(x)eB(x)))");
+//(((paraTodox(P(x)))e(paraTodox(Q(x))))implica(paraTodox((P(x))e(Q(x)))))
 
+$entrada = array ("((paraTodox((P(x))ou(Q(x))))implica((paraTodox(P(x)))ou(paraTodox(Q(x)))))"); 
+//$entrada = array ("(paraTodoz(paraTodoy(paraTodox((P(x,y,z))e(Q(x,y,z))))))");
+//$entrada = array("((A(x)^B(x))implica(C(x)^D(x)))");
+$dominio= array ('0','1');
+$tamanho=count($entrada);
+$entradaConvertida=processaEntradaLPO($entrada);
+print_r($entradaConvertida);
 
-$entradaTeste=$DNNquestao15;
-$tamanho=count($entradaTeste);
+adicionaArray($nosFolha, $entradaConvertida[0]);
 
 //Passo 2
-$entradaTeste=negaPergunta($entradaTeste,$tamanho);
-
-//Passos 3 e 4
-//$raiz=array();
-foreach ($entradaTeste as $key => $value) {
-	//$raiz[$key]=$value;
-	$listaFormulasDisponiveis[$key]=$value;
-	//Checa se é átomo para adicionar na hash
-
-	if($value['info']['esquerdo']==NULL && ($value['info']['conectivo']==NULL || $value['info']['conectivo']=='not')){
-		$hashInicial[$value['info']['direito']]=$value['info']['conectivo'] == "not" ? 0:1;
-	}
+//Gera a raiz com seus primeiros filhos
+while ($nosFolha!=null) {
+	geraArvore($entradaConvertida[0],$dominio,$nosFolha,$contador);
 }
 
-print_r($listaFormulasDisponiveis);
-print_r($hashInicial);
+//Passo 3
 
-//Passo 5
-$flagFechou=false;
-$contador=0;
-$escolhaAleatoria=false;
-$escolhaEficiente=true;
-$escolhaUsuario=false;
-$raiz=criaFormulaTableaux();
-$historicoVariaveis=array();
-$nosFolha=array();
+$relacoes = array ("P(0)","Q(0)","P(1)","Q(1)");
+print "<br>Relações<br>";
+print_r($relacoes);
 
-//Inicialização do histórico de variáveis
-//Neste passo qualquer nó pode ser raiz
-$historicoVariaveis[0]['raiz']=criaFormulaTableaux();
-$historicoVariaveis[0]['nosFolha']=null;
-$historicoVariaveis[0]['listaFormulasDisponiveis']=null;
-$historicoVariaveis[0]['numPasso']=0;
+//Passo 4
+print "<br>Após a aplicação de preencheProximo<br>";
+preencheProximo($relacoes,$entradaConvertida[0]);
+validaFormulas($relacoes,$entradaConvertida[0]);
 
-/*
-print "<br>Modo de Usuário escolhe a fórmula<br>";
-escolhaUsuario($listaFormulasDisponiveis,$hashInicial,$listaFormulasDisponiveis[0],$nosFolha);
-$contador++;
+print "<br>Imprime a arvore toda<br>";
+imprimeArvore($entradaConvertida[0]);
 
 
-//print "<br>Imprime raiz<br>";
-//print_r($raiz);
-escolhaUsuario($listaFormulasDisponiveis,$hashInicial,$listaFormulasDisponiveis[1],$nosFolha,$nosFolha[0]);
-print "<br>Imprime raiz<br>";
-print_r($raiz);
-$contador++;
-
-//escolhaUsuario($listaFormulasDisponiveis,$hashInicial,$listaFormulasDisponiveis[2],$nosFolha,$raiz,$nosFolha[0]);
-
-//$contador++;
-*/
-
-
-
-
-while (!(todasFechadas($nosFolha)) && ($contador<100)) {
-	//Recebe do front-end o critério para escolha de fórmula
-	////////////////////////////////
-	//.
-	//.
-	//Colocar aqui como vou receber do front-end
-	//.
-	//.
-	//////////////////////////////////
-
-	//Recebe do front-end o critério para escolha de fórmula
-	/////////////////////////////////
-	//.
-	//.
-	//Colocar aqui "voltar um passo"
-	//.
-	//.
-	///////////////////////////
-	
-	if ($escolhaAleatoria) {
-		# Chama a função de escolha aleatória
-		print "<br>Não está feito ainda a função de escolha aleatória<br>";
-		break;
-	}
-	elseif ($escolhaEficiente) {
-		/////////////////////
-		//.
-		//.
-		////Receber aqui avançar um passo se for verdade, se não for simplesmente resolve tudo
-		//.
-		//.
-		////////////////////
-		# Chama a função de escolha eficiente
-		print "<br>Chamando a função de escolha eficiente<br>";
-		foreach ($listaFormulasDisponiveis as $key => $value) {
-			print "key ".$key."<br>";
-			print_r($value['info']);
-			print "<br>";
-		}
-		escolhaEficiente($listaFormulasDisponiveis,$hashInicial,$nosFolha,$historicoVariaveis);
-		
-		if (todasFechadas($nosFolha)) {
-			//print "<br>Todos os ramos já estão fechados<br>";
-			//print $contador."<br>";
-			break;
-		}
-		print "<br>Contador ".$contador."<br>";
-		
-	}
-	elseif ($escolhaUsuario) {
-		# Chama a função de escolha do usuário
-		print "<br>Não está feito ainda a função de escolha do usuário<br>";
-		break;
-	}
-
-	$contador++;
-}
-
-
-if (todasFechadas($nosFolha)) {
-	print "<br>Todos os ramos foram fechados com sucesso<br>";
-	print $contador."<br>";
-}
-else{
-	print "<br>Nem todos os ramos foram fechados<br>Este Tableaux não fecha<br>";
-}
-print "<br>Árvore a partir da raiz<br>";
-imprimeArvore($raiz);
 
 ?>
