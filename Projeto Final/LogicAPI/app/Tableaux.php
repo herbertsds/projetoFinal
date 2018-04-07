@@ -198,5 +198,6 @@ class Tableaux extends Model
 		}
 		print "<br>Árvore a partir da raiz<br>";
 		FuncoesTableaux::imprimeArvore($raiz);
+		//$resposta = [];
     }
 }

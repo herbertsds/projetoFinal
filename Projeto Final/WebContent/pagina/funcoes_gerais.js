@@ -18,8 +18,10 @@
 	var exercicioBuscado;
 	var vet_exercicios = [];
 	var indice = 0;
-	
-	
+	var categoriaExercicio;
+	var vet_listas = [];
+	var vet_idListas = [];
+	var exercicios;
 	// funcao apenas para testes de eventos
 	function teste(){
 		
@@ -121,7 +123,7 @@
 	     $("#botaoTableaux").click( function()
 		    {
 				tipoEx = "tableaux";
-			
+				categoriaExercicio = 2;
 				carregaTela("tableaux");
 				$("#proximo").removeAttr("disabled");
 		      
@@ -132,6 +134,7 @@
 			    {
 					
 					tipoEx = "resolucao";
+					categoriaExercicio = 1;
 					carregaTela("resolucao");
 					
 					$("#proximo").removeAttr("disabled");
@@ -173,7 +176,7 @@
 			$("#liExercicio").removeAttr("style");
 			$("#liExecucao").removeAttr("style");
 			$('#tabExercicio').click();
-			f_listaEx();
+			f_BuscaListas();
 			break;
 		
 		case "deducao":
@@ -271,59 +274,39 @@
 	// FALTA PERMITIR EXCLUSAO/ALTERACAO DA PERGUNTA E DE REGRAS
 	
 	function f_buscaExercicio(btn_numExercicio){
-//		if($('#numExercicio').val() == ""){
-//			alert("Escreva o número de um exercícío!");
-//		}
-//		else{
-				numExercicio = btn_numExercicio;
+
+				idnumExercicio = btn_numExercicio;
+				console.log("id exercicio= " +idnumExercicio);
 				regras = 0;
 				numLinha = 0;
-//		    	numExercicio = $('#numExercicio').val();
+
 				$('#regrasAdicionadas').text("");
 				$('#perguntaAdicionada').text("");
 				$('#r_divFormulas').text("");
 				$('#r_divNovasFormulas').text("");
 				
 				vet_regras = [];
-//				var myData = { 'exercicio' : numExercicio};
-//				//console.log("myData = " + myData);
-//		            $.ajax({
-//		
-//		    	        url: 'http://127.0.0.1:8000/api/resolucao/exercicio',
-//		    	        type: 'GET',
-//		    	        callback: '?',
-//		    	        data: myData,
-//		    	        datatype: 'application/json',
-//		    	        success: function(retorno) {
-//		    	        	console.log("exercicio buscado "+ numExercicio + " = " + retorno);
-//		    	        	exercicioBuscado = JSON.parse(retorno);
-		    	        	 
-//		    				$('#regra').prop('disabled', true);
-//		    				$('#pergunta').prop('disabled', true);
-//		    				$('#buttonRegra').hide();
-//		    				$('#buttonPergunta').hide();
-		    				var exercicio = vet_exercicios[numExercicio];
-		    				var limiteFormulas = ((exercicio.length) -1);
-		    				//console.log(limiteFormulas);
-		    				for (var data = 0; data < limiteFormulas; data++) {
-		    					  
-		    					regras++;   					  
-		    					  
-		    					vet_regras.push(exercicio[data]);
-		    					adicionadas = exercicio[data];
-		    				
-		    					$('#regrasAdicionadas').append("<br/>" + regras + ": " + adicionadas );
-		    						
-		    				}
-		    				pergunta = exercicio[limiteFormulas];
-		    				linhaPerg = regras+1;
 
-		    				$('#perguntaAdicionada').append("<br/>" +linhaPerg + ": " + exercicio[limiteFormulas] );
-		    				atualizaTela(tipoEx);
-//		    				
-//		    	        },
-//		    	        error: function() { alert('Exercício inválido!'); },
-//		    	    });
+		    	var exercicio = vet_exercicios[idnumExercicio-1]['sentenca'].split(',');
+		    	console.log("f_buscaExercicio() = " + exercicio);
+		    	var limiteFormulas = ((exercicio.length) -1);
+		    				//console.log(limiteFormulas);
+		    	for (var data = 0; data < limiteFormulas; data++) {
+		    					  
+		    		regras++;   					  
+		    					  
+		    		vet_regras.push(exercicio[data]);
+		    		adicionadas = exercicio[data];
+		    				
+		    		$('#regrasAdicionadas').append("<br/>" + regras + ": " + adicionadas );
+		    					
+		    	}
+		    	pergunta = exercicio[limiteFormulas];
+		    	linhaPerg = regras+1;
+
+		    	$('#perguntaAdicionada').append("<br/>" +linhaPerg + ": " + exercicio[limiteFormulas] );
+		    	atualizaTela(tipoEx);
+
 		
 	}
 	
@@ -350,34 +333,102 @@
 	}
 	
 	
-	function f_listaEx(){
-		vet_exercicios[0] = "";
-	for(var i=1;i<56;i++){
-			$("#listaEx").append("<button id='"+ i + "' class='btn btn-info btn-sm dropdown-item' type='button' data-toggle='tooltip' data-placement='top' onclick='f_buscaExercicio(this.id)'>Ex."+ i +"</button>");
-		}
-	for(var i=1;i<56;i++){
-		var myData = { 'exercicio' : i};
-		indice = 1;
+	function f_BuscaListas(){
+		
+
+		var myData = { 'id' : categoriaExercicio};
+
+		// BUSCAR AS LISTAS NA CATEGORIA ESCOLHIDA
 		$.ajax({
-    		
-	        url: 'http://127.0.0.1:8000/api/resolucao/exercicio',
+	        url: 'http://127.0.0.1:8000/api/exercicios/getListas',
 	    	type: 'GET',
 	        callback: '?',
 	        data: myData, 
 	        datatype: 'application/json',
 	       
 	        success: function(retorno) {
-		        //console.log(retorno);
+	        	listas = JSON.parse(retorno);
+	      	    $('#listaEx').append("<h6 class='dropdown-header'>Total de Listas Encontradas: "+ listas.length.toString() +"</h6>");
+	      	    console.log(listas.length.toString());
+	        	for(var i =0; i<listas.length;i++){
+	        		vet_idListas[i] = listas[i]['id'];
+	        		vet_listas[i]= listas[i]['nome'];
+	        		$("#listaEx").append("<h6 class='dropdown-header'>&#10022; "+listas[i]['nome']+": </h6><div id='lista"+ vet_idListas[i]+"' </div>");
 
-	        	vet_exercicios[indice] = JSON.parse(retorno);
-	        	$("button[id='" + indice + "']").prop('title', retorno);
-	        	indice++;
+	
+	        		
+	        	}
+	    		f_BuscaEx();
+
 	        },
-	        error: function() { alert('Exercicio não encontrado!'); },
+	        error: function() { alert('listas não encontradas!'); },
 	    });
-		}
-
+		
 	}
+	
+	function f_BuscaEx(){
+
+		// BUSCAR EXERCICIOS DAS LISTAS
+		indice_vet_Ex = 0;
+		vet_exercicios= [];
+		vet_exercicios = [];
+		n=0;
+		for( i=0; i<vet_idListas.length;i++){
+			var myData = {'lista_id' : vet_idListas[i]};
+			$.ajax({
+		        url: 'http://127.0.0.1:8000/api/exercicios/listarExercicios',
+		    	type: 'GET',
+		        callback: '?',
+		        data: myData, 
+		        datatype: 'application/json',
+		       
+		        success: function(retorno) {
+		        	exercicios = JSON.parse(retorno);
+//		        	console.log(exercicios);
+					
+		        	for( k=0,j=indice_vet_Ex; j<(n+exercicios.length);j++, k++){
+			    		vet_exercicios[j] = exercicios[k];
+			    		indice_vet_Ex++;
+
+					}
+		        	n = indice_vet_Ex;
+
+		        },
+		        error: function() { alert('exercicios não encontrados!'); },
+		    });
+			
+
+		}
+		
+	}	
+	
+	function f_PreencheDrop(){
+		for(i=0; i < vet_idListas.length; i++){
+			$('#lista'+vet_idListas[i]).empty();
+			
+		}
+		for(j=0;j<vet_exercicios.length;j++){
+			$('#lista'+vet_exercicios[j]['pivot']['listas_id']).append("<button id='"+ vet_exercicios[j]['id'] + "' class='btn btn-info btn-sm dropdown-item' type='button' data-toggle='tooltip' data-placement='top' onclick='f_buscaExercicio(this.id)'>Ex."+ vet_exercicios[j]['id'] +"</button>");
+        	$("button[id='" + vet_exercicios[j]['id'] + "']").prop('title', vet_exercicios[j]['sentenca']);
+
+			
+		}
+		
+	}
+		
+		
+		
+//		for(var i=1;i<56;i++){
+//			$("#listaEx").append("<button id='"+ i + "' class='btn btn-info btn-sm dropdown-item' type='button' data-toggle='tooltip' data-placement='top' onclick='f_buscaExercicio(this.id)'>Ex."+ i +"</button>");
+//		}
+//	
+//	        	vet_exercicios[indice] = JSON.parse(retorno);
+//	        	$("button[id='" + indice + "']").prop('title', retorno);
+//	        	indice++;
+//	
+//		}
+
+	
 	
 	function sleep(milliseconds) {
 		  var start = new Date().getTime();
