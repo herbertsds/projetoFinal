@@ -12,8 +12,8 @@ class TableauxController extends Controller
 {
     public function index(Request $numeroExercicio){
 
-    	
-        $exercicio = Exercicios::getExercicio($numeroExercicio->exercicio);
+    	$exercicio = Exercicios::getExercicio(15);
+        //$exercicio = Exercicios::getExercicio($numeroExercicio->exercicio);
 
     	$resposta = new Tableaux($exercicio);
 
@@ -21,7 +21,7 @@ class TableauxController extends Controller
     	print_r($exercicio);
     	print_r("<br>----------------------------------------------<br><br>");
 
-    	return json_encode($resposta->fullSteps(), JSON_UNESCAPED_UNICODE);
-    	// dd($resposta->fullSteps());
+    	//return json_encode($resposta->fullSteps(), JSON_UNESCAPED_UNICODE);
+    	 dd($resposta->fullSteps());
     }
 }

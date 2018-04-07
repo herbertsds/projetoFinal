@@ -28,7 +28,7 @@ class FuncoesTableaux extends Model
 		$not=false;
 
 		FuncoesAuxiliares::converteConectivoSimbolo($form);
-		//print "<br> Teste".$form;
+		////print "<br> Teste".$form;
 		//Se for um átomo positivo
 		//OBS: Talvez haja uma maneira mais apropriada de tratar isto
 		//Em caso de erro nos cálculos, checar esta etapa
@@ -236,16 +236,16 @@ class FuncoesTableaux extends Model
 		//Verificação para saber se a função foi chamada mesmo
 		//que todas os ramos já estejam fechados
 		if (FuncoesTableaux::todasFechadas($nosFolha,$contador)) {
-			print "<br>Todos os ramos já estão fechados<br>";
-			print $contador."<br>";
-			return;
+			//print "<br>Todos os ramos já estão fechados<br>";
+			//print $contador."<br>";
+			return "fechado";
 		}
 		
 		$conectivosEficientes=array("e","not_ou","not_implica","notnot");
 
 		foreach ($listaFormulasDisponiveis as $key => $value) {
 			FuncoesTableaux::formataFormulasTableaux($listaFormulasDisponiveis[$key]);
-			//print_r($listaFormulasDisponiveis[$key]['info']);
+			////print_r($listaFormulasDisponiveis[$key]['info']);
 
 		}
 
@@ -261,8 +261,8 @@ class FuncoesTableaux extends Model
 					$raiz=$listaFormulasDisponiveis[$key];
 					$raiz['formDisponiveis']=$listaFormulasDisponiveis;
 					$raiz['hashAtomos']=$hashInicial;
-					print "<br>Aplicando regra em<br>";
-					print_r($raiz['info']);
+					//print "<br>Aplicando regra em<br>";
+					//print_r($raiz['info']);
 					FuncoesTableaux::aplicaRegra($raiz,$raiz,$nosFolha,$contador);
 					FuncoesTableaux::removerFormula($listaFormulasDisponiveis,$raiz['info']);
 					FuncoesTableaux::armazenaHistorico($historicoVariaveis,$nosFolha,$raiz,$contador+1,$listaFormulasDisponiveis);
@@ -283,8 +283,8 @@ class FuncoesTableaux extends Model
 			$raiz['formDisponiveis']=$listaFormulasDisponiveis;
 			$raiz['hashAtomos']=$hashInicial;
 			FuncoesTableaux::aplicaRegra($raiz,$raiz,$nosFolha,$contador);
-			print "<br>Aplicando regra em<br>";
-			print_r($raiz['info']);
+			//print "<br>Aplicando regra em<br>";
+			//print_r($raiz['info']);
 			FuncoesTableaux::removerFormula($listaFormulasDisponiveis,$raiz['info']);
 			FuncoesTableaux::armazenaHistorico($historicoVariaveis,$nosFolha,$raiz,$contador+1,$listaFormulasDisponiveis);
 			return;
@@ -311,10 +311,10 @@ class FuncoesTableaux extends Model
 					FuncoesTableaux::corrigeArrays($noFolhaAtual['formDisponiveis'][$key2]);
 					//Se achar conectivo eficiente aplique a regra
 					if (in_array($formDispAtual['info']['conectivo'],$conectivosEficientes)){
-						print "<br>Aplicando regra em<br>";
-						print_r($formDispAtual['info']);
-						print "<br>Com nó pai sendo<br>";
-						print_r(@$nosFolha[$key]['info']);
+						//print "<br>Aplicando regra em<br>";
+						//print_r($formDispAtual['info']);
+						//print "<br>Com nó pai sendo<br>";
+						//print_r(@$nosFolha[$key]['info']);
 						FuncoesTableaux::aplicaRegra($formDispAtual,$nosFolha[$key],$nosFolha,$contador);
 						FuncoesTableaux::removerFormula($listaFormulasDisponiveis,$formDispAtual['info']);
 						FuncoesTableaux::armazenaHistorico($historicoVariaveis,$nosFolha,$raiz,$contador+1,$listaFormulasDisponiveis);
@@ -322,8 +322,8 @@ class FuncoesTableaux extends Model
 						//Verificação para saber se a função foi chamada mesmo
 						//que todas os ramos já estejam fechados
 						if (FuncoesTableaux::todasFechadas($nosFolha,$contador)) {
-							print "<br>Todos os ramos já estão fechados<br>";
-							print $contador."<br>";
+							//print "<br>Todos os ramos já estão fechados<br>";
+							//print $contador."<br>";
 							return;
 						}
 						
@@ -349,10 +349,10 @@ class FuncoesTableaux extends Model
 					//Correções na fórmula
 					FuncoesTableaux::formataFormulasTableaux($noFolhaAtual['formDisponiveis'][$key2]);
 					FuncoesTableaux::corrigeArrays($noFolhaAtual['formDisponiveis'][$key2]);
-					print "<br>Aplicando regra em<br>";
-					print_r($formDispAtual['info']);
-					print "<br>Com nó pai sendo<br>";
-					print_r($nosFolha[$key]['info']);
+					//print "<br>Aplicando regra em<br>";
+					//print_r($formDispAtual['info']);
+					//print "<br>Com nó pai sendo<br>";
+					//print_r($nosFolha[$key]['info']);
 					FuncoesTableaux::aplicaRegra($formDispAtual,$nosFolha[$key],$nosFolha,$contador);
 					FuncoesTableaux::removerFormula($listaFormulasDisponiveis,$formDispAtual['info']);
 					FuncoesTableaux::armazenaHistorico($historicoVariaveis,$nosFolha,$raiz,$contador+1,$listaFormulasDisponiveis);
@@ -360,8 +360,8 @@ class FuncoesTableaux extends Model
 					//Verificação para saber se a função foi chamada mesmo
 					//que todas os ramos já estejam fechados
 					if (FuncoesTableaux::todasFechadas($nosFolha,$contador)) {
-						print "<br>Todos os ramos já estão fechados<br>";
-						print $contador."<br>";
+						//print "<br>Todos os ramos já estão fechados<br>";
+						//print $contador."<br>";
 						return;
 					}
 					
@@ -369,7 +369,7 @@ class FuncoesTableaux extends Model
 				}
 			}	
 		}	
-		print "<br>Erro, não houve nó para aplicar a fórmula<br>Verificar se todas as fórmulas estão fechadas<br>";	
+		//print "<br>Erro, não houve nó para aplicar a fórmula<br>Verificar se todas as fórmulas estão fechadas<br>";	
 		return;
 	}
 	public static function escolhaUsuario(&$listaFormulasDisponiveis,&$hashInicial,$formEscolhida,&$nosFolha,&$raiz,&$contador,&$noFolhaEscolhido=NULL){
@@ -418,17 +418,18 @@ class FuncoesTableaux extends Model
 		$noAuxDir=FuncoesTableaux::criaFormulaTableaux();
 		$noAuxDir['atualDireito']=true;
 		/*
-		print "<br>Nos Folha<br>";
+		//print "<br>Nos Folha<br>";
 		foreach ($nosFolha as $key => $value) {
-			print_r($value['info']);
+			//print_r($value['info']);
 		}*/
 		
 		
 		//Verificação para o caso de haver tentativa de aplciar fórmula
 		//num ramo que já foi fechado
 		if ($pai['filhoCentral']=='fechado') {
-			print "<br>Este ramo já foi fechado<br>O nó folha é<br>";
-			print_r($pai['info']);
+			//print "<br>Este ramo já foi fechado<br>O nó folha é<br>";
+			//print_r($pai['info']);
+			abort(400,"<br>Este ramo já foi fechado<br>O nó folha é<br>".json_encode($pai['info']))
 			return;
 		}
 		//Verifico o conectivo da fórmula que foi aplicada
@@ -462,8 +463,8 @@ class FuncoesTableaux extends Model
 				//Se a fórmula for atômica eu adiciono átomo gerado na hash da mesma
 				//Se não for átomo, então é uma fórmula e adiciono a fórmula gerada na lista de fórmulas desse elemento
 				//Como noAuxCen1 e noAuxCen2 estão no mesmo ramo, estes devem compartilhar as informações
-				//print "<br>noAuxCen1<br>";
-				//print_r($noAuxCen1);
+				////print "<br>noAuxCen1<br>";
+				////print_r($noAuxCen1);
 				if(FuncoesTableaux::checaAtomico($noAuxCen1['info'])){
 					if (FuncoesTableaux::casarFormula($noAuxCen1['hashAtomos'],$noAuxCen1['info'])) {
 						$noAuxCen2['filhoCentral']='fechado';
@@ -602,8 +603,8 @@ class FuncoesTableaux extends Model
 				if(FuncoesTableaux::checaAtomico($noAuxEsq['info'])){
 					if (FuncoesTableaux::casarFormula($noAuxEsq['hashAtomos'],$noAuxEsq['info'])) {
 						$noAuxEsq['filhoCentral']='fechado';
-						print "<br>FECHADO<br>";
-						print_r($noAuxEsq['info']);
+						//print "<br>FECHADO<br>";
+						//print_r($noAuxEsq['info']);
 					}
 					$noAuxEsq['hashAtomos'][$noAuxEsq['info']['direito']]=$noAuxEsq['info']['conectivo'] == 'not' ? '0':'1';	
 				}
@@ -614,27 +615,13 @@ class FuncoesTableaux extends Model
 				if(FuncoesTableaux::checaAtomico($noAuxDir['info'])){
 					if (FuncoesTableaux::casarFormula($noAuxDir['hashAtomos'],$noAuxDir['info'])) {
 						$noAuxDir['filhoCentral']='fechado';
-						print "<br>FECHADO<br>";
-						print_r($noAuxDir['info']);
+						//print "<br>FECHADO<br>";
+						//print_r($noAuxDir['info']);
 					}
 					$noAuxDir['hashAtomos'][$noAuxDir['info']['direito']]=$noAuxDir['info']['conectivo'] == 'not' ? '0':'1';	
 				}
 				elseif(!FuncoesTableaux::checaAtomico($noAuxDir['info'])) {
 					array_push($noAuxDir['formDisponiveis'], $noAuxDir);
-				}/*
-				print "<br>Fórmulas Disponíveis<br>";
-				foreach ($noAuxDir['formDisponiveis'] as $key => $value) {
-					print_r($noAuxDir['formDisponiveis'][$key]['info']);
-				}*/
-				
-				print "<br>Nós filho<br>";
-			
-					print_r($noAuxEsq['info']);
-					print_r($noAuxDir['info']);
-
-				print "<br>Nós folha<br>";
-				foreach ($nosFolha as $key => $value) {
-					print_r($nosFolha[$key]['info']);
 				}
 
 				FuncoesTableaux::removerFormula($noAuxEsq['formDisponiveis'],$form['info']);
@@ -647,10 +634,6 @@ class FuncoesTableaux extends Model
 				}	
 				
 				
-				print "<br>Nós folha<br>";
-				foreach ($nosFolha as $key => $value) {
-					print_r($nosFolha[$key]['info']);
-				}
 				return;		
 			//Regra 4
 			case 'notnot':
@@ -984,18 +967,10 @@ class FuncoesTableaux extends Model
 					}
 					$pai['hashAtomos'][$pai['info']['direito']]=$pai['info']['conectivo'] == 'not' ? '0':'1';	
 				}
-				/*
-				print "<br>Fórmulas disponíveis de C - ANTES<br>";
-				foreach ($pai['formDisponiveis'] as $key => $value) {
-					print_r($pai['formDisponiveis'][$key]['info']);
-				}*/
+
 				
 				FuncoesTableaux::removerFormula($pai['formDisponiveis'],$form['info']);
-				/*
-				print "<br>Fórmulas disponíveis de C - DEPOIS<br>";
-				foreach ($pai['formDisponiveis'] as $key => $value) {
-					print_r($pai['formDisponiveis'][$key]['info']);
-				}*/
+
 				return;
 			case null:
 				//Se for atômico devemos adicionar na hash e verificar se casa com alguma fórmula
@@ -1010,7 +985,7 @@ class FuncoesTableaux extends Model
 				
 				return;
 			default:
-				print_r($form['hashAtomos']);
+				//print_r($form['hashAtomos']);
 				break;
 		}
 	}
@@ -1138,7 +1113,7 @@ class FuncoesTableaux extends Model
 				if(@$no['info']=="fechado"){
 					break;
 				}
-				print "<br>Nó não categorizado<br>";
+				//print "<br>Nó não categorizado<br>";
 		}
 	}
 	public static function formataFormulasTableaux(&$form){

@@ -6,10 +6,10 @@
 $(document).ready(function(){
     $("button").click(function(){
     	var myData = {
-	        'exercicio': 1000
+	        'exercicio': 1
 	    };
         $.ajax({
-	        url: 'http://127.0.0.1:8000/api/exercicios/teste',
+	        url: 'http://127.0.0.1:8000/api/resolucao/teste',
 	        type: 'GET',
 	        callback: '?',
 	        data: myData,
@@ -26,7 +26,7 @@ $(document).ready(function(){
 
 	        },
 	        error: function(erro) {
-				alert(erro.responseText);
+				console.log(erro.responseText);
 			}
 	    });
     });

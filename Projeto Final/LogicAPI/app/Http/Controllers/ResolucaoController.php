@@ -18,14 +18,16 @@ class ResolucaoController extends Controller
 	//Resolve um exercício específico
     public function index(Request $numeroExercicio){
 
-    	$exercicio = Exercicios::getExercicio(1);
+    	$exercicio = Exercicios::getExercicio(15);
      // $exercicio = Exercicios::getExercicio(40);
 
     	// $exercicioLista = new Exercicios('resolucao');
     	$resposta = new Resolucao($exercicio);
 
-    	return json_encode($resposta->fullSteps(), JSON_UNESCAPED_UNICODE);
+
+    	//return json_encode($resposta->fullSteps(), JSON_UNESCAPED_UNICODE);
     	//print_r($resposta->fullSteps());
+      dd($resposta->stepByStep());
       // dd($exercicio);
     
     }
@@ -34,6 +36,7 @@ class ResolucaoController extends Controller
       // dd(Lista::find(1)->exercicios);
    		// dd(Lista::find(2)->exercicios); 
       $categoria = Exercicios::find(1)->categorias[0]->tipo;
+      abort(400,"Este ramo já foi fechado.\n O nó folha é\n ".implode(array('pai','filho'),"\n"));
       dd($categoria);
     }   	
 
