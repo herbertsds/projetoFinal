@@ -248,7 +248,7 @@ var camposMarcados;
 function f_GabResolucao(){
 	$('#r_divNovasFormulas').text("");
 	$("p[id='" + idPergNegada+"']").text("");
-	
+	$("#r_divFormulas :checkbox").prop("disabled", true);
 	var myData = { 'exercicio' : parseInt(numExercicio)};
 
 	$.ajax({
