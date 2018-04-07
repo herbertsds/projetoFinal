@@ -50,7 +50,8 @@ class ExercicioController extends Controller
     }
 
     public function teste(Request $request){
-        print_r(Exercicios::converteEntrada($request));
+        Exercicios::getExercicio(1000);
+        // print_r(Exercicios::converteEntrada($request));
         // return Exercicios::converteEntrada($request);
     }
 

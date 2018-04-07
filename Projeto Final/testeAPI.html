@@ -6,21 +6,23 @@
 $(document).ready(function(){
     $("button").click(function(){
     	var myData = {
-	        'lista_id': 2
+	        'exercicio': 1000
 	    };
         $.ajax({
 
-	        url: 'http://127.0.0.1:8000/api/exercicios/listarExercicios',
+	        url: 'http://127.0.0.1:8000/api/exercicios/teste',
 	        type: 'GET',
 	        callback: '?',
 	        data: myData,
 	        datatype: 'application/json',
 	        success: function(teste) { 
-	        // console.log(teste);
-	        var obj = JSON.parse(teste);
-	        console.log(obj[0]['sentenca'].split(","));
+	        console.log(teste);
+	        // var obj = JSON.parse(teste);
+	        // console.log(obj[0]['sentenca'].split(","));
 	        },
-	        error: function() { alert('Failed!'); },
+	        error: function(erro) {
+				alert(erro.responseText);
+			}
 	    });
     });
 });

@@ -38,8 +38,12 @@ class Exercicios extends Model
 	        else
 	            $exercicioLista = Exercicios::find(rand(1,Exercicios::contar('tableaux')));
     	}
-                
-        $exercicio = explode(',',$exercicioLista->sentenca);
+        if(is_object($exercicioLista))
+        	$exercicio = explode(',',$exercicioLista->sentenca);
+        else{
+        	
+        	abort(404,"Exercício não encontrado");
+        }
 
         return $exercicio;
     }
