@@ -45,4 +45,10 @@ class ResolucaoController extends Controller
     	// return json_encode($resposta, JSON_UNESCAPED_UNICODE);
     	return json_encode($exercicio, JSON_UNESCAPED_UNICODE);
     }
+
+    public function stepByStep(Request $request){
+    	$resposta = new Resolucao();
+    	// return json_encode($resposta->stepByStep(Exercicios::converteEntrada($request)), JSON_UNESCAPED_UNICODE);
+    	return $resposta->stepByStep(Exercicios::converteEntrada($request));
+    }
 }
