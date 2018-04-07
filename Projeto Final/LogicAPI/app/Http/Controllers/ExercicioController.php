@@ -48,4 +48,10 @@ class ExercicioController extends Controller
     	// return json_encode($resposta, JSON_UNESCAPED_UNICODE);
     	return json_encode($exercicio, JSON_UNESCAPED_UNICODE);
     }
+
+    public function teste(Request $request){
+        print_r(Exercicios::converteEntrada($request));
+        // return Exercicios::converteEntrada($request);
+    }
+
 }

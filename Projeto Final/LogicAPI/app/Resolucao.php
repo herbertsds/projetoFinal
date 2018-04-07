@@ -40,6 +40,7 @@ class Resolucao extends Model
 		//Negação da pergunta+Validação
 
 		$entradaConvertida=FuncoesResolucao::negaPergunta($entradaTeste,$tamanho,$perguntaAntesNegar,$perguntaDepoisNegar);
+
 		$resposta[] = "Negação da pergunta";
 		$resposta[] = $perguntaDepoisNegar;
 		$resposta[] = $perguntaAntesNegar;

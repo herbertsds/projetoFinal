@@ -44,6 +44,10 @@ class Exercicios extends Model
         return $exercicio;
     }
 
+    public static function converteEntrada($request){
+    	return $request->all();
+    }
+
 
 
     /*private function setListaExercicios(){

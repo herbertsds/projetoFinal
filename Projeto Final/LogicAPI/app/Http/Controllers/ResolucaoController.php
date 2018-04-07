@@ -18,7 +18,7 @@ class ResolucaoController extends Controller
 	//Resolve um exercício específico
     public function index(Request $numeroExercicio){
 
-    	$exercicio = Exercicios::getExercicio($numeroExercicio);
+    	$exercicio = Exercicios::getExercicio(1);
      // $exercicio = Exercicios::getExercicio(40);
 
     	// $exercicioLista = new Exercicios('resolucao');
@@ -26,7 +26,7 @@ class ResolucaoController extends Controller
 
     	return json_encode($resposta->fullSteps(), JSON_UNESCAPED_UNICODE);
     	//print_r($resposta->fullSteps());
-    	// dd($resposta->fullSteps());
+      // dd($exercicio);
     
     }
     //Função de teste do relacionamento

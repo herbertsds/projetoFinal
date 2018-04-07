@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 use App\FuncoesAuxiliares;
 
+use App\ParsingFormulas;
+
 class FuncoesResolucao extends Model
 {
     //Variáveis Globais
@@ -20,6 +22,7 @@ class FuncoesResolucao extends Model
 		//Tratar a entrada, verificação de digitação correta
 		foreach ($listaFormulas as $key => $value) {
 			FuncoesAuxiliares::verificaFormulaCorreta($listaFormulas[$key]);
+
 			$entradaConvertida[$key]=ParsingFormulas::resolveParenteses($listaFormulas[$key]);
 		}
 		$perguntaDepoisNegar=$entradaConvertida[$tamanho-1];
