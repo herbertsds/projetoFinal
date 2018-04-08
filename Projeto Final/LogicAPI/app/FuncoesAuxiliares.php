@@ -68,7 +68,7 @@ class FuncoesAuxiliares extends Model
 				if($contador<0){
 					#Criar um tratamento aqui
 					//Se o usuário digitar a entrada vamos precisar usar uma rotina de correção e chamar verifica recursivamente
-					//print "Fórmula com digitação incorreta<br>";
+					 abort(400,"Fórmula com digitação incorreta\n".implode($form,"\n"));
 					//print $form;
 					//print "<br>";
 					exit(1);

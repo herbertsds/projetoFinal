@@ -14,7 +14,7 @@ class Resolucao extends Model
 {
 	private $exercicioEscolhido;
 
-	public function __construct($exercicioEscolhido){
+	public function __construct($exercicioEscolhido=NULL){
     	$this->exercicioEscolhido = $exercicioEscolhido;
     }
 
