@@ -279,6 +279,7 @@
 	function f_buscaExercicio(btn_numExercicio){
 
 				idnumExercicio = btn_numExercicio;
+				numExercicio = idnumExercicio;
 				console.log("id exercicio= " +idnumExercicio);
 				regras = 0;
 				numLinha = 0;
