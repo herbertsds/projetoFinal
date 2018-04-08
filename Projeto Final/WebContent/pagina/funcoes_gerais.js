@@ -145,7 +145,8 @@
 		$("#botaoDeducao").click( function()
 			    {
 					tipoEx = "deducao";
-					
+					categoriaExercicio = 3;
+
 					carregaTela("deducao");
 					$("#proximo").removeAttr("disabled");
 			      
@@ -164,6 +165,7 @@
 			$("#liExercicio").removeAttr("style");
 			$("#liExecucao").removeAttr("style");
 			$('#tabExercicio').click();
+			f_BuscaListas();
 
 			break;
 		
@@ -188,6 +190,7 @@
 			$("#liExercicio").removeAttr("style");
 			$("#liExecucao").removeAttr("style");
 			$('#tabExercicio').click();
+			f_BuscaListas();
 
 			break;
 			
@@ -335,7 +338,7 @@
 	
 	function f_BuscaListas(){
 		
-
+		$("#listaEx").empty();
 		var myData = { 'id' : categoriaExercicio};
 
 		// BUSCAR AS LISTAS NA CATEGORIA ESCOLHIDA
@@ -348,11 +351,13 @@
 	       
 	        success: function(retorno) {
 	        	listas = JSON.parse(retorno);
-	      	    $('#listaEx').append("<h6 class='dropdown-header'>Total de Listas Encontradas: "+ listas.length.toString() +"</h6>");
-	      	    console.log(listas.length.toString());
+	      	    $('#listaEx').append("<h8 color='gray'>Total de Listas Encontradas: "+ listas.length.toString() +"</h8>");
+	      	    
+	      	    console.log(categoriaExercicio);
 	        	for(var i =0; i<listas.length;i++){
 	        		vet_idListas[i] = listas[i]['id'];
 	        		vet_listas[i]= listas[i]['nome'];
+	        		
 	        		$("#listaEx").append("<h6 class='dropdown-header'>&#10022; "+listas[i]['nome']+": </h6><div id='lista"+ vet_idListas[i]+"' </div>");
 
 	
