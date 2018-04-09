@@ -280,7 +280,7 @@
 
 				idnumExercicio = btn_numExercicio;
 				numExercicio = idnumExercicio;
-				console.log("id exercicio= " +idnumExercicio);
+				console.log("id exercicio = " +idnumExercicio);
 				regras = 0;
 				numLinha = 0;
 
@@ -291,24 +291,24 @@
 				
 				vet_regras = [];
 
-		    	var exercicio = vet_exercicios[idnumExercicio-1]['sentenca'].split(',');
-		    	console.log("f_buscaExercicio() = " + exercicio);
-		    	var limiteFormulas = ((exercicio.length) -1);
+		    	exercicioBuscado = vet_exercicios[idnumExercicio-1]['sentenca'].split(',');
+		    	//console.log("f_buscaExercicio() = " + exercicio);
+		    	var limiteFormulas = ((exercicioBuscado.length) -1);
 		    				//console.log(limiteFormulas);
 		    	for (var data = 0; data < limiteFormulas; data++) {
 		    					  
 		    		regras++;   					  
 		    					  
-		    		vet_regras.push(exercicio[data]);
-		    		adicionadas = exercicio[data];
+		    		vet_regras.push(exercicioBuscado[data]);
+		    		adicionadas = exercicioBuscado[data];
 		    				
 		    		$('#regrasAdicionadas').append("<br/>" + regras + ": " + adicionadas );
 		    					
 		    	}
-		    	pergunta = exercicio[limiteFormulas];
+		    	pergunta = exercicioBuscado[limiteFormulas];
 		    	linhaPerg = regras+1;
 
-		    	$('#perguntaAdicionada').append("<br/>" +linhaPerg + ": " + exercicio[limiteFormulas] );
+		    	$('#perguntaAdicionada').append("<br/>" +linhaPerg + ": " + exercicioBuscado[limiteFormulas] );
 		    	atualizaTela(tipoEx);
 
 		
@@ -354,7 +354,7 @@
 	        	listas = JSON.parse(retorno);
 	      	    $('#listaEx').append("<h8 color='gray'>Total de Listas Encontradas: "+ listas.length.toString() +"</h8>");
 	      	    
-	      	    console.log(categoriaExercicio);
+	      	    //console.log(categoriaExercicio);
 	        	for(var i =0; i<listas.length;i++){
 	        		vet_idListas[i] = listas[i]['id'];
 	        		vet_listas[i]= listas[i]['nome'];
@@ -424,15 +424,6 @@
 		
 		
 		
-//		for(var i=1;i<56;i++){
-//			$("#listaEx").append("<button id='"+ i + "' class='btn btn-info btn-sm dropdown-item' type='button' data-toggle='tooltip' data-placement='top' onclick='f_buscaExercicio(this.id)'>Ex."+ i +"</button>");
-//		}
-//	
-//	        	vet_exercicios[indice] = JSON.parse(retorno);
-//	        	$("button[id='" + indice + "']").prop('title', retorno);
-//	        	indice++;
-//	
-//		}
 
 	
 	

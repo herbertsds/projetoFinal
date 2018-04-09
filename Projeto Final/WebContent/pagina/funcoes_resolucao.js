@@ -1,54 +1,28 @@
 // tic adicionado só na primeira formula obrigatoria 
-var perguntaFNC=false;
 var negadaIndice;
 var vet_Entrada = [];
 var selecionadas = 0;
 var linhasGab =0;
 var idPergNegada;
 var camposMarcados;
+var erro = 0;
 
 	function f_Transformar(){
 		
 	//VERIFICAR OBRIGATORIEDADE DA SEQUENCIA
-//		if(formulaId == ""){
-//				alert("Selecione uma fórmula.");
-//		}
-//		else{
-		
+
 			switch($('#btn_TransformarRegra').text()){
 			
 				case 'Negar Pergunta':
 					f_CkSelecionados();
 					if(selecionadas != 1 || camposMarcados[0] != pergunta){
-						alert("Atenção!\nSelecione a Pergunta para ser negada.");
+						alert("Atenção!\nSelecione apenas a Pergunta para ser negada.");
 					}
 					else{
 						
-						perguntaNegada = true;
-						
-		//// NEGAR A PERGUNTA
-						resposta = f_Negar(pergunta);
-						numLinha++;
-						linhasGab++;
-						idPergNegada = cont;
-						$('#r_divFormulas').append("<input  type='checkbox' class='form-check-input'  name='ck_Formulas' id='"+ idPergNegada + "' value='"+ pergunta + "'>"+ numLinha +": " + pergunta + " # pergunta negada </input></br>" );
-						$('#r_divNovasFormulas').append("<article> --------------------------------------------------------- </article>" );
-						
-						$("#finalVetor").prop("disabled", true);
-						$("#finalVetor").prop("checked", false);
-						
-						$('#r_passo1').append(" &#10004;");
-
-						formulaId = "";
-						vet_regras[cont]= resposta;
-						negadaIndice == cont;
-						regras++;
-						perguntaFNC = true;
-						
-						$('#btn_TransformarRegra').text("Passar para FNC");
-						
-						}
-					
+						// NEGAR A PERGUNTA
+						f_Negar();
+					}
 					break;
 				
 				case 'Passar para FNC':
@@ -58,66 +32,33 @@ var camposMarcados;
 	
 						}
 					else{
+						
 						f_CkSelecionados();
 						if(selecionadas == 0){
 							alert("Selecione pelo menos uma fórmula!");
 							
 						}
 						else{
-
-
-	// PASSAR VET_REGRAS[FORMULAID] PARA FNC ################################################################################
-							
-							resposta = f_FNC(vet_regras[formulaId]);
-							
-							for(var i=0;i<selecionadas;i++){
-								regras --;
-								cont++;
-								numLinha++;
-								linhasGab++;
-								$('#r_divNovasFormulas').append("<input disabled type='checkbox' class='form-check-input' data-color = 'purple' name='ck_novasFormulas' id='" + cont +"' value='" + vet_regras[formulaId] +"'> "+ numLinha + ": "  + resposta[i] +" em FNC </br>"  );
-
-								vet_regras[cont]= resposta[i];
-							}
-							
-							
-							formulaId = "";
-							if(regras ==0 && perguntaFNC == true){
-								
-								$('#btn_ConfrontarRegra').show();
-								$('#btn_SepararE').show();
-								$('#btn_SepararOU').show();
-								$('#btn_TransformarRegra').hide();
-								
-								$("#r_divFormulas").unbind();
-								$('#alertResolucao').fadeOut();
-
-								$('#r_passo2').append(" &#10004;");
-								$("#r_divNovasFormulas :checkbox").prop("disabled", false);
-								
-							}	
+							f_FNC();
+	
 						}	
 					}
-						break;
-				
+					
+					break;
 
-				
 				default: 
-				
 					break;
 			}
-//		}
-		
-		 
 	}
 	
 	
 	// abrir a formula para fnc
-	function f_FNC(formula){
-		selecionadas =0;
-		// chamar a funcao php que transforma fnc
+	function f_FNC(){
+		selecionadas = 0;
+		
 		vet_Entrada = [];
 		camposMarcados = new Array();
+		
 		$("input[type=checkbox][name='ck_Formulas']:checked").each(function(){
 		    camposMarcados.push($(this).val());
 			$(this).prop("disabled", true);
@@ -127,55 +68,125 @@ var camposMarcados;
 		});
 		
 		
-			// mostra a saída
-			console.log("Selecionados:" + camposMarcados );
+			
+			//console.log("Selecionados:" + camposMarcados );
 			vet_Entrada[0] = "FNC";
 			vet_Entrada[1] = selecionadas;
 			vet_Entrada[2] = camposMarcados;
-			console.log("Entrada enviada:"+vet_Entrada);
-		return vet_Entrada[2];
+			console.log(vet_Entrada);
+			
+			var myData = { 'operacao' : vet_Entrada[0],
+					'qtd_formulasSelecionadas' : vet_Entrada[1],
+					'formulas' : vet_Entrada[2]
+
+			};
+
+		$.ajax({
+			
+	        url: 'http://127.0.0.1:8000/api/resolucao/stepByStep',
+	    	type: 'GET',
+	        callback: '?',
+	        data: myData, 
+	        datatype: 'application/json',
+	       
+	        success: function(retorno) {
+		        console.log(retorno);
+				
+//
+//				for(var i=0;i<selecionadas;i++){
+//					regras --;
+//					cont++;
+//					numLinha++;
+//					linhasGab++;
+//					$('#r_divNovasFormulas').append("<input disabled type='checkbox' class='form-check-input' data-color = 'purple' name='ck_novasFormulas' id='" + cont +"' value='" + vet_regras[formulaId] +"'> "+ numLinha + ": "  + resposta[i] +" em FNC </br>"  );
+//
+//					vet_regras[cont]= resposta[i];
+//				}
+//				
+//				
+//				formulaId = "";
+//				if(regras ==0 && perguntaFNC == true){
+//					
+//					$('#btn_ConfrontarRegra').show();
+//					$('#btn_SepararE').show();
+//					$('#btn_SepararOU').show();
+//					$('#btn_TransformarRegra').hide();
+//					
+//					$("#r_divFormulas").unbind();
+//					$('#alertResolucao').fadeOut();
+//
+//					$('#r_passo2').append(" &#10004;");
+//					$("#r_divNovasFormulas :checkbox").prop("disabled", false);
+//					
+//				}
+	
+	//		return formula;
+		},
+		
+		error: function() {
+			alert('Erro ao passar para FNC!');
+			},
+	    });
 	
 	}
 	
-	function f_Negar(formula){
+	function f_Negar(){
 		vet_Entrada = [];
 		vet_Entrada[0] = "negPergunta";
-		vet_Entrada[1] = vet_regras.length +1;
-		vet_todasFormulas = vet_regras;
-		vet_todasFormulas[vet_todasFormulas.length] = pergunta;
-		//console.log("todas = " + vet_todasFormulas);
-		vet_Entrada[2] = vet_todasFormulas;
+		vet_Entrada[1] = exercicioBuscado.length;
+
+		vet_Entrada[2] = exercicioBuscado;
 		console.log(vet_Entrada);
 		
 		// CHAMAR PHP ENVIAR JSON
-//		var myData = { 'operacao' : vet_entrada[0],
-//						'qtd_formulasSelecionadas' : vet_entrada[1],
-//						'formulas' : vet_entrada[2]
-//	
-//	};
+		var myData = { 'operacao' : vet_Entrada[0],
+						'qtd_formulasSelecionadas' : vet_Entrada[1],
+						'formulas' : vet_Entrada[2]
+	
+		};
+
+		$.ajax({
+    		
+	        url: 'http://127.0.0.1:8000/api/resolucao/stepByStep',
+	    	type: 'GET',
+	        callback: '?',
+	        data: myData, 
+	        datatype: 'application/json',
+	       
+	        success: function(retorno) {
+		        console.log(retorno);
+				
+//		        numLinha++;
+//				linhasGab++;
+//				idPergNegada = cont;
+//				$('#r_divFormulas').append("<input  type='checkbox' class='form-check-input'  name='ck_Formulas' id='"+ idPergNegada + "' value='"+ pergunta + "'>"+ numLinha +": " + pergunta + " # pergunta negada </input></br>" );
+//				$('#r_divNovasFormulas').append("<article> --------------------------------------------------------- </article>" );
+//				
+////						$("#finalVetor").prop("disabled", true);
+////						$("#finalVetor").prop("checked", false);
+//				
+//				$('#r_passo1').append(" &#10004;");
 //
-//		$.ajax({
-//    		
-//	        url: 'http://127.0.0.1:8000/api/resolucao/',
-//	    	type: 'GET',
-//	        callback: '?',
-//	        data: myData, 
-//	        datatype: 'application/json',
-//	       
-//	        success: function(retorno) {
-//		        //console.log(numExercicio);
-//
-//	        	gabaritoBuscado = JSON.parse(retorno);
-//
+//				formulaId = "";
+//				vet_regras[cont]= resposta;
+//				negadaIndice == cont;
+//				regras++;
+//				perguntaNegada = true;
+//				
+//				$('#btn_TransformarRegra').text("Passar para FNC");
+//				
+//				$(this).prop("disabled", true);
+//				$(this).prop("checked", false);
+//				return formula;
+		},
 		
+		error: function() {
+			alert('Erro ao Negar a fórmula!');
+			return 1;
+			},
+	    });
 		
-		$(this).prop("disabled", true);
-		$(this).prop("checked", false);
-		
-		
-		
-		return formula;
-	}
+	}		
 	
 	//bater duas fórmulas diferentes para gerar uma nova
 	
@@ -215,7 +226,33 @@ var camposMarcados;
 				vet_Entrada[0] = "separaE";
 				vet_Entrada[1] = selecionadas;
 				vet_Entrada[2] = camposMarcados;
-				console.log("Entrada enviada:"+vet_Entrada);
+				console.log(vet_Entrada);
+				
+				var myData = { 'operacao' : vet_Entrada[0],
+						'qtd_formulasSelecionadas' : vet_Entrada[1],
+						'formulas' : vet_Entrada[2]
+
+				};
+				
+				$.ajax({
+					
+			        url: 'http://127.0.0.1:8000/api/resolucao/stepByStep',
+			    	type: 'GET',
+			        callback: '?',
+			        data: myData, 
+			        datatype: 'application/json',
+			       
+			        success: function(retorno) {
+				        console.log(retorno);
+						
+			
+			//		return formula;
+				},
+				
+				error: function() {
+					alert('Erro ao separar E!');
+					},
+			    });
 			}
 		}
 	
@@ -237,6 +274,31 @@ var camposMarcados;
 			vet_Entrada[1] = selecionadas;
 			vet_Entrada[2] = camposMarcados;
 			console.log(vet_Entrada);		
+			
+			var myData = { 'operacao' : vet_Entrada[0],
+					'qtd_formulasSelecionadas' : vet_Entrada[1],
+					'formulas' : vet_Entrada[2]
+
+			};
+			$.ajax({
+				
+		        url: 'http://127.0.0.1:8000/api/resolucao/stepByStep',
+		    	type: 'GET',
+		        callback: '?',
+		        data: myData, 
+		        datatype: 'application/json',
+		       
+		        success: function(retorno) {
+			        console.log(retorno);
+					
+		
+		//		return formula;
+			},
+			
+			error: function() {
+				alert('Erro ao separar OU!');
+				},
+		    });
 		}
 		else{
 			selecionadas = 0;
@@ -246,9 +308,7 @@ var camposMarcados;
 	}
 
 function f_GabResolucao(){
-	$('#r_divNovasFormulas').text("");
-	$("p[id='" + idPergNegada+"']").text("");
-	$("#r_divFormulas :checkbox").prop("disabled", true);
+
 	var myData = { 'exercicio' : parseInt(numExercicio)};
 
 	$.ajax({
@@ -261,7 +321,14 @@ function f_GabResolucao(){
        
         success: function(retorno) {
 	        //console.log(retorno);
-
+        	
+        	$('#r_divNovasFormulas').text("");
+        	$("p[id='" + idPergNegada+"']").text("");
+        	$("#r_divFormulas :checkbox").prop("disabled", true);
+        	$("#r_divFormulas :checkbox").prop("checked", true);
+        	
+        	
+        	
         	gabaritoBuscado = JSON.parse(retorno);
         	//console.log(gabaritoBuscado); 
 			limiteGabarito = gabaritoBuscado.length;
