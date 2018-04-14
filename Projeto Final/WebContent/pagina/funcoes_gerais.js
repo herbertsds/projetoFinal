@@ -48,9 +48,12 @@
 	});
 
 		$('#btn_ConfrontarRegra').hide();
-		$('#btn_TransformarRegra').show();
 		$('#btn_SepararE').hide();
 		$('#btn_SepararOU').hide();
+		
+		$('#btn_TransformarRegra').hide();
+		$('#btn_ProximoPasso').hide();
+
 		
 		$('[data-toggle="popover"]').popover();
 
@@ -152,7 +155,18 @@
 			      
 			    }
 			 );
+		
+		$("#botaoSemantica").click( function()
+			    {
+					tipoEx = "semantica";
+					categoriaExercicio = 0;
 
+					carregaTela("semantica");
+					$("#proximo").removeAttr("disabled");
+			      
+			    }
+			 );
+		
 	});
 	
 	function carregaTela(exercicio){
@@ -161,10 +175,13 @@
 			$("#divTableaux").removeAttr("style");
 			$("#divResolucao").attr("style", 'display:none');
 			$("#divDeducao").attr("style", 'display:none');
+			$("#divSemantica").attr("style", 'display:none');
 			$("#exercicio").removeAttr("style");
 			$("#liExercicio").removeAttr("style");
 			$("#liExecucao").removeAttr("style");
 			$('#tabExercicio').click();
+			
+			f_LimpaTipo();
 			f_BuscaListas();
 
 			break;
@@ -173,11 +190,14 @@
 			$("#divResolucao").removeAttr("style");
 			$("#divTableaux").attr("style", 'display:none');
 			$("#divDeducao").attr("style", 'display:none');
+			$("#divSemantica").attr("style", 'display:none');
 			$("#exercicio").removeAttr("style");
 
 			$("#liExercicio").removeAttr("style");
 			$("#liExecucao").removeAttr("style");
 			$('#tabExercicio').click();
+
+			f_LimpaTipo();
 			f_BuscaListas();
 			break;
 		
@@ -185,15 +205,30 @@
 			$("#divDeducao").removeAttr("style");
 			$("#divTableaux").attr("style", 'display:none');
 			$("#divResolucao").attr("style", 'display:none');
+			$("#divSemantica").attr("style", 'display:none');
 			$("#exercicio").removeAttr("style");
 
 			$("#liExercicio").removeAttr("style");
 			$("#liExecucao").removeAttr("style");
 			$('#tabExercicio').click();
+			f_LimpaTipo();
 			f_BuscaListas();
 
 			break;
+		case "semantica":
+			$("#divSemantica").removeAttr("style");
+			$("#divTableaux").attr("style", 'display:none');
+			$("#divResolucao").attr("style", 'display:none');
+			$("#divDeducao").attr("style", 'display:none');
+			$("#exercicio").removeAttr("style");
+			$("#liExercicio").removeAttr("style");
+			$("#liExecucao").removeAttr("style");
+			$('#tabExercicio').click();
 			
+			f_LimpaTipo();
+			f_BuscaListas();
+
+			break;	
 		default:
 			break;
 		}
@@ -230,6 +265,10 @@
 			case "deducao":
 				$('#formulas').append("<br/>" + pergunta );
 				break;
+				
+			case "semantica":
+				$('#formulas').append("<br/>" + pergunta );
+				break;	
 		}
 	}	
 //-------------------------------------------------------------------------------------------------------
@@ -276,7 +315,7 @@
 	
 	// FALTA PERMITIR EXCLUSAO/ALTERACAO DA PERGUNTA E DE REGRAS
 	
-	function f_buscaExercicio(btn_numExercicio){
+	function f_SelecionaExercicio(btn_numExercicio){
 
 				idnumExercicio = btn_numExercicio;
 				numExercicio = idnumExercicio;
@@ -310,7 +349,9 @@
 
 		    	$('#perguntaAdicionada').append("<br/>" +linhaPerg + ": " + exercicioBuscado[limiteFormulas] );
 		    	atualizaTela(tipoEx);
-
+		    	
+				$('#btn_TransformarRegra').show();
+				$('#btn_ProximoPasso').show();
 		
 	}
 	
@@ -332,6 +373,8 @@
 		case "deducao":
 			f_gabDeducao();
 			break;
+		case "semantica":	
+			//f_gabSemantica();
 		}
 			
 	}
@@ -367,7 +410,10 @@
 	    		f_BuscaEx();
 
 	        },
-	        error: function() { alert('listas não encontradas!'); },
+	        error: function() { console.log('ERRO: listas não encontradas!');
+	        	$('#listaEx').append("<h8 color='gray'>> Total de Listas Encontradas: 0</br></br>Certifique-se de que existem listas ou verifique a conexão com o banco de dados</h8>");
+
+	        },
 	    });
 		
 	}
@@ -400,7 +446,7 @@
 		        	n = indice_vet_Ex;
 
 		        },
-		        error: function() { alert('exercicios não encontrados!'); },
+		        error: function() { console.log('ERRO: exercicios não encontrados!'); },
 		    });
 			
 
@@ -414,8 +460,11 @@
 			
 		}
 		for(j=0;j<vet_exercicios.length;j++){
-			$('#lista'+vet_exercicios[j]['pivot']['listas_id']).append("<button id='"+ vet_exercicios[j]['id'] + "' class='btn btn-info btn-sm dropdown-item' type='button' data-toggle='tooltip' data-placement='top' onclick='f_buscaExercicio(this.id)'>Ex."+ vet_exercicios[j]['id'] +"</button>");
-        	$("button[id='" + vet_exercicios[j]['id'] + "']").prop('title', vet_exercicios[j]['sentenca']);
+			$('#lista'+vet_exercicios[j]['pivot']['listas_id']).append("<button id='"+ vet_exercicios[j]['id'] + 
+					"' class='btn btn-info btn-sm dropdown-item' type='button' data-toggle='tooltip' data-placement='top'" +
+					" onclick='f_SelecionaExercicio(this.id)'>Ex."+ vet_exercicios[j]['id'] +"</button>");
+        	
+			$("button[id='" + vet_exercicios[j]['id'] + "']").prop('title', vet_exercicios[j]['sentenca']);
 
 			
 		}
@@ -437,3 +486,29 @@
 	}
 
 	
+function f_LimpaTipo(){
+	console.log("limpando");
+	$('#regrasAdicionadas').empty();
+	$('#perguntaAdicionada').empty();
+	vet_regras= [];
+	pergunta = "";
+	adicionadas="";
+	formulaSimplificar ="";
+	formulaId="";
+	regras = 0;
+	formulas_JSON = "";
+	transformados_FNC = "";
+	cont =0;
+	perguntaNegada = false;
+	numLinha = 0;
+	numExercicio = "";
+	vet_exercicios = [];
+	indice = 0;
+	vet_listas = [];
+	vet_idListas = [];
+	
+	f_LimpaTableaux();
+	f_LimpaResolucao();
+	f_LimpaDeducao();
+	f_LimpaSemantica();
+}
