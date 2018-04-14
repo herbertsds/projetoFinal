@@ -385,6 +385,8 @@ class Resolucao extends Model
 		$mudancaArray;
 		$mudancaHash=[];
 
+		//return $request;
+
 		$formAntesDoE=[];
 		$formAntesDoOu1=[];
 		$formAntesDoOu2=[];
@@ -398,7 +400,9 @@ class Resolucao extends Model
 
 		//Negação da pergunta+Validação
 		//Recebo a lista com todas as fórmulas e nego a pergunta, além de processar os notnot0
-		if ($request[0]=='negPergunta') {
+		if ($request['operacao']=='negPergunta') {
+			return "Entrei";
+			/*
 			$entradaConvertida=FuncoesResolucao::negaPergunta($request[2],$request[1],$perguntaAntesNegar,$perguntaDepoisNegar);
 			$resposta[] = $entradaConvertida;
 
@@ -447,7 +451,7 @@ class Resolucao extends Model
 	 				ParsingFormulas::converteFormulaString($resposta[$key]);
 	 			}
  			}
- 			return $resposta;
+ 			return $resposta;*/
 
 		}		
 

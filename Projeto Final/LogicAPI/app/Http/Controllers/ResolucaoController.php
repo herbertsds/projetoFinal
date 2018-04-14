@@ -18,16 +18,16 @@ class ResolucaoController extends Controller
 	//Resolve um exercício específico
     public function index(Request $numeroExercicio){
 
-    	$exercicio = Exercicios::getExercicio(15);
+    	$exercicio = Exercicios::getExercicio(1);
      // $exercicio = Exercicios::getExercicio(40);
 
     	// $exercicioLista = new Exercicios('resolucao');
     	$resposta = new Resolucao($exercicio);
 
 
-    	//return json_encode($resposta->fullSteps(), JSON_UNESCAPED_UNICODE);
+    	return json_encode($resposta->fullSteps(), JSON_UNESCAPED_UNICODE);
     	//print_r($resposta->fullSteps());
-      dd($resposta->stepByStep());
+      //dd($resposta->stepByStep());
       // dd($exercicio);
     
     }
@@ -51,6 +51,7 @@ class ResolucaoController extends Controller
 
     public function stepByStep(Request $request){
     	$resposta = new Resolucao();
+    
     	// return json_encode($resposta->stepByStep(Exercicios::converteEntrada($request)), JSON_UNESCAPED_UNICODE);
     	return $resposta->stepByStep(Exercicios::converteEntrada($request));
     }

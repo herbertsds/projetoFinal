@@ -172,7 +172,7 @@ class Tableaux extends Model
 					////print "<br>";
 				}
 				if(FuncoesTableaux::escolhaEficiente($this->listaFormulasDisponiveis,$this->hashInicial,$nosFolha,$historicoVariaveis,$raiz,$contador) === 'fechado')
-					break;
+					return ;
 				
 				if (FuncoesTableaux::todasFechadas($nosFolha,$contador)) {
 					break;
@@ -201,7 +201,7 @@ class Tableaux extends Model
 		//FuncoesTableaux::imprimeArvore($raiz);
 		//print '<br>Raiz<br>';
 		//print_r($raiz);
-		$resposta[] =$raiz;
+		$resposta[] = $raiz;
 		return $resposta;
     }
 }

@@ -13,7 +13,11 @@ class categoriasSeeder extends Seeder
     {
         $dados = array(
 		    array('tipo'=>'Resolução'),
-		    array('tipo'=>'Tableaux')
+		    array('tipo'=>'Tableaux'),
+            array('tipo'=>'Dedução_Natural'),
+            array('tipo'=>'LPO_Tableaux'),
+            array('tipo'=>'LPO_Dedução_Natural'),
+            array('tipo'=>'Semantica')
 		);
 
         App\Categorias::insert($dados);

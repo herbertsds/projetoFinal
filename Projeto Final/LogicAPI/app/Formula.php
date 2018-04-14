@@ -96,7 +96,7 @@ class Formula extends Model
 	}
 
 	public static function getListaConectivos(){
-		$listaConectivos=array("^","v","-","!");
+		$listaConectivos=array("^","v","-","!",'@','&');
 		return $listaConectivos;
 	}
 }

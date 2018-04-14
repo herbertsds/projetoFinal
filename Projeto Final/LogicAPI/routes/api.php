@@ -75,3 +75,15 @@ Route::group(['prefix' => 'tableaux', 'middleware' => 'cors'], function(){
 	});
 
 });
+
+// api/semantica/
+Route::group(['prefix' => 'semantica', 'middleware' => 'cors'], function(){
+	
+	//Resolve um exercício específico, rodando o algoritmo inteiro do tableaux(fullSteps)
+	Route::get('/', 'SemanticaController@index');
+
+	Route::post('', function () {
+	    return request();
+	});
+
+});
