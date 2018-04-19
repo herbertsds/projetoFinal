@@ -6,19 +6,12 @@
 $(document).ready(function(){
     $("button").click(function(){
     	var myData = {
-
-	        'exercicio': 1
-	    };
-        /*$.ajax({
-	        url: 'http://127.0.0.1:8000/api/resolucao/teste',
-
 	        'operacao': 'resolucao',
 	        'qtd_formulasSelecionadas': 2,
 	        'formulas': ["a", "b"]
-	    };*/
+	    };
         $.ajax({
-	        url: 'http://127.0.0.1:8000/api/resolucao/stepByStep',
-
+	        url: 'http://127.0.0.1:8000/api/resolucao/teste',
 	        type: 'GET',
 	        callback: '?',
 	        data: myData,
@@ -35,7 +28,7 @@ $(document).ready(function(){
 
 	        },
 	        error: function(erro) {
-				console.log(erro.responseText);
+				alert(erro.responseText);
 			}
 	    });
     });
@@ -49,6 +42,6 @@ $(document).ready(function(){
 <div class='resultado'>
 
 </div>
-
+˄Ɐ˅→¬
 </body>
 </html>
