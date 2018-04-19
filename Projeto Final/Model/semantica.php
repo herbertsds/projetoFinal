@@ -37,12 +37,12 @@ $form = array ('info' => array ('esquerdo' => , 'conectivo' => , 'direito' =>), 
 //$entrada = array ("(paraTodox(A(x)eB(x)))");
 //(((paraTodox(P(x)))e(paraTodox(Q(x))))implica(paraTodox((P(x))e(Q(x)))))
 
-$entrada = array ("((paraTodox((P(x))ou(Q(x))))implica((paraTodox(P(x)))ou(paraTodox(Q(x)))))"); 
+$entrada = $SEMquestao1;
 //$entrada = array ("(paraTodoz(paraTodoy(paraTodox((P(x,y,z))e(Q(x,y,z))))))");
 //$entrada = array("((A(x)^B(x))implica(C(x)^D(x)))");
 $dominio= array ('0','1');
 $tamanho=count($entrada);
-$entradaConvertida=processaEntradaLPO($entrada);
+$entradaConvertida=processaEntradaSemantica($entrada);
 print_r($entradaConvertida);
 
 adicionaArray($nosFolha, $entradaConvertida[0]);

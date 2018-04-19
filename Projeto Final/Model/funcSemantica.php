@@ -7,11 +7,13 @@ echo "<pre>";
 //Variáveis Globais
 $listaConectivos=array("^","v","-","!",'@','&');
 
-function processaEntradaLPO($listaFormulas){
+function processaEntradaSemantica($listaFormulas){
 	//Tratar a entrada, verificação de digitação correta
 	foreach ($listaFormulas as $key => $value) {
 		verificaFormulaCorreta($listaFormulas[$key]);
 		$entradaConvertida[$key]=resolveParentesesSemantica($listaFormulas[$key]);
+		print '<br>Fórmula correta<br>';
+		print_r($entradaConvertida[$key]);
 	}
 	
 	return $entradaConvertida;
