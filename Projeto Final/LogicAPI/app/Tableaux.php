@@ -198,7 +198,7 @@ class Tableaux extends Model
 			//print "<br>Nem todos os ramos foram fechados<br>Este Tableaux não fecha<br>";
 		}
 		//print "<br>Árvore a partir da raiz<br>";
-		//FuncoesTableaux::imprimeArvore($raiz);
+		FuncoesTableaux::imprimeArvore($raiz);
 		//print '<br>Raiz<br>';
 		//print_r($raiz);
 		$resposta[] = $raiz;

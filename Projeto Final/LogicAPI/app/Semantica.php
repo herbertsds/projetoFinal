@@ -25,7 +25,7 @@ class Semantica extends Model
     	$entrada=null;
     	//Passo 1 - Recebe entrada e parâmetros
     	$entrada = $this->exercicioEscolhido;
-		$dominio= array ('0','1');
+		$dominio= array ('0','1','2');
 		$tamanho=count($entrada);		
 		$entradaConvertida=FuncoesSemantica::processaEntradaSemantica($entrada);
 		print_r($entradaConvertida);
@@ -39,8 +39,8 @@ class Semantica extends Model
 			FuncoesSemantica::geraArvore($entradaConvertida[0],$dominio,$nosFolha,$contador);
 		}
 		//Passo 3
-		$relacoes = array ();
-		//$relacoes = array ("P(0)","Q(0)","P(1)","Q(1)");
+		//$relacoes = array ();
+		$relacoes = array ("P(0)","Q(0)","P(1)","Q(1)");
 		FuncoesSemantica::preencheProximo($relacoes,$entradaConvertida[0]);
 		FuncoesSemantica::validaFormulas($relacoes,$entradaConvertida[0]);
 

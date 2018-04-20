@@ -21,7 +21,8 @@ class TableauxController extends Controller
     	print_r($exercicio);
     	print_r("<br>----------------------------------------------<br><br>");
 
-    	//return json_encode($resposta->fullSteps(), JSON_UNESCAPED_UNICODE);
+    	//print_r($resposta->fullSteps());
+        //return json_encode($resposta->fullSteps(), JSON_UNESCAPED_UNICODE);
     	 dd($resposta->fullSteps());
     }
 }
