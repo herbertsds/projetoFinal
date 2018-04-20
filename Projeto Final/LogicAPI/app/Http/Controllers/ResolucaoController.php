@@ -25,7 +25,7 @@ class ResolucaoController extends Controller
     	$resposta = new Resolucao($exercicio);
 
 
-    	return json_encode($resposta->fullSteps(), JSON_UNESCAPED_UNICODE);
+    	return Exercicios::converteSaida(json_encode($resposta->fullSteps(), JSON_UNESCAPED_UNICODE));
     	//print_r($resposta->fullSteps());
       //dd($resposta->stepByStep());
       // dd($exercicio);
@@ -38,8 +38,8 @@ class ResolucaoController extends Controller
       // $categoria = Exercicios::find(1)->categorias[0]->tipo;
       // abort(400,"Este ramo já foi fechado.\n O nó folha é\n ".implode(array('pai','filho'),"\n"));
       // dd($categoria);
-   		return Exercicios::converteSaida("notA");
-   		return "˄Ɐ˅→¬";
+   		// return Exercicios::converteSaida("notA");
+   		return "Ɐ       ∨      ∧       →       ¬       ∃";
     }   	
 
    	//Pega um exercício

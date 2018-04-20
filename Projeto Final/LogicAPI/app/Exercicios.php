@@ -53,10 +53,12 @@ class Exercicios extends Model
     }
 
     public static function converteSaida($string){
-    	$string = str_replace("ou","˅",$string);
-    	$string = str_replace("e","˄",$string);
+    	$string = str_replace("ou","∨",$string);
+    	$string = str_replace("e","∧",$string);
     	$string = str_replace("implica","→",$string);
     	$string = str_replace("not","¬",$string);
+    	$string = str_replace("Para Todo", "∀",$string);
+    	$string = str_replace("Existe", "∃",$string);
 
     	return $string;
     }
