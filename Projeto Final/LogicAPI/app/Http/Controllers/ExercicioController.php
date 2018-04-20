@@ -46,7 +46,7 @@ class ExercicioController extends Controller
     	$exercicio = Exercicios::getExercicio($numeroExercicio);
 
     	// return json_encode($resposta, JSON_UNESCAPED_UNICODE);
-    	return json_encode($exercicio, JSON_UNESCAPED_UNICODE);
+    	return Exercicios::converteSaida(json_encode($exercicio, JSON_UNESCAPED_UNICODE));
     }
 
     public function teste(Request $request){

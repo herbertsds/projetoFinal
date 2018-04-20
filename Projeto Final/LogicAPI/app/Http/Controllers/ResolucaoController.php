@@ -25,7 +25,7 @@ class ResolucaoController extends Controller
     	$resposta = new Resolucao($exercicio);
 
 
-    	return Exercicios::converteSaida(json_encode($resposta->fullSteps(), JSON_UNESCAPED_UNICODE));
+    	return json_encode($resposta->fullSteps(), JSON_UNESCAPED_UNICODE);
     	//print_r($resposta->fullSteps());
       //dd($resposta->fullSteps());
       // dd($exercicio);

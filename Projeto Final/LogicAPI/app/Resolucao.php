@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\FuncoesResolucao;
 use App\Formula;
 use App\ParsingFormulas;
+use App\Exercicios;
 //echo "<pre>";
 
 
@@ -399,6 +400,8 @@ class Resolucao extends Model
  		foreach ($resposta as $key => $value) {
  			if (is_array($value)) {
  				ParsingFormulas::converteFormulaString($resposta[$key]);
+ 				$resposta[$key] = Exercicios::converteSaida($resposta[$key]);
+
  			}
  		}
 		return $resposta;
