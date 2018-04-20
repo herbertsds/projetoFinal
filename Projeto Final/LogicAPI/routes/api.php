@@ -76,6 +76,18 @@ Route::group(['prefix' => 'tableaux', 'middleware' => 'cors'], function(){
 
 });
 
+// api/tableauxLPO/
+Route::group(['prefix' => 'tableauxLPO', 'middleware' => 'cors'], function(){
+	
+	//Resolve um exercício específico, rodando o algoritmo inteiro do tableaux(fullSteps)
+	Route::get('/', 'TableauxLPOController@index');
+
+	Route::post('', function () {
+	    return request();
+	});
+
+});
+
 // api/semantica/
 Route::group(['prefix' => 'semantica', 'middleware' => 'cors'], function(){
 	

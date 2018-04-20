@@ -6,16 +6,16 @@ use Illuminate\Http\Request;
 
 use App\Exercicios;
 
-use App\Tableaux;
+use App\TableauxLPO;
 
-class TableauxController extends Controller
+class TableauxLPOController extends Controller
 {
     public function index(Request $numeroExercicio){
 
-    	$exercicio = Exercicios::getExercicio(15);
+    	$exercicio = Exercicios::getExercicio(74);
         //$exercicio = Exercicios::getExercicio($numeroExercicio->exercicio);
 
-    	$resposta = new Tableaux($exercicio);
+    	$resposta = new TableauxLPO($exercicio);
 
     	print_r("Exercício:<br>");
     	print_r($exercicio);
@@ -25,4 +25,3 @@ class TableauxController extends Controller
     	 dd($resposta->fullSteps());
     }
 }
-?>

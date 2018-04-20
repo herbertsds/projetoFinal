@@ -328,6 +328,7 @@ function f_GabResolucao(){
         	$("#r_divFormulas :checkbox").prop("checked", true);
         	
         	
+        	//console.log(retorno);
         	
         	gabaritoBuscado = JSON.parse(retorno);
         	//console.log(gabaritoBuscado); 

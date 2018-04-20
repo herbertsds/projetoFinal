@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\FuncoesResolucao;
 use App\Formula;
 use App\ParsingFormulas;
-// echo "<pre>";
+//echo "<pre>";
 
 
 //Remover a repetição das fórmulas em cada passo
@@ -245,7 +245,7 @@ class Resolucao extends Model
 				$resposta[] = $hashResolucao;
 			}*/
 			
-
+			//print_r($arrayFormulas);
 
 			//Passo 6
 			//
@@ -340,10 +340,7 @@ class Resolucao extends Model
 				ParsingFormulas::corrigeAtomos($arrayFormulas[$key]['esquerdo']);
 				ParsingFormulas::corrigeAtomos($arrayFormulas[$key]['direito']);
 		 	}
-		 	//Atualização de mudancaArray para evitar erros
-		 	if ($entradaConvertida!=$mudancaArray) {
-				$mudancaArray=$entradaConvertida;
-			}	
+		 	
 
 
 			//Passo 5 - REPETIÇÃO
@@ -352,6 +349,34 @@ class Resolucao extends Model
 				goto fim;
 			}
 
+			//Aplica FNC novamente para passar not para dentro
+			foreach ($arrayFormulas as $key => $value) {
+			FuncoesResolucao::resolveNOT($arrayFormulas[$key]);
+			}
+			if ($arrayFormulas!=$mudancaArray) {
+				foreach ($arrayFormulas as $key => $value) {
+					if ($arrayFormulas[$key]!=$mudancaArray[$key]) {
+						//Regra
+						$resposta[] = "Passando o not para dentro";
+						//Fórmula nova
+						$resposta[] = $arrayFormulas[$key];
+						//Fórmula antiga
+						$resposta[] = $mudancaArray[$key];
+						
+
+					}
+				}
+				//$resposta[] = "<br>Após FNC<br>";
+				//$resposta[] = $entradaConvertida;
+				$mudancaArray=$arrayFormulas;
+			}
+
+			//Atualização de mudancaArray para evitar erros
+		 	if ($entradaConvertida!=$mudancaArray) {
+				$mudancaArray=$entradaConvertida;
+			}	
+
+			//Passo 5 - REPETIÇÃO
 			if(!FuncoesResolucao::checaExisteArray($arrayFormulas)){
  				$resposta[] = "<br>Não existem mais array, saindo do loop<br><br>";
 				break;
@@ -395,23 +420,27 @@ class Resolucao extends Model
 		$perguntaAntesNegar=null;
 		$perguntaDepoisNegar=null;
 		$statusFechado='Não fechado';
+		return "Aloou";
+		//return $request;
 
 		//Receber a entrada do Front-End
 
 		//Negação da pergunta+Validação
 		//Recebo a lista com todas as fórmulas e nego a pergunta, além de processar os notnot0
-		if ($request['operacao']=='negPergunta') {
-			return "Entrei";
-			/*
-			$entradaConvertida=FuncoesResolucao::negaPergunta($request[2],$request[1],$perguntaAntesNegar,$perguntaDepoisNegar);
+		//if ($request['operacao']=='negPergunta') {
+			
+			
+			/*$entradaConvertida=FuncoesResolucao::negaPergunta($request['formulas'],$request['qtd_formulasSelecionadas'],$perguntaAntesNegar,$perguntaDepoisNegar);
 			$resposta[] = $entradaConvertida;
-
+			return $entradaConvertida;
+			
+			
 			//Constrói o retorno
 			$mudancaArray=$entradaConvertida;
 
 
 			//Print, pré-processa os notnot
-			foreach ($entradaTeste as $key => $value) {
+			foreach ($entradaConvertida as $key => $value) {
 				if ($entradaConvertida[$key]['conectivo']=='notnot') {
 					$entradaConvertida[$key]['conectivo']=NULL;
 				}
@@ -451,10 +480,10 @@ class Resolucao extends Model
 	 				ParsingFormulas::converteFormulaString($resposta[$key]);
 	 			}
  			}
- 			return $resposta;*/
+ 			return $resposta;
 
 		}		
-
+		
 		//Se houver digitação incorreta vai haver um aviso. Para o front-end adicionar uma flag (valor "1")
 		//A flag vai indicar que a fórmula está incorreta e ficar pedindo a digitação correta para o front-end
 		//Quando a flag voltar para o valor "0" pode passar para a próxima entrada
@@ -742,6 +771,6 @@ class Resolucao extends Model
 		fim:
  		$resposta[] = $statusFechado;
 
-		return $resposta;
+		return $resposta;*/
     }
 }

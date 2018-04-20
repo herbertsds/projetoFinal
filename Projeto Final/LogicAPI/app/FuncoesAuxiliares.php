@@ -96,7 +96,7 @@ class FuncoesAuxiliares extends Model
 		    //print "Fórmula com digitação incorreta";
 			exit(1);
 		}
-		print "Fórmula Ok<br>";
+		//print "Fórmula Ok<br>";
 		
 	}
 

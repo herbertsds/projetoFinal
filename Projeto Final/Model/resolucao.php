@@ -23,7 +23,7 @@ $tamanho=0;
 //Passos 1 e 2
 //Entrada
 
-$entradaTeste= $DNNquestao41;
+$entradaTeste= $DNNquestao43;
 
 $tamanho=count($entradaTeste);
 //Receber a entrada do Front-End

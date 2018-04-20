@@ -16,6 +16,7 @@ class FuncoesResolucao extends Model
 	//devolve um array com a pergunta negada.
 	//Se houver digitação incorreta gera uma exceção (trabalhar na exceção depois)
 	public static function negaPergunta($listaFormulas,$tamanho,&$perguntaAntesNegar,&$perguntaDepoisNegar){
+		//print_r($listaFormulas);
 		//Nega a pergunta
 		$perguntaAntesNegar=ParsingFormulas::resolveParenteses($listaFormulas[$tamanho-1]);
 		$listaFormulas[$tamanho-1]="not".$listaFormulas[$tamanho-1];
@@ -47,8 +48,8 @@ class FuncoesResolucao extends Model
 		//Primeiro, remover a implicação, se houver
 		
 		FuncoesResolucao::resolveImplicacoes($form);
-		////print "PRIMEIRO PASSO CONCLUÍDO";
-
+		//print "<br>PRIMEIRO PASSO CONCLUÍDO<br>";
+		//print_r($form);
 			
 		//Segundo Passar todos os not fora de parênteses para dentro
 
@@ -198,30 +199,45 @@ class FuncoesResolucao extends Model
 				if (is_array($aux1['esquerdo']) && $aux1['esquerdo']['conectivo']=='not') {
 					$aux1['esquerdo']=$aux1['esquerdo']['direito'];
 				}
-				else{
+				elseif(!is_array($aux1['esquerdo'])){;
 					$aux1['esquerdo']="!(".$aux1['esquerdo'].")";
+				}
+				elseif(is_array($aux1['esquerdo'])){
+					print "<br>Entrei aqui pra negar conectivo<br>";
+					FuncoesResolucao::negaConectivo($aux1['esquerdo']['conectivo']);
 				}
 				if (is_array($aux1['direito']) && $aux1['direito']['conectivo']=='not') {
 					$aux1['direito']=$aux1['direito']['direito'];
-				}
-				else{
+				}				
+				elseif(!is_array($aux1['direito'])){
 					$aux1['direito']="!(".$aux1['direito'].")";
-				$aux1['conectivo']='ou';
+				
 				}
+				elseif(is_array($aux1['direito'])){
+					FuncoesResolucao::negaConectivo($aux1['direito']['conectivo']);
+				}
+				$aux1['conectivo']='ou';
 			}
 
 			if(@$aux1['conectivo']=='not_ou'){
 				if (is_array($aux1['esquerdo']) && $aux1['esquerdo']['conectivo']=='not') {
 					$aux1['esquerdo']=$aux1['esquerdo']['direito'];
 				}
-				else{
+				elseif(!is_array($aux1['esquerdo'])){;
 					$aux1['esquerdo']="!(".$aux1['esquerdo'].")";
+				}
+				elseif(is_array($aux1['esquerdo'])){
+					FuncoesResolucao::negaConectivo($aux1['esquerdo']['conectivo']);
 				}
 				if (is_array($aux1['direito']) && $aux1['direito']['conectivo']=='not') {
 					$aux1['direito']=$aux1['direito']['direito'];
 				}
-				else{
+				elseif(!is_array($aux1['direito'])){
 					$aux1['direito']="!(".$aux1['direito'].")";
+				
+				}
+				elseif(is_array($aux1['direito'])){
+					FuncoesResolucao::negaConectivo($aux1['direito']['conectivo']);
 				}
 				$aux1['conectivo']='e';
 			}
@@ -230,14 +246,20 @@ class FuncoesResolucao extends Model
 				if (is_array($aux2['esquerdo']) && $aux2['esquerdo']['conectivo']=='not') {
 					$aux2['esquerdo']=$aux2['esquerdo']['direito'];
 				}
-				else{
+				elseif(!is_array($aux2['esquerdo'])){
 					$aux2['esquerdo']="!(".$aux2['esquerdo'].")";
+				}
+				elseif(is_array($aux2['esquerdo'])){
+					FuncoesResolucao::negaConectivo($aux2['esquerdo']['conectivo']);
 				}
 				if (is_array($aux2['direito']) && $aux2['direito']['conectivo']=='not') {
 					$aux2['direito']=$aux2['direito']['direito'];
 				}
-				else{
+				elseif(!is_array($aux2['direito'])){
 					$aux2['direito']="!(".$aux2['direito'].")";
+				}
+				elseif(is_array($aux2['direito'])){
+					FuncoesResolucao::negaConectivo($aux2['direito']['conectivo']);
 				}
 				$aux2['conectivo']='ou';
 				
@@ -247,16 +269,22 @@ class FuncoesResolucao extends Model
 				if (is_array($aux2['direito']) && $aux2['direito']['conectivo']=='not') {
 					$aux2['direito']=$aux2['direito']['direito'];
 				}
-				else{
-					$aux2['direito']="!(".$aux2['direito'].")";
+				elseif(!is_array($aux2['esquerdo'])){
+					$aux2['esquerdo']="!(".$aux2['esquerdo'].")";
+				}
+				elseif(is_array($aux2['esquerdo'])){
+					FuncoesResolucao::negaConectivo($aux2['esquerdo']['conectivo']);
 				}
 				
 				$aux2['conectivo']='e';
 				if (is_array($aux2['esquerdo']) && $aux2['esquerdo']['conectivo']=='not') {
 					$aux2['esquerdo']=$aux2['esquerdo']['direito'];
 				}
-				else{
-					$aux2['esquerdo']="!(".$aux2['esquerdo'].")";
+				elseif(!is_array($aux2['direito'])){
+					$aux2['direito']="!(".$aux2['direito'].")";
+				}
+				elseif(is_array($aux2['direito'])){
+					FuncoesResolucao::negaConectivo($aux2['direito']['conectivo']);
 				}
 			}
 			if(@is_array($aux1['esquerdo']) && $aux1['esquerdo']['conectivo']!='not'){
@@ -277,7 +305,8 @@ class FuncoesResolucao extends Model
 		}while ($array1['esquerdo'] || $array1['direito'] || $array2['esquerdo'] || $array2['direito']);
 
 		
-
+		//print "<br>SEGUNDO PASSO CONCLUÍDO<BR>";
+		//print_r($form);
 
 		//Terceira, aplicar a distributiva, formalizar o "e" de "ou"
 
@@ -375,6 +404,93 @@ class FuncoesResolucao extends Model
 			}
 		}
 
+	}
+	public static function negaConectivo(&$conectivo){
+		if ($conectivo=='e') {
+			$conectivo='not_e';
+		}
+		elseif ($conectivo=='ou') {
+			$conectivo='not_ou';
+		}
+		elseif ($conectivo=='implica') {
+			$conectivo='not_implica';
+		}
+		elseif ($conectivo=='not_e') {
+			$conectivo='e';
+		}
+		elseif ($conectivo=='not_ou') {
+			$conectivo='ou';
+		}
+		elseif ($conectivo=='not_implica') {
+			$conectivo='implica';
+		}
+		elseif ($conectivo=='notnot') {
+			$conectivo=null;
+		}
+	}
+	public static function resolveNOT(&$form){
+		if ($form['conectivo']=='not_ou') {
+			if (!is_array($form['esquerdo']) ||  (is_array($form['esquerdo']) && $form['esquerdo']['conectivo']=='not')) {
+				if (@$form['esquerdo']['conectivo']=='not') {
+					$form['esquerdo']['conectivo']=null;
+				}
+				else{
+					$aux['esquerdo']=null;
+					$aux['conectivo']='not';
+					$aux['direito']=$form['esquerdo'];
+					$form['esquerdo']=$aux;
+				}
+			}
+			elseif (is_array($form['esquerdo'])) {
+				negaConectivo($form['esquerdo']['conectivo']);
+			}
+			if (!is_array($form['direito']) ||  (is_array($form['esquerdo']) && $form['esquerdo']['conectivo']=='not')) {
+				if (@$form['direito']['conectivo']=='not') {
+					$form['direito']['conectivo']=null;
+				}
+				else{
+					$aux['esquerdo']=null;
+					$aux['conectivo']='not';
+					$aux['direito']=$form['direito'];
+					$form['direito']=$aux;
+				}
+			}
+			elseif (is_array($form['direito'])) {
+				negaConectivo($form['direito']['conectivo']);
+			}
+			$form['conectivo']='e';
+		}
+		if ($form['conectivo']=='not_e') {
+			if (!is_array($form['esquerdo']) ||  (is_array($form['esquerdo']) && $form['esquerdo']['conectivo']=='not')) {
+				if (@$form['esquerdo']['conectivo']=='not') {
+					$form['esquerdo']['conectivo']=null;
+				}
+				else{
+					$aux['esquerdo']=null;
+					$aux['conectivo']='not';
+					$aux['direito']=$form['esquerdo'];
+					$form['esquerdo']=$aux;
+				}
+			}
+			elseif (is_array($form['esquerdo'])) {
+				negaConectivo($form['esquerdo']['conectivo']);
+			}
+			if (!is_array($form['direito']) ||  (is_array($form['esquerdo']) && $form['esquerdo']['conectivo']=='not')) {
+				if (@$form['direito']['conectivo']=='not') {
+					$form['direito']['conectivo']=null;
+				}
+				else{
+					$aux['esquerdo']=null;
+					$aux['conectivo']='not';
+					$aux['direito']=$form['direito'];
+					$form['direito']=$aux;
+				}
+			}
+			elseif (is_array($form['direito'])) {
+				negaConectivo($form['direito']['conectivo']);
+			}
+			$form['conectivo']='ou';
+		}
 	}
 	public static function resolveImplicacoes(&$form){
 		$flag=true;
