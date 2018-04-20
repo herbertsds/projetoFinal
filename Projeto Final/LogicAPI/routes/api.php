@@ -52,6 +52,8 @@ Route::group(['prefix' => 'resolucao', 'middleware' => 'cors'], function(){
 	
 	//Resolve um exercício específico, rodando o algoritmo inteiro de resolução (fullSteps)
 	Route::get('/', 'ResolucaoController@index');
+
+	Route::get('/stepByStep', 'ResolucaoController@stepByStep');
 	
 	//Teste de relacionamento (não usar)
 	Route::get('/teste', 'ResolucaoController@teste');
@@ -67,6 +69,18 @@ Route::group(['prefix' => 'tableaux', 'middleware' => 'cors'], function(){
 	
 	//Resolve um exercício específico, rodando o algoritmo inteiro do tableaux(fullSteps)
 	Route::get('/', 'TableauxController@index');
+
+	Route::post('', function () {
+	    return request();
+	});
+
+});
+
+// api/semantica/
+Route::group(['prefix' => 'semantica', 'middleware' => 'cors'], function(){
+	
+	//Resolve um exercício específico, rodando o algoritmo inteiro do tableaux(fullSteps)
+	Route::get('/', 'SemanticaController@index');
 
 	Route::post('', function () {
 	    return request();

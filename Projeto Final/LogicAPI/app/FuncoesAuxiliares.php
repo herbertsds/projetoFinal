@@ -17,6 +17,8 @@ class FuncoesAuxiliares extends Model
 		$form=str_replace('ou','v',$form);
 		$form=str_replace('implica','-',$form);
 		$form=str_replace('not','!',$form);
+		$form=str_replace('paraTodo','@',$form);
+		$form=str_replace('xist','&',$form);
 	}
 
 	//Função recebe um ponteiro para uma String fórmula e converte
@@ -26,6 +28,8 @@ class FuncoesAuxiliares extends Model
 		$form=str_replace('v','ou',$form);
 		$form=str_replace('-','implica',$form);
 		$form=str_replace('!','not',$form);
+		$form=str_replace('&','xist',$form);
+		$form=str_replace('@','paraTodo',$form);
 	}
 
 	//Função auxiliar para facilitar a extração de conectivos de fórmulas com not
@@ -34,6 +38,8 @@ class FuncoesAuxiliares extends Model
 		$form=str_replace('^','not_e',$form);
 		$form=str_replace('v','not_ou',$form);
 		$form=str_replace('-','not_implica',$form);
+		$form=str_replace('&','not_xist',$form);
+		$form=str_replace('@','not_paraTodo',$form);
 	}
 
 
@@ -68,7 +74,7 @@ class FuncoesAuxiliares extends Model
 				if($contador<0){
 					#Criar um tratamento aqui
 					//Se o usuário digitar a entrada vamos precisar usar uma rotina de correção e chamar verifica recursivamente
-					//print "Fórmula com digitação incorreta<br>";
+					 abort(400,"Fórmula com digitação incorreta\n".implode($form,"\n"));
 					//print $form;
 					//print "<br>";
 					exit(1);
@@ -86,10 +92,11 @@ class FuncoesAuxiliares extends Model
 			//Se o usuário digitar a entrada vamos precisar usar uma rotina de correção e chamar verifica recursivamente
 			//print $form;
 			//print "<br>";
+			 abort(400,"Fórmula com digitação incorreta\n".implode($form,"\n"));
 		    //print "Fórmula com digitação incorreta";
 			exit(1);
 		}
-		//print "Fórmula Ok<br>";
+		print "Fórmula Ok<br>";
 		
 	}
 

@@ -38,14 +38,27 @@ class Exercicios extends Model
 	        else
 	            $exercicioLista = Exercicios::find(rand(1,Exercicios::contar('tableaux')));
     	}
-                
-        $exercicio = explode(',',$exercicioLista->sentenca);
+        if(is_object($exercicioLista))
+        	$exercicio = explode(',',$exercicioLista->sentenca);
+        else{
+        	
+        	abort(404,"Exercício não encontrado");
+        }
 
         return $exercicio;
     }
 
     public static function converteEntrada($request){
     	return $request->all();
+    }
+
+    public static function converteSaida($string){
+    	$string = str_replace("ou","˅",$string);
+    	$string = str_replace("e","˄",$string);
+    	$string = str_replace("implica","→",$string);
+    	$string = str_replace("not","¬",$string);
+
+    	return $string;
     }
 
 

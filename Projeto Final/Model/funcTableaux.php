@@ -17,14 +17,12 @@ function resolveParentesesTableaux($form){
 	$abreFormula=false;
 	$contador=0;
 	$not=false;
-
 	converteConectivoSimbolo($form);
 	//print "<br> Teste".$form;
 	//Se for um átomo positivo
 	//OBS: Talvez haja uma maneira mais apropriada de tratar isto
 	//Em caso de erro nos cálculos, checar esta etapa
 	//Número 3 é porque há dois parênteses e o átomo SEMPRE, por exemplo: (A)
-
 	if(strlen($form)==3){
 		$form=substr($form, 1);
 		$form=substr($form, 0, strlen($form)-1);
@@ -35,7 +33,6 @@ function resolveParentesesTableaux($form){
 	//OBS: Talvez haja uma maneira mais apropriada de tratar isto
 	//Em caso de erro nos cálculos, checar esta etapa
 	//Número 4 é porque há dois parênteses e o átomo com negativo SEMPRE, por exemplo: (!A)
-
 	if(strlen($form)==4){
 		$form=substr($form, 1);		
 		$form=substr($form, 1);
@@ -44,7 +41,6 @@ function resolveParentesesTableaux($form){
 		$auxForm['info']['conectivo']='not';
 		return $auxForm;
 	}
-
 	//Se não for átomo, caso mais geral
 	for ($i=0; $i<strlen($form); $i++){
 		//Caso notnotnot
@@ -54,11 +50,9 @@ function resolveParentesesTableaux($form){
 				$form=substr($form, 1);
 				$form=substr($form, 0, strlen($form)-1);
 			}
-
 			if ($auxForm['info']['esquerdo']=='(') {
 				$auxForm['info']['esquerdo']=NULL;
 			}
-
 			$form=substr($form, 4);		
 			$form=substr($form, 0, strlen($form)-1);
 			$auxForm['info']['direito']=$form;
@@ -72,11 +66,9 @@ function resolveParentesesTableaux($form){
 				$form=substr($form, 1);
 				$form=substr($form, 0, strlen($form)-1);
 			}
-
 			if ($auxForm['info']['esquerdo']=='(') {
 				$auxForm['info']['esquerdo']=NULL;
 			}
-
 			$form=substr($form, 3);		
 			$form=substr($form, 0, strlen($form)-1);
 			$auxForm['info']['direito']=$form;
@@ -84,7 +76,6 @@ function resolveParentesesTableaux($form){
 			return $auxForm;
 		}
 		
-
 		//Se achar o conectivo not no exterior de um parentese
 		//Certamente há uma fórmula do tipo not para atribuir um conectivo not_algumacoisa
 		//Mas preciso me certificar de que não é um átomo negativo, então verifico se o próximo elemento
@@ -232,12 +223,9 @@ function escolhaEficiente(&$listaFormulasDisponiveis,&$hashInicial,&$nosFolha,&$
 	}
 	
 	$conectivosEficientes=array("e","not_ou","not_implica","notnot");
-
 	foreach ($listaFormulasDisponiveis as $key => $value) {
 		formataFormulasTableaux($listaFormulasDisponiveis[$key]);
-
 	}
-
 	//Aplicação na raiz
 	//-------------------------------------------------------------------
 	//Caso 1 - Raiz é eficiente
@@ -258,7 +246,6 @@ function escolhaEficiente(&$listaFormulasDisponiveis,&$hashInicial,&$nosFolha,&$
 			}
 		}
 	}
-
 	//Caso 2 - Raiz não é eficiente
 	//Se não há fórmula eficiente, aplique no primeiro elemento disponível
 	if ($contador==0) {
@@ -279,14 +266,12 @@ function escolhaEficiente(&$listaFormulasDisponiveis,&$hashInicial,&$nosFolha,&$
 	}
 	//--------------------------------------------------------------------	
 	
-
 	//Aplicação geral de regras
 	//Caso 1 - Existem nós eficientes para serem escolhidos
 	//Devo checar todos os nós folhas em busca do primeiro não não fechado
 	//Se houver fórmula eficiente na lista de fórmulas disponíveis do ramo,
 	//aplico a regra, senão continuo a busca até achar ou acabarem os nós folha
 	foreach ($nosFolha as $key => $noFolhaAtual) {
-
 		//Verifica se este nó já está fechado
 		if (@$noFolhaAtual['filhoCentral']=='fechado') {
 			//Deixe o loop passar
@@ -320,13 +305,11 @@ function escolhaEficiente(&$listaFormulasDisponiveis,&$hashInicial,&$nosFolha,&$
 			}	
 		}
 	}
-
 	//Caso 2 - Não existem nós eficientes para serem escolhidos
 	//Devo checar todos os nós folhas em busca do primeiro não não fechado
 	//Se houver fórmula eficiente na lista de fórmulas disponíveis do ramo,
 	//aplico a regra, senão continuo a busca até achar ou acabarem os nós folha
 	foreach ($nosFolha as $key => $noFolhaAtual) {
-
 		//Verifica se este nó já está fechado
 		if (@$noFolhaAtual['filhoCentral']=='fechado') {
 			//Deixe o loop passar
@@ -363,7 +346,6 @@ function escolhaEficiente(&$listaFormulasDisponiveis,&$hashInicial,&$nosFolha,&$
 function escolhaUsuario(&$listaFormulasDisponiveis,&$hashInicial,$formEscolhida,&$nosFolha,&$noFolhaEscolhido=NULL){
 	global $contador;
 	global $raiz;
-
 	if ($contador==0) {
 		$raiz=$formEscolhida;
 		$raiz['formDisponiveis']=$listaFormulasDisponiveis;
@@ -377,8 +359,6 @@ function escolhaUsuario(&$listaFormulasDisponiveis,&$hashInicial,$formEscolhida,
 		removerFormula($listaFormulasDisponiveis,$formEscolhida['info']);
 		return;
 	}
-
-
 }
 //Serve apenas pra instânciar todos os campos do array fórmula para trabalhar evitando erros ou warnings
 function criaFormulaTableaux(){
@@ -393,7 +373,6 @@ function criaFormulaTableaux(){
 	$auxForm['formDisponiveis']=array();
 	$auxForm['hashAtomos']=array();
 	return $auxForm;
-
 }
 function aplicaRegra(&$form,&$pai,&$nosFolha){
 	global $contador;
@@ -443,13 +422,11 @@ function aplicaRegra(&$form,&$pai,&$nosFolha){
 			$noAuxCen2['formDisponiveis']=$pai['formDisponiveis'];
 			$noAuxCen1['hashAtomos']=$pai['hashAtomos'];
 			$noAuxCen2['hashAtomos']=$pai['hashAtomos'];
-
 			//Correções na estrutura de dados
 			
 			corrigeArrays($noAuxCen1);			
 			corrigeArrays($noAuxCen2);
 			
-
 			//Se a fórmula for atômica eu adiciono átomo gerado na hash da mesma
 			//Se não for átomo, então é uma fórmula e adiciono a fórmula gerada na lista de fórmulas desse elemento
 			//Como noAuxCen1 e noAuxCen2 estão no mesmo ramo, estes devem compartilhar as informações
@@ -478,13 +455,11 @@ function aplicaRegra(&$form,&$pai,&$nosFolha){
 				array_push($noAuxCen1['formDisponiveis'], $noAuxCen2);
 				array_push($noAuxCen2['formDisponiveis'], $noAuxCen2);
 			}
-
 			removerFormula($noAuxCen1['formDisponiveis'],$form['info']);
 			removerFormula($noAuxCen2['formDisponiveis'],$form['info']);
 				
 			adicionaArray($nosFolha, $noAuxCen2);
 			return;
-
 		//Regra 2
 		case 'ou':
 			//Com exceção da raiz, todo o no que é pai neste momento, deixará de ser nó folha.
@@ -504,12 +479,10 @@ function aplicaRegra(&$form,&$pai,&$nosFolha){
 			$noAuxDir['formDisponiveis']=$pai['formDisponiveis'];
 			$noAuxEsq['hashAtomos']=$pai['hashAtomos'];
 			$noAuxDir['hashAtomos']=$pai['hashAtomos'];
-
 			//Correções na estrutura de dados
 			
 			corrigeArrays($noAuxEsq);			
 			corrigeArrays($noAuxDir);
-
 			//Se a fórmula for atômica eu adiciono átomo gerado na hash da mesma
 			//Se não for átomo, então é uma fórmula e adiciono a fórmula gerada na lista de fórmulas desse elemento
 			//Como noAuxCen1 e noAuxCen2 estão no mesmo ramo, estes devem compartilhar as informações
@@ -555,16 +528,13 @@ function aplicaRegra(&$form,&$pai,&$nosFolha){
 			$noAuxDir['formDisponiveis']=$pai['formDisponiveis'];
 			$noAuxEsq['hashAtomos']=$pai['hashAtomos'];
 			$noAuxDir['hashAtomos']=$pai['hashAtomos'];
-
 			//Correções na estrutura de dados
 			
 			corrigeArrays($noAuxEsq);			
 			corrigeArrays($noAuxDir);
 			
-
 			//Manipulação específica da implicação
 			//O lado esquerdo deve passar a ter um not externamente
-
 			//Se o lado esquerdo for átomo
 			if (checaAtomico($noAuxEsq['info'])) {
 				if ($noAuxEsq['info']['conectivo']=='not') {
@@ -579,7 +549,6 @@ function aplicaRegra(&$form,&$pai,&$nosFolha){
 			elseif (!checaAtomico($noAuxEsq['info'])){
 				negaArrayTableaux($noAuxEsq['info']);
 			}
-
 			//Se a fórmula for atômica eu adiciono átomo gerado na hash da mesma
 			//Se não for átomo, então é uma fórmula e adiciono a fórmula gerada na lista de fórmulas desse elemento
 			//Como noAuxCen1 e noAuxCen2 estão no mesmo ramo, estes devem compartilhar as informações
@@ -602,7 +571,6 @@ function aplicaRegra(&$form,&$pai,&$nosFolha){
 			elseif(!checaAtomico($noAuxDir['info'])) {
 				array_push($noAuxDir['formDisponiveis'], $noAuxDir);
 			}
-
 			removerFormula($noAuxEsq['formDisponiveis'],$form['info']);
 			removerFormula($noAuxDir['formDisponiveis'],$form['info']);	
 			adicionaArray($nosFolha, $noAuxEsq);
@@ -623,16 +591,13 @@ function aplicaRegra(&$form,&$pai,&$nosFolha){
 			//Inicialização dos dados que são compartilhados com o pai
 			$noAuxCen1['formDisponiveis']=$pai['formDisponiveis'];
 			$noAuxCen1['hashAtomos']=$pai['hashAtomos'];
-
 			//Correções na estrutura de dados
 			
 			
 			corrigeArrays($noAuxCen1);
 			
-
 			//Manipulação específica de notnot
 			
-
 			//Se a fórmula for átomo
 			if (checaAtomico($noAuxEsq['info'])) {
 				if ($noAuxEsq['info']['conectivo']=='notnot') {
@@ -640,7 +605,6 @@ function aplicaRegra(&$form,&$pai,&$nosFolha){
 					$noAuxEsq['info']['conectivo']=null;
 				}
 			}
-
 			//ARRUMAR O CASO EM QUE NOTNOT ESTIVER EM ARRAY
 			/*
 			//Se o lado esquerdo for array
@@ -648,11 +612,9 @@ function aplicaRegra(&$form,&$pai,&$nosFolha){
 				negaArrayTableaux($noAuxEsq['info']);
 			}			
 			*/
-
 			//Se a fórmula for atômica eu adiciono átomo gerado na hash da mesma
 			//Se não for átomo, então é uma fórmula e adiciono a fórmula gerada na lista de fórmulas desse elemento
 			//Como noAuxCen1 e noAuxCen2 estão no mesmo ramo, estes devem compartilhar as informações
-
 			if(checaAtomico($noAuxCen1['info'])){
 				if (casarFormula($noAuxCen1['hashAtomos'],$noAuxCen1['info'])) {
 					$noAuxCen1['filhoCentral']='fechado';
@@ -685,15 +647,12 @@ function aplicaRegra(&$form,&$pai,&$nosFolha){
 			$noAuxDir['formDisponiveis']=$pai['formDisponiveis'];
 			$noAuxEsq['hashAtomos']=$pai['hashAtomos'];
 			$noAuxDir['hashAtomos']=$pai['hashAtomos'];
-
 			//Correções na estrutura de dados
 			
 			corrigeArrays($noAuxEsq);			
 			corrigeArrays($noAuxDir);
-
 			//Manipulação específica do not_e
 			//Os dois lados devem passar a ter um not externamente
-
 			//Se o lado esquerdo for átomo
 			if (checaAtomico($noAuxEsq['info'])) {
 				if ($noAuxEsq['info']['conectivo']=='not') {
@@ -708,7 +667,6 @@ function aplicaRegra(&$form,&$pai,&$nosFolha){
 			elseif (!checaAtomico($noAuxEsq['info'])){
 				negaArrayTableaux($noAuxEsq['info']);
 			}
-
 			//Se o lado direito for átomo
 			if (checaAtomico($noAuxDir['info'])) {
 				if ($noAuxDir['info']['conectivo']=='not') {
@@ -723,7 +681,6 @@ function aplicaRegra(&$form,&$pai,&$nosFolha){
 			elseif (!checaAtomico($noAuxDir['info'])){
 				negaArrayTableaux($noAuxDir['info']);
 			}
-
 			//Se a fórmula for atômica eu adiciono átomo gerado na hash da mesma
 			//Se não for átomo, então é uma fórmula e adiciono a fórmula gerada na lista de fórmulas desse elemento
 			//Como noAuxCen1 e noAuxCen2 estão no mesmo ramo, estes devem compartilhar as informações
@@ -769,18 +726,13 @@ function aplicaRegra(&$form,&$pai,&$nosFolha){
 			$noAuxCen2['formDisponiveis']=$pai['formDisponiveis'];
 			$noAuxCen1['hashAtomos']=$pai['hashAtomos'];
 			$noAuxCen2['hashAtomos']=$pai['hashAtomos'];
-
 			
-
 			//Correções na estrutura de dados
 			
 			corrigeArrays($noAuxCen1);			
 			corrigeArrays($noAuxCen2);
-
-
 			//Manipulação específica do not_ou
 			//Os dois lados devem passar a ter um not externamente
-
 			//Se o lado esquerdo for átomo
 			if (checaAtomico($noAuxCen1['info'])) {
 				if ($noAuxCen1['info']['conectivo']=='not') {
@@ -795,7 +747,6 @@ function aplicaRegra(&$form,&$pai,&$nosFolha){
 			elseif (!checaAtomico($noAuxCen1['info'])){
 				negaArrayTableaux($noAuxCen1['info']);
 			}
-
 			//Se o lado direito for átomo
 			if (checaAtomico($noAuxCen2['info'])) {
 				if ($noAuxCen2['info']['conectivo']=='not') {
@@ -811,8 +762,6 @@ function aplicaRegra(&$form,&$pai,&$nosFolha){
 				negaArrayTableaux($noAuxCen2['info']);
 			}
 			
-
-
 			//Se a fórmula for atômica eu adiciono átomo gerado na hash da mesma
 			//Se não for átomo, então é uma fórmula e adiciono a fórmula gerada na lista de fórmulas desse elemento
 			//Como noAuxCen1 e noAuxCen2 estão no mesmo ramo, estes devem compartilhar as informações
@@ -839,8 +788,6 @@ function aplicaRegra(&$form,&$pai,&$nosFolha){
 				array_push($noAuxCen1['formDisponiveis'], $noAuxCen2);
 				array_push($noAuxCen2['formDisponiveis'], $noAuxCen2);
 			}
-
-
 			removerFormula($noAuxCen1['formDisponiveis'],$form['info']);
 			removerFormula($noAuxCen2['formDisponiveis'],$form['info']);
 				
@@ -864,16 +811,12 @@ function aplicaRegra(&$form,&$pai,&$nosFolha){
 			$noAuxCen2['formDisponiveis']=$pai['formDisponiveis'];
 			$noAuxCen1['hashAtomos']=$pai['hashAtomos'];
 			$noAuxCen2['hashAtomos']=$pai['hashAtomos'];
-
 			//Correções na estrutura de dados
 			
 			corrigeArrays($noAuxCen1);			
 			corrigeArrays($noAuxCen2);
-
 			//Manipulação específica do not_implica
 			//O lado direito deve passar a ter um not externamente
-
-
 			//Se o lado direito for átomo
 			if (checaAtomico($noAuxCen2['info'])) {
 				if ($noAuxCen2['info']['conectivo']=='not') {
@@ -889,7 +832,6 @@ function aplicaRegra(&$form,&$pai,&$nosFolha){
 				negaArrayTableaux($noAuxCen2['info']);
 			}
 			
-
 			//Se a fórmula for atômica eu adiciono átomo gerado na hash da mesma
 			//Se não for átomo, então é uma fórmula e adiciono a fórmula gerada na lista de fórmulas desse elemento
 			//Como noAuxCen1 e noAuxCen2 estão no mesmo ramo, estes devem compartilhar as informações
@@ -916,12 +858,10 @@ function aplicaRegra(&$form,&$pai,&$nosFolha){
 				array_push($noAuxCen1['formDisponiveis'], $noAuxCen2);
 				array_push($noAuxCen2['formDisponiveis'], $noAuxCen2);
 			}
-
 			removerFormula($noAuxCen1['formDisponiveis'],$form['info']);
 			removerFormula($noAuxCen2['formDisponiveis'],$form['info']);
 				
 			adicionaArray($nosFolha, $noAuxCen2);
-
 			return;
 		//Caso extra
 		case 'not':
@@ -970,10 +910,8 @@ function checaAtomico($form){
 	else{
 		return false;
 	}
-
 	
 }
-
 //Se houver digitação incorreta gera uma exceção (trabalhar na exceção depois)
 function negaPergunta($listaFormulas,$tamanho){
 	//Nega a pergunta
@@ -1070,7 +1008,6 @@ function imprimeArvore(&$no){
 		imprimeArvore(@$no['filhoDireito']);
 	}
 }
-
 //Função utilizada somente por imprimArvore para ajustaro formato da impressão
 function verificaStatusNo(&$no){
 	switch($no){
@@ -1160,5 +1097,3 @@ function voltaUmPasso(&$arrayHistorico,&$nosFolha,&$raiz,&$numPasso,&$listaFormu
 	$listaFormulasDisponiveis=$arrayHistorico[$tam-2]['listaFormulasDisponiveis'];
 	$numPasso=$arrayHistorico[$tam-2]['numPasso'];
 }
-
-?>

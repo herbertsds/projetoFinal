@@ -6,23 +6,31 @@
 $(document).ready(function(){
     $("button").click(function(){
     	var myData = {
-	        'operacao' : 'negaPergunta',
+	        'operacao': 'negPergunta',
 	        'qtd_formulasSelecionadas': 2,
-	        'formulas' : ['AeB','AeC']
+	        'formulas': ["a", "b"]
 	    };
-        $.ajax({
 
-	        url: 'http://127.0.0.1:8000/api/exercicios/teste',
+        $.ajax({
+	        url: 'http://127.0.0.1:8000/api/resolucao/teste',
 	        type: 'GET',
 	        callback: '?',
 	        data: myData,
 	        datatype: 'application/json',
 	        success: function(teste) { 
+
 	        console.log(teste);
 	        // var obj = JSON.parse(teste);
-	        // console.log(obj[0]);
+	        // console.log(obj[0]['sentenca'].split(","));
+
+	         // console.log(teste);
+	        // var obj = JSON.parse(teste);
+	        // console.log(obj[0]['sentenca'].split(","));
+
 	        },
-	        error: function() { alert('Failed!'); },
+	        error: function(erro) {
+				alert(erro.responseText);
+			}
 	    });
     });
 });
@@ -35,6 +43,6 @@ $(document).ready(function(){
 <div class='resultado'>
 
 </div>
-
+˄Ɐ˅→¬
 </body>
 </html>

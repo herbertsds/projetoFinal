@@ -30,6 +30,8 @@
 	<script src="teste.js" type="text/javascript"></script>
 	<script src="funcoes_resolucao.js" type="text/javascript"></script>
 	<script src="funcoes_tableaux.js" type="text/javascript"></script>
+	<script src="funcoes_deducao.js" type="text/javascript"></script>
+	<script src="funcoes_semantica.js" type="text/javascript"></script>
 <!-- 	<script src="funcoes_deducao.js" type="text/javascript"></script> -->
 	
 		<style>
@@ -45,19 +47,27 @@
 		    text-align:center;
 		}
 		.popover {
-			border: 2	px solid #C0C0C0;
+			border: 2px solid #C0C0C0;
 		 }
 		.dropdown-menu{
 			 border: 1px solid gray;
 			 padding: 20px;
 			 background-color:LemonChiffon;
 			 width: 90%;
- 			 height: 200px; 
+ 			 height: 300px; 
 			 overflow-y: scroll;
 		}
 		.dropdown-item{
 			width: 68px;
 		
+		}
+		
+		.dropdown-header{
+			border: 1px dotted gray;
+			background-color: GoldenRod ;
+		    color: #000000;	
+		    text-align:center;
+		    
 		}
 		 </style>	
 
@@ -148,6 +158,16 @@
 		                                                <h6>Deducao Natural</h6>
 		                                            </div>
 		                                        </div>
+		                                        <div class="col-sm-4">
+		                                            <div class="choice" data-toggle="wizard-radio" rel="tooltip" title="Semântica">
+		                                                <input type="radio" name="escolha" value="semantica">
+		                    
+		                                                <div class="icon" id="botaoSemantica">
+		                                                    <i class="material-icons">clear_all</i>
+		                                                </div>
+		                                                <h6>Semântica</h6>
+		                                            </div>
+		                                        </div>
 		                                    </div>
 		                                </div>
 		                            </div>
@@ -166,11 +186,10 @@
 		                                	<div class="col-sm-14 col-sm-offset-4">
 											
 		                                		<div class="dropdown">
-												  <button class="btn btn-success btn-sm dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+												  <button onclick='f_PreencheDrop()' class="btn btn-success btn-sm dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 												    Lista de Exercícíos &#8711;
 												  </button>
 												  <div id="listaEx" class="dropdown-menu" aria-labelledby="dropdownMenu2">
-												  	    <h6 class="dropdown-header">Lista de exercícios para Resolução: </h6>
 <!-- 												    <button class="dropdown-item" type="button">Ex.1</button> -->
 												    
 												  </div>
@@ -261,7 +280,7 @@
 												</div>
 											</div> <!--FIM TABLEAUX	-->
 					
-											<!--  DIV PARA RESOLUCAO -->
+<!------------------------------------------  DIV PARA RESOLUCAO ---------------------------------------------------------------------->
 										<div class="regrasResolucao" id='divResolucao' style="display: none">											
 
 											<div class="col-sm-14 col-sm-offset-0">
@@ -318,6 +337,14 @@
 												<div class="col-sm-8 col-sm-offset-2">
 					
 													<div class="regrasDeducao" id='divDeducao' style="display: none">		
+														<h4 class="info-text"> Execução da Dedução Natural...</h4>
+																						
+													</div>
+												</div> <!--FIM DEDUCAO	-->											
+													<!--  DIV PARA SEMANTICA-->
+												<div class="col-sm-8 col-sm-offset-2">
+					
+													<div class="regrasSemantica" id='divSemantica' style="display: none">		
 														<h4 class="info-text"> Execução da Dedução Natural...</h4>
 																						
 													</div>
