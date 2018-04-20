@@ -124,7 +124,7 @@ var erro = 0;
 		},
 		
 		error: function() {
-			alert('Erro ao passar para FNC!');
+			console.log('ERRO: Função f_FNC!');
 			},
 	    });
 	
@@ -136,7 +136,6 @@ var erro = 0;
 		vet_Entrada[1] = exercicioBuscado.length;
 
 		vet_Entrada[2] = exercicioBuscado;
-		console.log(vet_Entrada);
 		
 		// CHAMAR PHP ENVIAR JSON
 		var myData = { 'operacao' : vet_Entrada[0],
@@ -144,7 +143,7 @@ var erro = 0;
 						'formulas' : vet_Entrada[2]
 	
 		};
-
+		//console.log(myData);
 		$.ajax({
     		
 	        url: 'http://127.0.0.1:8000/api/resolucao/stepByStep',
@@ -181,7 +180,7 @@ var erro = 0;
 		},
 		
 		error: function() {
-			alert('Erro ao Negar a fórmula!');
+			console.log('ERRO: função  f_Negar!');
 			return 1;
 			},
 	    });
@@ -226,14 +225,13 @@ var erro = 0;
 				vet_Entrada[0] = "separaE";
 				vet_Entrada[1] = selecionadas;
 				vet_Entrada[2] = camposMarcados;
-				console.log(vet_Entrada);
 				
 				var myData = { 'operacao' : vet_Entrada[0],
 						'qtd_formulasSelecionadas' : vet_Entrada[1],
 						'formulas' : vet_Entrada[2]
 
 				};
-				
+				console.log(myData);	
 				$.ajax({
 					
 			        url: 'http://127.0.0.1:8000/api/resolucao/stepByStep',
@@ -250,7 +248,7 @@ var erro = 0;
 				},
 				
 				error: function() {
-					alert('Erro ao separar E!');
+					console.log('ERRO: Função f_SeparaE!');
 					},
 			    });
 			}
@@ -273,13 +271,13 @@ var erro = 0;
 			vet_Entrada[0] = "separaOU";
 			vet_Entrada[1] = selecionadas;
 			vet_Entrada[2] = camposMarcados;
-			console.log(vet_Entrada);		
 			
 			var myData = { 'operacao' : vet_Entrada[0],
 					'qtd_formulasSelecionadas' : vet_Entrada[1],
 					'formulas' : vet_Entrada[2]
 
 			};
+			console.log(myData);
 			$.ajax({
 				
 		        url: 'http://127.0.0.1:8000/api/resolucao/stepByStep',
@@ -296,7 +294,7 @@ var erro = 0;
 			},
 			
 			error: function() {
-				alert('Erro ao separar OU!');
+				alert('ERRO: função f_SeparaOU!');
 				},
 		    });
 		}
@@ -447,7 +445,7 @@ function f_GabResolucao(){
 
 			
         },
-        error: function() { alert('Gabarito não encontrado!'); },
+        error: function() { console.log('ERRO: Gabarito não encontrado!'); },
     });
 
 	
@@ -469,3 +467,14 @@ function f_CkSelecionados(){
 	
 	// ######################################################################################################
 	
+function f_LimpaResolucao(){
+	negadaIndice = "";
+	vet_Entrada = [];
+	selecionadas = 0;
+	linhasGab =0;
+	idPergNegada = "";
+	camposMarcados = "";
+	erro = 0;
+	$("#r_divFormulas").empty();
+	$('#r_divNovasFormulas').empty();
+}
