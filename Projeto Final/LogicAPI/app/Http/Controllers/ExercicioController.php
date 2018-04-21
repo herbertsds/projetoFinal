@@ -30,12 +30,25 @@ class ExercicioController extends Controller
 
 
     public function listarExercicios(Request $request){
-    	if(!is_null($request->lista_id))
-    		return json_encode(Listas::find($request->lista_id)->exercicios);
-    	else if (!is_null($request->categorias_id)) 
-    		return json_encode(Categorias::find($request->categorias_id)->exercicios);
-    	else
-    		return json_encode(Exercicios::all());
+    	if(!is_null($request->lista_id)){
+            $retorno = Listas::find($request->lista_id)->exercicios;
+            for($i = 0; $i < count($retorno); $i++){
+                $retorno[$i]['sentenca'] = Exercicios::converteSaida($retorno[$i]['sentenca']);
+            }
+        }
+    	else if (!is_null($request->categorias_id)){
+    		$retorno = Categorias::find($request->categorias_id)->exercicios;
+            for($i = 0; $i < count($retorno); $i++){
+                $retorno[$i]['sentenca'] = Exercicios::converteSaida($retorno[$i]['sentenca']);
+            }
+        }
+    	else{
+    		$retorno = Exercicios::all();
+            for($i = 0; $i < count($retorno); $i++){
+                $retorno[$i]['sentenca'] = Exercicios::converteSaida($retorno[$i]['sentenca']);
+            }
+        }
+        return json_encode($retorno);
     		// dd(Listas::find(1)->exercicios);
     	
     }

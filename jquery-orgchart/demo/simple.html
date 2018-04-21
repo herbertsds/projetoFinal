@@ -1,0 +1,94 @@
+<!DOCTYPE HTML>
+
+<html>
+    <head>
+        <title>Org Chart</title>
+        <link rel="stylesheet" href="demo.css"/>
+        <link rel="stylesheet" href="../jquery.orgchart.css"/>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script src="../jquery.orgchart.js"></script>
+        <script>
+        $(function() {
+            $("#organisation").orgChart({container: $("#main")});
+        });
+        </script>
+    </head>
+
+    <body>
+
+        <div id="left" >
+
+            <ul id="organisation">
+                    <ul>
+                        <li>A e B
+                            <ul>
+                                <li>A
+                                    <ul>
+                                        <li>B
+                                            <ul>
+                                                <li>A ou B
+                                                    <ul id='teste'>
+                                                        <li>A</li>
+                                                        <li>B</li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+
+        </div>
+
+        <div id="content">
+
+            <h1>JQuery/CSS Organisation Chart</h1>
+
+            <div id="main">
+            </div>
+
+            <div class="text">
+                <h2>JQuery</h2>
+                <pre>
+$("#organisation").orgChart({container: $("#main")});
+                </pre>
+            </div>
+
+        </div>
+<script>
+$(document).ready(function(){
+    $("button").click(function(){
+        var myData = {
+            'operacao' : 'negaPergunta',
+            'qtd_formulasSelecionadas': 2,
+            'formulas' : ['AeB','AeC']
+        };
+        $.ajax({
+
+            url: 'http://127.0.0.1:8000/api/exercicios/teste',
+            type: 'GET',
+            callback: '?',
+            data: myData,
+            datatype: 'application/json',
+            success: function(teste) { 
+            // console.log(teste);
+            $("#teste").append('<li>Teste</li>');
+            $("#organisation").orgChart({container: $("#main")});
+            // var obj = JSON.parse(teste);
+            // console.log(obj[0]);
+            },
+            error: function() { alert('Failed!'); },
+        });
+    });
+});
+</script>
+</head>
+<body>
+
+<button>Testar o retorno da API</button>
+
+  </body>
+
+</html>

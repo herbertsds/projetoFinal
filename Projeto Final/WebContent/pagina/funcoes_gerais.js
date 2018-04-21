@@ -436,7 +436,7 @@
 		       
 		        success: function(retorno) {
 		        	exercicios = JSON.parse(retorno);
-//		        	console.log(exercicios);
+		        	console.log(exercicios);
 					
 		        	for( k=0,j=indice_vet_Ex; j<(n+exercicios.length);j++, k++){
 			    		vet_exercicios[j] = exercicios[k];
