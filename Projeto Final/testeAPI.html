@@ -6,19 +6,19 @@
 $(document).ready(function(){
     $("button").click(function(){
     	var myData = {
-	        'operacao': 'negPergunta',
+	        'operacao': 'PassarNotParaDentro',
 	        'qtd_formulasSelecionadas': 4,
-	        'formulas': ["(AimplicaB)","(BimplicaC)","(A)","(C)"]
+	        'formulas': ["((not(A))ouB)","((not(B))ouC)","(A)","not(C)"]
 	    };
 
         $.ajax({
-	        url: 'http://127.0.0.1:8000/api/resolucao/teste',
+	        url: 'http://127.0.0.1:8000/api/resolucao/stepByStep',
 	        type: 'GET',
 	        callback: '?',
 	        data: myData,
 	        datatype: 'application/json',
 	        success: function(teste) { 
-
+			
 	        console.log(teste);
 	        // var obj = JSON.parse(teste);
 	        // console.log(obj[0]['sentenca'].split(","));
@@ -43,6 +43,5 @@ $(document).ready(function(){
 <div class='resultado'>
 
 </div>
-˄Ɐ˅→¬
 </body>
 </html>

@@ -1172,7 +1172,7 @@ class FuncoesResolucao extends Model
 	public static function inicializaHash(&$array){
 		$hash=[];
 		foreach ($array as $key => $value) {
-			if (checaAtomico($value)) {
+			if (FuncoesResolucao::checaAtomico($value)) {
 				$hash[$value['direito']]= $value['conectivo']=='not' ? 0:1;
 			}
 		}

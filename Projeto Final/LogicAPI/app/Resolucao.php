@@ -423,21 +423,20 @@ class Resolucao extends Model
 		$perguntaAntesNegar=null;
 		$perguntaDepoisNegar=null;
 		$statusFechado='Não fechado';
-		return "Aloou";
-		//return $request;
+
+
 
 		//Receber a entrada do Front-End
 
 		//Negação da pergunta+Validação
-		//Recebo a lista com todas as fórmulas e nego a pergunta, além de processar os notnot0
-		//if ($request['operacao']=='negPergunta') {
+		//Recebo a lista com todas as fórmulas e nego a pergunta, além de processar os notnot
+		if ($request['operacao']=='negPergunta') {
 			
 			
-			/*$entradaConvertida=FuncoesResolucao::negaPergunta($request['formulas'],$request['qtd_formulasSelecionadas'],$perguntaAntesNegar,$perguntaDepoisNegar);
-			$resposta[] = $entradaConvertida;
-			return $entradaConvertida;
-			
-			
+		$entradaConvertida=FuncoesResolucao::negaPergunta($request['formulas'],$request['qtd_formulasSelecionadas'],$perguntaAntesNegar,$perguntaDepoisNegar);
+		$resposta = $entradaConvertida;
+		//print_r($resposta);
+
 			//Constrói o retorno
 			$mudancaArray=$entradaConvertida;
 
@@ -466,11 +465,11 @@ class Resolucao extends Model
 				foreach ($entradaConvertida as $key => $value) {
 					if ($entradaConvertida[$key]!=$mudancaArray[$key]) {
 						//Regra
-						$resposta[] = "Remove os notnot";
+						//$resposta[] = "Remove os notnot";
 						//Fórmula nova
-						$resposta[] = $entradaConvertida[$key];
+						$resposta[$key] = $entradaConvertida[$key];
 						//Fórmula antiga
-						$resposta[] = $mudancaArray[$key];
+						//$resposta = $mudancaArray[$key];
 						
 
 					}
@@ -479,10 +478,13 @@ class Resolucao extends Model
 			}
 
 			foreach ($resposta as $key => $value) {
-	 			if (is_array($value)) {
-	 				ParsingFormulas::converteFormulaString($resposta[$key]);
-	 			}
+				if (is_array($value)) {
+		 			ParsingFormulas::converteFormulaString($resposta[$key]);
+		 		}
+				
+	 			
  			}
+ 			
  			return $resposta;
 
 		}		
@@ -491,17 +493,18 @@ class Resolucao extends Model
 		//A flag vai indicar que a fórmula está incorreta e ficar pedindo a digitação correta para o front-end
 		//Quando a flag voltar para o valor "0" pode passar para a próxima entrada
 
-
+		//print_r($request);
 		//Passo 3
-		if ($request[0]=='FNC') {
+		if ($request['operacao']=='FNC') {
 			//Recebo as fórmulas em string do front-end e as converto
-			$entradaConvertida=$request[2];
+			$entradaConvertida=$request['formulas'];
 			ParsingFormulas::ConverteFormulasEmArray($entradaConvertida);
 
 			//Aplico a operação do FNC
 			foreach ($entradaConvertida as $key => $value) {
 				FuncoesResolucao::converteFNC($entradaConvertida[$key]);
 			}
+			/*
 			if ($entradaConvertida!=$mudancaArray) {
 				foreach ($entradaConvertida as $key => $value) {
 					if ($entradaConvertida[$key]!=$mudancaArray[$key]) {
@@ -518,7 +521,7 @@ class Resolucao extends Model
 				//$resposta[] = "<br>Após FNC<br>";
 				//$resposta[] = $entradaConvertida;
 				$mudancaArray=$entradaConvertida;
-			}
+			}*/
 			//Loop para tranfosformar em arrays as fórmulas mais internas, por exemplo
 			//Nesta etapa um Av(BeC) é representado como
 			//$form['esquerdo']=A  $form['conectivo']='ou' $form['direito']='BvC'
@@ -553,11 +556,12 @@ class Resolucao extends Model
 
 			//Formatação de array para controle interno
 			//Não é necessário mostrar
+			/*
 			if ($entradaConvertida!=$mudancaArray) {
 				//$resposta[] = "<br>Após a formatação<br>";
 				//$resposta[] = $entradaConvertida;
 				$mudancaArray=$entradaConvertida;
-			}
+			}*/
 
 			
 
@@ -565,14 +569,14 @@ class Resolucao extends Model
 			foreach ($entradaConvertida as $key => $value) {
 				ParsingFormulas::corrigeArrays($entradaConvertida[$key]);
 			}
-
+			/*
 			//Correção de átomos para controle interno
 			if ($entradaConvertida!=$mudancaArray) {
 				//$resposta[] = "<br>Após o tratamento dos átomos<br>";
 				//$resposta[] = $entradaConvertida;
 				$mudancaArray=$entradaConvertida;
-			}
-
+			}*/
+			$resposta=$entradaConvertida;
 			//Converte de volta para strings e retorna
 			foreach ($resposta as $key => $value) {
 	 			if (is_array($value)) {
@@ -581,13 +585,16 @@ class Resolucao extends Model
 	 		}
 			return $resposta;			
 		}
+		
 
 		//Passo 4
-		if ($request[0]=='SeparaE'){
+		if ($request['operacao']=='SeparaE'){
 			$flag=false;
 			$hashResolucao=[];
+			$contador=0;
+			$arrayFormulas=[];
 			//Recebo as fórmulas em string do front-end e as converto
-			$entradaConvertida=$request[2];
+			$entradaConvertida=$request['formulas'];
 			ParsingFormulas::ConverteFormulasEmArray($entradaConvertida);
 
 			//Inicializa a hash
@@ -598,10 +605,11 @@ class Resolucao extends Model
 				ParsingFormulas::corrigeArrays($entradaConvertida[$key]);
 				ParsingFormulas::corrigeAtomos($entradaConvertida[$key]);
 			}
+			/*
 			//Correção de átomos para controle interno
 			if ($entradaConvertida!=$mudancaArray) {
 				$mudancaArray=$entradaConvertida;
-			}
+			}*/
 			$aux1['esquerdo']=NULL;
 			$aux1['conectivo']=NULL;
 			$aux1['direito']=NULL;
@@ -616,7 +624,7 @@ class Resolucao extends Model
 				ParsingFormulas::corrigeAtomos($arrayFormulas[$key]['esquerdo']);
 				ParsingFormulas::corrigeAtomos($arrayFormulas[$key]['direito']);
 		 	}
-
+		 	/*
 			if ($arrayFormulas!=$mudancaArray) {
 				$key2=0;
 				foreach ($formAntesDoE as $key => $value) {
@@ -634,41 +642,46 @@ class Resolucao extends Model
 			}
 			$mudancaArray=$arrayFormulas;
 			$formAntesDoE=[];
-			$formsDepoisDoE=[];
+			$formsDepoisDoE=[];*/
 			
 			FuncoesResolucao::confrontaAtomos($arrayFormulas,$hashResolucao,$flag,$statusFechado);
+			$resposta=$entradaConvertida;
 
-			if($flag){
-				goto fim;
-			}
+			//Converte de volta para strings e retorna
+			foreach ($resposta as $key => $value) {
+	 			if (is_array($value)) {
+	 				ParsingFormulas::converteFormulaString($resposta[$key]);
+	 			}
+	 		}
 
-			return $resposta;
+			return array($resposta,$statusFechado);
 		}
 
-		if ($request[0]=='SeparaOU'){
+		if ($request['operacao']=='SeparaOU'){
 			$flag=false;
 			$hashResolucao=[];
-			$arrayInicial=[];
+			$arrayFormulas=[];
 			//Recebo as fórmulas em string do front-end e as converto
-			$entradaConvertida=$request[2];
-			ParsingFormulas::ConverteFormulasEmArray($entradaConvertida);
+			$arrayFormulas=$request['formulas'];
+			ParsingFormulas::ConverteFormulasEmArray($arrayFormulas);
 
 			//Inicializa a hash
-			$hashResolucao=FuncoesResolucao::inicializaHash($entradaConvertida);
+			$hashResolucao=FuncoesResolucao::inicializaHash($arrayFormulas);
 
 			//Correções nas fórmulas
-			foreach ($entradaConvertida as $key => $value) {
-				ParsingFormulas::corrigeArrays($entradaConvertida[$key]);
-				ParsingFormulas::corrigeAtomos($entradaConvertida[$key]);
+			foreach ($arrayFormulas as $key => $value) {
+				ParsingFormulas::corrigeArrays($arrayFormulas[$key]);
+				ParsingFormulas::corrigeAtomos($arrayFormulas[$key]);
 			}
+			/*
 			//Correção de átomos para controle interno
 			if ($entradaConvertida!=$mudancaArray) {
 				$mudancaArray=$entradaConvertida;
 				$arrayInicial=$entradaConvertida;
-			}
+			}*/
 
 			FuncoesResolucao::separarOU1($arrayFormulas,$hashResolucao,$formAntesDoOu1, $formAntesDoOu2, $formsDepoisDoOu);
-
+			/*
 			if ($arrayFormulas!=$mudancaArray) {
 				foreach ($formsDepoisDoOu as $key => $value) {
 					//Regra
@@ -685,7 +698,7 @@ class Resolucao extends Model
 				$formAntesDoOu1=[];
 				$formAntesDoOu2=[];
 				$formsDepoisDoOu=[];
-			}
+			}*/
 			foreach ($arrayFormulas as $key => $value) {
 		 		ParsingFormulas::corrigeArrays($arrayFormulas[$key]);
 				ParsingFormulas::corrigeAtomos($arrayFormulas[$key]);
@@ -697,7 +710,7 @@ class Resolucao extends Model
 
 			//Simplificação do tipo: Se Av¬B e AvB então A.
 			FuncoesResolucao::separarOU2($arrayFormulas,$formAntesDoOu1, $formAntesDoOu2, $formsDepoisDoOu);
-			if ($arrayFormulas!=$mudancaArray) {
+			/*if ($arrayFormulas!=$mudancaArray) {
 				foreach ($formAntesDoOu1 as $key => $value) {
 					//Regra
 					$resposta[] = "Separação do Ou";
@@ -713,7 +726,7 @@ class Resolucao extends Model
 				$formAntesDoOu1=[];
 				$formAntesDoOu2=[];
 				$formsDepoisDoOu=[];
-			}
+			}*/
 
 			foreach ($arrayFormulas as $key => $value) {
 		 		ParsingFormulas::corrigeArrays($arrayFormulas[$key]);
@@ -721,9 +734,9 @@ class Resolucao extends Model
 				ParsingFormulas::corrigeAtomos($arrayFormulas[$key]['direito']);
 		 	}
 		 	//Atualização de mudancaArray para evitar erros
-		 	if ($entradaConvertida!=$mudancaArray) {
+		 	/*if ($entradaConvertida!=$mudancaArray) {
 					$mudancaArray=$entradaConvertida;
-			}	
+			}	*/
 
 			FuncoesResolucao::confrontaAtomos($arrayFormulas,$hashResolucao,$flag,$statusFechado);
 			if($flag){
@@ -731,7 +744,7 @@ class Resolucao extends Model
 			}
 
 			FuncoesResolucao::separarOU3($arrayFormulas,$hashResolucao,$formAntesDoOu1, $formAntesDoOu2, $formsDepoisDoOu);
-			if ($arrayFormulas!=$mudancaArray) {
+			/*if ($arrayFormulas!=$mudancaArray) {
 				foreach ($formAntesDoOu1 as $key => $value) {
 						//Regra
 						$resposta[] = "Separação do Ou";
@@ -750,7 +763,7 @@ class Resolucao extends Model
 				$formAntesDoOu1=[];
 				$formAntesDoOu2=[];
 				$formsDepoisDoOu=[];
-			}
+			}*/
 
 			foreach ($arrayFormulas as $key => $value) {
 		 		ParsingFormulas::corrigeArrays($arrayFormulas[$key]);
@@ -758,9 +771,9 @@ class Resolucao extends Model
 				ParsingFormulas::corrigeAtomos($arrayFormulas[$key]['direito']);
 		 	}
 		 	//Atualização de mudancaArray para evitar erros
-		 	if ($entradaConvertida!=$mudancaArray) {
+		 	/*if ($entradaConvertida!=$mudancaArray) {
 					$mudancaArray=$entradaConvertida;
-			}	
+			}	*/
 
 
 			//Passo 5 - REPETIÇÃO
@@ -768,12 +781,44 @@ class Resolucao extends Model
 			if($flag){
 				goto fim;
 			}
+			fim:
+ 			$resposta=$arrayFormulas;
+			//Converte de volta para strings e retorna
+			foreach ($resposta as $key => $value) {
+	 			if (is_array($value)) {
+	 				ParsingFormulas::converteFormulaString($resposta[$key]);
+	 			}
+	 		}
+
+		return array($resposta,$statusFechado);
 		}
+		if ($request['operacao']=="PassarNotParaDentro") {
+			$arrayFormulas=[];
+			//Recebo as fórmulas em string do front-end e as converto
+			$arrayFormulas=$request['formulas'];
+			ParsingFormulas::ConverteFormulasEmArray($arrayFormulas);
 
+			//Inicializa a hash
+			$hashResolucao=FuncoesResolucao::inicializaHash($arrayFormulas);
 
-		fim:
- 		$resposta[] = $statusFechado;
+			//Correções nas fórmulas
+			foreach ($arrayFormulas as $key => $value) {
+				ParsingFormulas::corrigeArrays($arrayFormulas[$key]);
+				ParsingFormulas::corrigeAtomos($arrayFormulas[$key]);
+			}
 
-		return $resposta;*/
+			//Aplica FNC novamente para passar not para dentro
+			foreach ($arrayFormulas as $key => $value) {
+			FuncoesResolucao::resolveNOT($arrayFormulas[$key]);
+			}
+			$resposta=$arrayFormulas;
+			foreach ($resposta as $key => $value) {
+	 			if (is_array($value)) {
+	 				ParsingFormulas::converteFormulaString($resposta[$key]);
+	 			}
+	 		}
+
+			return array($resposta,$statusFechado);
+		}	
     }
 }
