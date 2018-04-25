@@ -1083,6 +1083,7 @@ class FuncoesTableaux extends Model
 	public static function imprimeArvore(&$no){
 		if (@$no['info']!=NULL) {
 			FuncoesTableaux::converteFormulaString($no['info']);
+			print "<br>";
 			print_r($no['info']);
 			FuncoesTableaux::verificaStatusNo($no);
 		}
