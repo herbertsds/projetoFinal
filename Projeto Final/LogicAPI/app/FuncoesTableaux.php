@@ -1080,43 +1080,70 @@ class FuncoesTableaux extends Model
 			return false;
 		}
 	}
-	public static function imprimeArvore(&$no){
+	public static function imprimeArvore(&$no,&$resultado=NULL){
 		if (@$no['info']!=NULL) {
 			FuncoesTableaux::converteFormulaString($no['info']);
 			print "<br>";
 			print_r($no['info']);
-			FuncoesTableaux::verificaStatusNo($no);
+			FuncoesTableaux::verificaStatusNo($no,$resultado);
 		}
 		
 		if(@$no['filhoCentral']!=NULL && @$no['filhoCentral']!='fechado'){
-			@FuncoesTableaux::imprimeArvore($no['filhoCentral']);
+			@FuncoesTableaux::imprimeArvore($no['filhoCentral'],$resultado);
 		}
 		if(@$no['filhoEsquerdo'] && @$no['filhoEsquerdo']!='fechado'){
-			FuncoesTableaux::imprimeArvore(@$no['filhoEsquerdo']);
+			FuncoesTableaux::imprimeArvore(@$no['filhoEsquerdo'],$resultado);
 		}
 		if(@$no['filhoDireito'] && @$no['filhoDireito']!='fechado'){
-			FuncoesTableaux::imprimeArvore(@$no['filhoDireito']);
+			FuncoesTableaux::imprimeArvore(@$no['filhoDireito'],$resultado);
 		}
 	}
 
 	//Função utilizada somente por imprimArvore para ajustaro formato da impressão
-	public static function verificaStatusNo(&$no){
+	public static function verificaStatusNo(&$no,&$resultado){
 		switch($no){
 			case @$no['atualCentral']:
 				print "  Central <br>";
+				$resultado[]['central'] = $no['info'];
 				break;
 			case @$no['atualEsquerdo']:
-				print "  Esquerda ------ ";
+				print "  Esquerdo <br>";
+				$resultado[]['esquerda'] = $no['info'];
 				break;
 			case @$no['atualDireito']:
-				print "  Direita <br>";
+				print "  Direito <br>";
+				$resultado[]['direita'] = $no['info'];
 				break;
 			default:
 				if(@$no['info']=="fechado"){
 					break;
 				}
+				else{
+					$resultado[]['raiz'] = $no['info'];
+				}
 				//print "<br>Nó não categorizado<br>";
 		}
+	}
+	public static function outputArvore($resultado){
+		$fechamento = null;
+		$resposta = null;
+		foreach ($resultado as $chave => $valor) {
+			if(array_key_exists("raiz", $valor)){
+				$resposta .= "<ul id='organisation'><li id='".$valor['raiz']."'>".$valor['raiz'];
+				$fechamento = "</li></ul>" . $fechamento;
+			}
+			else if(array_key_exists("central", $valor)){
+				$resposta .= "<ul><li id={$valor['central']}>{$valor['central']}";
+				$fechamento = "</li></ul>" . $fechamento;
+			}
+			else if(array_key_exists("esquerda", $valor)){
+				$resposta .= "<ul><li id={$valor['esquerda']}>{$valor['esquerda']}";
+				$fechamento = "</li></ul>" . $fechamento;
+			}
+			
+		}
+		print_r($resposta.$fechamento);
+		// dd($resposta.$fechamento);
 	}
 	public static function formataFormulasTableaux(&$form){
 		//Se ocorrer erro, investigar a entrada no if barra por strlen

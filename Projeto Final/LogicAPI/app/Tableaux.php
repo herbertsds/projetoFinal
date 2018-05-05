@@ -197,10 +197,12 @@ class Tableaux extends Model
 		else{
 			//print "<br>Nem todos os ramos foram fechados<br>Este Tableaux não fecha<br>";
 		}
+		$resultado = null;
 		//print "<br>Árvore a partir da raiz<br>";
-		FuncoesTableaux::imprimeArvore($raiz);
+		FuncoesTableaux::imprimeArvore($raiz,$resultado);
 		//print '<br>Raiz<br>';
 		//print_r($raiz);
+		FuncoesTableaux::outputArvore($resultado);
 		$resposta[] = $raiz;
 		return $resposta;
     }
