@@ -1,4 +1,3 @@
-// tic adicionado só na primeira formula obrigatoria 
 var negadaIndice;
 var vet_Entrada = [];
 var selecionadas = 0;
