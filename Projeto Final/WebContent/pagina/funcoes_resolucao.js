@@ -143,7 +143,8 @@ var erro = 0;
 						'formulas' : vet_Entrada[2]
 	
 		};
-		//console.log(myData);
+		
+		console.log(myData);
 		$.ajax({
     		
 	        url: 'http://127.0.0.1:8000/api/resolucao/stepByStep',
@@ -151,9 +152,9 @@ var erro = 0;
 	        callback: '?',
 	        data: myData, 
 	        datatype: 'application/json',
-	       
+
 	        success: function(retorno) {
-		        console.log(retorno);
+	        	console.log(retorno);
 				
 //		        numLinha++;
 //				linhasGab++;
@@ -188,6 +189,53 @@ var erro = 0;
 	}		
 	
 	//bater duas fórmulas diferentes para gerar uma nova
+	function f_PassarNotPraDentro(){
+		vet_Entrada = [];
+		selecionadas = 0;
+		camposMarcados = new Array();
+		$("input[type=checkbox][name='ck_novasFormulas']:checked").each(function(){
+		    camposMarcados.push($(this).val());
+		    selecionadas++;
+		});
+		
+		if(selecionadas == 0){
+			alert("Número inválido de fórmulas selecionadas!");
+		}
+		
+		else{
+			
+				vet_Entrada[2] = camposMarcados;
+	
+				// mostra a saída
+				console.log("Selecionados:" + camposMarcados );
+			var myData = { 'operacao' : vet_Entrada[0],
+							'qtd_formulasSelecionadas' : selecionadas,
+							'formulas' : vet_Entrada[2]
+		
+			};
+			//console.log(myData);
+			$.ajax({
+	    		
+		        url: 'http://127.0.0.1:8000/api/resolucao/stepByStep',
+		    	type: 'GET',
+		        callback: '?',
+		        data: myData, 
+		        datatype: 'application/json',
+		       
+		        success: function(retorno) {
+			        console.log(retorno);
+					
+//					return formula;
+			},
+			
+			error: function() {
+				console.log('ERRO: função  f_PassarNotPraDentro!');
+				return 1;
+				},
+		    });
+		}	
+	}
+	
 	
 	function f_Confrontar(){
 		selecionadas = 0;
@@ -337,11 +385,8 @@ function f_GabResolucao(){
 			
 			// traduzir para o usuário o retorno  
 			// apresentar o gabarito na tela
+			console.log(gabaritoBuscado);
 			for(var data=0; data < limiteGabarito; data++) {
-				
-
-
-
 				switch (gabaritoBuscado[data]){
 					case "Negação da pergunta": 
 						cont++;
@@ -386,6 +431,14 @@ function f_GabResolucao(){
 						data = data+2;
 						
 						break;
+						
+					case "Passando Not Para Dentro":
+						cont++;
+						numLinha++;
+						$('#r_divNovasFormulas').append("<p id='" + cont+ "' data-html='true'  data-trigger='click' data-toggle='popover' data-placement='right' title='Passando Not Pra Dentro' data-content='Fórmulas usadas:\n<ul><li>"+ gabaritoBuscado[data+2]+"</li></ul>'>"+ numLinha +": " + gabaritoBuscado[data+1] + "</p>" );
+						data = data+2;
+						
+						break;	
 						
 					case "Fechado":
 						cont++;
