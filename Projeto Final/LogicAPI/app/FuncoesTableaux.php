@@ -1125,25 +1125,68 @@ class FuncoesTableaux extends Model
 		}
 	}
 	public static function outputArvore($resultado){
-		$fechamento = null;
-		$resposta = null;
-		foreach ($resultado as $chave => $valor) {
-			if(array_key_exists("raiz", $valor)){
-				$resposta .= "<ul id='organisation'><li id='".$valor['raiz']."'>".$valor['raiz'];
-				$fechamento = "</li></ul>" . $fechamento;
+		
+		$subgrupo = FuncoesTableaux::setSubGrupos($resultado);
+
+		$grupo = FuncoesTableaux::setGrupo($subgrupo);
+
+		dd($subgrupo);
+		
+	}
+	private static function setSubGrupos($resultado){
+		$subgrupo = NULL;
+		$controle = 0;
+		foreach ($resultado as $key => $value) {
+			if(array_key_exists("central", $value)){
+				$subgrupo[$controle]['string'][] = $value['central'];
+				$subgrupo[$controle]['node'][] = 'central';
 			}
-			else if(array_key_exists("central", $valor)){
-				$resposta .= "<ul><li id={$valor['central']}>{$valor['central']}";
-				$fechamento = "</li></ul>" . $fechamento;
+			else if(array_key_exists("raiz", $value)){
+				$subgrupo[$controle]['string'][] = $value['raiz'];
+				$subgrupo[$controle]['node'][] = 'central';
 			}
-			else if(array_key_exists("esquerda", $valor)){
-				$resposta .= "<ul><li id={$valor['esquerda']}>{$valor['esquerda']}";
-				$fechamento = "</li></ul>" . $fechamento;
+			else{
+				$controle++;
+				$subgrupo[$controle]['node'][] = key($value);
+				$subgrupo[$controle]['string'][] = $value[key($value)];
 			}
-			
 		}
-		print_r($resposta.$fechamento);
-		// dd($resposta.$fechamento);
+		return $subgrupo;
+	}
+
+	public static function setGrupo(&$subgrupo){
+		$controle = 1;
+		for($i = count($subgrupo) - 1 ; $i >= 0 ; $i--) {
+			if($subgrupo[$i]['node'][0] == "direita" && $subgrupo[$i-1]['node'][0] == "esquerda"){
+				if(!array_key_exists("filho", $grupo[$controle])){
+					$grupo[$controle]['filho'] = null;
+				}
+				$grupo[$controle][] = $i-1;
+				$grupo[$controle][] = $i;
+				$grupo[$controle+1]['filho'] = $i-1;
+				$subgrupo[$i]['grupo'] = $controle;
+				$subgrupo[$i-1]['grupo'] = $controle;
+				$controle++;
+				$i--;
+			}
+			else if($subgrupo[$i]['node'][0] == "direita" && $subgrupo[$i-1]['node'][0] == "direita"){
+				$grupo[$controle][] = $subgrupo[$i];
+				while (true) {
+					$j = 2;
+					$nextEsquerdo = 2;
+					if($subgrupo[$i-$j]['node'][0] == "direita")
+						$nextEsquerdo++;
+					else
+						$nextEsquerdo--;
+
+					if($nextEsquerdo == 0){
+						$grupo[$controle+1]['filho'] = $i-1;
+					}
+					
+				}
+				
+			}
+		}
 	}
 	public static function formataFormulasTableaux(&$form){
 		//Se ocorrer erro, investigar a entrada no if barra por strlen
