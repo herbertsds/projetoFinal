@@ -1130,7 +1130,7 @@ class FuncoesTableaux extends Model
 
 		$grupo = FuncoesTableaux::setGrupo($subgrupo);
 
-		dd($subgrupo);
+		dd($grupo);
 		
 	}
 	private static function setSubGrupos($resultado){
@@ -1158,12 +1158,12 @@ class FuncoesTableaux extends Model
 		$controle = 1;
 		for($i = count($subgrupo) - 1 ; $i >= 0 ; $i--) {
 			if($subgrupo[$i]['node'][0] == "direita" && $subgrupo[$i-1]['node'][0] == "esquerda"){
+				$grupo[$controle][] = $i-1;
+				$grupo[$controle][] = $i;
 				if(!array_key_exists("filho", $grupo[$controle])){
 					$grupo[$controle]['filho'] = null;
 				}
-				$grupo[$controle][] = $i-1;
-				$grupo[$controle][] = $i;
-				$grupo[$controle+1]['filho'] = $i-1;
+				$grupo[$controle+1]['filho'][] = $i-1;
 				$subgrupo[$i]['grupo'] = $controle;
 				$subgrupo[$i-1]['grupo'] = $controle;
 				$controle++;
@@ -1171,22 +1171,42 @@ class FuncoesTableaux extends Model
 			}
 			else if($subgrupo[$i]['node'][0] == "direita" && $subgrupo[$i-1]['node'][0] == "direita"){
 				$grupo[$controle][] = $subgrupo[$i];
+				$j = 2;
+				$nextEsquerdo = 2;
 				while (true) {
-					$j = 2;
-					$nextEsquerdo = 2;
+					
 					if($subgrupo[$i-$j]['node'][0] == "direita")
 						$nextEsquerdo++;
 					else
 						$nextEsquerdo--;
 
 					if($nextEsquerdo == 0){
-						$grupo[$controle+1]['filho'] = $i-1;
+
+						if(array_key_exists('grupo', $subgrupo[$i-$j]))
+							$grupo[$subgrupo[$i-$j]['grupo']]['filho'][1] = $i;
+						else
+							$subgrupo[$i-$j]['filho'] = $i;
+						break;
 					}
-					
+					$j++;
 				}
-				
+				$controle++;
+			}
+			else if($subgrupo[$i]['node'][0] == "esquerda"){
+				$grupo[$controle][] = $i;
+				if(array_key_exists('filho', $subgrupo[$i])){
+					$grupo[$controle]['filho'][1] = $subgrupo[$i]['filho'];
+				}
+				$controle++;
+				$grupo[$controle]['filho'][0] = $i;
+			}
+			else if($subgrupo[$i]['node'][0] == "central"){
+				$grupo[$controle][] = $i;
+				if(array_key_exists('filho', $subgrupo[$i]))
+					$grupo[$controle]['filho'][1] = $subgrupo[$i]['filho'];
 			}
 		}
+		return $grupo;
 	}
 	public static function formataFormulasTableaux(&$form){
 		//Se ocorrer erro, investigar a entrada no if barra por strlen

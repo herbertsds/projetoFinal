@@ -202,6 +202,31 @@ class Tableaux extends Model
 		FuncoesTableaux::imprimeArvore($raiz,$resultado);
 		//print '<br>Raiz<br>';
 		//print_r($raiz);
+		$resultado = null;
+		$resultado[]['central'] = 'Zero';
+		$resultado[]['central'] = 'Um';
+		$resultado[]['central'] = 'Dois';
+		$resultado[]['central'] = 'Três';
+
+		$resultado[]['esquerda'] = 'Quatro';
+
+		$resultado[]['esquerda'] = 'Cinco';
+		$resultado[]['central'] = 'Seis';
+		$resultado[]['central'] = 'Sete';
+
+		$resultado[]['direita'] = 'Oito';
+
+		$resultado[]['direita'] = 'Nove';
+		$resultado[]['central'] = 'Dez';
+		$resultado[]['central'] = 'Onze';
+
+		$resultado[]['esquerda'] = 'Doze';
+		$resultado[]['central'] = 'Treze';
+		$resultado[]['central'] = 'Quatorze';
+		
+		$resultado[]['direita'] = 'Quinze';
+		$resultado[]['central'] = 'Dezesseis';
+
 		FuncoesTableaux::outputArvore($resultado);
 		$resposta[] = $raiz;
 		return $resposta;
