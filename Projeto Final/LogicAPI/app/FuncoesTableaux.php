@@ -1083,43 +1083,133 @@ class FuncoesTableaux extends Model
 			return false;
 		}
 	}
-	public static function imprimeArvore(&$no){
+	public static function imprimeArvore(&$no,&$resultado=NULL){
 		if (@$no['info']!=NULL) {
 			FuncoesTableaux::converteFormulaString($no['info']);
 			print "<br>";
 			print_r($no['info']);
-			FuncoesTableaux::verificaStatusNo($no);
+			FuncoesTableaux::verificaStatusNo($no,$resultado);
 		}
 		
 		if(@$no['filhoCentral']!=NULL && @$no['filhoCentral']!='fechado'){
-			@FuncoesTableaux::imprimeArvore($no['filhoCentral']);
+			@FuncoesTableaux::imprimeArvore($no['filhoCentral'],$resultado);
 		}
 		if(@$no['filhoEsquerdo'] && @$no['filhoEsquerdo']!='fechado'){
-			FuncoesTableaux::imprimeArvore(@$no['filhoEsquerdo']);
+			FuncoesTableaux::imprimeArvore(@$no['filhoEsquerdo'],$resultado);
 		}
 		if(@$no['filhoDireito'] && @$no['filhoDireito']!='fechado'){
-			FuncoesTableaux::imprimeArvore(@$no['filhoDireito']);
+			FuncoesTableaux::imprimeArvore(@$no['filhoDireito'],$resultado);
 		}
 	}
 
 	//Função utilizada somente por imprimArvore para ajustaro formato da impressão
-	public static function verificaStatusNo(&$no){
+	public static function verificaStatusNo(&$no,&$resultado){
 		switch($no){
 			case @$no['atualCentral']:
 				print "  Central <br>";
+				$resultado[]['central'] = $no['info'];
 				break;
 			case @$no['atualEsquerdo']:
-				print "  Esquerda ------ ";
+				print "  Esquerdo <br>";
+				$resultado[]['esquerda'] = $no['info'];
 				break;
 			case @$no['atualDireito']:
-				print "  Direita <br>";
+				print "  Direito <br>";
+				$resultado[]['direita'] = $no['info'];
 				break;
 			default:
 				if(@$no['info']=="fechado"){
 					break;
 				}
+				else{
+					$resultado[]['raiz'] = $no['info'];
+				}
 				//print "<br>Nó não categorizado<br>";
 		}
+	}
+	public static function outputArvore($resultado){
+		
+		$subgrupo = FuncoesTableaux::setSubGrupos($resultado);
+
+		$grupo = FuncoesTableaux::setGrupo($subgrupo);
+
+		dd($grupo);
+		
+	}
+	private static function setSubGrupos($resultado){
+		$subgrupo = NULL;
+		$controle = 0;
+		foreach ($resultado as $key => $value) {
+			if(array_key_exists("central", $value)){
+				$subgrupo[$controle]['string'][] = $value['central'];
+				$subgrupo[$controle]['node'][] = 'central';
+			}
+			else if(array_key_exists("raiz", $value)){
+				$subgrupo[$controle]['string'][] = $value['raiz'];
+				$subgrupo[$controle]['node'][] = 'central';
+			}
+			else{
+				$controle++;
+				$subgrupo[$controle]['node'][] = key($value);
+				$subgrupo[$controle]['string'][] = $value[key($value)];
+			}
+		}
+		return $subgrupo;
+	}
+
+	public static function setGrupo(&$subgrupo){
+		$controle = 1;
+		for($i = count($subgrupo) - 1 ; $i >= 0 ; $i--) {
+			if($subgrupo[$i]['node'][0] == "direita" && $subgrupo[$i-1]['node'][0] == "esquerda"){
+				$grupo[$controle][] = $i-1;
+				$grupo[$controle][] = $i;
+				if(!array_key_exists("filho", $grupo[$controle])){
+					$grupo[$controle]['filho'] = null;
+				}
+				$grupo[$controle+1]['filho'][] = $i-1;
+				$subgrupo[$i]['grupo'] = $controle;
+				$subgrupo[$i-1]['grupo'] = $controle;
+				$controle++;
+				$i--;
+			}
+			else if($subgrupo[$i]['node'][0] == "direita" && $subgrupo[$i-1]['node'][0] == "direita"){
+				$grupo[$controle][] = $subgrupo[$i];
+				$j = 2;
+				$nextEsquerdo = 2;
+				while (true) {
+					
+					if($subgrupo[$i-$j]['node'][0] == "direita")
+						$nextEsquerdo++;
+					else
+						$nextEsquerdo--;
+
+					if($nextEsquerdo == 0){
+
+						if(array_key_exists('grupo', $subgrupo[$i-$j]))
+							$grupo[$subgrupo[$i-$j]['grupo']]['filho'][1] = $i;
+						else
+							$subgrupo[$i-$j]['filho'] = $i;
+						break;
+					}
+					$j++;
+				}
+				$controle++;
+			}
+			else if($subgrupo[$i]['node'][0] == "esquerda"){
+				$grupo[$controle][] = $i;
+				if(array_key_exists('filho', $subgrupo[$i])){
+					$grupo[$controle]['filho'][1] = $subgrupo[$i]['filho'];
+				}
+				$controle++;
+				$grupo[$controle]['filho'][0] = $i;
+			}
+			else if($subgrupo[$i]['node'][0] == "central"){
+				$grupo[$controle][] = $i;
+				if(array_key_exists('filho', $subgrupo[$i]))
+					$grupo[$controle]['filho'][1] = $subgrupo[$i]['filho'];
+			}
+		}
+		return $grupo;
 	}
 	public static function formataFormulasTableaux(&$form){
 		//Se ocorrer erro, investigar a entrada no if barra por strlen

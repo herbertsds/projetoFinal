@@ -197,10 +197,37 @@ class Tableaux extends Model
 		else{
 			//print "<br>Nem todos os ramos foram fechados<br>Este Tableaux não fecha<br>";
 		}
+		$resultado = null;
 		//print "<br>Árvore a partir da raiz<br>";
-		FuncoesTableaux::imprimeArvore($raiz);
+		FuncoesTableaux::imprimeArvore($raiz,$resultado);
 		//print '<br>Raiz<br>';
 		//print_r($raiz);
+		$resultado = null;
+		$resultado[]['central'] = 'Zero';
+		$resultado[]['central'] = 'Um';
+		$resultado[]['central'] = 'Dois';
+		$resultado[]['central'] = 'Três';
+
+		$resultado[]['esquerda'] = 'Quatro';
+
+		$resultado[]['esquerda'] = 'Cinco';
+		$resultado[]['central'] = 'Seis';
+		$resultado[]['central'] = 'Sete';
+
+		$resultado[]['direita'] = 'Oito';
+
+		$resultado[]['direita'] = 'Nove';
+		$resultado[]['central'] = 'Dez';
+		$resultado[]['central'] = 'Onze';
+
+		$resultado[]['esquerda'] = 'Doze';
+		$resultado[]['central'] = 'Treze';
+		$resultado[]['central'] = 'Quatorze';
+		
+		$resultado[]['direita'] = 'Quinze';
+		$resultado[]['central'] = 'Dezesseis';
+
+		FuncoesTableaux::outputArvore($resultado);
 		$resposta[] = $raiz;
 		return $resposta;
     }
