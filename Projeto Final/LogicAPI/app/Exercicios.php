@@ -64,7 +64,19 @@ class Exercicios extends Model
 
     	return $string;
     }
-
+    public static function converteSimbolosEntrada($string){
+        $string = str_replace("∨","ou",$string);
+        $string = str_replace("∧","e",$string);
+        $string = str_replace("→","implica",$string);
+        $string = str_replace("→","-",$string);
+        $string = str_replace("¬","not",$string);
+        $string = str_replace("¬","!",$string);
+        $string = str_replace("∀","paraTodo", $string);
+        $string = str_replace("∃","xist", $string);
+        
+        return $string;
+    }
+    
 
 
     /*private function setListaExercicios(){
