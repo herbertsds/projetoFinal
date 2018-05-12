@@ -9,10 +9,10 @@ use App\Exercicios;
 use App\TableauxLPO;
 
 class TableauxLPOController extends Controller
-{
+{   
     public function index(Request $numeroExercicio){
-
-    	$exercicio = Exercicios::getExercicio(74);
+        //Exercícios 72 até o 138
+    	$exercicio = Exercicios::getExercicio(76);
         //$exercicio = Exercicios::getExercicio($numeroExercicio->exercicio);
 
     	$resposta = new TableauxLPO($exercicio);

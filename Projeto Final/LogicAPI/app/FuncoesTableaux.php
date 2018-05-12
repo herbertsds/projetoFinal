@@ -661,10 +661,10 @@ class FuncoesTableaux extends Model
 				
 
 				//Se a fórmula for átomo
-				if (FuncoesTableaux::checaAtomico($noAuxEsq['info'])) {
-					if ($noAuxEsq['info']['conectivo']=='notnot') {
+				if (FuncoesTableaux::checaAtomico($noAuxCen1['info'])) {
+					if ($noAuxCen1['info']['conectivo']=='notnot') {
 						//Equivalente a notnot
-						$noAuxEsq['info']['conectivo']=null;
+						$noAuxCen1['info']['conectivo']=null;
 					}
 				}
 
@@ -690,8 +690,11 @@ class FuncoesTableaux extends Model
 					array_push($noAuxCen1['formDisponiveis'], $noAuxCen1);
 				}		
 				FuncoesTableaux::removerFormula($noAuxCen1['formDisponiveis'],$form['info']);
-					
-				FuncoesTableaux::adicionaArray($nosFolha, $noAuxCen1);
+				
+				if (!FuncoesTableaux::checaAtomico($noAuxCen1['info'])) {
+					FuncoesTableaux::adicionaArray($nosFolha, $noAuxCen1);
+				}	
+				
 				return;
 			
 			case 'not_e':
@@ -991,7 +994,7 @@ class FuncoesTableaux extends Model
 	}
 	public static function checaAtomico($form){
 		//@ colocado para previnir que fórmulas não instanciadas deem warning
-		if (@$form['esquerdo']==NULL && (@$form['conectivo']==NULL || @$form['conectivo']='not')) {
+		if (@$form['esquerdo']==NULL && (@$form['conectivo']==NULL || @$form['conectivo']=='not')) {
 			return true;
 		}
 		else{
