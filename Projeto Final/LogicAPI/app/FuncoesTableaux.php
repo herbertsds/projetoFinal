@@ -1083,8 +1083,8 @@ class FuncoesTableaux extends Model
 	public static function imprimeArvore(&$no,&$resultado=NULL){
 		if (@$no['info']!=NULL) {
 			FuncoesTableaux::converteFormulaString($no['info']);
-			print "<br>";
-			print_r($no['info']);
+			// print "<br>";
+			// print_r($no['info']);
 			FuncoesTableaux::verificaStatusNo($no,$resultado);
 		}
 		
@@ -1103,15 +1103,15 @@ class FuncoesTableaux extends Model
 	public static function verificaStatusNo(&$no,&$resultado){
 		switch($no){
 			case @$no['atualCentral']:
-				print "  Central <br>";
+				// print "  Central <br>";
 				$resultado[]['central'] = $no['info'];
 				break;
 			case @$no['atualEsquerdo']:
-				print "  Esquerdo <br>";
+				// print "  Esquerdo <br>";
 				$resultado[]['esquerda'] = $no['info'];
 				break;
 			case @$no['atualDireito']:
-				print "  Direito <br>";
+				// print "  Direito <br>";
 				$resultado[]['direita'] = $no['info'];
 				break;
 			default:
@@ -1124,14 +1124,132 @@ class FuncoesTableaux extends Model
 				//print "<br>Nó não categorizado<br>";
 		}
 	}
-	public static function outputArvore($resultado){
+	public static function outputArvore($resultado,$exercicio){
 		
 		$subgrupo = FuncoesTableaux::setSubGrupos($resultado);
 
 		$grupo = FuncoesTableaux::setGrupo($subgrupo);
 
-		dd($grupo);
+		$stringFinal = FuncoesTableaux::printEstrutura($grupo,$subgrupo,count($grupo));
+		// dd($exercicio);
+		for($i = count($exercicio) - 2; $i >=0 ; $i--){
+			$stringFinal = "<ul><li>" . $exercicio[$i] .  $stringFinal . "</li></ul>";
+		}
+		return $stringFinal;
 		
+	}
+	public static function printEstrutura($grupo,$subgrupo,$indice){
+		if(isset($grupo[$indice]['filho']))
+			$filho = $grupo[$indice]['filho'];
+		else
+			$filho = null;
+		// if($indice == 4)
+		// 	dd($filho);
+		unset($grupo[$indice]['filho']);
+		$impressao = null;
+		$impressao .= FuncoesTableaux::printAberturaSubArvore($grupo[$indice],$subgrupo);
+		if(is_array($filho)){
+			foreach ($filho as $key => $value) {
+				$impressao .= FuncoesTableaux::printEstrutura($grupo,$subgrupo,$value);
+			}
+		}
+		$impressao .= FuncoesTableaux::printFechamentoSubArvore($grupo[$indice],$subgrupo);
+		return $impressao;
+		
+	}
+
+	public static function printAberturaSubArvore($grupo,$subgrupo){
+		$resposta = "";
+		if($subgrupo[$grupo[0]]['node']['0'] == 'central'){
+			
+			foreach ($subgrupo[$grupo[0]]['string'] as $chave => $valor) {
+				$resposta .= "<ul>";
+				$resposta .= "<li>";
+				$resposta .= $valor;
+			}
+			$resposta .= "<ul>";
+		}else if($subgrupo[$grupo[0]]['node']['0'] == 'esquerda' && isset($grupo[1]) ){
+			$abertura = null;
+			$fechamento = null;
+			$resposta .= "<ul>";
+
+			$abertura = "<li>";
+			$abertura .= $subgrupo[$grupo[0]]['string'][0];
+			$fechamento = "</li>";
+			$print = false;
+
+			foreach ($subgrupo[$grupo[0]]['string'] as $chave => $valor) {
+
+				if(!$print){
+					$print = true;
+				}else{
+					$abertura .= "<ul><li>";
+					$abertura .= $valor;
+					$fechamento = "</li></ul>" . $fechamento;
+				}
+			}
+			$resposta .= $abertura;
+			$resposta .= $fechamento;
+
+			$abertura = "<li>";
+			$abertura .= $subgrupo[$grupo[1]]['string'][0];
+			$fechamento = "</li>";
+			$print = false;
+			foreach ($subgrupo[$grupo[1]]['string'] as $chave => $valor) {
+
+				if(!$print){
+					$print = true;
+				}else{
+					$abertura .= "<ul><li>";
+					$abertura .= $valor;
+					$fechamento = "</li></ul>" . $fechamento;
+				}
+			}
+			$resposta .= $abertura;
+			$resposta .= $fechamento;
+			$resposta .= "</ul>";
+		}else if($subgrupo[$grupo[0]]['node']['0'] == 'direita' || $subgrupo[$grupo[0]]['node']['0'] == 'esquerda'){
+			$resposta .= "<li>";
+			$resposta .= $subgrupo[$grupo[0]]['string']['0'];
+			$print = false;
+			foreach ($subgrupo[$grupo[0]]['string'] as $key => $value) {
+				if(!$print){
+					$print = true;
+				}else{
+					$resposta .= "<ul><li>";
+					$resposta .= $value;
+				}
+			}
+		}
+		
+
+		return $resposta;
+	}
+
+	public static function printFechamentoSubArvore($grupo,$subgrupo){
+		$resposta = "";
+		
+		if($subgrupo[$grupo[0]]['node']['0'] == 'central'){
+			$resposta .= "</ul>";
+			foreach ($subgrupo[$grupo[0]]['string'] as $chave => $valor) {
+				$resposta .= "</li>";
+				$resposta .= "</ul>";
+			}
+		}else if($subgrupo[$grupo[0]]['node']['0'] == 'esquerda' && isset($grupo[1]) ){
+			$resposta = "";
+		}else if($subgrupo[$grupo[0]]['node']['0'] == 'direita' || $subgrupo[$grupo[0]]['node']['0'] == 'esquerda'){
+			$print = false;
+			foreach ($subgrupo[$grupo[0]]['string'] as $key => $value) {
+				if(!$print){
+					$print = true;
+				}else{
+					$resposta .= "</li></ul>";
+				}
+			}
+			$resposta .= "</li>";
+		}
+
+		return $resposta;
 	}
 	private static function setSubGrupos($resultado){
 		$subgrupo = NULL;
@@ -1163,14 +1281,14 @@ class FuncoesTableaux extends Model
 				if(!array_key_exists("filho", $grupo[$controle])){
 					$grupo[$controle]['filho'] = null;
 				}
-				$grupo[$controle+1]['filho'][] = $i-1;
+				$grupo[$controle+1]['filho'][] = $controle;
 				$subgrupo[$i]['grupo'] = $controle;
 				$subgrupo[$i-1]['grupo'] = $controle;
 				$controle++;
 				$i--;
 			}
 			else if($subgrupo[$i]['node'][0] == "direita" && $subgrupo[$i-1]['node'][0] == "direita"){
-				$grupo[$controle][] = $subgrupo[$i];
+				$grupo[$controle][] = $i;
 				$j = 2;
 				$nextEsquerdo = 2;
 				while (true) {
@@ -1181,11 +1299,11 @@ class FuncoesTableaux extends Model
 						$nextEsquerdo--;
 
 					if($nextEsquerdo == 0){
-
+						$j++;
 						if(array_key_exists('grupo', $subgrupo[$i-$j]))
-							$grupo[$subgrupo[$i-$j]['grupo']]['filho'][1] = $i;
+							$grupo[$subgrupo[$i-$j]['grupo']]['filho'][1] = $controle;
 						else
-							$subgrupo[$i-$j]['filho'] = $i;
+							$subgrupo[$i-$j]['filho'] = $controle;
 						break;
 					}
 					$j++;
@@ -1198,7 +1316,7 @@ class FuncoesTableaux extends Model
 					$grupo[$controle]['filho'][1] = $subgrupo[$i]['filho'];
 				}
 				$controle++;
-				$grupo[$controle]['filho'][0] = $i;
+				$grupo[$controle]['filho'][0] = $controle-1;
 			}
 			else if($subgrupo[$i]['node'][0] == "central"){
 				$grupo[$controle][] = $i;

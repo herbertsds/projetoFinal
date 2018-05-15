@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 use App\FuncoesTableaux;
 
-echo "<pre>";
+// echo "<pre>";
 
 class Tableaux extends Model
 {
@@ -202,33 +202,33 @@ class Tableaux extends Model
 		FuncoesTableaux::imprimeArvore($raiz,$resultado);
 		//print '<br>Raiz<br>';
 		//print_r($raiz);
-		$resultado = null;
-		$resultado[]['central'] = 'Zero';
-		$resultado[]['central'] = 'Um';
-		$resultado[]['central'] = 'Dois';
-		$resultado[]['central'] = 'Três';
+		// $resultado = null;
+		// $resultado[]['central'] = 'Zero';
+		// $resultado[]['central'] = 'Um';
+		// $resultado[]['central'] = 'Dois';
+		// $resultado[]['central'] = 'Três';
 
-		$resultado[]['esquerda'] = 'Quatro';
+		// $resultado[]['esquerda'] = 'Quatro';
 
-		$resultado[]['esquerda'] = 'Cinco';
-		$resultado[]['central'] = 'Seis';
-		$resultado[]['central'] = 'Sete';
+		// $resultado[]['esquerda'] = 'Cinco';
+		// $resultado[]['central'] = 'Seis';
+		// $resultado[]['central'] = 'Sete';
 
-		$resultado[]['direita'] = 'Oito';
+		// $resultado[]['direita'] = 'Oito';
 
-		$resultado[]['direita'] = 'Nove';
-		$resultado[]['central'] = 'Dez';
-		$resultado[]['central'] = 'Onze';
+		// $resultado[]['direita'] = 'Nove';
+		// $resultado[]['central'] = 'Dez';
+		// $resultado[]['central'] = 'Onze';
 
-		$resultado[]['esquerda'] = 'Doze';
-		$resultado[]['central'] = 'Treze';
-		$resultado[]['central'] = 'Quatorze';
+		// $resultado[]['esquerda'] = 'Doze';
+		// $resultado[]['central'] = 'Treze';
+		// $resultado[]['central'] = 'Quatorze';
 		
-		$resultado[]['direita'] = 'Quinze';
-		$resultado[]['central'] = 'Dezesseis';
+		// $resultado[]['direita'] = 'Quinze';
+		// $resultado[]['central'] = 'Dezesseis';
 
-		FuncoesTableaux::outputArvore($resultado);
-		$resposta[] = $raiz;
+		$resposta = FuncoesTableaux::outputArvore($resultado,$this->exercicioEscolhido);
+		// $resposta[] = $raiz;
 		return $resposta;
     }
 }

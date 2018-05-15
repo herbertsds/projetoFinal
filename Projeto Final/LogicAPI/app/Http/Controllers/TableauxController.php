@@ -17,13 +17,13 @@ class TableauxController extends Controller
 
     	$resposta = new Tableaux($exercicio);
 
-    	print_r("Exercício:<br>");
-    	print_r($exercicio);
-    	print_r("<br>----------------------------------------------<br><br>");
+    	// print_r("Exercício:<br>");
+    	// print_r($exercicio);
+    	// print_r("<br>----------------------------------------------<br><br>");
 
     	//print_r($resposta->fullSteps());
-        //return json_encode($resposta->fullSteps(), JSON_UNESCAPED_UNICODE);
-    	 dd($resposta->fullSteps());
+        return json_encode(Exercicios::converteSaida($resposta->fullSteps()), JSON_UNESCAPED_UNICODE);
+    	 // dd($resposta->fullSteps());
     }
 }
 ?>

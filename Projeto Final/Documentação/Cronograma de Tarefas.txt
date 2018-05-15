@@ -1,4 +1,5 @@
-*Árvore Tableaux e Semântica
+﻿*Árvore Tableaux ------------- OK
+*Árvore Semântica
 *stepByStep da Resolução
 *TableauxLPO
 *DN (Proposicional e primeira ordem)

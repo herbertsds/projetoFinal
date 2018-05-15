@@ -8,38 +8,15 @@
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
         <script src="../jquery.orgchart.js"></script>
         <script>
-        $(function() {
-            $("#organisation").orgChart({container: $("#main")});
-        });
+        // $(function() {
+        //     $("#organisation").orgChart({container: $("#main")});
+        // });
         </script>
     </head>
 
     <body>
 
         <div id="left" >
-
-            <ul id="organisation">
-                    <ul>
-                        <li>A e B
-                            <ul>
-                                <li>A
-                                    <ul>
-                                        <li>B
-                                            <ul>
-                                                <li>A ou B
-                                                    <ul id='teste'>
-                                                        <li>A</li>
-                                                        <li>B</li>
-                                                    </ul>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-
         </div>
 
         <div id="content">
@@ -47,6 +24,8 @@
             <h1>JQuery/CSS Organisation Chart</h1>
 
             <div id="main">
+                <ul id="organisation">
+                </ul>
             </div>
 
             <div class="text">
@@ -67,17 +46,19 @@ $(document).ready(function(){
         };
         $.ajax({
 
-            url: 'http://127.0.0.1:8000/api/exercicios/teste',
+            url: 'http://127.0.0.1:8000/api/tableaux/',
             type: 'GET',
             callback: '?',
             data: myData,
             datatype: 'application/json',
             success: function(teste) { 
             // console.log(teste);
-            $("#teste").append('<li>Teste</li>');
+            // $("#teste").append('<li>Teste</li>');
+            var obj = JSON.parse(teste);
+            console.log(obj);
+            $("#organisation").append(obj);
             $("#organisation").orgChart({container: $("#main")});
-            // var obj = JSON.parse(teste);
-            // console.log(obj[0]);
+
             },
             error: function() { alert('Failed!'); },
         });
