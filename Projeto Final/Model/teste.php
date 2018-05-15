@@ -8,22 +8,27 @@ echo "<pre>";
 $listaConectivos=array("^","v","-","!",'@','&');
 $listaFormulasDisponiveis=array();
 $listaGlobalConstates=array("a","b","c","d");
-$hash['F(a)']='0';
+//$hash['F(a)']='0';
 $hash['F(b)']='1';
-$hash=null;
-$listaConstantes=null;
+$c='a';
+foreach(range('a', 'z') as $letra) {
+print "'$letra', ";
+}
+//$hash=null;
+/*
+$listaConstantes=[];
 $variavel='x';
 $entrada['info']=array('esquerdo' => null, 'conectivo' => array('operacao' => null, 'variavel'=> 'x'), 'direito'=>"F(x)");
 print "<br>Antes da operação<br>";
 print_r($entrada);
 print "<br>Depois da operação<br>";
-atribuiConstateFormulaArray($form,true,$listaConstantes,$hash,$listaGlobalConstates,$variavel);
+atribuiConstateFormulaArray($entrada,false,$listaConstantes,$hash,$listaGlobalConstates,$variavel);
 //substituiPorConstante('a',$entrada['info']['direito'],'x');
 print_r($entrada);
 if (checaAtomicoLPO($entrada)) {
 	print "<br>É atômico<br>";
 }
-
+*/
 function checaAtomicoLPO($form){
 	if ($form['info']['esquerdo']!=null || ($form['info']['conectivo']['operacao']!='not' && $form['info']['conectivo']['operacao']!=null )) {
 		return false;
@@ -42,40 +47,50 @@ function substituiPorConstante($constante, &$form, $variavel){
 }
 
 function atribuiConstateFormulaArray(&$form,$repetir,$listaConstantes,$hashAtomosLPO,$listaGlobalConstates,$variavel){
-	if ($form['info']['esquerdo']==null && $form['info']['direito']==null) {
+	/*if ($form['info']['esquerdo']==null && $form['info']['direito']==null) {
+		print "<br>Retornei direto<br>";
 		return;
-	}
+	}*/
 	if (is_array($form['info']['esquerdo'])) {
+		print "<br>Fui pela esquerda<br>";
 		atribuiConstateFormulaArray($form['info']['esquerdo'],$repetir,$listaConstantes,$variavel);
 	}
 
 	if (is_array($form['info']['direito'])) {
+		print "<br>Fui pela direito<br>";
 		atribuiConstateFormulaArray($form['info']['direito'],$repetir,$listaConstantes,$variavel);
 	}
 	elseif (!(is_array($form['info']['direito']))) {
 		$aux=$form['info'];
-		print "<br>Aux<br>";
-		print_r($aux);
+		
 		if ($repetir) {
 			foreach ($listaGlobalConstates as $key => $value) {
 				$aux=$form['info'];
+				//print "<br>Aux<br>";
+				//print_r($aux);
 				substituiPorConstante($value,$aux['direito'],$aux['conectivo']['variavel']);
 				if (casarFormulaLPO($hashAtomosLPO,$aux)) {
+					$aux['conectivo']['variavel']=null;
 					break;
 				}
 			}
+			$aux['conectivo']['variavel']=null;
 		}
 		elseif (!$repetir) {
 			foreach ($listaGlobalConstates as $key => $value) {
 				if (!in_array($value, $listaConstantes)) {
 					substituiPorConstante($value,$aux['direito'],$variavel);
+					$aux['conectivo']['variavel']=null;
 				}
 			}
 		}
-		$form['info']['direito']=$aux;
+		$form['info']=$aux;
 	}
 }
 function casarFormulaLPO($hash,$form){
+	if ($hash==null) {
+		return false;
+	}
 	$aux=$form['conectivo']['operacao'] == "not" ? '0':'1';
 	foreach ($hash as $key => $value) {			
 	//Verifico se alguma vez esse cara já foi setado na hash

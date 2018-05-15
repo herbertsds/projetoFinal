@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-use App\FuncoesTableaux;
+use App\FuncoesTableauxLPO;
 
 echo "<pre>";
 
@@ -12,10 +12,13 @@ class TableauxLPO extends Model
 {
     private $exercicioEscolhido;
     private $hashInicial;
+    private $hashFuncaoInicial;
+    private $constantesInicial;
     private $listaFormulasNaoUsadas;
     private $listaFormulasDisponiveis;
     private $numRamoGlobal;
     private $listaConectivos;
+
 
 	public function __construct($exercicioEscolhido){
     	$this->exercicioEscolhido = $exercicioEscolhido;
@@ -24,9 +27,12 @@ class TableauxLPO extends Model
 
     public function fullSteps(){
     	$this->hashInicial = array();
+    	$this->hashFuncaoInicial = array();
+    	$this->constantesInicial = array();
 		$this->listaFormulasNaoUsadas = array();
 		$this->listaFormulasDisponiveis = array();
 		$this->numRamoGlobal=1;
+		$listaGlobalConstantes=Formula::getListaConstantesGlobal();
 		//-------------------------------------VARIÁVEIS--GLOBAIS--------------------------------------------
 
 		//Inicialização das fórmulas, aqui recebo os dados para resolver o tableaux
@@ -75,19 +81,40 @@ class TableauxLPO extends Model
     	//Passo 2
     	
 		$entradaTeste=FuncoesTableauxLPO::negaPerguntaLPO($entradaTeste,$tamanho);
+		print "<br>Entrada com a pergunta negada<br>";
 		print_r($entradaTeste);
 
 		
-
+		
 		//Passos 3 e 4
 		foreach ($entradaTeste as $key => $value) {
 			$this->listaFormulasDisponiveis[$key]=$value;
 			//Checa se é átomo para adicionar na hash
 
-			if($value['info']['esquerdo']==NULL && ($value['info']['conectivo']==NULL || $value['info']['conectivo']=='not')){
-				$this->hashInicial[$value['info']['direito']]=$value['info']['conectivo'] == "not" ? 0:1;
+			if($value['info']['esquerdo']==NULL && ($value['info']['conectivo']['operacao']==NULL || $value['info']['conectivo']['operacao']=='not')){
+				$this->hashInicial[$value['info']['direito']]=$value['info']['conectivo']['operacao'] == "not" ? 0:1;
+			}
+			if (FuncoesTableauxLPO::checaAtomicoLPO($value['info'])) {
+				$this->hashFuncaoInicial[$value['info']['direito']]=$value['info']['conectivo']['operacao'] == "not" ? 0:1;
+				for ($i=0; $i < strlen($value['info']['direito']) ; $i++) { 
+					if (in_array($value['info']['direito'][$i], $listaGlobalConstantes)) {
+						array_push($this->constantesInicial,$value['info']['direito'][$i]);
+					}
+				}
+			}
+			if ($value['info']['conectivo']['operacao']=='notnot') {
+				for ($i=0; $i < strlen($value['info']['direito']) ; $i++) { 
+					if (in_array($value['info']['direito'][$i], $listaGlobalConstantes)) {
+						array_push($this->constantesInicial,$value['info']['direito'][$i]);
+					}
+				}
 			}
 		}
+		print "<br>Hash inicial de funções<br>";
+		print_r($this->hashFuncaoInicial);
+
+		print "<br>Lista de constantes inicial<br>";
+		print_r($this->constantesInicial);
 		
 		
 		//Passo 5
@@ -96,11 +123,11 @@ class TableauxLPO extends Model
 		$escolhaAleatoria=false;
 		$escolhaEficiente=true;
 		$escolhaUsuario=false;
-		$raiz=FuncoesTableaux::criaFormulaTableaux();
+		$raiz=FuncoesTableauxLPO::criaFormulaTableauxLPO();
 		$historicoVariaveis=array();
 		$nosFolha=array();
-
-
+		
+		
 		while (!(FuncoesTableaux::todasFechadas($nosFolha,$contador)) && ($contador<100)) {
 			
 			if ($escolhaAleatoria) {
@@ -112,12 +139,12 @@ class TableauxLPO extends Model
 				# Chama a função de escolha eficiente
 				//print "<br>Chamando a função de escolha eficiente<br>";
 				foreach ($this->listaFormulasDisponiveis as $key => $value) {
-					////print "key ".$key."<br>";
-					////print_r($value['info']);
-					////print "<br>";
+					print "key ".$key."<br>";
+					print_r($value['info']);
+					print "<br>";
 				}
-				if(FuncoesTableaux::escolhaEficiente($this->listaFormulasDisponiveis,$this->hashInicial,$nosFolha,$historicoVariaveis,$raiz,$contador) === 'fechado')
-					return ;
+				if(FuncoesTableauxLPO::escolhaEficiente($this->listaFormulasDisponiveis,$this->hashInicial,$this->hashFuncaoInicial,$this->constantesInicial,$nosFolha,$historicoVariaveis,$raiz,$contador) === 'fechado')
+					break ;
 				
 				if (FuncoesTableaux::todasFechadas($nosFolha,$contador)) {
 					break;
@@ -133,6 +160,7 @@ class TableauxLPO extends Model
 
 			$contador++;
 		}
+		
 
 
 		if (FuncoesTableaux::todasFechadas($nosFolha,$contador)) {
@@ -142,12 +170,11 @@ class TableauxLPO extends Model
 		else{
 			//print "<br>Nem todos os ramos foram fechados<br>Este Tableaux não fecha<br>";
 		}
-		//print "<br>Árvore a partir da raiz<br>";
-		//FuncoesTableaux::imprimeArvore($raiz);
+		print "<br>Árvore a partir da raiz<br>";
+		FuncoesTableauxLPO::imprimeArvore($raiz);
 		//print '<br>Raiz<br>';
 		//print_r($raiz);
-		$resposta[] = $raiz;
-		
-		return $resposta;*/
+		$resposta[] = $raiz;		
+		return $resposta;
     }
 }
