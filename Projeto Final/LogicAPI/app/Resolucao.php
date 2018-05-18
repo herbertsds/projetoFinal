@@ -423,13 +423,15 @@ class Resolucao extends Model
 		$perguntaAntesNegar=null;
 		$perguntaDepoisNegar=null;
 		$statusFechado='Não fechado';
-
+        
 
 
 		//Receber a entrada do Front-End
-
+        
 		//Negação da pergunta+Validação
 		//Recebo a lista com todas as fórmulas e nego a pergunta, além de processar os notnot
+    	 
+		
 		if ($request['operacao']=='negPergunta') {
 			
 			

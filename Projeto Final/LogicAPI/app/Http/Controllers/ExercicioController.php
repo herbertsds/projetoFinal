@@ -21,6 +21,8 @@ class ExercicioController extends Controller
 	//Pega todas as listas de uma determinada categoria
 	//Se não receber nada, retorna todas as listas
     public function getListas(Request $categoria){
+        
+
 
     	if (!is_null($categoria->id))
     		return json_encode(Categorias::find($categoria->id)->listas);

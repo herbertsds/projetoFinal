@@ -251,11 +251,11 @@
 			case "resolucao":
 				  for (cont = 0; cont in vet_regras; cont++){
 					  numLinha = cont+1;
-					  $('#r_divFormulas').append("<input  type='checkbox' class='form-check-input'  name='ck_Formulas' id='" + cont +"' value='"+ vet_regras[cont]+"'>"+ numLinha + ": " + vet_regras[cont] + "</input></br>" );
+					  $('#r_divFormulas').append("<input  type='checkbox' class='form-check-input'  name='ck_Formulas' id='" + cont +"' value='"+ vet_regras[cont]+"'> " + numLinha + ": " + vet_regras[cont] + "</input></br>" );
 	
 				  }
 				  numLinha++;
-				$('#r_divFormulas').append("<input  type='checkbox' class='form-check-input'  name='ck_Formulas' id='finalVetor' value='"+ pergunta + "'>"+ numLinha +": " + pergunta + " # Pergunta </input></br>" );
+				$('#r_divFormulas').append("<input  type='checkbox' class='form-check-input'  name='ck_Formulas' id='finalVetor' value='"+ pergunta + "'> "+ numLinha +": " + pergunta + " # Pergunta </input></br>" );
 				if(regras==0){
 					$('#alertResolucao').fadeOut();
 
@@ -436,7 +436,7 @@
 		       
 		        success: function(retorno) {
 		        	exercicios = JSON.parse(retorno);
-		        	console.log(exercicios);
+		        	//console.log(exercicios);
 					
 		        	for( k=0,j=indice_vet_Ex; j<(n+exercicios.length);j++, k++){
 			    		vet_exercicios[j] = exercicios[k];
