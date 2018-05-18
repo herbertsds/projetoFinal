@@ -423,8 +423,8 @@ class Resolucao extends Model
 		$perguntaAntesNegar=null;
 		$perguntaDepoisNegar=null;
 		$statusFechado='Não fechado';
-		
-		dd($request);
+
+		//dd($request);
 
 
 
@@ -439,7 +439,6 @@ class Resolucao extends Model
 			
 		$entradaConvertida=FuncoesResolucao::negaPergunta($request['formulas'],$request['qtd_formulasSelecionadas'],$perguntaAntesNegar,$perguntaDepoisNegar);
 		$resposta = $entradaConvertida;
-		//print_r($resposta);
 
 			//Constrói o retorno
 			$mudancaArray=$entradaConvertida;
@@ -480,7 +479,7 @@ class Resolucao extends Model
 				}
 				$mudancaArray=$entradaConvertida;
 			}
-
+			//print_r($resposta);
 			foreach ($resposta as $key => $value) {
 				if (is_array($value)) {
 		 			ParsingFormulas::converteFormulaString($resposta[$key]);
@@ -820,7 +819,9 @@ class Resolucao extends Model
 	 			if (is_array($value)) {
 	 				ParsingFormulas::converteFormulaString($resposta[$key]);
 	 			}
+	 			//ParsingFormulas::consertaStringFormula($resposta[$key]);
 	 		}
+
 
 			return array($resposta,$statusFechado);
 		}	

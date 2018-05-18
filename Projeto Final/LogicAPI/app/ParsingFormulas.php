@@ -1604,6 +1604,43 @@ class ParsingFormulas extends Model{
 			$form="(".$form.")";
 		}
 	}
+	public static function consertaStringFormula(&$form){
+		converteConectivoSimbolo($form);
+		$contador=0;
+		$abertoUmaVez=false;
+		$listaConectivos=array("^","v","-","!",'@','&');
+		for ($i=0; $i <strlen($form) ; $i++) { 
+			if ($form[$i]=='(') {
+				$abertoUmaVez=true;
+				$contador++;
+			}
+			elseif ($form[$i]==')') {
+				$contador--;
+			}
+			while($i==strlen($form)-1 && $contador>0){
+				$form=substr($form, 1);
+			}
+			while($i==strlen($form)-1 && $contador<0){
+				$form=substr($form, 0, strlen($form)-1);
+			}
+		}
+		$aux=$form;
+		flag:
+		$aux=substr($aux, 1);
+		$aux=substr($aux, 0, strlen($aux)-1);
+		if ($aux[0]!='(' && $aux[0]!='!') {
+			goto fim;
+		}
+		else{
+			if ($aux[0]=='(') {
+				$form=$aux;
+				goto flag;
+			}
+		}
+		fim:
+		converteConectivoExtenso($form);
+	}
+
 	//Função que recebe a referência para uma fórmula array com a estrutura
 	//array ('esquerdo' => , 'conectivo' => , 'direito' =>) e trabalha recursivamente
 	//com colocaParenteses para transforma-lo em string
@@ -1626,6 +1663,7 @@ class ParsingFormulas extends Model{
 	//Função que recebe a referência para uma fórmula array com a estrutura
 	//array ('esquerdo' => , 'conectivo' => , 'direito' =>) e transforma em string
 	public static function colocaParenteses(&$form){
+		//print_r($form);
 		if (@is_array($form['esquerdo']) && @!is_array($form['direito'])) {
 			if ($form['conectivo']=='not') {
 				if (FuncoesResolucao::checaAtomico($form)) {
@@ -1657,6 +1695,7 @@ class ParsingFormulas extends Model{
 			$aux=$form['conectivo'];
 			$aux=$aux.$form['direito'].")";
 			$form['direito']=$aux;
+
 			return;
 
 		}
@@ -1671,13 +1710,23 @@ class ParsingFormulas extends Model{
 			if ($form['conectivo']=='not_ou') {
 				
 				if ($form['esquerdo'][0]=="(") {
-					$aux="not";
+					if (strlen($form['esquerdo'])==1) {
+						$aux="not";
+					}
+					else{
+						$aux="not(";
+					}
 					$aux=$aux.$form['esquerdo'];
 					$aux=$aux."ou";
 					$aux=$aux.$form['direito'].")";
 				}
 				else{
-					$aux="not(";
+					if (strlen($form['esquerdo'])==1) {
+						$aux="not(";
+					}
+					else{
+						$aux="not((";
+					}
 					$aux=$aux.$form['esquerdo'];
 					$aux=$aux."ou";
 					$aux=$aux.$form['direito']."))";
@@ -1687,32 +1736,56 @@ class ParsingFormulas extends Model{
 			}
 			if ($form['conectivo']=='not_e') {
 				if ($form['esquerdo'][0]=="(") {
-					$aux="not";
+					if (strlen($form['esquerdo'])==1) {
+						$aux="not";
+					}
+					else{
+						$aux="not(";
+					}
 					$aux=$aux.$form['esquerdo'];
 					$aux=$aux."e";
 					$aux=$aux.$form['direito'].")";
 				}
 				else{
-					$aux="not(";
+					if (strlen($form['esquerdo'])==1) {
+						$aux="not(";
+					}
+					else{
+						$aux="not((";
+					}
 					$aux=$aux.$form['esquerdo'];
 					$aux=$aux."e";
-					$aux=$aux.$form['direito']."))";
+					$aux=$aux.$form['direito'].")";
+					
+
 				}
 				$form=$aux;
 				return;
 			}
 			if ($form['conectivo']=='not_implica') {
+				
 				if ($form['esquerdo'][0]=="(") {
-					$aux="not";
+					if (strlen($form['esquerdo'])==1) {
+						$aux="not";
+					}
+					else{
+						$aux="not(";
+					}
 					$aux=$aux.$form['esquerdo'];
 					$aux=$aux."implica";
 					$aux=$aux.$form['direito'].")";
 				}
-				else{
-					$aux="not(";
+				else{					
+					if (strlen($form['esquerdo'])==1) {
+						$aux="not(";
+					}
+					else{
+						$aux="not((";
+					}
 					$aux=$aux.$form['esquerdo'];
 					$aux=$aux."implica";
-					$aux=$aux.$form['direito']."))";
+					$aux=$aux.$form['direito'].")";
+
 				}			
 				$form=$aux;
 				return;

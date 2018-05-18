@@ -6,9 +6,9 @@
 $(document).ready(function(){
     $("button").click(function(){
     	var myData = {
-	        'operacao': 'PassarNotParaDentro',
-	        'qtd_formulasSelecionadas': 4,
-	        'formulas': ["((not(A))ouB)","((not(B))ouC)","(A)","not(C)"]
+	        'operacao': 'negPergunta',
+	        'qtd_formulasSelecionadas': 1,
+	        'formulas': ["(AimplicaC)"]
 	    };
 
         $.ajax({

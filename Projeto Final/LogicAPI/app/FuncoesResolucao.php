@@ -203,7 +203,7 @@ class FuncoesResolucao extends Model
 					$aux1['esquerdo']="!(".$aux1['esquerdo'].")";
 				}
 				elseif(is_array($aux1['esquerdo'])){
-					print "<br>Entrei aqui pra negar conectivo<br>";
+					//print "<br>Entrei aqui pra negar conectivo<br>";
 					FuncoesResolucao::negaConectivo($aux1['esquerdo']['conectivo']);
 				}
 				if (is_array($aux1['direito']) && $aux1['direito']['conectivo']=='not') {

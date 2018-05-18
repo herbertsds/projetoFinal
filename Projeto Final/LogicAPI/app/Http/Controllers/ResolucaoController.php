@@ -19,7 +19,7 @@ class ResolucaoController extends Controller
     public function index(Request $numeroExercicio){
 
     	$exercicio = Exercicios::getExercicio($numeroExercicio);
-    // $exercicio = Exercicios::getExercicio(5);
+      //$exercicio = Exercicios::getExercicio(1);
 
     	// $exercicioLista = new Exercicios('resolucao');
     	$resposta = new Resolucao($exercicio);
@@ -45,8 +45,8 @@ class ResolucaoController extends Controller
    	//Pega um exercício
     public function exercicio(Request $numeroExercicio){
    
-    	//$exercicio = Exercicios::getExercicio($numeroExercicio);
-      $exercicio = Exercicios::getExercicio(1);
+    	$exercicio = Exercicios::getExercicio($numeroExercicio);
+      //$exercicio = Exercicios::getExercicio(1);
 
     	// return json_encode($resposta, JSON_UNESCAPED_UNICODE);
     	return json_encode($exercicio, JSON_UNESCAPED_UNICODE);

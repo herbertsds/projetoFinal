@@ -62,6 +62,7 @@ class FuncoesAuxiliares extends Model
 	//Verificar durante a etapa de fazer o WebService funcionar
 	//Um tratamento para fórmulas incorretas, a aplicação NÃO pode encerrar
 	public static function verificaFormulaCorreta(&$form){
+		//dd($form);
 	    
 		$contador=0;
 		$contador2=0;
