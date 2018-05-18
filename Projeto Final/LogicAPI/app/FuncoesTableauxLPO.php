@@ -16,12 +16,15 @@ class FuncoesTableauxLPO extends Model
 			return "fechado";
 		}
 		$conectivosEficientes=array("e","not_ou","not_implica","notnot","paraTodo","not_paraTodo","xist","not_xist");
-
+		
 		foreach ($listaFormulasDisponiveis as $key => $value) {
 			ParsingFormulas::formataFormulasTableauxLPO($listaFormulasDisponiveis[$key]);
-
+			ParsingFormulas::formataFormulasTableauxLPO($listaFormulasDisponiveis[$key]['esquerdo']);
+			ParsingFormulas::formataFormulasTableauxLPO($listaFormulasDisponiveis[$key]['direito']);
 		}
-		
+
+
+		$conectivosUmaVez=array('not_paraTodo','xist','notnot');
 		
 
 		//Aplicação na raiz
@@ -29,6 +32,15 @@ class FuncoesTableauxLPO extends Model
 		//Caso 1 - Raiz é eficiente
 		//Busque o primeiro nó eficiente que existir e aplique a fórmula nele
 		foreach ($listaFormulasDisponiveis as $key => $value) {
+			//Checar primeiro se há os conectivos nos quais a constante só pode aparecer pela primeira vez
+			foreach ($listaFormulasDisponiveis as $key2 => $value2) {
+				//print "<br>Loop repetido<br>";
+				//print_r($value2['info']);
+				if (in_array($value2['info']['conectivo']['operacao'], $conectivosUmaVez)) {
+					$value=$value2;
+					$key=$key2;
+				}
+			}
 			if (in_array($value['info']['conectivo']['operacao'],$conectivosEficientes)){
 				if ($contador==0) {
 					//Correções na fórmula
@@ -51,6 +63,13 @@ class FuncoesTableauxLPO extends Model
 		//Se não há fórmula eficiente, aplique no primeiro elemento disponível
 		if ($contador==0) {
 			foreach ($listaFormulasDisponiveis as $key => $value) {
+				//Checar primeiro se há os conectivos nos quais a constante só pode aparecer pela primeira vez
+				foreach ($listaFormulasDisponiveis as $key2 => $value2) {
+					if (in_array($value2['info']['conectivo']['operacao'], $conectivosUmaVez)) {
+						$value=$value2;
+						$key=$key2;
+					}
+				}
 				if ($value['info']['conectivo']['operacao']!=null && $value['info']['conectivo']['operacao']!='not'){
 					$raiz=$listaFormulasDisponiveis[$key];			
 				}			
@@ -76,19 +95,26 @@ class FuncoesTableauxLPO extends Model
 		//Se houver fórmula eficiente na lista de fórmulas disponíveis do ramo,
 		//aplico a regra, senão continuo a busca até achar ou acabarem os nós folha
 		foreach ($nosFolha as $key => $noFolhaAtual) {
-
 			//Verifica se este nó já está fechado
 			if (@$noFolhaAtual['filhoCentral']=='fechado') {
 				//Deixe o loop passar
 			}
 			else{
+
 				//Percorre a lista de fórmulas disponíveis do nó folha atual
 				foreach ($noFolhaAtual['formDisponiveis'] as $key2 => $formDispAtual) {
+					foreach ($noFolhaAtual['formDisponiveis'] as $key3 => $value3) {
+						if (in_array($value3['info']['conectivo']['operacao'], $conectivosUmaVez)) {
+							$formDispAtual=$value3;
+							$key2=$key3;
+						}
+					}
 					//Correções na fórmula
 					ParsingFormulas::formataFormulasTableauxLPO($noFolhaAtual['formDisponiveis'][$key2]);
 					FuncoesTableauxLPO::corrigeArrays($noFolhaAtual['formDisponiveis'][$key2]);
+					
 					//Se achar conectivo eficiente aplique a regra
-					if (in_array($formDispAtual['info']['conectivo'],$conectivosEficientes)){
+					if (in_array($formDispAtual['info']['conectivo']['operacao'],$conectivosEficientes)){
 						//print "<br>Aplicando regra em<br>";
 						//print_r($formDispAtual['info']);
 						//print "<br>Com nó pai sendo<br>";
@@ -123,6 +149,12 @@ class FuncoesTableauxLPO extends Model
 			else{
 				//Percorre a lista de fórmulas disponíveis do nó folha atual
 				foreach ($noFolhaAtual['formDisponiveis'] as $key2 => $formDispAtual) {
+					foreach ($noFolhaAtual['formDisponiveis'] as $key3 => $value3) {
+						if (in_array($value3['info']['conectivo']['operacao'], $conectivosUmaVez)) {
+							$formDispAtual=$value3;
+							$key2=$key3;
+						}
+					}
 					//Correções na fórmula
 					ParsingFormulas::formataFormulasTableauxLPO($noFolhaAtual['formDisponiveis'][$key2]);
 					FuncoesTableauxLPO::corrigeArrays($noFolhaAtual['formDisponiveis'][$key2]);
@@ -185,8 +217,6 @@ class FuncoesTableauxLPO extends Model
 
 	}
 	public static function checaAtomicoLPO($form){
-		print "<br>Fórmula da checagem atômica<br>";
-		print_r($form);
 		if (($form['esquerdo']==null && $form['conectivo']['operacao']==null) || ($form['conectivo']['operacao']=='not' && $form['esquerdo']==null )) {
 			if (!(is_array($form['direito']))) {
 				return true;
@@ -209,61 +239,130 @@ class FuncoesTableauxLPO extends Model
 	//Método que recebe uma fórmula, boolean repetir para o caso do conectivo permitir ou não a repetição de constante,
 	//A lista de constantes daquele ramo, a hash de funções atômicas, a lista total de constantes que podem ser usadas,
 	//A variável que se deseja substituir. Recursivamente busca na fórmula e efetua a substituição
-	public static function atribuiConstateFormulaArray(&$form,$repetir,$listaConstantes,$hashAtomosFuncoes,$listaGlobalConstates,$variavel){
+	public static function atribuiConstanteFormulaArray(&$form,$repetir,$listaGlobalConstantes,$variavel,&$listaAcumuladora,$listaConstantes=null,$hashAtomosFuncoes=null){
 		/*if ($form['info']['esquerdo']==null && $form['info']['direito']==null) {
 			print "<br>Retornei direto<br>";
 			return;
 		}*/
 		if (is_array($form['info']['esquerdo'])) {
 			//print "<br>Fui pela esquerda<br>";
-			FuncoesTableauxLPO::atribuiConstateFormulaArray($form['info']['esquerdo'],$repetir,$listaConstantes,$variavel);
+			$aux=$form;
+			$form['info']['conectivo']['variavel']=null;
+			FuncoesTableauxLPO::corrigeArraysLPO($form);
+			//Pega todos os átomos contidos na fórmula para aplicar a substituição por constante em todos eles
+			if ((@FuncoesTableauxLPO::checaAtomicoLPO($form['info']['esquerdo']) || !is_array($form['info']['esquerdo'])) &&($form['info']['esquerdo']!=null)) {
+				if (!in_array($form['info']['esquerdo'], $listaAcumuladora)) {
+					FuncoesTableauxLPO::adicionaArray($listaAcumuladora, $form['info']['esquerdo']);
+					//print "<br>Lista Acumuladora<br>";
+					//dd($listaAcumuladora);
+					//print_r($listaAcumuladora);
+				}				
+			}
+			if ($aux!=$form) {
+				FuncoesTableauxLPO::atribuiConstanteFormulaArray($form,$repetir,$listaGlobalConstantes,$variavel,$listaAcumuladora,$listaConstantes,$hashAtomosFuncoes);			}
+			else{
+				FuncoesTableauxLPO::atribuiConstanteFormulaArray($form['info']['esquerdo'],$repetir,$listaGlobalConstantes,$variavel,$listaAcumuladora,$listaConstantes,$hashAtomosFuncoes);
+			}
 		}
 
 		if (is_array($form['info']['direito'])) {
-			//print "<br>Fui pela direito<br>";
-			FuncoesTableauxLPO::atribuiConstateFormulaArray($form['info']['direito'],$repetir,$listaConstantes,$variavel);
+			//print "<br>Fui pela direita<br>";
+			$aux=$form;
+			$form['info']['conectivo']['variavel']=null;
+			FuncoesTableauxLPO::corrigeArraysLPO($form);
+			//Pega todos os átomos contidos na fórmula para aplicar a substituição por constante em todos eles
+			if ((@FuncoesTableauxLPO::checaAtomicoLPO($form['info']['esquerdo']) || !is_array($form['info']['esquerdo'])) &&($form['info']['esquerdo']!=null)) {
+				if (!in_array($form['info']['esquerdo'], $listaAcumuladora)) {
+					FuncoesTableauxLPO::adicionaArray($listaAcumuladora, $form['info']['esquerdo']);
+					//print "<br>Lista Acumuladora<br>";
+					//dd($listaAcumuladora);
+					//print_r($listaAcumuladora);
+				}				
+			}
+			if ($aux!=$form) {
+				FuncoesTableauxLPO::atribuiConstanteFormulaArray($form,$repetir,$listaGlobalConstantes,$variavel,$listaAcumuladora,$listaConstantes,$hashAtomosFuncoes);			
+			}
+			else{
+				//print '<br>Pega o direito<br>';
+				FuncoesTableauxLPO::atribuiConstanteFormulaArray($form['info']['direito'],$repetir,$listaGlobalConstantes,$variavel,$listaAcumuladora,$listaConstantes,$hashAtomosFuncoes);
+			}
 		}
 		elseif (!(is_array($form['info']['direito']))) {
 			$aux=$form['info'];
-			
+			$valor=null;
 			if ($repetir) {
-				foreach ($listaGlobalConstates as $key => $value) {
+				foreach ($listaGlobalConstantes as $key => $value) {
 					$aux=$form['info'];
+					$valor=$value;
 					
 					//print "<br>Aux<br>";
 					//print_r($aux);
-					FuncoesTableauxLPO::substituiPorConstante($value,$aux['direito'],$aux['conectivo']['variavel']);
+					//dd($listaAcumuladora);
+					foreach ($listaAcumuladora as $key2 => $value2) {
+						FuncoesTableauxLPO::substituiPorConstante($value,$listaAcumuladora[$key2],$variavel);
+					}
+					FuncoesTableauxLPO::substituiPorConstante($value,$aux['direito'],$variavel);
+					if ($aux['esquerdo']!=null) {
+						FuncoesTableauxLPO::substituiPorConstante($value,$aux['esquerdo'],$variavel);
+					}
+					else{
+						$aux['conectivo']['variavel']=null;
+					}
+
 					if (FuncoesTableauxLPO::casarFormulaLPO($hashAtomosFuncoes,$aux)) {
 						$aux['conectivo']['variavel']=null;
 						break;
 					}
+
 				}
 				//Verificação adicional para pegar um cara que possa casar no futuro
-				if ($value=='z') {
+				if ($valor=='z') {
 					$aux2=$form['info'];
 					foreach ($form['constantesUsadas'] as $key => $value) {
-						FuncoesTableauxLPO::substituiPorConstante($value,$aux2['direito'],$aux2['conectivo']['variavel']);
+						FuncoesTableauxLPO::substituiPorConstante($value,$aux2['direito'],$variavel);
+						if ($aux['esquerdo']!=null) {
+							FuncoesTableauxLPO::substituiPorConstante($value,$aux2['esquerdo'],$variavel);
+						}
+						else{
+							$aux['conectivo']['variavel']=null;
+						}
 						foreach ($form['formDisponiveis'] as $key2 => $value2) {
 							if ($value2['info']['direito']==$aux2['direito']) {
 								$aux2['conectivo']['variavel']=null;
 								$aux=$aux2;
 								$form['info']=$aux;
+								foreach ($listaAcumuladora as $key2 => $value2) {
+									FuncoesTableauxLPO::substituiPorConstante($value,$listaAcumuladora[$key2],$variavel);
+								}
+								array_push($form['constantesUsadas'],$value);
 								return;
 							}
 						}
 					}
 				}
-				$aux['conectivo']['variavel']=null;
+				
 			}
 			elseif (!$repetir) {
-				foreach ($listaGlobalConstates as $key => $value) {
+				foreach ($listaGlobalConstantes as $key => $value) {
 					if (!in_array($value, $listaConstantes)) {
+						foreach ($listaAcumuladora as $key2 => $value2) {
+							FuncoesTableauxLPO::substituiPorConstante($value,$listaAcumuladora[$key2],$variavel);
+						}
 						FuncoesTableauxLPO::substituiPorConstante($value,$aux['direito'],$variavel);
-						$aux['conectivo']['variavel']=null;
+						if ($aux['esquerdo']!=null) {
+							FuncoesTableauxLPO::substituiPorConstante($value,$aux['esquerdo'],$variavel);
+						}
+						else{
+							$aux['conectivo']['variavel']=null;
+						}
+						array_push($form['constantesUsadas'],$value);
+						break;
+						
 					}
 				}
 			}
 			$form['info']=$aux;
+			array_push($form['constantesUsadas'],$valor);
 		}
 	}
 	public static function casarFormula($hash,$form){
@@ -294,8 +393,9 @@ class FuncoesTableauxLPO extends Model
 		return false;
 	}
 	public static function aplicaRegraLPO(&$form,&$pai,&$nosFolha,&$contador){
-		$listaGlobalConstates=Formula::getListaConstantesGlobal();
-
+		$listaGlobalConstantes=Formula::getListaConstantesGlobal();
+		$listaGlobalConectivos=array('e','ou','implica','not_e','not_ou','not_implica','paraTodo','not_paraTodo','xist','not_xist');
+		$listaAcumuladora=[];
 		//Inicializando variáveis auxiliares com suas respectivas estruturas de dados
 		$noAuxCen1=FuncoesTableauxLPO::criaFormulaTableauxLPO();
 		$noAuxCen1['atualCentral']=true;
@@ -358,16 +458,8 @@ class FuncoesTableauxLPO extends Model
 				//Se não for átomo, então é uma fórmula e adiciono a fórmula gerada na lista de fórmulas desse elemento
 				//Como noAuxCen1 e noAuxCen2 estão no mesmo ramo, estes devem compartilhar as informações
 
-				//Checa se é átomo comum
-				if(FuncoesTableaux::checaAtomico($noAuxCen1['info'])){
-					if (FuncoesTableaux::casarFormula($noAuxCen1['hashAtomos'],$noAuxCen1['info'])) {
-						$noAuxCen2['filhoCentral']='fechado';
-					}
-					$noAuxCen1['hashAtomos'][$noAuxCen1['info']['direito']]=$noAuxCen1['info']['conectivo']['operacao'] == 'not' ? '0':'1';
-					$noAuxCen2['hashAtomos'][$noAuxCen1['info']['direito']]=$noAuxCen1['info']['conectivo']['operacao'] == 'not' ? '0':'1';		
-				}
 				//Se não for nenhum tipo de átomo, entra como fórmula disponível para usar depois
-				elseif(!FuncoesTableaux::checaAtomico($noAuxCen1['info']) && !FuncoesTableauxLPO::checaAtomicoLPO($noAuxCen1['info'])) {
+				if(!FuncoesTableauxLPO::checaAtomicoLPO($noAuxCen1['info'])) {
 					array_push($noAuxCen1['formDisponiveis'], $noAuxCen1);
 					array_push($noAuxCen2['formDisponiveis'], $noAuxCen1);
 
@@ -380,18 +472,10 @@ class FuncoesTableauxLPO extends Model
 					$noAuxCen1['hashAtomosFuncoes'][$noAuxCen1['info']['direito']]=$noAuxCen1['info']['conectivo']['operacao'] == 'not' ? '0':'1';
 					$noAuxCen2['hashAtomosFuncoes'][$noAuxCen1['info']['direito']]=$noAuxCen1['info']['conectivo']['operacao'] == 'not' ? '0':'1';
 				}			
-				//Checa se é átomo comum
-				if(FuncoesTableaux::checaAtomico($noAuxCen2['info'])){
-					if (FuncoesTableaux::casarFormula($noAuxCen2['hashAtomos'],$noAuxCen2['info'])) {
-						$noAuxCen2['filhoCentral']='fechado';
-					}
-					$noAuxCen2['hashAtomos'][$noAuxCen2['info']['direito']]=$noAuxCen2['info']['conectivo']['operacao'] == 'not' ? '0':'1';
-					$noAuxCen1['hashAtomos'][$noAuxCen2['info']['direito']]=$noAuxCen2['info']['conectivo']['operacao'] == 'not' ? '0':'1';				
-				}
 				//Se não for nenhum tipo de átomo, entra como fórmula disponível para usar depois
-				elseif(!FuncoesTableaux::checaAtomico($noAuxCen1['info']) && !FuncoesTableauxLPO::checaAtomicoLPO($noAuxCen1['info'])) {
-					array_push($noAuxCen1['formDisponiveis'], $noAuxCen1);
-					array_push($noAuxCen2['formDisponiveis'], $noAuxCen1);
+				if(!FuncoesTableauxLPO::checaAtomicoLPO($noAuxCen2['info'])) {
+					array_push($noAuxCen1['formDisponiveis'], $noAuxCen2);
+					array_push($noAuxCen2['formDisponiveis'], $noAuxCen2);
 
 				}
 				//Checa se é átomo LPO
@@ -446,14 +530,14 @@ class FuncoesTableauxLPO extends Model
 				//Como noAuxCen1 e noAuxCen2 estão no mesmo ramo, estes devem compartilhar as informações
 
 				//Checa se é átomo comum
-				if(FuncoesTableaux::checaAtomico($noAuxEsq['info'])){
+				/*if(FuncoesTableaux::checaAtomico($noAuxEsq['info'])){
 					if (FuncoesTableaux::casarFormula($noAuxEsq['hashAtomos'],$noAuxEsq['info'])) {
 						$noAuxEsq['filhoCentral']='fechado';
 					}
 					$noAuxEsq['hashAtomos'][$noAuxEsq['info']['direito']]=$noAuxEsq['info']['conectivo']['operacao'] == 'not' ? '0':'1';	
-				}
+				}*/
 				//Se não for nenhum tipo de átomo, entra como fórmula disponível para usar depois
-				elseif(!FuncoesTableauxLPO::checaAtomico($noAuxEsq['info'])  && !FuncoesTableauxLPO::checaAtomicoLPO($noAuxEsq['info'])) {
+				if(!FuncoesTableauxLPO::checaAtomicoLPO($noAuxEsq['info'])) {
 					array_push($noAuxEsq['formDisponiveis'], $noAuxEsq);
 				}
 				//Checa se é átomo LPO
@@ -465,14 +549,14 @@ class FuncoesTableauxLPO extends Model
 				}		
 
 				//Checa se é átomo comum
-				if(FuncoesTableaux::checaAtomico($noAuxDir['info'])){
+				/*if(FuncoesTableaux::checaAtomico($noAuxDir['info'])){
 					if (FuncoesTableaux::casarFormula($noAuxDir['hashAtomos'],$noAuxDir['info'])) {
 						$noAuxDir['filhoCentral']='fechado';
 					}
 					$noAuxDir['hashAtomos'][$noAuxDir['info']['direito']]=$noAuxDir['info']['conectivo']['operacao'] == 'not' ? '0':'1';	
-				}
+				}*/
 				//Se não for nenhum tipo de átomo, entra como fórmula disponível para usar depois
-				elseif(!FuncoesTableaux::checaAtomico($noAuxDir['info']) && !FuncoesTableauxLPO::checaAtomicoLPO($noAuxEsq['info'])) {
+				if(!FuncoesTableauxLPO::checaAtomicoLPO($noAuxDir['info'])) {
 					array_push($noAuxDir['formDisponiveis'], $noAuxDir);
 				}
 				//Checa se é átomo LPO
@@ -490,7 +574,8 @@ class FuncoesTableauxLPO extends Model
 				}
 				if (@$noAuxDir['filhoCentral']!='fechado') {
 						FuncoesTableauxLPO::adicionaArray($nosFolha, $noAuxDir);
-				}	
+				}
+				//dd($noAuxEsq);	
 				return;		
 			case 'implica':
 				//Com exceção da raiz, todo o no que é pai neste momento, deixará de ser nó folha.
@@ -510,6 +595,11 @@ class FuncoesTableauxLPO extends Model
 				$noAuxDir['formDisponiveis']=$pai['formDisponiveis'];
 				$noAuxEsq['hashAtomos']=$pai['hashAtomos'];
 				$noAuxDir['hashAtomos']=$pai['hashAtomos'];
+				$noAuxEsq['hashAtomosFuncoes']=$pai['hashAtomosFuncoes'];
+				$noAuxDir['hashAtomosFuncoes']=$pai['hashAtomosFuncoes'];
+				$noAuxEsq['constantesUsadas']=$pai['constantesUsadas'];
+				$noAuxDir['constantesUsadas']=$pai['constantesUsadas'];
+
 
 				//Correções na estrutura de dados
 				
@@ -517,53 +607,68 @@ class FuncoesTableauxLPO extends Model
 				FuncoesTableauxLPO::corrigeArrays($noAuxDir);
 				
 
-				//Manipulação específica da implicação
+				//---------------------------------------MANIPULAÇÃO ESPECÍFICA DA IMPLICAÇÃO---------------------------------------
 				//O lado esquerdo deve passar a ter um not externamente
 
 				//Se o lado esquerdo for átomo
-				if (FuncoesTableauxLPO::checaAtomico($noAuxEsq['info'])) {
-					if ($noAuxEsq['info']['conectivo']=='not') {
+				if (FuncoesTableauxLPO::checaAtomicoLPO($noAuxEsq['info'])) {
+					if ($noAuxEsq['info']['conectivo']['operacao']=='not') {
 						//Equivalente a notnot
-						$noAuxEsq['info']['conectivo']=null;
+						$noAuxEsq['info']['conectivo']['operacao']=null;
 					}
 					else{
-						$noAuxEsq['info']['conectivo']='not';
+						$noAuxEsq['info']['conectivo']['operacao']='not';
 					}
 				}
 				//Se o lado esquerdo for array
-				elseif (!FuncoesTableauxLPO::checaAtomico($noAuxEsq['info'])){
+				elseif (!FuncoesTableauxLPO::checaAtomicoLPO($noAuxEsq['info'])){
 					FuncoesTableauxLPO::negaArrayTableauxLPO($noAuxEsq['info']);
 				}
 
 				//Se a fórmula for atômica eu adiciono átomo gerado na hash da mesma
 				//Se não for átomo, então é uma fórmula e adiciono a fórmula gerada na lista de fórmulas desse elemento
 				//Como noAuxCen1 e noAuxCen2 estão no mesmo ramo, estes devem compartilhar as informações
-				if(FuncoesTableauxLPO::checaAtomico($noAuxEsq['info'])){
-					if (FuncoesTableauxLPO::casarFormulaLPO($noAuxEsq['hashAtomos'],$noAuxEsq['info'])) {
+				//Checa se é átomo comum
+				/*if(FuncoesTableaux::checaAtomico($noAuxEsq['info'])){
+					if (FuncoesTableaux::casarFormula($noAuxEsq['hashAtomos'],$noAuxEsq['info'])) {
 						$noAuxEsq['filhoCentral']='fechado';
-						//print "<br>FECHADO<br>";
-						//print_r($noAuxEsq['info']);
 					}
-					$noAuxEsq['hashAtomos'][$noAuxEsq['info']['direito']]=$noAuxEsq['info']['conectivo'] == 'not' ? '0':'1';	
-				}
-				elseif(!FuncoesTableauxLPO::checaAtomico($noAuxEsq['info'])) {
+					$noAuxEsq['hashAtomos'][$noAuxEsq['info']['direito']]=$noAuxEsq['info']['conectivo']['operacao'] == 'not' ? '0':'1';	
+				}*/
+				//Se não for nenhum tipo de átomo, entra como fórmula disponível para usar depois
+				if(!FuncoesTableauxLPO::checaAtomicoLPO($noAuxEsq['info'])) {
 					array_push($noAuxEsq['formDisponiveis'], $noAuxEsq);
-				}			
-				
-				if(FuncoesTableauxLPO::checaAtomico($noAuxDir['info'])){
-					if (FuncoesTableauxLPO::casarFormulaLPO($noAuxDir['hashAtomos'],$noAuxDir['info'])) {
-						$noAuxDir['filhoCentral']='fechado';
-						//print "<br>FECHADO<br>";
-						//print_r($noAuxDir['info']);
-					}
-					$noAuxDir['hashAtomos'][$noAuxDir['info']['direito']]=$noAuxDir['info']['conectivo'] == 'not' ? '0':'1';	
 				}
-				elseif(!FuncoesTableauxLPO::checaAtomico($noAuxDir['info'])) {
+				//Checa se é átomo LPO
+				elseif (FuncoesTableauxLPO::checaAtomicoLPO($noAuxEsq['info'])) {
+					if (FuncoesTableauxLPO::casarFormulaLPO($noAuxEsq['hashAtomosFuncoes'],$noAuxEsq['info'])) {
+						$noAuxEsq['filhoCentral']='fechado';
+					}
+					$noAuxEsq['hashAtomosFuncoes'][$noAuxEsq['info']['direito']]=$noAuxEsq['info']['conectivo']['operacao'] == 'not' ? '0':'1';
+				}		
+
+				//Checa se é átomo comum
+				/*if(FuncoesTableaux::checaAtomico($noAuxDir['info'])){
+					if (FuncoesTableaux::casarFormula($noAuxDir['hashAtomos'],$noAuxDir['info'])) {
+						$noAuxDir['filhoCentral']='fechado';
+					}
+					$noAuxDir['hashAtomos'][$noAuxDir['info']['direito']]=$noAuxDir['info']['conectivo']['operacao'] == 'not' ? '0':'1';	
+				}*/
+				//Se não for nenhum tipo de átomo, entra como fórmula disponível para usar depois
+				if(!FuncoesTableauxLPO::checaAtomicoLPO($noAuxDir['info'])) {
 					array_push($noAuxDir['formDisponiveis'], $noAuxDir);
+				}
+				//Checa se é átomo LPO
+				elseif (FuncoesTableauxLPO::checaAtomicoLPO($noAuxDir['info'])) {
+					if (FuncoesTableauxLPO::casarFormulaLPO($noAuxDir['hashAtomosFuncoes'],$noAuxDir['info'])) {
+						$noAuxDir['filhoCentral']='fechado';
+					}
+					$noAuxDir['hashAtomosFuncoes'][$noAuxDir['info']['direito']]=$noAuxDir['info']['conectivo']['operacao'] == 'not' ? '0':'1';
 				}
 
 				FuncoesTableauxLPO::removerFormula($noAuxEsq['formDisponiveis'],$form['info']);
 				FuncoesTableauxLPO::removerFormula($noAuxDir['formDisponiveis'],$form['info']);
+
 				if (@$noAuxEsq['filhoCentral']!='fechado') {
 						FuncoesTableauxLPO::adicionaArray($nosFolha, $noAuxEsq);
 				}
@@ -644,11 +749,10 @@ class FuncoesTableauxLPO extends Model
 					$noAuxCen1['hashAtomosFuncoes'][$noAuxCen1['info']['direito']]=$noAuxCen1['info']['conectivo']['operacao'] == 'not' ? '0':'1';
 				}	
 				FuncoesTableaux::removerFormula($noAuxCen1['formDisponiveis'],$form['info']);
-				
-				if (!FuncoesTableaux::checaAtomico($noAuxCen1['info']) && !FuncoesTableauxLPO::checaAtomicoLPO($noAuxCen1['info'])) {
-					FuncoesTableaux::adicionaArray($nosFolha, $noAuxCen1);
-				}	
-				
+				//Caso o nó não esteja fechado, adicionar como nó folha para dar prosseguimento
+				if (@$noAuxCen1['filhoCentral']!='fechado') {
+						FuncoesTableauxLPO::adicionaArray($nosFolha, $noAuxCen1);
+				}
 				return;
 			
 			case 'not_e':
@@ -669,67 +773,92 @@ class FuncoesTableauxLPO extends Model
 				$noAuxDir['formDisponiveis']=$pai['formDisponiveis'];
 				$noAuxEsq['hashAtomos']=$pai['hashAtomos'];
 				$noAuxDir['hashAtomos']=$pai['hashAtomos'];
+				$noAuxEsq['hashAtomosFuncoes']=$pai['hashAtomosFuncoes'];
+				$noAuxDir['hashAtomosFuncoes']=$pai['hashAtomosFuncoes'];
+				$noAuxEsq['constantesUsadas']=$pai['constantesUsadas'];
+				$noAuxDir['constantesUsadas']=$pai['constantesUsadas'];
 
 				//Correções na estrutura de dados
 				
 				FuncoesTableauxLPO::corrigeArrays($noAuxEsq);			
 				FuncoesTableauxLPO::corrigeArrays($noAuxDir);
 
-				//Manipulação específica do not_e
+				//------------------------------------------MANIPULAÇÃO ESPECÍFICA DO NOT_E---------------------------------------
 				//Os dois lados devem passar a ter um not externamente
 
 				//Se o lado esquerdo for átomo
-				if (FuncoesTableauxLPO::checaAtomico($noAuxEsq['info'])) {
-					if ($noAuxEsq['info']['conectivo']=='not') {
+				if (FuncoesTableaux::checaAtomico($noAuxEsq['info']) || FuncoesTableauxLPO::checaAtomicoLPO($noAuxEsq['info'])) {
+					if ($noAuxEsq['info']['conectivo']['operacao']=='not') {
 						//Equivalente a notnot
-						$noAuxEsq['info']['conectivo']=null;
+						$noAuxEsq['info']['conectivo']['operacao']=null;
 					}
 					else{
-						$noAuxEsq['info']['conectivo']='not';
+						$noAuxEsq['info']['conectivo']['operacao']='not';
 					}
 				}
 				//Se o lado esquerdo for array
-				elseif (!FuncoesTableauxLPO::checaAtomico($noAuxEsq['info'])){
+				elseif (!FuncoesTableaux::checaAtomico($noAuxEsq['info']) && !FuncoesTableauxLPO::checaAtomicoLPO($noAuxEsq['info'])){
 					FuncoesTableauxLPO::negaArrayTableauxLPO($noAuxEsq['info']);
 				}
 
 				//Se o lado direito for átomo
-				if (FuncoesTableauxLPO::checaAtomico($noAuxDir['info'])) {
-					if ($noAuxDir['info']['conectivo']=='not') {
+				if (FuncoesTableaux::checaAtomico($noAuxDir['info']) || FuncoesTableauxLPO::checaAtomicoLPO($noAuxDir['info'])) {
+					if ($noAuxDir['info']['conectivo']['operacao']=='not') {
 						//Equivalente a notnot
-						$noAuxDir['info']['conectivo']=null;
+						$noAuxDir['info']['conectivo']['operacao']=null;
 					}
 					else{
-						$noAuxDir['info']['conectivo']='not';
+						$noAuxDir['info']['conectivo']['operacao']='not';
 					}
 				}
 				//Se o lado direito for array
-				elseif (!FuncoesTableauxLPO::checaAtomico($noAuxDir['info'])){
+				elseif (!FuncoesTableaux::checaAtomico($noAuxDir['info']) && !FuncoesTableauxLPO::checaAtomicoLPO($noAuxDir['info'])){
 					FuncoesTableauxLPO::negaArrayTableauxLPO($noAuxDir['info']);
 				}
+				//---------------------------------------------------------------------------------------------------------------------------
 
 				//Se a fórmula for atômica eu adiciono átomo gerado na hash da mesma
 				//Se não for átomo, então é uma fórmula e adiciono a fórmula gerada na lista de fórmulas desse elemento
 				//Como noAuxCen1 e noAuxCen2 estão no mesmo ramo, estes devem compartilhar as informações
-				if(FuncoesTableauxLPO::checaAtomico($noAuxEsq['info'])){
-					if (FuncoesTableauxLPO::casarFormulaLPO($noAuxEsq['hashAtomos'],$noAuxEsq['info'])) {
+
+				//Checa se é átomo comum
+				/*if(FuncoesTableaux::checaAtomico($noAuxEsq['info'])){
+					if (FuncoesTableaux::casarFormula($noAuxEsq['hashAtomos'],$noAuxEsq['info'])) {
 						$noAuxEsq['filhoCentral']='fechado';
 					}
-					$noAuxEsq['hashAtomos'][$noAuxEsq['info']['direito']]=$noAuxEsq['info']['conectivo'] == 'not' ? '0':'1';	
-				}
-				elseif(!FuncoesTableauxLPO::checaAtomico($noAuxEsq['info'])) {
+					$noAuxEsq['hashAtomos'][$noAuxEsq['info']['direito']]=$noAuxEsq['info']['conectivo']['operacao'] == 'not' ? '0':'1';	
+				}*/
+				//Se não for nenhum tipo de átomo, entra como fórmula disponível para usar depois
+				if(!FuncoesTableauxLPO::checaAtomicoLPO($noAuxEsq['info'])) {
 					array_push($noAuxEsq['formDisponiveis'], $noAuxEsq);
-				}			
-				
-				if(FuncoesTableauxLPO::checaAtomico($noAuxDir['info'])){
-					if (FuncoesTableauxLPO::casarFormulaLPO($noAuxDir['hashAtomos'],$noAuxDir['info'])) {
+				}
+				//Checa se é átomo LPO
+				elseif (FuncoesTableauxLPO::checaAtomicoLPO($noAuxEsq['info'])) {
+					if (FuncoesTableauxLPO::casarFormulaLPO($noAuxEsq['hashAtomosFuncoes'],$noAuxEsq['info'])) {
+						$noAuxEsq['filhoCentral']='fechado';
+					}
+					$noAuxEsq['hashAtomosFuncoes'][$noAuxEsq['info']['direito']]=$noAuxEsq['info']['conectivo']['operacao'] == 'not' ? '0':'1';
+				}		
+
+				//Checa se é átomo comum
+				/*if(FuncoesTableaux::checaAtomico($noAuxDir['info'])){
+					if (FuncoesTableaux::casarFormula($noAuxDir['hashAtomos'],$noAuxDir['info'])) {
 						$noAuxDir['filhoCentral']='fechado';
 					}
-					$noAuxDir['hashAtomos'][$noAuxDir['info']['direito']]=$noAuxDir['info']['conectivo'] == 'not' ? '0':'1';	
-				}
-				elseif(!FuncoesTableauxLPO::checaAtomico($noAuxDir['info'])) {
+					$noAuxDir['hashAtomos'][$noAuxDir['info']['direito']]=$noAuxDir['info']['conectivo']['operacao'] == 'not' ? '0':'1';	
+				}*/
+				//Se não for nenhum tipo de átomo, entra como fórmula disponível para usar depois
+				if(!FuncoesTableauxLPO::checaAtomicoLPO($noAuxDir['info'])) {
 					array_push($noAuxDir['formDisponiveis'], $noAuxDir);
 				}
+				//Checa se é átomo LPO
+				elseif (FuncoesTableauxLPO::checaAtomicoLPO($noAuxDir['info'])) {
+					if (FuncoesTableauxLPO::casarFormulaLPO($noAuxDir['hashAtomosFuncoes'],$noAuxDir['info'])) {
+						$noAuxDir['filhoCentral']='fechado';
+					}
+					$noAuxDir['hashAtomosFuncoes'][$noAuxDir['info']['direito']]=$noAuxDir['info']['conectivo']['operacao'] == 'not' ? '0':'1';
+				}
+
 				FuncoesTableauxLPO::removerFormula($noAuxEsq['formDisponiveis'],$form['info']);
 				FuncoesTableauxLPO::removerFormula($noAuxDir['formDisponiveis'],$form['info']);	
 				if (@$noAuxEsq['filhoCentral']!='fechado') {
@@ -774,7 +903,7 @@ class FuncoesTableauxLPO extends Model
 				//Os dois lados devem passar a ter um not externamente
 
 				//Se o lado esquerdo for átomo simples
-				if (FuncoesTableaux::checaAtomico($noAuxCen1['info'])) {
+				/*if (FuncoesTableaux::checaAtomico($noAuxCen1['info'])) {
 					if ($noAuxCen1['info']['conectivo']['operacao']=='not') {
 						//Equivalente a notnot
 						$noAuxCen1['info']['conectivo']['operacao']=null;
@@ -782,9 +911,9 @@ class FuncoesTableauxLPO extends Model
 					else{
 						$noAuxCen1['info']['conectivo']['operacao']='not';
 					}
-				}
+				}*/
 				//Se o lado esquerdo for átomo LPO
-				elseif (FuncoesTableauxLPO::checaAtomicoLPO($noAuxCen1['info'])) {
+				if (FuncoesTableauxLPO::checaAtomicoLPO($noAuxCen1['info'])) {
 					if ($noAuxCen1['info']['conectivo']['operacao']=='not') {
 						//Equivalente a notnot
 						$noAuxCen1['info']['conectivo']['operacao']=null;
@@ -794,13 +923,13 @@ class FuncoesTableauxLPO extends Model
 					}
 				}
 				//Se o lado esquerdo for array
-				elseif (!FuncoesTableaux::checaAtomico($noAuxCen1['info']) && !FuncoesTableauxLPO::checaAtomicoLPO($noAuxCen1['info'])){
+				elseif (!FuncoesTableauxLPO::checaAtomicoLPO($noAuxCen1['info'])){
 					FuncoesTableauxLPO::negaArrayTableauxLPO($noAuxCen1['info']);
 				}
 				
 
 				//Se o lado direito for átomo simples ou composto
-				if (FuncoesTableaux::checaAtomico($noAuxCen2['info'])  || FuncoesTableauxLPO::checaAtomicoLPO($noAuxCen2['info'])) {
+				if (FuncoesTableauxLPO::checaAtomicoLPO($noAuxCen2['info'])) {
 					if ($noAuxCen2['info']['conectivo']['operacao']=='not') {
 						//Equivalente a notnot
 						$noAuxCen2['info']['conectivo']['operacao']=null;
@@ -810,7 +939,7 @@ class FuncoesTableauxLPO extends Model
 					}
 				}
 				//Se o lado direito for array
-				elseif (!FuncoesTableaux::checaAtomico($noAuxCen2['info']) && !FuncoesTableauxLPO::checaAtomicoLPO($noAuxCen2['info'])){
+				elseif (!FuncoesTableauxLPO::checaAtomicoLPO($noAuxCen2['info'])){
 					FuncoesTableauxLPO::negaArrayTableauxLPO($noAuxCen2['info']);
 				}
 				
@@ -822,15 +951,15 @@ class FuncoesTableauxLPO extends Model
 
 				//PARA O PRIMEIRO TERMO
 				//Checa se é átomo comum
-				if(FuncoesTableaux::checaAtomico($noAuxCen1['info'])){
+				/*if(FuncoesTableaux::checaAtomico($noAuxCen1['info'])){
 					if (FuncoesTableauxLPO::casarFormula($noAuxCen1['hashAtomos'],$noAuxCen1['info'])) {
 						$noAuxCen2['filhoCentral']='fechado';
 					}
 					$noAuxCen1['hashAtomos'][$noAuxCen1['info']['direito']]=$noAuxCen1['info']['conectivo']['operacao'] == 'not' ? '0':'1';
 					$noAuxCen2['hashAtomos'][$noAuxCen1['info']['direito']]=$noAuxCen1['info']['conectivo']['operacao'] == 'not' ? '0':'1';		
-				}
+				}*/
 				//Se não for nenhum tipo de átomo, entra como fórmula disponível para usar depois
-				elseif(!FuncoesTableaux::checaAtomico($noAuxCen1['info']) && !FuncoesTableauxLPO::checaAtomicoLPO($noAuxCen1['info'])) {
+				if(!FuncoesTableauxLPO::checaAtomicoLPO($noAuxCen1['info'])) {
 					array_push($noAuxCen1['formDisponiveis'], $noAuxCen1);
 					array_push($noAuxCen2['formDisponiveis'], $noAuxCen1);
 
@@ -846,17 +975,17 @@ class FuncoesTableauxLPO extends Model
 
 				//PARA O SEGUNDO TERMO
 				//Checa se é átomo comum
-				if(FuncoesTableaux::checaAtomico($noAuxCen2['info'])){
+				/*if(FuncoesTableaux::checaAtomico($noAuxCen2['info'])){
 					if (FuncoesTableaux::casarFormula($noAuxCen2['hashAtomos'],$noAuxCen2['info'])) {
 						$noAuxCen2['filhoCentral']='fechado';
 					}
 					$noAuxCen2['hashAtomos'][$noAuxCen2['info']['direito']]=$noAuxCen2['info']['conectivo']['operacao'] == 'not' ? '0':'1';
 					$noAuxCen1['hashAtomos'][$noAuxCen2['info']['direito']]=$noAuxCen2['info']['conectivo']['operacao'] == 'not' ? '0':'1';				
-				}
+				}*/
 				//Se não for nenhum tipo de átomo, entra como fórmula disponível para usar depois
-				elseif(!FuncoesTableaux::checaAtomico($noAuxCen1['info']) && !FuncoesTableauxLPO::checaAtomicoLPO($noAuxCen1['info'])) {
-					array_push($noAuxCen1['formDisponiveis'], $noAuxCen1);
-					array_push($noAuxCen2['formDisponiveis'], $noAuxCen1);
+				if(!FuncoesTableauxLPO::checaAtomicoLPO($noAuxCen2['info'])) {
+					array_push($noAuxCen1['formDisponiveis'], $noAuxCen2);
+					array_push($noAuxCen2['formDisponiveis'], $noAuxCen2);
 
 				}
 				//Checa se é átomo LPO
@@ -908,7 +1037,7 @@ class FuncoesTableauxLPO extends Model
 
 				//O lado direito deve passar a ter um not externamente
 				//Se o lado direito for átomo simples ou composto
-				if (FuncoesTableaux::checaAtomico($noAuxCen2['info'])  || FuncoesTableauxLPO::checaAtomicoLPO($noAuxCen2['info'])) {
+				if (FuncoesTableauxLPO::checaAtomicoLPO($noAuxCen2['info'])) {
 					if ($noAuxCen2['info']['conectivo']['operacao']=='not') {
 						//Equivalente a notnot
 						$noAuxCen2['info']['conectivo']['operacao']=null;
@@ -918,7 +1047,7 @@ class FuncoesTableauxLPO extends Model
 					}
 				}
 				//Se o lado direito for array
-				elseif (!FuncoesTableaux::checaAtomico($noAuxCen2['info']) && !FuncoesTableauxLPO::checaAtomicoLPO($noAuxCen2['info'])){
+				elseif (!FuncoesTableauxLPO::checaAtomicoLPO($noAuxCen2['info'])){
 					FuncoesTableauxLPO::negaArrayTableauxLPO($noAuxCen2['info']);
 				}
 				//------------------------------------------------------------------------------------------------------------------------
@@ -929,15 +1058,15 @@ class FuncoesTableauxLPO extends Model
 				//Como noAuxCen1 e noAuxCen2 estão no mesmo ramo, estes devem compartilhar as informações
 				//PARA O PRIMEIRO TERMO
 				//Checa se é átomo comum
-				if(FuncoesTableaux::checaAtomico($noAuxCen1['info'])){
+				/*if(FuncoesTableaux::checaAtomico($noAuxCen1['info'])){
 					if (FuncoesTableauxLPO::casarFormula($noAuxCen1['hashAtomos'],$noAuxCen1['info'])) {
 						$noAuxCen2['filhoCentral']='fechado';
 					}
 					$noAuxCen1['hashAtomos'][$noAuxCen1['info']['direito']]=$noAuxCen1['info']['conectivo']['operacao'] == 'not' ? '0':'1';
 					$noAuxCen2['hashAtomos'][$noAuxCen1['info']['direito']]=$noAuxCen1['info']['conectivo']['operacao'] == 'not' ? '0':'1';		
-				}
+				}*/
 				//Se não for nenhum tipo de átomo, entra como fórmula disponível para usar depois
-				elseif(!FuncoesTableaux::checaAtomico($noAuxCen1['info']) && !FuncoesTableauxLPO::checaAtomicoLPO($noAuxCen1['info'])) {
+				if(!FuncoesTableauxLPO::checaAtomicoLPO($noAuxCen1['info'])) {
 					array_push($noAuxCen1['formDisponiveis'], $noAuxCen1);
 					array_push($noAuxCen2['formDisponiveis'], $noAuxCen1);
 
@@ -953,17 +1082,17 @@ class FuncoesTableauxLPO extends Model
 
 				//PARA O SEGUNDO TERMO
 				//Checa se é átomo comum
-				if(FuncoesTableaux::checaAtomico($noAuxCen2['info'])){
+				/*if(FuncoesTableaux::checaAtomico($noAuxCen2['info'])){
 					if (FuncoesTableaux::casarFormula($noAuxCen2['hashAtomos'],$noAuxCen2['info'])) {
 						$noAuxCen2['filhoCentral']='fechado';
 					}
 					$noAuxCen2['hashAtomos'][$noAuxCen2['info']['direito']]=$noAuxCen2['info']['conectivo']['operacao'] == 'not' ? '0':'1';
 					$noAuxCen1['hashAtomos'][$noAuxCen2['info']['direito']]=$noAuxCen2['info']['conectivo']['operacao'] == 'not' ? '0':'1';				
-				}
+				}*/
 				//Se não for nenhum tipo de átomo, entra como fórmula disponível para usar depois
-				elseif(!FuncoesTableaux::checaAtomico($noAuxCen1['info']) && !FuncoesTableauxLPO::checaAtomicoLPO($noAuxCen1['info'])) {
-					array_push($noAuxCen1['formDisponiveis'], $noAuxCen1);
-					array_push($noAuxCen2['formDisponiveis'], $noAuxCen1);
+				if(!FuncoesTableauxLPO::checaAtomicoLPO($noAuxCen2['info'])) {
+					array_push($noAuxCen1['formDisponiveis'], $noAuxCen2);
+					array_push($noAuxCen2['formDisponiveis'], $noAuxCen2);
 
 				}
 				//Checa se é átomo LPO
@@ -987,9 +1116,11 @@ class FuncoesTableauxLPO extends Model
 			case 'paraTodo':
 				//Com exceção da raiz, todo o no que é pai neste momento, deixará de ser nó folha.
 				//Relembrando, consideramos que a raiz é pai dela mesma para a aplicação inicial.
+
 				if ($contador!=0) {
 					FuncoesTableauxLPO::removerFormula($nosFolha,$pai['info']);
 				}
+
 				
 				$pai['filhoCentral']=&$noAuxCen1;
 				$noAuxCen1['pai']=&$pai;
@@ -1002,16 +1133,17 @@ class FuncoesTableauxLPO extends Model
 				$noAuxCen1['constantesUsadas']=$pai['constantesUsadas'];
 
 				//Correções na estrutura de dados
-				FuncoesTableauxLPO::corrigeArrays($noAuxCen1);
-
 				
-
+				FuncoesTableauxLPO::corrigeArrays($noAuxCen1);
 				//Manipulação específica de paraTodo
+				//print "<br>Antes a aplicação da regra<br>";
+				//print_r($noAuxCen1['info']);
 				$noAuxCen1['filhoCentral']=null;
 				$noAuxCen1['info']['conectivo']['operacao']=null;
-				FuncoesTableauxLPO::atribuiConstateFormulaArray($noAuxCen1,true,$noAuxCen1['constantesUsadas'],$noAuxCen1['hashAtomosFuncoes'],$listaGlobalConstates,$noAuxCen1['info']['conectivo']['variavel']);
-				
-				
+				FuncoesTableauxLPO::atribuiConstanteFormulaArray($noAuxCen1,true,$listaGlobalConstantes,$noAuxCen1['info']['conectivo']['variavel'],$listaAcumuladora,$noAuxCen1['constantesUsadas'],$noAuxCen1['hashAtomosFuncoes']);
+				//dd($noAuxCen1);	
+				//print "<br>Após a aplicação da regra<br>";
+				//print_r($noAuxCen1['info']);
 				//dd($form);
 
 				//Se a fórmula for atômica eu adiciono átomo gerado na hash da mesma
@@ -1032,9 +1164,14 @@ class FuncoesTableauxLPO extends Model
 						$noAuxCen1['filhoCentral']='fechado';
 					}
 					$noAuxCen1['hashAtomosFuncoes'][$noAuxCen1['info']['direito']]=$noAuxCen1['info']['conectivo']['operacao'] == 'not' ? '0':'1';
-				}		
+				}
+
 				FuncoesTableaux::removerFormula($noAuxCen1['formDisponiveis'],$form['info']);
-				FuncoesTableaux::adicionaArray($nosFolha, $noAuxCen1);
+				if (@$noAuxCen1['filhoCentral']!='fechado') {
+						FuncoesTableauxLPO::adicionaArray($nosFolha, $noAuxCen1);
+				}
+
+				//dd($noAuxCen1);
 				return;
 			case 'xist':
 				//Com exceção da raiz, todo o no que é pai neste momento, deixará de ser nó folha.
@@ -1060,7 +1197,7 @@ class FuncoesTableauxLPO extends Model
 				//Manipulação específica de xist
 				$noAuxCen1['filhoCentral']=null;
 				$noAuxCen1['info']['conectivo']['operacao']=null;
-				FuncoesTableauxLPO::atribuiConstateFormulaArray($noAuxCen1,false,$noAuxCen1['constantesUsadas'],$noAuxCen1['hashAtomosFuncoes'],$listaGlobalConstates,$noAuxCen1['info']['conectivo']['variavel']);
+				FuncoesTableauxLPO::atribuiConstanteFormulaArray($noAuxCen1,false,$listaGlobalConstantes,$noAuxCen1['info']['conectivo']['variavel'],$listaAcumuladora,$noAuxCen1['constantesUsadas'],$noAuxCen1['hashAtomosFuncoes']);
 
 				
 				//dd($form);
@@ -1085,7 +1222,9 @@ class FuncoesTableauxLPO extends Model
 					$noAuxCen1['hashAtomosFuncoes'][$noAuxCen1['info']['direito']]=$noAuxCen1['info']['conectivo']['operacao'] == 'not' ? '0':'1';
 				}		
 				FuncoesTableaux::removerFormula($noAuxCen1['formDisponiveis'],$form['info']);
-				FuncoesTableaux::adicionaArray($nosFolha, $noAuxCen1);
+				if (@$noAuxCen1['filhoCentral']!='fechado') {
+						FuncoesTableauxLPO::adicionaArray($nosFolha, $noAuxCen1);
+				}
 				return;
 
 			case 'not_paraTodo':
@@ -1112,9 +1251,34 @@ class FuncoesTableauxLPO extends Model
 
 				//Manipulação específica de paraTodo
 				$noAuxCen1['filhoCentral']=null;
-				$noAuxCen1['info']['conectivo']['operacao']='not';
-				FuncoesTableauxLPO::atribuiConstateFormulaArray($noAuxCen1,false,$noAuxCen1['constantesUsadas'],$noAuxCen1['hashAtomosFuncoes'],$listaGlobalConstates,$noAuxCen1['info']['conectivo']['variavel']);
-				
+				$noAuxCen1['info']['conectivo']['operacao']=null;
+				//dd($noAuxCen1);
+				//print "<br>Antes da aplicação da fórmula<br>";
+				//print_r($noAuxCen1['constantesUsadas']);
+				if (@$noAuxCen1['info']['direito']['info']['conectivo']['operacao']=='not') {
+					$variavel=$noAuxCen1['info']['conectivo']['variavel'];
+					$noAuxCen1['info']['conectivo']['operacao']=null;
+					$noAuxCen1['info']['conectivo']['variavel']=null;
+					FuncoesTableauxLPO::corrigeArraysLPO($noAuxCen1);
+					//Negação do not
+					$noAuxCen1['info']['conectivo']['operacao']=null;
+					FuncoesTableauxLPO::atribuiConstanteFormulaArray($noAuxCen1,false,$listaGlobalConstantes,$variavel,$listaAcumuladora,$noAuxCen1['constantesUsadas'],$noAuxCen1['hashAtomosFuncoes']);
+
+					//dd($noAuxCen1);
+				}
+
+				//Caso haja uma fórmula no lado direito com conectivo, devemos negar o conectivo
+				elseif (@in_array($noAuxCen1['info']['direito']['info']['conectivo']['operacao'], $listaGlobalConectivos)) {
+					FuncoesTableauxLPO::negaConectivo($noAuxCen1['info']['direito']['info']['conectivo']['operacao']);
+					FuncoesTableauxLPO::atribuiConstanteFormulaArray($noAuxCen1,false,$listaGlobalConstantes,$noAuxCen1['info']['conectivo']['variavel'],$listaAcumuladora,$noAuxCen1['constantesUsadas'],$noAuxCen1['hashAtomosFuncoes']);
+				}
+				else{
+					$noAuxCen1['info']['conectivo']['operacao']='not';
+					FuncoesTableauxLPO::atribuiConstanteFormulaArray($noAuxCen1,false,$listaGlobalConstantes,$noAuxCen1['info']['conectivo']['variavel'],$listaAcumuladora,$noAuxCen1['constantesUsadas'],$noAuxCen1['hashAtomosFuncoes']);
+					//dd($noAuxCen1);
+				}
+				//print "<br>Depois da aplicação da fórmula<br>";
+				//print_r($noAuxCen1['constantesUsadas']);
 				
 				//dd($form);
 
@@ -1138,7 +1302,10 @@ class FuncoesTableauxLPO extends Model
 					$noAuxCen1['hashAtomosFuncoes'][$noAuxCen1['info']['direito']]=$noAuxCen1['info']['conectivo']['operacao'] == 'not' ? '0':'1';
 				}		
 				FuncoesTableaux::removerFormula($noAuxCen1['formDisponiveis'],$form['info']);
-				FuncoesTableaux::adicionaArray($nosFolha, $noAuxCen1);
+				if (@$noAuxCen1['filhoCentral']!='fechado') {
+						FuncoesTableauxLPO::adicionaArray($nosFolha, $noAuxCen1);
+				}
+				//dd($noAuxCen1);
 				return;
 
 			case 'not_xist':
@@ -1147,7 +1314,6 @@ class FuncoesTableauxLPO extends Model
 				if ($contador!=0) {
 					FuncoesTableauxLPO::removerFormula($nosFolha,$pai['info']);
 				}
-				
 				$pai['filhoCentral']=&$noAuxCen1;
 				$noAuxCen1['pai']=&$pai;
 				//Inicialização das variáveis auxiliares
@@ -1163,37 +1329,62 @@ class FuncoesTableauxLPO extends Model
 
 				//Manipulação específica de paraTodo
 				$noAuxCen1['filhoCentral']=null;
-				$noAuxCen1['info']['conectivo']['operacao']='not';
-				FuncoesTableauxLPO::atribuiConstateFormulaArray($noAuxCen1,true,$noAuxCen1['constantesUsadas'],$noAuxCen1['hashAtomosFuncoes'],$listaGlobalConstates,$noAuxCen1['info']['conectivo']['variavel']);
+				//print_r($noAuxCen1['info']['direito']['info']['conectivo']);
 				//dd($noAuxCen1);
+				//Caso haja um átomo com not, fazer a correção do array
+				$noAuxCen1['info']['conectivo']['operacao']=null;
+				if (@$noAuxCen1['info']['direito']['info']['conectivo']['operacao']=='not') {
+					$variavel=$noAuxCen1['info']['conectivo']['variavel'];
+					$noAuxCen1['info']['conectivo']['operacao']=null;
+					$noAuxCen1['info']['conectivo']['variavel']=null;
+					FuncoesTableauxLPO::corrigeArraysLPO($noAuxCen1);
+					//Negação do not
+					$noAuxCen1['info']['conectivo']['operacao']=null;
+					FuncoesTableauxLPO::atribuiConstanteFormulaArray($noAuxCen1,true,$listaGlobalConstantes,$variavel,$listaAcumuladora,$noAuxCen1['constantesUsadas'],$noAuxCen1['hashAtomosFuncoes']);
 
+					//dd($noAuxCen1);
+				}
+
+				//Caso haja uma fórmula no lado direito com conectivo, devemos negar o conectivo
+				elseif (@in_array($noAuxCen1['info']['direito']['info']['conectivo']['operacao'], $listaGlobalConectivos)) {
+					FuncoesTableauxLPO::negaConectivo($noAuxCen1['info']['direito']['info']['conectivo']['operacao']);
+					FuncoesTableauxLPO::atribuiConstanteFormulaArray($noAuxCen1,true,$listaGlobalConstantes,$noAuxCen1['info']['conectivo']['variavel'],$listaAcumuladora,$noAuxCen1['constantesUsadas'],$noAuxCen1['hashAtomosFuncoes']);
+				}
+				else{
+					$noAuxCen1['info']['conectivo']['operacao']='not';
+					FuncoesTableauxLPO::atribuiConstanteFormulaArray($noAuxCen1,true,$listaGlobalConstantes,$noAuxCen1['info']['conectivo']['variavel'],$listaAcumuladora,$noAuxCen1['constantesUsadas'],$noAuxCen1['hashAtomosFuncoes']);
+					//dd($noAuxCen1);
+				}
 				//Se a fórmula for atômica eu adiciono átomo gerado na hash da mesma
 				//Se não for átomo, então é uma fórmula e adiciono a fórmula gerada na lista de fórmulas desse elemento
 				//Como noAuxCen1 e noAuxCen2 estão no mesmo ramo, estes devem compartilhar as informações
 
-				if(FuncoesTableaux::checaAtomico($noAuxCen1['info'])){
-					print "<br>Entrei no cara errado<br>";
+				/*if(FuncoesTableaux::checaAtomico($noAuxCen1['info'])){
 					if (FuncoesTableaux::casarFormula($noAuxCen1['hashAtomos'],$noAuxCen1['info'])) {
 						$noAuxCen1['filhoCentral']='fechado';
 					}
 					$noAuxCen1['hashAtomos'][$noAuxCen1['info']['direito']]=$noAuxCen1['info']['conectivo']['operacao'] == 'not' ? '0':'1';
-				}
-				elseif(!FuncoesTableaux::checaAtomico($noAuxCen1['info']) && !FuncoesTableauxLPO::checaAtomicoLPO($noAuxCen1['info'])) {
+				}*/
+				if(!FuncoesTableaux::checaAtomico($noAuxCen1['info']) && !FuncoesTableauxLPO::checaAtomicoLPO($noAuxCen1['info'])) {
 					array_push($noAuxCen1['formDisponiveis'], $noAuxCen1);
 				}
 				elseif (FuncoesTableauxLPO::checaAtomicoLPO($noAuxCen1['info'])) {
+					//print "<br>Casarrrrrr<br>";
+					//print_r($noAuxCen1['info']);
 					if (FuncoesTableauxLPO::casarFormulaLPO($noAuxCen1['hashAtomosFuncoes'],$noAuxCen1['info'])) {
 						$noAuxCen1['filhoCentral']='fechado';
 					}
 					$noAuxCen1['hashAtomosFuncoes'][$noAuxCen1['info']['direito']]=$noAuxCen1['info']['conectivo']['operacao'] == 'not' ? '0':'1';
 				}		
 				FuncoesTableaux::removerFormula($noAuxCen1['formDisponiveis'],$form['info']);
-				FuncoesTableaux::adicionaArray($nosFolha, $noAuxCen1);
+				if (@$noAuxCen1['filhoCentral']!='fechado') {
+						FuncoesTableauxLPO::adicionaArray($nosFolha, $noAuxCen1);
+				}
 				return;
 			//Caso extra
 			case 'not':
 				//Se for atômico devemos adicionar na hash e verificar se casa com alguma fórmula
-				if(FuncoesTableauxLPO::checaAtomico($pai['info'])){
+				if(FuncoesTableaux::checaAtomico($pai['info'])){
 					if(FuncoesTableauxLPO::casarFormula($pai['hashAtomos'],$pai['info'])){
 						$pai['filhoCentral']='fechado';
 					}
@@ -1212,7 +1403,7 @@ class FuncoesTableauxLPO extends Model
 				return;
 			case null:
 				//Se for atômico devemos adicionar na hash e verificar se casa com alguma fórmula
-				if(FuncoesTableauxLPO::checaAtomico($pai['info'])){
+				if(FuncoesTableaux::checaAtomico($pai['info'])){
 					if(FuncoesTableauxLPO::casarFormulaLPO($pai['hashAtomos'],$pai['info'])){
 						$pai['filhoCentral']='fechado';
 					}
@@ -1246,6 +1437,29 @@ class FuncoesTableauxLPO extends Model
 				unset($listaFormulas[$key]);
 				return;
 			}
+		}
+	}
+	public static function negaConectivo(&$conectivo){
+		if ($conectivo=='e') {
+			$conectivo='not_e';
+		}
+		elseif ($conectivo=='ou') {
+			$conectivo='not_ou';
+		}
+		elseif ($conectivo=='implica') {
+			$conectivo='not_implica';
+		}
+		elseif ($conectivo=='not_e') {
+			$conectivo='e';
+		}
+		elseif ($conectivo=='not_ou') {
+			$conectivo='ou';
+		}
+		elseif ($conectivo=='not_implica') {
+			$conectivo='implica';
+		}
+		elseif ($conectivo=='notnot') {
+			$conectivo=null;
 		}
 	}
 	public static function adicionaArray(&$array,&$valor){
@@ -1351,7 +1565,8 @@ class FuncoesTableauxLPO extends Model
 	//Função que corrige casos em que temos um campo array do tipo fórmula dentro de outro
 	//array do tipo fórmula com um dos campos (esquerdo ou direito) vazio
 	public static function corrigeArrays(&$form){
-		if (@$form['info']['esquerdo']==NULL && @is_array($form['info']['direito'])) {
+		$conectivos=array("paraTodo","xist","not_paraTodo","not_xist");
+		if (@$form['info']['esquerdo']==NULL && @is_array($form['info']['direito']) && !in_array($form['info']['conectivo']['operacao'], $conectivos)) {
 			$aux1=$form['info']['direito'];
 			$form['info']['esquerdo']=$aux1['info']['esquerdo'];
 			$form['info']['conectivo']=$aux1['info']['conectivo'];
@@ -1365,6 +1580,29 @@ class FuncoesTableauxLPO extends Model
 			$form['info']['direito']=$aux1['info']['direito'];
 		}
 		return;
+	}
+	public static function corrigeArraysLPO(&$form){
+		$conectivos=array("paraTodo","xist","not_paraTodo","not_xist");
+		if (@$form['info']['esquerdo']['operacao']==null && @$form['info']['conectivo']['operacao']==null){
+			$aux=$form['info']['direito'];
+			foreach ($form as $key => $value) {
+				if ($key!='info') {
+					$aux[$key]=$form[$key];
+				}
+			}
+			$form=$aux;
+		}
+	}
+	public static function temConectivo($form){
+		$listaConectivos=array("^","v","-",'@','&');
+		for ($i=0; $i < strlen($form) ; $i++) { 
+			for ($j=0; $j < count($listaConectivos); $j++) { 
+				if ($listaConectivos[$j]==$form[$i]) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	//Função que processa o equivalente a um not(array)
 	//Para processar not(atomo) funções não são necessárias

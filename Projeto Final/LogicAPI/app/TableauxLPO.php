@@ -103,11 +103,21 @@ class TableauxLPO extends Model
 				}
 			}
 			if ($value['info']['conectivo']['operacao']=='notnot') {
-				for ($i=0; $i < strlen($value['info']['direito']) ; $i++) { 
-					if (in_array($value['info']['direito'][$i], $listaGlobalConstantes)) {
-						array_push($this->constantesInicial,$value['info']['direito'][$i]);
-					}
+				$aux=$value['info']['direito'];
+				if ($aux[0]!='(' && $aux[0]!='!') {
+					$aux="(".$aux.")";
 				}
+				$aux=ParsingFormulas::resolveParentesesTableauxLPO($aux);
+				//print_r($aux);
+				//Condição anterior
+				//if (FuncoesTableauxLPO::checaAtomicoLPO($aux['info']) && !is_array($aux)) {
+				if (FuncoesTableauxLPO::checaAtomicoLPO($aux['info'])) {
+					for ($i=0; $i < strlen($value['info']['direito']) ; $i++) { 
+						if (in_array($value['info']['direito'][$i], $listaGlobalConstantes)) {
+							array_push($this->constantesInicial,$value['info']['direito'][$i]);
+						}
+					}
+				}				
 			}
 		}
 		print "<br>Hash inicial de funções<br>";
@@ -126,7 +136,6 @@ class TableauxLPO extends Model
 		$raiz=FuncoesTableauxLPO::criaFormulaTableauxLPO();
 		$historicoVariaveis=array();
 		$nosFolha=array();
-		
 		
 		while (!(FuncoesTableaux::todasFechadas($nosFolha,$contador)) && ($contador<100)) {
 			

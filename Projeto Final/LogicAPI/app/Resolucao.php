@@ -423,6 +423,7 @@ class Resolucao extends Model
 		$perguntaAntesNegar=null;
 		$perguntaDepoisNegar=null;
 		$statusFechado='Não fechado';
+		dd($request);
 
 
 

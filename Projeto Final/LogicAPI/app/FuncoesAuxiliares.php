@@ -42,6 +42,18 @@ class FuncoesAuxiliares extends Model
 		$form=str_replace('@','not_paraTodo',$form);
 	}
 
+	public static function temConectivo($form){
+		$listaConectivos=array("^","v","-",'@','&');
+		for ($i=0; $i < strlen($form) ; $i++) { 
+			for ($j=0; $j < count($listaConectivos); $j++) { 
+				if ($listaConectivos[$j]==$form[$i]) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 
 	//Função para verificação da corretude das formulas com parenteses
 	//Use no lado direito ou esquerdo de um objeto formula

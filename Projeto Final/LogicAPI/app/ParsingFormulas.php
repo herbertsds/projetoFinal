@@ -1476,12 +1476,12 @@ class ParsingFormulas extends Model{
 	//gerando arrays aninhados para fórmulas mais complexas específico para Tableaux
 	public static function formataFormulasTableauxLPO(&$form){
 		//Se ocorrer erro, investigar a entrada no if barra por strlen
-		if(@strlen(@$form['info']['esquerdo'])>4 && $form['info']['esquerdo'][0]!='!'){
+		if(@strlen(@$form['info']['esquerdo'])>4 && @!FuncoesAuxiliares::temConectivo($form)){
 			$aux=ParsingFormulas::resolveParentesesTableauxLPO($form['info']['esquerdo']);
 			$form['info']['esquerdo']=$aux;
-			FuncoesTableaux::formataFormulasTableauxLPO($form['info']['esquerdo']);
+			ParsingFormulas::formataFormulasTableauxLPO($form['info']['esquerdo']);
 		}
-		if(@strlen(@$form['info']['direito'])>4 && $form['info']['direito'][0]!='!'){
+		if(@strlen(@$form['info']['direito'])>4 && @!FuncoesAuxiliares::temConectivo($form)){
 			$aux=ParsingFormulas::resolveParentesesTableauxLPO($form['info']['direito']);
 			$form['info']['direito']=$aux;
 			ParsingFormulas::formataFormulasTableauxLPO($form['info']['direito']);
