@@ -648,15 +648,15 @@ class Resolucao extends Model
 			$formsDepoisDoE=[];*/
 			
 			FuncoesResolucao::confrontaAtomos($arrayFormulas,$hashResolucao,$flag,$statusFechado);
-			$resposta=$entradaConvertida;
+			
 
 			//Converte de volta para strings e retorna
-			foreach ($resposta as $key => $value) {
+			foreach ($arrayFormulas as $key => $value) {
 	 			if (is_array($value)) {
-	 				ParsingFormulas::converteFormulaString($resposta[$key]);
+	 				ParsingFormulas::converteFormulaString($arrayFormulas[$key]);
 	 			}
 	 		}
-
+	 		$resposta=$arrayFormulas;
 			return array($resposta,$statusFechado);
 		}
 
