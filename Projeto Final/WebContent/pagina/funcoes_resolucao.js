@@ -72,7 +72,7 @@ var erro = 0;
 			vet_Entrada[0] = "FNC";
 			vet_Entrada[1] = selecionadas;
 			vet_Entrada[2] = camposMarcados;
-			console.log(vet_Entrada);
+			//console.log(vet_Entrada);
 			
 			var myData = { 'operacao' : vet_Entrada[0],
 					'qtd_formulasSelecionadas' : vet_Entrada[1],
@@ -91,35 +91,34 @@ var erro = 0;
 	        success: function(retorno) {
 		        console.log(retorno);
 				
-//
-//				for(var i=0;i<selecionadas;i++){
-//					regras --;
-//					cont++;
-//					numLinha++;
-//					linhasGab++;
-//					$('#r_divNovasFormulas').append("<input disabled type='checkbox' class='form-check-input' data-color = 'purple' name='ck_novasFormulas' id='" + cont +"' value='" + vet_regras[formulaId] +"'> "+ numLinha + ": "  + resposta[i] +" em FNC </br>"  );
-//
-//					vet_regras[cont]= resposta[i];
-//				}
-//				
-//				
-//				formulaId = "";
-//				if(regras ==0 && perguntaFNC == true){
-//					
-//					$('#btn_ConfrontarRegra').show();
-//					$('#btn_SepararE').show();
-//					$('#btn_SepararOU').show();
-//					$('#btn_TransformarRegra').hide();
-//					
-//					$("#r_divFormulas").unbind();
-//					$('#alertResolucao').fadeOut();
-//
-//					$('#r_passo2').append(" &#10004;");
-//					$("#r_divNovasFormulas :checkbox").prop("disabled", false);
-//					
-//				}
+
+				for(var i=0;i<selecionadas;i++){
+					regras --;
+					cont++;
+					numLinha++;
+					linhasGab++;
+					$('#r_divNovasFormulas').append("<input disabled type='checkbox' class='form-check-input' data-color = 'purple' name='ck_novasFormulas' id='" + cont +"' value='" + retorno[i] +"'> "+ numLinha + ": "  + retorno[i] +"</br>"  );
+
+					vet_regras[cont]= retorno[i];
+				}
+				
+				
+				formulaId = "";
+				if(regras ==0){
+					
+					$('#btn_ConfrontarRegra').show();
+					$('#btn_SepararE').show();
+					$('#btn_SepararOU').show();
+					$('#btn_TransformarRegra').hide();
+					
+					$("#r_divFormulas").unbind();
+					$('#alertResolucao').fadeOut();
+
+					$('#r_passo2').append(" &#10004;");
+					$("#r_divNovasFormulas :checkbox").prop("disabled", false);
+					
+				}
 	
-	//		return formula;
 		},
 		
 		error: function() {
@@ -143,7 +142,7 @@ var erro = 0;
 	
 		};
 		
-		console.log(myData);
+		//console.log(myData);
 		$.ajax({
     		
 	        url: 'http://127.0.0.1:8000/api/resolucao/stepByStep',
@@ -154,29 +153,29 @@ var erro = 0;
 
 	        success: function(retorno) {
 	        	console.log(retorno);
+				perguntaNegada = retorno[retorno.length -1];
+				console.log(perguntaNegada);
+		        numLinha++;
+				linhasGab++;
+				idPergNegada = cont;
+				$('#r_divFormulas').append("<input  type='checkbox' class='form-check-input'  name='ck_Formulas' id='"+ idPergNegada + "' value='"+ perguntaNegada + "'>"+ numLinha +": " + perguntaNegada + " # pergunta negada </input></br>" );
+				$('#r_divNovasFormulas').append("<article> --------------------------------------------------------- </article>" );
 				
-//		        numLinha++;
-//				linhasGab++;
-//				idPergNegada = cont;
-//				$('#r_divFormulas').append("<input  type='checkbox' class='form-check-input'  name='ck_Formulas' id='"+ idPergNegada + "' value='"+ pergunta + "'>"+ numLinha +": " + pergunta + " # pergunta negada </input></br>" );
-//				$('#r_divNovasFormulas').append("<article> --------------------------------------------------------- </article>" );
-//				
-////						$("#finalVetor").prop("disabled", true);
-////						$("#finalVetor").prop("checked", false);
-//				
-//				$('#r_passo1').append(" &#10004;");
-//
-//				formulaId = "";
-//				vet_regras[cont]= resposta;
-//				negadaIndice == cont;
-//				regras++;
-//				perguntaNegada = true;
-//				
-//				$('#btn_TransformarRegra').text("Passar para FNC");
-//				
+						$("#finalVetor").prop("disabled", true);
+						$("#finalVetor").prop("checked", false);
+				
+				$('#r_passo1').append(" &#10004;");
+
+				formulaId = "";
+				vet_regras[cont]= retorno;
+				negadaIndice == cont;
+				regras++;
+				perguntaNegada = true;
+				
+				$('#btn_TransformarRegra').text("Passar para FNC");
+				
 //				$(this).prop("disabled", true);
-//				$(this).prop("checked", false);
-//				return formula;
+//				$(this).prop("checked", true);
 		},
 		
 		error: function() {
@@ -268,8 +267,8 @@ var erro = 0;
 			
 			else{
 				// mostra a saída
-				console.log("Selecionados:" + camposMarcados );
-				vet_Entrada[0] = "separaE";
+				//console.log("Selecionados:" + camposMarcados );
+				vet_Entrada[0] = "SeparaE";
 				vet_Entrada[1] = selecionadas;
 				vet_Entrada[2] = camposMarcados;
 				
@@ -278,7 +277,9 @@ var erro = 0;
 						'formulas' : vet_Entrada[2]
 
 				};
+				
 				console.log(myData);	
+				console.log("envio");
 				$.ajax({
 					
 			        url: 'http://127.0.0.1:8000/api/resolucao/stepByStep',
@@ -289,6 +290,17 @@ var erro = 0;
 			       
 			        success: function(retorno) {
 				        console.log(retorno);
+				        for(var i=0;i<retorno[0].length;i++){
+							
+							cont++;
+							numLinha++;
+							linhasGab++;
+							$('#r_divNovasFormulas').append("<input disabled type='checkbox' class='form-check-input' data-color = 'purple' name='ck_novasFormulas' id='" + cont +"' value='" + retorno[0][i] +"'> "+ numLinha + ": "  + retorno[0][i] +"</br>"  );
+
+							vet_regras[cont]= retorno[0][i];
+							$(this).prop("disabled", true);
+							$(this).prop("checked", false);
+						}
 						
 			
 			//		return formula;
@@ -315,7 +327,7 @@ var erro = 0;
 		if(selecionadas % 2 === 0  && selecionadas > 0){
 			// mostra a saída
 			console.log("Selecionados:" + camposMarcados );
-			vet_Entrada[0] = "separaOU";
+			vet_Entrada[0] = "SeparaOU";
 			vet_Entrada[1] = selecionadas;
 			vet_Entrada[2] = camposMarcados;
 			

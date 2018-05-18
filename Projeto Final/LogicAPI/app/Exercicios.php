@@ -49,7 +49,10 @@ class Exercicios extends Model
     }
 
     public static function converteEntrada($request){
-    	return $request->all();
+    	$request = $request->all();
+    	$request['formulas'] = Exercicios::converteSimbolosEntrada($request['formulas']);
+    	return $request;
+    	
     }
 
     public static function converteSaida($string){
