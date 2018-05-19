@@ -5,7 +5,8 @@ var linhasGab =0;
 var idPergNegada;
 var camposMarcados;
 var erro = 0;
-
+var vet_verificar= [];
+var verificar = 0;
 	function f_Transformar(){
 		
 	//VERIFICAR OBRIGATORIEDADE DA SEQUENCIA
@@ -90,7 +91,10 @@ var erro = 0;
 	        datatype: 'application/json',
 	       
 	        success: function(retorno) {
+	        	console.log('retorno:');
 		        console.log(retorno);
+				console.log("-------");
+
 				
 
 				for(var i=0;i<selecionadas;i++){
@@ -99,21 +103,24 @@ var erro = 0;
 					numLinha++;
 					linhasGab++;
 					$('#r_divNovasFormulas').append("<input disabled type='checkbox' class='form-check-input' data-color = 'purple' name='ck_novasFormulas' id='" + cont +"' value='" + retorno[i] +"'> "+ numLinha + ": "  + retorno[i] +"</br>"  );
-
+					
+					vet_verificar[verificar] = retorno[i];
+					verificar++;
 					vet_regras[cont]= retorno[i];
+					console.log(vet_verificar);
 				}
 				
 				
 				formulaId = "";
 				if(regras ==0){
 					
-					$('#btn_ConfrontarRegra').show();
+					$('#btn_Verificar').show();
 					$('#btn_SepararE').show();
 					$('#btn_SepararOU').show();
 					$('#btn_TransformarRegra').hide();
 					
 					$("#r_divFormulas").unbind();
-					$('#alertResolucao').fadeOut();
+//					$('#alertResolucao').fadeOut();
 
 					$('#r_passo2').append(" &#10004;");
 					$("#r_divNovasFormulas :checkbox").prop("disabled", false);
@@ -154,17 +161,20 @@ var erro = 0;
 	        datatype: 'application/json',
 
 	        success: function(retorno) {
+	        	console.log('retorno:');
 	        	console.log(retorno);
+				console.log("-------");
+
 				perguntaNegada = retorno[retorno.length -1];
-				console.log(perguntaNegada);
+				//console.log(perguntaNegada);
 		        numLinha++;
 				linhasGab++;
 				idPergNegada = cont;
 				$('#r_divFormulas').append("<input  type='checkbox' class='form-check-input'  name='ck_Formulas' id='"+ idPergNegada + "' value='"+ perguntaNegada + "'>"+ numLinha +": " + perguntaNegada + " # pergunta negada </input></br>" );
 				$('#r_divNovasFormulas').append("<article> --------------------------------------------------------- </article>" );
 				
-						$("#finalVetor").prop("disabled", true);
-						$("#finalVetor").prop("checked", false);
+				$("#finalVetor").prop("disabled", true);
+				$("#finalVetor").prop("checked", false);
 				
 				$('#r_passo1').append(" &#10004;");
 
@@ -237,22 +247,38 @@ var erro = 0;
 	}
 	
 	
-	function f_Confrontar(){
-		selecionadas = 0;
-
-		camposMarcados = new Array();
-		$("input[type=checkbox][name='ck_novasFormulas']:checked").each(function(){
-		    camposMarcados.push($(this).val());
-		    selecionadas++;
-
-		});
-		if(selecionadas == 0){
-			alert("Número inválido de fórmulas para Confrontar!");
-		}
+	function f_Verificar(){
+		vet_Entrada[0] = "SeparaE";
+		vet_Entrada[1] = verificar;
+		vet_Entrada[2] = vet_verificar;
 		
-		else{// mostra a saída
-			console.log("Selecionados:" + camposMarcados );
-		}
+		var myData = { 'operacao' : vet_Entrada[0],
+				'qtd_formulasSelecionadas' : vet_Entrada[1],
+				'formulas' : vet_Entrada[2]
+
+		};
+		console.log('envio Verificar:');
+		console.log(myData);	
+		console.log("-------");
+		$.ajax({
+			
+	        url: 'http://127.0.0.1:8000/api/resolucao/stepByStep',
+	    	type: 'GET',
+	        callback: '?',
+	        data: myData, 
+	        datatype: 'application/json',
+	       
+	        success: function(retorno) {
+	        	console.log('retorno:');
+		        console.log(retorno);
+				console.log("-------");
+
+	        },
+			error: function() {
+				console.log('ERRO: Função f_SeparaE!');
+				},
+		    });	        
+
 	}
 	function f_SepararE(){
 		console.log('envio separaE');
@@ -294,7 +320,10 @@ var erro = 0;
 			        datatype: 'application/json',
 			       
 			        success: function(retorno) {
+			        	console.log('retorno:');
 				        console.log(retorno);
+						console.log("-------");
+
 				        for(var i=0;i<retorno[0].length;i++){
 							
 							cont++;
@@ -303,6 +332,8 @@ var erro = 0;
 							$('#r_divNovasFormulas').append("<input  type='checkbox' class='form-check-input' data-color = 'purple' name='ck_novasFormulas' id='" + cont +"' value='" + retorno[0][i] +"'> "+ numLinha + ": "  + retorno[0][i] +"</br>"  );
 
 							vet_regras[cont]= retorno[0][i];
+							vet_verificar[verificar] = retorno[0][i];
+							verificar++;
 
 						}
 				        if(retorno[1].toUpperCase() == 'NÃO FECHADO'){
@@ -336,7 +367,7 @@ var erro = 0;
 			$(this).prop("checked", false);
 		});
 		
-		if(selecionadas % 2 === 0  && selecionadas > 0){
+		if(selecionadas <2 ){
 			// mostra a saída
 			console.log("Selecionados:" + camposMarcados );
 			vet_Entrada[0] = "SeparaOU";
@@ -360,7 +391,10 @@ var erro = 0;
 		        datatype: 'application/json',
 		       
 		        success: function(retorno) {
+		        	console.log('retorno:');
 			        console.log(retorno);
+					console.log("-------");
+
 			        for(var i=0;i<retorno[0].length;i++){
 						
 						cont++;
@@ -369,6 +403,8 @@ var erro = 0;
 						$('#r_divNovasFormulas').append("<input  type='checkbox' class='form-check-input' data-color = 'purple' name='ck_novasFormulas' id='" + cont +"' value='" + retorno[0][i] +"'> "+ numLinha + ": "  + retorno[0][i] +"</br>"  );
 
 						vet_regras[cont]= retorno[0][i];
+						vet_verificar[verificar] = retorno[0][i];
+						verificar++;
 
 					}
 			        if(retorno[1].toUpperCase() == 'NÃO FECHADO'){
@@ -382,7 +418,7 @@ var erro = 0;
 			},
 			
 			error: function() {
-				alert('ERRO: função f_SeparaOU!');
+				console.log('ERRO: função f_SeparaOU!');
 				},
 		    });
 		}

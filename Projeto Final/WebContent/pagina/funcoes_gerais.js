@@ -47,7 +47,7 @@
 			'float':'right'
 	});
 
-		$('#btn_ConfrontarRegra').hide();
+		$('#btn_Verificar').hide();
 		$('#btn_SepararE').hide();
 		$('#btn_SepararOU').hide();
 		
@@ -159,7 +159,7 @@
 		$("#botaoSemantica").click( function()
 			    {
 					tipoEx = "semantica";
-					categoriaExercicio = 0;
+					categoriaExercicio = 6;
 
 					carregaTela("semantica");
 					$("#proximo").removeAttr("disabled");
@@ -181,8 +181,12 @@
 			$("#liExecucao").removeAttr("style");
 			$('#tabExercicio').click();
 			
+			$('#div_ListasSup').attr("style", 'display : none');
+			$('#div_Escolha').removeAttr("style");
+			$('#adicaoExercicio').attr("style", 'display : none');
+			
 			f_LimpaTipo();
-			f_BuscaListas();
+//			f_BuscaListas();
 
 			break;
 		
@@ -196,9 +200,13 @@
 			$("#liExercicio").removeAttr("style");
 			$("#liExecucao").removeAttr("style");
 			$('#tabExercicio').click();
-
+			
+			$('#div_ListasSup').attr("style", 'display : none');
+			$('#div_Escolha').removeAttr("style");
+			$('#adicaoExercicio').attr("style", 'display : none');
+			
 			f_LimpaTipo();
-			f_BuscaListas();
+//			f_BuscaListas();
 			break;
 		
 		case "deducao":
@@ -211,8 +219,13 @@
 			$("#liExercicio").removeAttr("style");
 			$("#liExecucao").removeAttr("style");
 			$('#tabExercicio').click();
+			
+			$('#div_ListasSup').attr("style", 'display : none');
+			$('#div_Escolha').removeAttr("style");
+			$('#adicaoExercicio').attr("style", 'display : none');
+			
 			f_LimpaTipo();
-			f_BuscaListas();
+//			f_BuscaListas();
 
 			break;
 		case "semantica":
@@ -225,8 +238,13 @@
 			$("#liExecucao").removeAttr("style");
 			$('#tabExercicio').click();
 			
+			$('#div_ListasSup').attr("style", 'display : none');
+			$('#div_Escolha').removeAttr("style");
+			$('#adicaoExercicio').attr("style", 'display : none');
+			
 			f_LimpaTipo();
-			f_BuscaListas();
+//			f_BuscaListas();
+			
 
 			break;	
 		default:
@@ -234,6 +252,7 @@
 		}
 	}
 	
+
 	function atualizaTela(){
 		
 		switch(tipoEx){
@@ -272,6 +291,64 @@
 		}
 	}	
 //-------------------------------------------------------------------------------------------------------
+	
+	function f_Escolha(forma){
+		switch(forma){
+			case "novoExercicio":
+				//console.log("aqui");
+//				f_LimpaTipo();
+				$('#adicaoExercicio').removeAttr("style");
+				$('#div_Escolha').attr("style", 'display : none');
+				$('#div_ListasSup').attr("style", 'display : none');
+
+				break;
+				
+			case "listarEx":
+				//console.log("listar");
+//				f_LimpaTipo();
+				
+				f_BuscaListas();
+
+				
+				$('#div_ListasSup').removeAttr("style");
+				$('#div_Escolha').attr("style", 'display : none');
+				$('#adicaoExercicio').attr("style", 'display : none');
+				break;
+		}
+		
+	}
+	function f_PreencherDivListas(){
+		$("#div_ListasSup").append("<div class='col-sm-14 col-sm-offset-1' id='div_ListasInf'></div>");
+
+		$("#div_ListasInf").empty();
+
+  	    $('#div_ListasInf').append("<br/><h8 color='gray'>Total de Listas Encontradas: "+ listas.length.toString() +"</h8>");
+  	    
+  	    //console.log(categoriaExercicio);
+    	for(var i =0; i<listas.length;i++){
+    		vet_idListas[i] = listas[i]['id'];
+    		vet_listas[i]= listas[i]['nome'];
+    		
+    		$("#div_ListasInf").append("<h6 >&#10022; "+listas[i]['nome']+": </h6><div id='div_ListaEx"+ vet_idListas[i]+"' </div>");
+
+
+    		
+    	}
+		for(i=0; i < vet_idListas.length; i++){
+			$('#div_ListaEx'+vet_idListas[i]).empty();
+			
+		}
+		for(j=0;j<vet_exercicios.length;j++){
+			$('#div_ListaEx'+vet_exercicios[j]['pivot']['listas_id']).append("<button id='"+ vet_exercicios[j]['id'] + 
+					"' class='btn btn-info btn-sm dropdown-item' type='button' data-toggle='tooltip' data-placement='top'" +
+					" onclick='f_SelecionaExercicio(this.id)'>Ex."+ vet_exercicios[j]['id'] +"</button>");
+        	
+			$("button[id='" + vet_exercicios[j]['id'] + "']").prop('title', vet_exercicios[j]['sentenca']);
+			//console.log("listando...");
+			
+		}
+
+	}
 // ############# ADICAO DE REGRAS E PERGUNTA ############################################################
 	
 	function f_AddRegra(){
@@ -348,8 +425,13 @@
 		    	linhaPerg = regras+1;
 
 		    	$('#perguntaAdicionada').append("<br/>" +linhaPerg + ": " + exercicioBuscado[limiteFormulas] );
+				$('#regra').prop('disabled', true);
+				$('#pergunta').prop('disabled', true);
+				$('#buttonRegra').hide();
+				$('#buttonPergunta').hide();
 		    	atualizaTela(tipoEx);
-		    	
+				$('#tabExecucao').click();
+
 				$('#btn_TransformarRegra').show();
 				$('#btn_ProximoPasso').show();
 		
@@ -383,6 +465,9 @@
 	function f_BuscaListas(){
 		
 		$("#listaEx").empty();
+		$("#div_ListasInf").empty();
+		vet_listas = [];
+		vet_idListas= [];
 		var myData = { 'id' : categoriaExercicio};
 
 		// BUSCAR AS LISTAS NA CATEGORIA ESCOLHIDA
@@ -412,6 +497,7 @@
 	        },
 	        error: function() { console.log('ERRO: listas não encontradas!');
 	        	$('#listaEx').append("<h8 color='gray'>> Total de Listas Encontradas: 0</br></br>Certifique-se de que existem listas ou verifique a conexão com o banco de dados</h8>");
+	        	$('#div_ListasInf').append("<h8 color='gray'>> Total de Listas Encontradas: 0</br></br>Certifique-se de que existem listas ou verifique a conexão com o banco de dados</h8>");
 
 	        },
 	    });
@@ -444,6 +530,8 @@
 
 					}
 		        	n = indice_vet_Ex;
+					f_PreencherDivListas();
+
 
 		        },
 		        error: function() { console.log('ERRO: exercicios não encontrados!'); },

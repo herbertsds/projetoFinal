@@ -70,6 +70,14 @@
 		    text-align:center;
 		    
 		}
+		
+		body{
+		  background: url('assets/img/wall.jpg') center center no-repeat fixed; 
+		  -webkit-background-size: cover;
+		  -moz-background-size: cover;
+		  -o-background-size: cover;
+		  background-size: cover;
+}
 		 </style>	
 
 </head>
@@ -95,7 +103,7 @@
 
 	        </div>
 	    </a>
-	<div class="image-container set-full-height" style="background-image: url('assets/img/wall.jpg')">
+	<div class="image-container set-full-height">
 
 	    <!--   Big container   -->
 	    <div class="container">
@@ -178,26 +186,46 @@
 		                  
 		                            <div class="tab-pane" id="exercicio" style="display: none">
 		                            	<div class="row">
+											<div class="col-sm-14 col-sm-offset-4" id='div_Escolha'>
+											
+<!-- 		                                		<div class="dropdown"> -->
+<!-- 												  <button onclick='f_PreencheDrop()' class="btn btn-success btn-sm dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> -->
+<!-- 												    Lista de Exercícíos TEMP &#8711;  -->
+<!-- 												  </button> -->
+<!-- 												  <div id="listaEx" class="dropdown-menu" aria-labelledby="dropdownMenu2"> -->
+<!-- 												    <button class="dropdown-item" type="button">Ex.1</button>  -->
+												    
+<!-- 												  </div> -->
+<!-- 												</div> -->
+												<br/>
+												<button class='btn btn-info btn-sm' type="button" id="listarEx" onClick="f_Escolha(this.id)">Listas de Exercícios</button>
+												<button class='btn btn-info btn-sm' type="button" id="novoExercicio" onClick="f_Escolha(this.id)">Criar Exercício</button>
+												
+
+											</div>
+											
+											<div  id='div_ListasSup' style="display: none">		
+												<div class="col-sm-14 col-sm-offset-1">
+																						
+													<button class='btn btn-default btn-xs' type="button" onClick="f_Escolha('novoExercicio')"> Novo Exercício </button>
+			                            		</div>									
+											
+											</div>
+											
+											
+											<div  id='adicaoExercicio' style="display: none">	
+											<div class="col-sm-8 col-sm-offset-1">
+																					
+												<button class='btn btn-default btn-xs' type="button" onClick="f_Escolha('listarEx')"> Listas </button>
+		                            		</div>
 			                            	<div class="col-sm-8 col-sm-offset-3">
-			                            		<article>&#10022; Selecione um exercício ou crie o seu próprio</article>
+			                            	
+			                            		<article>&#10022; Adicione um novo exercício</article>
 			                            		<article>&#10022; Exemplo de adição de fórmula:</article>
 			                            		<article> ¬A∨((B^C)&#x279D; D) deve ser escrita como (notA)ou((BeC)implica(D))</article>
 			                            	</br>
 			                            	</div>
-		                                	<div class="col-sm-14 col-sm-offset-4">
-											
-		                                		<div class="dropdown">
-												  <button onclick='f_PreencheDrop()' class="btn btn-success btn-sm dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-												    Lista de Exercícíos &#8711;
-												  </button>
-												  <div id="listaEx" class="dropdown-menu" aria-labelledby="dropdownMenu2">
-<!-- 												    <button class="dropdown-item" type="button">Ex.1</button> -->
-												    
-												  </div>
-												</div>
-
-											</div>
-											<div class="col-sm-4 col-sm-offset-1">
+			                            	<div class="col-sm-4 col-sm-offset-1">
 												
 												<div class="input-group">											
 													<div class="form-group label-floating">
@@ -228,6 +256,8 @@
 			                                          	<article  id="perguntaAdicionada" ></article>
 			                                        </div>
 		                                	</div>
+		                                </div>	
+		                                	
 		                                	
 		                            	</div>
 		                            </div>
@@ -309,7 +339,7 @@
 														<span id='r_passo2'>- Passar todas as fórmulas e a pergunta negada para FNC</span> </br>
 														
 														<span id='r_passo3'>- Desenvolver o exercício até encontrar o absurdo &#10066; </span> </br> 
-														<button type="button"  class="btn btn-success btn-sm" data-trigger="focus" data-toggle="popover" data-placement="left" data-content="<ol><li>Negar a pergunta</li><li>Passar todas as fórmulas e a pergunta para FNC</li><li>Separar todos os 'e', ou seja, cada 'e' vira uma fórmula (ou linha) independente.</li><li>Verificar se há 'átomos', havendo, confrontar átomos para ver se a resolução fecha, por exemplo A e ¬A são átomos que se contradizem e portanto fecharia a resolução.</li><li>Se não fechar, vá para a próxima etapa.  Fazer as simplificações do 'ou', se possível. Se Av¬B e AvB então A. Se Av¬B e B então A</li><li>Verificar se há átomos, havendo, confrontar átomos para ver se a resolução fecha.</li><li>Se não fechar após este último passo, o problema não é possível de resolver.</li></ol>" data-html="true"  title="Algoritmo Base" >Algoritmo completo aqui</button>
+														<button type="button"  class="btn btn-success btn-sm" data-trigger="focus" data-toggle="popover" data-placement="left" data-content="<ol><li>Negar a pergunta</li><li>Passar todas as fórmulas e a pergunta para FNC</li><li>Separar todos os 'e', ou seja, cada 'e' vira uma fórmula (ou linha) independente.</li><li>Verificar se há 'átomos', havendo, confrontar átomos para ver se a resolução fecha, por exemplo A e ¬A são átomos que se contradizem e portanto fecharia a resolução.</li><li>Se não fechar, vá para a próxima etapa.  Fazer as simplificações do 'ou', se possível. Se Av¬B e AvB então A. Se Av¬B e B então A</li><li>Verificar se há átomos, havendo, confrontar átomos para ver se a resolução fecha.</li><li>Se não fechar após este último passo, o problema não é possível de resolver.</li></ol>" data-html="true"  title="Algoritmo Base" >Ver o algoritmo completo</button>
 					
 													</div>
 									<!-- ############################################################################################### -->			
@@ -327,7 +357,7 @@
 														
 														</div>
 														</br>
-														<button type="button" id="btn_ConfrontarRegra" class="btn btn-info btn-xs"  onclick='f_Confrontar()'  >Confrontar</button>
+														<button type="button" id="btn_Verificar" class="btn btn-primary btn-xs"  onclick='f_Verificar()'  >Verificar</button>
 														<button type="button" id="btn_SepararE" class="btn btn-info btn-xs"  onclick='f_SepararE()'  >Separar "E"</button>
 														<button type="button" id="btn_SepararOU" class="btn btn-info btn-xs"  onclick='f_SepararOU()'  >Separar "OU"</button>
 														
