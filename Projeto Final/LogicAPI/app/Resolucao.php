@@ -679,8 +679,8 @@ class Resolucao extends Model
 				goto fim;
 			}
 			if ($arrayFormulas!=$mudancaArray) {
-				array_push($retorno, $formsDepoisDoOu);
-				$resposta=$retorno;
+				//array_push($retorno, $formsDepoisDoOu);
+				$resposta=$formsDepoisDoOu;
 				goto fim;
 			}			
 
@@ -699,8 +699,8 @@ class Resolucao extends Model
 				goto fim;
 			}
 			if ($arrayFormulas!=$mudancaArray) {
-				array_push($retorno, $formsDepoisDoOu);
-				$resposta=$retorno;
+				//array_push($retorno, $formsDepoisDoOu);
+				$resposta=$formsDepoisDoOu;
 				goto fim;
 			}
 
@@ -721,13 +721,13 @@ class Resolucao extends Model
 				goto fim;
 			}
 			if ($arrayFormulas!=$mudancaArray) {
-				array_push($retorno, $formsDepoisDoOu);
-				$resposta=$retorno;
+				//array_push($retorno, $formsDepoisDoOu);
+				$resposta=$formsDepoisDoOu;
 				goto fim;
 			}
 			fim:
-
- 			$resposta=$arrayFormulas;
+			//return $arrayFormulas;
+ 			//return $resposta;
 			//Converte de volta para strings e retorna
 			foreach ($resposta as $key => $value) {
 	 			if (is_array($value)) {
