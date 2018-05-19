@@ -1,3 +1,4 @@
+//import { org } from 'jquery.orgchart.js';
 function f_GabTableaux(){
 
 	var myData = { 'exercicio' : parseInt(numExercicio)};
@@ -11,7 +12,16 @@ function f_GabTableaux(){
         datatype: 'application/json',
        
         success: function(retorno) {
-	        console.log(retorno);
+	        //console.log(retorno);
+	        var obj = JSON.parse(retorno);
+            console.log(obj);
+
+            $("#organisation").append(obj);
+            $("#organisation").orgChart({container: $("#main")});
+
+	        
+	        
+	        
         },
 	    error: function() { console.log('ERRO: Gabarito não encontrado!'); },
         });
