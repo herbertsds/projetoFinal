@@ -72,14 +72,15 @@ var erro = 0;
 			vet_Entrada[0] = "FNC";
 			vet_Entrada[1] = selecionadas;
 			vet_Entrada[2] = camposMarcados;
-			//console.log(vet_Entrada);
 			
 			var myData = { 'operacao' : vet_Entrada[0],
 					'qtd_formulasSelecionadas' : vet_Entrada[1],
 					'formulas' : vet_Entrada[2]
 
 			};
-
+			console.log('envio FNC');
+			console.log(myData);
+			console.log("-------");
 		$.ajax({
 			
 	        url: 'http://127.0.0.1:8000/api/resolucao/stepByStep',
@@ -141,8 +142,9 @@ var erro = 0;
 						'formulas' : vet_Entrada[2]
 	
 		};
-		
-		//console.log(myData);
+		console.log('envio negar');
+		console.log(myData);
+		console.log("-------");
 		$.ajax({
     		
 	        url: 'http://127.0.0.1:8000/api/resolucao/stepByStep',
@@ -253,12 +255,15 @@ var erro = 0;
 		}
 	}
 	function f_SepararE(){
+		console.log('envio separaE');
 			selecionadas = 0;
 			vet_Entrada = [];
 			camposMarcados = new Array();
 			$("input[type=checkbox][name='ck_novasFormulas']:checked").each(function(){
 			    camposMarcados.push($(this).val());
 			    selecionadas++;
+				$(this).prop("disabled", true);
+				$(this).prop("checked", false);
 			});
 			
 			if(selecionadas == 0){
@@ -279,7 +284,7 @@ var erro = 0;
 				};
 				
 				console.log(myData);	
-				console.log("envio");
+				console.log("-------");
 				$.ajax({
 					
 			        url: 'http://127.0.0.1:8000/api/resolucao/stepByStep',
@@ -295,12 +300,17 @@ var erro = 0;
 							cont++;
 							numLinha++;
 							linhasGab++;
-							$('#r_divNovasFormulas').append("<input disabled type='checkbox' class='form-check-input' data-color = 'purple' name='ck_novasFormulas' id='" + cont +"' value='" + retorno[0][i] +"'> "+ numLinha + ": "  + retorno[0][i] +"</br>"  );
+							$('#r_divNovasFormulas').append("<input  type='checkbox' class='form-check-input' data-color = 'purple' name='ck_novasFormulas' id='" + cont +"' value='" + retorno[0][i] +"'> "+ numLinha + ": "  + retorno[0][i] +"</br>"  );
 
 							vet_regras[cont]= retorno[0][i];
-							$(this).prop("disabled", true);
-							$(this).prop("checked", false);
+
 						}
+				        if(retorno[1].toUpperCase() == 'NÃO FECHADO'){
+				        	console.log('ok');
+				        }
+				        else{
+				        	console.log("FIM DO EXERCICIO!!");
+				        }
 						
 			
 			//		return formula;
@@ -322,6 +332,8 @@ var erro = 0;
 		$("input[type=checkbox][name='ck_novasFormulas']:checked").each(function(){
 		    camposMarcados.push($(this).val());
 		    selecionadas++;
+			$(this).prop("disabled", true);
+			$(this).prop("checked", false);
 		});
 		
 		if(selecionadas % 2 === 0  && selecionadas > 0){
@@ -336,7 +348,9 @@ var erro = 0;
 					'formulas' : vet_Entrada[2]
 
 			};
+			console.log('envio SeparaOu: ---');
 			console.log(myData);
+			console.log('------------------');
 			$.ajax({
 				
 		        url: 'http://127.0.0.1:8000/api/resolucao/stepByStep',
@@ -347,7 +361,22 @@ var erro = 0;
 		       
 		        success: function(retorno) {
 			        console.log(retorno);
-					
+			        for(var i=0;i<retorno[0].length;i++){
+						
+						cont++;
+						numLinha++;
+						linhasGab++;
+						$('#r_divNovasFormulas').append("<input  type='checkbox' class='form-check-input' data-color = 'purple' name='ck_novasFormulas' id='" + cont +"' value='" + retorno[0][i] +"'> "+ numLinha + ": "  + retorno[0][i] +"</br>"  );
+
+						vet_regras[cont]= retorno[0][i];
+
+					}
+			        if(retorno[1].toUpperCase() == 'NÃO FECHADO'){
+			        	console.log('ok');
+			        }
+			        else{
+			        	console.log("FIM DO EXERCICIO!!");
+			        }
 		
 		//		return formula;
 			},
