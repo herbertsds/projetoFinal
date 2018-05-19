@@ -729,12 +729,12 @@ class Resolucao extends Model
 			//return $arrayFormulas;
  			//return $resposta;
 			//Converte de volta para strings e retorna
+			//return $resposta;
 			foreach ($resposta as $key => $value) {
-	 			if (is_array($value)) {
+	 			if (is_array($value) || strlen($value)==1) {
 	 				ParsingFormulas::converteFormulaString($resposta[$key]);
 	 			}
 	 		}
-
 		return array($resposta,$statusFechado);
 		}
 		if ($request['operacao']=="PassarNotParaDentro") {

@@ -1596,13 +1596,14 @@ class ParsingFormulas extends Model{
 	//Função que recebe uma referência para uma array fórmula e a converte num string fórmula
 	//Esta é a função que deve ser chamada no código principal ao realizar a conversão
 	public static function converteFormulaString(&$form){
+		if (strlen($form)==1) {
+			$form="(".$form.")";
+			return;
+		}
 		while (@is_array($form['esquerdo']) || @is_array($form['direito']) || is_array($form)) {
 			ParsingFormulas::reverteFormatacao($form);
 		}
-
-		if (strlen($form)==1) {
-			$form="(".$form.")";
-		}
+		
 	}
 	public static function consertaStringFormula(&$form){
 		converteConectivoSimbolo($form);
