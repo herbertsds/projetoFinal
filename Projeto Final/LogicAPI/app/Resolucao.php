@@ -664,6 +664,7 @@ class Resolucao extends Model
 			$flag=false;
 			$hashResolucao=[];
 			$arrayFormulas=[];
+			$retorno=[];
 			//Recebo as fórmulas em string do front-end e as converto
 			$arrayFormulas=$request['formulas'];
 			ParsingFormulas::ConverteFormulasEmArray($arrayFormulas);
@@ -676,38 +677,28 @@ class Resolucao extends Model
 				ParsingFormulas::corrigeArrays($arrayFormulas[$key]);
 				ParsingFormulas::corrigeAtomos($arrayFormulas[$key]);
 			}
+
 			/*
 			//Correção de átomos para controle interno
 			if ($entradaConvertida!=$mudancaArray) {
 				$mudancaArray=$entradaConvertida;
 				$arrayInicial=$entradaConvertida;
 			}*/
-
+			$mudancaArray=$arrayFormulas;
 			FuncoesResolucao::separarOU1($arrayFormulas,$hashResolucao,$formAntesDoOu1, $formAntesDoOu2, $formsDepoisDoOu);
-			/*
-			if ($arrayFormulas!=$mudancaArray) {
-				foreach ($formsDepoisDoOu as $key => $value) {
-					//Regra
-					$resposta[] = "Separação do Ou";
-					//Fórmula nova
-					$resposta[] = $formsDepoisDoOu[$key];
-					//Fórmula antiga 1
-					$resposta[] = $formAntesDoOu1[$key];
-					//Fórmula antiga 2
-					$resposta[] = $formAntesDoOu2[$key];
-				}
+			
 
-				$mudancaArray=$arrayFormulas;
-				$formAntesDoOu1=[];
-				$formAntesDoOu2=[];
-				$formsDepoisDoOu=[];
-			}*/
 			foreach ($arrayFormulas as $key => $value) {
 		 		ParsingFormulas::corrigeArrays($arrayFormulas[$key]);
 				ParsingFormulas::corrigeAtomos($arrayFormulas[$key]);
 		 	}
 			FuncoesResolucao::confrontaAtomos($arrayFormulas,$hashResolucao,$flag,$statusFechado);
 			if($flag){
+				goto fim;
+			}
+			if ($arrayFormulas!=$mudancaArray) {
+				array_push($retorno, $formsDepoisDoOu);
+				$resposta=$retorno;
 				goto fim;
 			}			
 
@@ -743,6 +734,11 @@ class Resolucao extends Model
 
 			FuncoesResolucao::confrontaAtomos($arrayFormulas,$hashResolucao,$flag,$statusFechado);
 			if($flag){
+				goto fim;
+			}
+			if ($arrayFormulas!=$mudancaArray) {
+				array_push($retorno, $formsDepoisDoOu);
+				$resposta=$retorno;
 				goto fim;
 			}
 
@@ -784,7 +780,13 @@ class Resolucao extends Model
 			if($flag){
 				goto fim;
 			}
+			if ($arrayFormulas!=$mudancaArray) {
+				array_push($retorno, $formsDepoisDoOu);
+				$resposta=$retorno;
+				goto fim;
+			}
 			fim:
+
  			$resposta=$arrayFormulas;
 			//Converte de volta para strings e retorna
 			foreach ($resposta as $key => $value) {
