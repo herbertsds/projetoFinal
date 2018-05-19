@@ -195,7 +195,9 @@ class Tableaux extends Model
 			//print $contador."<br>";
 		}
 		else{
-			//print "<br>Nem todos os ramos foram fechados<br>Este Tableaux não fecha<br>";
+			foreach ($nosFolha as $key => $value) {
+				$nosFolha[$key]['filhoCentral']="Não fechado";
+			}
 		}
 		$resultado = null;
 		//print "<br>Árvore a partir da raiz<br>";
