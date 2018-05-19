@@ -184,6 +184,10 @@
 			$('#div_ListasSup').attr("style", 'display : none');
 			$('#div_Escolha').removeAttr("style");
 			$('#adicaoExercicio').attr("style", 'display : none');
+			$('#regra').prop('disabled', false);
+			$('#pergunta').prop('disabled', false);
+			$('#buttonRegra').show();
+			$('#buttonPergunta').show();
 			
 			f_LimpaTipo();
 //			f_BuscaListas();
@@ -204,6 +208,10 @@
 			$('#div_ListasSup').attr("style", 'display : none');
 			$('#div_Escolha').removeAttr("style");
 			$('#adicaoExercicio').attr("style", 'display : none');
+			$('#regra').prop('disabled', false);
+			$('#pergunta').prop('disabled', false);
+			$('#buttonRegra').show();
+			$('#buttonPergunta').show();
 			
 			f_LimpaTipo();
 //			f_BuscaListas();
@@ -223,6 +231,10 @@
 			$('#div_ListasSup').attr("style", 'display : none');
 			$('#div_Escolha').removeAttr("style");
 			$('#adicaoExercicio').attr("style", 'display : none');
+			$('#regra').prop('disabled', false);
+			$('#pergunta').prop('disabled', false);
+			$('#buttonRegra').show();
+			$('#buttonPergunta').show();
 			
 			f_LimpaTipo();
 //			f_BuscaListas();
@@ -241,6 +253,10 @@
 			$('#div_ListasSup').attr("style", 'display : none');
 			$('#div_Escolha').removeAttr("style");
 			$('#adicaoExercicio').attr("style", 'display : none');
+			$('#regra').prop('disabled', false);
+			$('#pergunta').prop('disabled', false);
+			$('#buttonRegra').show();
+			$('#buttonPergunta').show();
 			
 			f_LimpaTipo();
 //			f_BuscaListas();
