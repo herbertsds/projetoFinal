@@ -600,14 +600,16 @@ class Resolucao extends Model
 			$entradaConvertida=$request['formulas'];
 			ParsingFormulas::ConverteFormulasEmArray($entradaConvertida);
 
-			//Inicializa a hash
-			$hashResolucao=FuncoesResolucao::inicializaHash($entradaConvertida);
+			
 
 			//Correções nas fórmulas
 			foreach ($entradaConvertida as $key => $value) {
 				ParsingFormulas::corrigeArrays($entradaConvertida[$key]);
 				ParsingFormulas::corrigeAtomos($entradaConvertida[$key]);
 			}
+
+			//Inicializa a hash
+			$hashResolucao=FuncoesResolucao::inicializaHash($entradaConvertida);
 			/*
 			//Correção de átomos para controle interno
 			if ($entradaConvertida!=$mudancaArray) {
@@ -627,25 +629,7 @@ class Resolucao extends Model
 				ParsingFormulas::corrigeAtomos($arrayFormulas[$key]['esquerdo']);
 				ParsingFormulas::corrigeAtomos($arrayFormulas[$key]['direito']);
 		 	}
-		 	/*
-			if ($arrayFormulas!=$mudancaArray) {
-				$key2=0;
-				foreach ($formAntesDoE as $key => $value) {
-						//Regra
-						$resposta[] = "Separação do E";
-						//Fórmula nova
-						$resposta[] = $formsDepoisDoE[$key2];
-						$resposta[] = $formsDepoisDoE[$key2+1];
-						//Fórmula antiga
-						$resposta[] = $formAntesDoE[$key];
 
-						
-						$key2+=2;
-				}
-			}
-			$mudancaArray=$arrayFormulas;
-			$formAntesDoE=[];
-			$formsDepoisDoE=[];*/
 			
 			FuncoesResolucao::confrontaAtomos($arrayFormulas,$hashResolucao,$flag,$statusFechado);
 			
@@ -669,21 +653,18 @@ class Resolucao extends Model
 			$arrayFormulas=$request['formulas'];
 			ParsingFormulas::ConverteFormulasEmArray($arrayFormulas);
 
-			//Inicializa a hash
-			$hashResolucao=FuncoesResolucao::inicializaHash($arrayFormulas);
+
 
 			//Correções nas fórmulas
 			foreach ($arrayFormulas as $key => $value) {
 				ParsingFormulas::corrigeArrays($arrayFormulas[$key]);
 				ParsingFormulas::corrigeAtomos($arrayFormulas[$key]);
 			}
+			//Inicializa a hash
+			$hashResolucao=FuncoesResolucao::inicializaHash($arrayFormulas);
 
-			/*
-			//Correção de átomos para controle interno
-			if ($entradaConvertida!=$mudancaArray) {
-				$mudancaArray=$entradaConvertida;
-				$arrayInicial=$entradaConvertida;
-			}*/
+			//print_r($arrayFormulas);
+
 			$mudancaArray=$arrayFormulas;
 			FuncoesResolucao::separarOU1($arrayFormulas,$hashResolucao,$formAntesDoOu1, $formAntesDoOu2, $formsDepoisDoOu);
 			
@@ -692,6 +673,7 @@ class Resolucao extends Model
 		 		ParsingFormulas::corrigeArrays($arrayFormulas[$key]);
 				ParsingFormulas::corrigeAtomos($arrayFormulas[$key]);
 		 	}
+
 			FuncoesResolucao::confrontaAtomos($arrayFormulas,$hashResolucao,$flag,$statusFechado);
 			if($flag){
 				goto fim;
@@ -704,33 +686,13 @@ class Resolucao extends Model
 
 			//Simplificação do tipo: Se Av¬B e AvB então A.
 			FuncoesResolucao::separarOU2($arrayFormulas,$formAntesDoOu1, $formAntesDoOu2, $formsDepoisDoOu);
-			/*if ($arrayFormulas!=$mudancaArray) {
-				foreach ($formAntesDoOu1 as $key => $value) {
-					//Regra
-					$resposta[] = "Separação do Ou";
-					//Fórmula nova
-					$resposta[] = $formsDepoisDoOu[$key];
-					//Fórmula antiga 1
-					$resposta[] = $formAntesDoOu1[$key];
-					//Fórmula antiga 2
-					$resposta[] = $formAntesDoOu2[$key];
-				}
 
-				$mudancaArray=$arrayFormulas;
-				$formAntesDoOu1=[];
-				$formAntesDoOu2=[];
-				$formsDepoisDoOu=[];
-			}*/
 
 			foreach ($arrayFormulas as $key => $value) {
 		 		ParsingFormulas::corrigeArrays($arrayFormulas[$key]);
 				ParsingFormulas::corrigeAtomos($arrayFormulas[$key]['esquerdo']);
 				ParsingFormulas::corrigeAtomos($arrayFormulas[$key]['direito']);
 		 	}
-		 	//Atualização de mudancaArray para evitar erros
-		 	/*if ($entradaConvertida!=$mudancaArray) {
-					$mudancaArray=$entradaConvertida;
-			}	*/
 
 			FuncoesResolucao::confrontaAtomos($arrayFormulas,$hashResolucao,$flag,$statusFechado);
 			if($flag){
@@ -743,36 +705,14 @@ class Resolucao extends Model
 			}
 
 			FuncoesResolucao::separarOU3($arrayFormulas,$hashResolucao,$formAntesDoOu1, $formAntesDoOu2, $formsDepoisDoOu);
-			/*if ($arrayFormulas!=$mudancaArray) {
-				foreach ($formAntesDoOu1 as $key => $value) {
-						//Regra
-						$resposta[] = "Separação do Ou";
-						//Fórmula nova
-						$resposta[] = $formsDepoisDoOu[$key];
-						//Fórmula antiga 1
-						$resposta[] = $formAntesDoOu1[$key];
-						//Fórmula antiga 2
-						$resposta[] = $formAntesDoOu2[$key];
-						
 
-						
-				}
-
-				$mudancaArray=$arrayFormulas;
-				$formAntesDoOu1=[];
-				$formAntesDoOu2=[];
-				$formsDepoisDoOu=[];
-			}*/
 
 			foreach ($arrayFormulas as $key => $value) {
 		 		ParsingFormulas::corrigeArrays($arrayFormulas[$key]);
 				ParsingFormulas::corrigeAtomos($arrayFormulas[$key]['esquerdo']);
 				ParsingFormulas::corrigeAtomos($arrayFormulas[$key]['direito']);
 		 	}
-		 	//Atualização de mudancaArray para evitar erros
-		 	/*if ($entradaConvertida!=$mudancaArray) {
-					$mudancaArray=$entradaConvertida;
-			}	*/
+
 
 
 			//Passo 5 - REPETIÇÃO

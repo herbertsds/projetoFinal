@@ -638,7 +638,7 @@ class FuncoesResolucao extends Model
 	}
 	public static function checaAtomico($form){
 		//@ colocado para previnir que fórmulas não instanciadas deem warning
-		if (@$form['esquerdo']==NULL && (@$form['conectivo']==NULL || @$form['conectivo']='not')) {
+		if (@$form['esquerdo']==NULL && (@$form['conectivo']==NULL || @$form['conectivo']=='not')) {
 			return true;
 		}
 		else{
@@ -1173,7 +1173,7 @@ class FuncoesResolucao extends Model
 		$hash=[];
 		foreach ($array as $key => $value) {
 			if (FuncoesResolucao::checaAtomico($value)) {
-				$hash[$value['direito']]= $value['conectivo']=='not' ? 0:1;
+				$hash[$value['direito']]= $value['conectivo']=='not' ? '0':'1';
 			}
 		}
 		return $hash;
