@@ -52,7 +52,7 @@ Colocar aqui como vou receber do front-end
 */
 
 
-$entradaTeste=$DNNquestao15;
+$entradaTeste=$DNNquestao4;
 $tamanho=count($entradaTeste);
 
 //Passo 2

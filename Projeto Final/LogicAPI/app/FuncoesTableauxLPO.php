@@ -25,6 +25,7 @@ class FuncoesTableauxLPO extends Model
 
 
 		$conectivosUmaVez=array('not_paraTodo','xist','notnot');
+		$checarMudancaDePrioridade=true;
 		
 
 		//Aplicação na raiz
@@ -34,11 +35,19 @@ class FuncoesTableauxLPO extends Model
 		foreach ($listaFormulasDisponiveis as $key => $value) {
 			//Checar primeiro se há os conectivos nos quais a constante só pode aparecer pela primeira vez
 			foreach ($listaFormulasDisponiveis as $key2 => $value2) {
-				//print "<br>Loop repetido<br>";
-				//print_r($value2['info']);
 				if (in_array($value2['info']['conectivo']['operacao'], $conectivosUmaVez)) {
+					$checarMudancaDePrioridade=false;
 					$value=$value2;
 					$key=$key2;
+				}
+			}
+			//Checar primeiro se vai aparecer na próxima iteração conectivos nos quais a constante só pode aparecer pela primeira vez
+			if ($checarMudancaDePrioridade) {
+				foreach ($listaFormulasDisponiveis as $key2 => $value2) {
+					if (FuncoesTableauxLPO::verificaPotencialPrioridade($value2)) {
+						$value=$value2;
+						$key=$key2;
+					}
 				}
 			}
 			if (in_array($value['info']['conectivo']['operacao'],$conectivosEficientes)){
@@ -58,7 +67,7 @@ class FuncoesTableauxLPO extends Model
 				}
 			}
 		}
-
+		$checarMudancaDePrioridade=true;
 		//Caso 2 - Raiz não é eficiente
 		//Se não há fórmula eficiente, aplique no primeiro elemento disponível
 		if ($contador==0) {
@@ -68,6 +77,16 @@ class FuncoesTableauxLPO extends Model
 					if (in_array($value2['info']['conectivo']['operacao'], $conectivosUmaVez)) {
 						$value=$value2;
 						$key=$key2;
+						$checarMudancaDePrioridade=false;
+					}
+				}
+				//Checar primeiro se vai aparecer na próxima iteração conectivos nos quais a constante só pode aparecer pela primeira vez
+				if ($checarMudancaDePrioridade) {
+					foreach ($listaFormulasDisponiveis as $key2 => $value2) {
+						if (FuncoesTableauxLPO::verificaPotencialPrioridade($value2)) {
+							$value=$value2;
+							$key=$key2;
+						}
 					}
 				}
 				if ($value['info']['conectivo']['operacao']!=null && $value['info']['conectivo']['operacao']!='not'){
@@ -88,7 +107,7 @@ class FuncoesTableauxLPO extends Model
 		}
 		//--------------------------------------------------------------------	
 		
-
+		$checarMudancaDePrioridade=true;
 		//Aplicação geral de regras
 		//Caso 1 - Existem nós eficientes para serem escolhidos
 		//Devo checar todos os nós folhas em busca do primeiro não não fechado
@@ -103,12 +122,25 @@ class FuncoesTableauxLPO extends Model
 
 				//Percorre a lista de fórmulas disponíveis do nó folha atual
 				foreach ($noFolhaAtual['formDisponiveis'] as $key2 => $formDispAtual) {
+					//Caso 1.1 - Pega um conectivo que só cuja a substituição por constante só pode tê-la aparecendo pela primeira vez
 					foreach ($noFolhaAtual['formDisponiveis'] as $key3 => $value3) {
 						if (in_array($value3['info']['conectivo']['operacao'], $conectivosUmaVez)) {
 							$formDispAtual=$value3;
 							$key2=$key3;
+							$checarMudancaDePrioridade=false;
 						}
 					}
+					//Caso 1.2 - Pega um conectivo que gerará uma substituição por constante que só pode ser feita pela primeira vez
+					//Na próxima iteração
+					if ($checarMudancaDePrioridade) {
+						foreach ($noFolhaAtual['formDisponiveis'] as $key3 => $value3) {
+							if (FuncoesTableauxLPO::verificaPotencialPrioridade($value3)) {
+								$formDispAtual=$value3;
+								$key2=$key3;
+							}
+						}
+					}
+					
 					//Correções na fórmula
 					ParsingFormulas::formataFormulasTableauxLPO($noFolhaAtual['formDisponiveis'][$key2]);
 					FuncoesTableauxLPO::corrigeArrays($noFolhaAtual['formDisponiveis'][$key2]);
@@ -136,7 +168,7 @@ class FuncoesTableauxLPO extends Model
 				}	
 			}
 		}
-
+		$checarMudancaDePrioridade=true;
 		//Caso 2 - Não existem nós eficientes para serem escolhidos
 		//Devo checar todos os nós folhas em busca do primeiro não não fechado
 		//Se houver fórmula eficiente na lista de fórmulas disponíveis do ramo,
@@ -149,10 +181,22 @@ class FuncoesTableauxLPO extends Model
 			else{
 				//Percorre a lista de fórmulas disponíveis do nó folha atual
 				foreach ($noFolhaAtual['formDisponiveis'] as $key2 => $formDispAtual) {
+					//Caso 2.1 - Pega um conectivo que só cuja a substituição por constante só pode tê-la aparecendo pela primeira vez
 					foreach ($noFolhaAtual['formDisponiveis'] as $key3 => $value3) {
 						if (in_array($value3['info']['conectivo']['operacao'], $conectivosUmaVez)) {
 							$formDispAtual=$value3;
 							$key2=$key3;
+							$checarMudancaDePrioridade=false;
+						}
+					}
+					//Caso 2.2 - Pega um conectivo que gerará uma substituição por constante que só pode ser feita pela primeira vez
+					//Na próxima iteração
+					if ($checarMudancaDePrioridade) {
+						foreach ($noFolhaAtual['formDisponiveis'] as $key3 => $value3) {
+							if (FuncoesTableauxLPO::verificaPotencialPrioridade($value3)) {
+								$formDispAtual=$value3;
+								$key2=$key3;
+							}
 						}
 					}
 					//Correções na fórmula
@@ -1655,4 +1699,26 @@ class FuncoesTableauxLPO extends Model
 		$listaFormulasDisponiveis=$arrayHistorico[$tam-2]['listaFormulasDisponiveis'];
 		$numPasso=$arrayHistorico[$tam-2]['numPasso'];
 	}
+	public static function verificaPotencialPrioridade($form){
+		$conectivosImportantes=array('not_e','not_ou','not_implica');
+		$conectivosImportantes2=array('paraTodo','xist');
+		if (!in_array($form['info']['conectivo']['operacao'], $conectivosImportantes)) {
+			return false;
+		}
+		elseif (in_array($form['info']['conectivo']['operacao'], $conectivosImportantes)) {
+			if (@in_array($form['info']['esquerdo']['info']['conectivo']['operacao'],$conectivosImportantes2)) {
+				return true;
+			}
+			if (@in_array($form['info']['direito']['info']['conectivo']['operacao'],$conectivosImportantes2)) {
+				return true;
+			}
+		}
+		if(is_array($form['info']['esquerdo'])){
+			FuncoesTableauxLPO::verificaPotencialPrioridade($form['info']['esquerdo']);
+		}
+		if(is_array($form['info']['direito'])){
+			FuncoesTableauxLPO::verificaPotencialPrioridade($form['info']['direito']);
+		}
+	}
+
 }

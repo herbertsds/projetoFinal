@@ -8,31 +8,58 @@ echo "<pre>";
 $listaFormulasDisponiveis=array();
 $listaGlobalConstates=array("a","b","c","d");
 //$hash['F(a)']='0';
-$form=array('info'=>array('esquerdo'=>null,'conectivo'=>array('operacao'=>null,'variavel'=>null),'direito'=>array('info'=>array('esquerdo'=>null,'conectivo'=>null,'direito'=>'F(x)'))));
-$teste="((Ae(not(C)))))";
-print "<br>Antes ".$teste."<br>";
-consertaStringFormula($teste);
-print "<br>Depois ".$teste."<br>";
+$form=array('info'=>array('esquerdo'=>null,'conectivo'=>array('operacao'=>'not_e','variavel'=>null),'direito'=>array('info'=>array('esquerdo'=>null,'conectivo'=>array('operacao'=>'paraTodo','variavel'=>'x'),'direito'=>'F(x)'))));
+$form2=array('info'=>array('esquerdo'=>null,'conectivo'=>array('operacao'=>'not_ou','variavel'=>null),'direito'=>array('info'=>array('esquerdo'=>null,'conectivo'=>array('operacao'=>'xist','variavel'=>'x'),'direito'=>'F(x)'))));
+$form3=array('info'=>array('esquerdo'=>array('info'=>array('esquerdo'=>null,'conectivo'=>array('operacao'=>'paraTodo','variavel'=>'x'),'direito'=>'F(x)')),'conectivo'=>array('operacao'=>'not_implica','variavel'=>null),'direito'=>null));
+
+print "<br>Formula 1<br>";
+print_r($form);
+if (verificaPotencialPrioridade($form)) {
+	print "<br>Ok<br>";
+}
+else{
+	print "<br>Errado<br>";
+}
+print "<br>Formula 2<br>";
+print_r($form2);
+if (verificaPotencialPrioridade($form2)) {
+	print "<br>Ok<br>";
+}
+else{
+	print "<br>Errado<br>";
+}
+print "<br>Formula 3<br>";
+print_r($form3);
+if (verificaPotencialPrioridade($form3)) {
+	print "<br>Ok<br>";
+}
+else{
+	print "<br>Errado<br>";
+}
 
 //Recebe um array fórmula e verifica se o conectivo é not_e,not_ou ou not_implica.
-//Sendo um desses, caso haja um paraTodo ou not_xist aninhado, haverá um aumento de priridade nesta fórmula
-/*function verificaPotencialPrioridade(&$form){
+//Sendo um desses, caso haja um paraTodo ou not_xist aninhado, retorno true
+function verificaPotencialPrioridade($form){
 	$conectivosImportantes=array('not_e','not_ou','not_implica');
+	$conectivosImportantes2=array('paraTodo','xist');
 	if (!in_array($form['info']['conectivo']['operacao'], $conectivosImportantes)) {
-		return null;
+		return false;
 	}
-
+	elseif (in_array($form['info']['conectivo']['operacao'], $conectivosImportantes)) {
+		if (@in_array($form['info']['esquerdo']['info']['conectivo']['operacao'],$conectivosImportantes2)) {
+			return true;
+		}
+		if (@in_array($form['info']['direito']['info']['conectivo']['operacao'],$conectivosImportantes2)) {
+			return true;
+		}
+	}
 	if(is_array($form['info']['esquerdo'])){
-		$aux=ParsingFormulas::resolveParentesesTableauxLPO($form['info']['esquerdo']);
-		$form['info']['esquerdo']=$aux;
-		ParsingFormulas::formataFormulasTableauxLPO($form['info']['esquerdo']);
+		verificaPotencialPrioridade($form['info']['esquerdo']);
 	}
-	if(@strlen(@$form['info']['direito'])>4 && @!FuncoesAuxiliares::temConectivo($form)){
-		$aux=ParsingFormulas::resolveParentesesTableauxLPO($form['info']['direito']);
-		$form['info']['direito']=$aux;
-		ParsingFormulas::formataFormulasTableauxLPO($form['info']['direito']);
+	if(is_array($form['info']['direito'])){
+		verificaPotencialPrioridade($form['info']['direito']);
 	}
-}*/
+}
 
 function consertaStringFormula(&$form){
 	converteConectivoSimbolo($form);
