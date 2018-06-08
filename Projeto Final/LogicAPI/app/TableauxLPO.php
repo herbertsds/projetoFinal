@@ -180,7 +180,8 @@ class TableauxLPO extends Model
 			//print "<br>Nem todos os ramos foram fechados<br>Este Tableaux não fecha<br>";
 		}
 		print "<br>Árvore a partir da raiz<br>";
-		FuncoesTableauxLPO::imprimeArvore($raiz);
+		$contador=0;
+		FuncoesTableauxLPO::imprimeArvore($raiz,$contador);
 		//print '<br>Raiz<br>';
 		//print_r($raiz);
 		$resposta[] = $raiz;		

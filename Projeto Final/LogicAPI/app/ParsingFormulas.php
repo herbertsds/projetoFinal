@@ -475,6 +475,7 @@ class ParsingFormulas extends Model{
 		$auxForm['constantesUsadas']=array();
 		$auxForm['hashAtomos']=array();
 		$auxForm['hashAtomosFuncoes']=array();
+		$auxForm['funcoesComSubstituicao']=null;
 		$aux;
 		$esquerdo=true;
 		$abreFormula=false;
@@ -1476,12 +1477,12 @@ class ParsingFormulas extends Model{
 	//gerando arrays aninhados para fórmulas mais complexas específico para Tableaux
 	public static function formataFormulasTableauxLPO(&$form){
 		//Se ocorrer erro, investigar a entrada no if barra por strlen
-		if(@strlen(@$form['info']['esquerdo'])>4 && @!FuncoesAuxiliares::temConectivo($form)){
+		if(@is_string(@$form['info']['esquerdo']) && @FuncoesAuxiliares::temConectivo($form['info']['esquerdo'])){
 			$aux=ParsingFormulas::resolveParentesesTableauxLPO($form['info']['esquerdo']);
 			$form['info']['esquerdo']=$aux;
 			ParsingFormulas::formataFormulasTableauxLPO($form['info']['esquerdo']);
 		}
-		if(@strlen(@$form['info']['direito'])>4 && @!FuncoesAuxiliares::temConectivo($form)){
+		if(@is_string(@$form['info']['direito']) && @FuncoesAuxiliares::temConectivo($form['info']['direito'])){
 			$aux=ParsingFormulas::resolveParentesesTableauxLPO($form['info']['direito']);
 			$form['info']['direito']=$aux;
 			ParsingFormulas::formataFormulasTableauxLPO($form['info']['direito']);

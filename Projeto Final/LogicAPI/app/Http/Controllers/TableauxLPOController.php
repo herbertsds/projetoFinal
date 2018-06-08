@@ -12,7 +12,7 @@ class TableauxLPOController extends Controller
 {   
     public function index(Request $numeroExercicio){
         //Exercícios 72 até o 138
-    	$exercicio = Exercicios::getExercicio(97);
+    	$exercicio = Exercicios::getExercicio(72);
         //$exercicio = Exercicios::getExercicio($numeroExercicio->exercicio);
 
     	$resposta = new TableauxLPO($exercicio);
@@ -20,6 +20,7 @@ class TableauxLPOController extends Controller
     	print_r("Exercício:<br>");
     	print_r($exercicio);
     	print_r("<br>----------------------------------------------<br><br>");
+        //dd(1);
 
     	//return json_encode($resposta->fullSteps(), JSON_UNESCAPED_UNICODE);
     	 dd($resposta->fullSteps());
