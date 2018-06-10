@@ -43,7 +43,7 @@ class FuncoesAuxiliares extends Model
 	}
 
 	public static function temConectivo($form){
-		$listaConectivos=array("^","v","-",'@','&');
+		$listaConectivos=array("^","v","-",'@','&','!');
 		for ($i=0; $i < strlen($form) ; $i++) { 
 			for ($j=0; $j < count($listaConectivos); $j++) { 
 				if ($listaConectivos[$j]==$form[$i]) {
