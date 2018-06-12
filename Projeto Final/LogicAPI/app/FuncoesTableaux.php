@@ -1086,9 +1086,9 @@ class FuncoesTableaux extends Model
 	public static function imprimeArvore(&$no,&$resultado=NULL){
 		if (@$no['info']!=NULL) {
 			FuncoesTableaux::converteFormulaStringTableaux($no['info']);
-			//FuncoesTableaux::consertaStringFormula($no['info']);
-			 print "<br>";
-			 print_r($no['info']);
+			// FuncoesTableaux::consertaStringFormula($no['info']);
+			 // print "<br>";
+			 // print_r($no['info']);
 			FuncoesTableaux::verificaStatusNo($no,$resultado);
 		}
 		
@@ -1107,15 +1107,15 @@ class FuncoesTableaux extends Model
 	public static function verificaStatusNo(&$no,&$resultado){
 		switch($no){
 			case @$no['atualCentral']:
-				print "  Central <br>";
+				// print "  Central <br>";
 				$resultado[]['central'] = $no['info'];
 				break;
 			case @$no['atualEsquerdo']:
-				print "  Esquerdo <br>";
+				// print "  Esquerdo <br>";
 				$resultado[]['esquerda'] = $no['info'];
 				break;
 			case @$no['atualDireito']:
-				print "  Direito <br>";
+				// print "  Direito <br>";
 				$resultado[]['direita'] = $no['info'];
 				break;
 			default:
@@ -1158,15 +1158,15 @@ class FuncoesTableaux extends Model
 	public static function verificaStatusNo2(&$no){
 		switch($no){
 			case @$no['atualCentral']:
-				print "  Central <br>";
+				// print "  Central <br>";
 				$resultado[]['central'] = $no['info'];
 				break;
 			case @$no['atualEsquerdo']:
-				print "  Esquerdo <br>";
+				// print "  Esquerdo <br>";
 				$resultado[]['esquerda'] = $no['info'];
 				break;
 			case @$no['atualDireito']:
-				print "  Direito <br>";
+				// print "  Direito <br>";
 				$resultado[]['direita'] = $no['info'];
 				break;
 			default:
@@ -1182,8 +1182,10 @@ class FuncoesTableaux extends Model
 	public static function outputArvore($resultado,$exercicio){
 		
 		$subgrupo = FuncoesTableaux::setSubGrupos($resultado);
+		// dd($subgrupo);
 
 		$grupo = FuncoesTableaux::setGrupo($subgrupo);
+		// dd($grupo);
 
 		$stringFinal = FuncoesTableaux::printEstrutura($grupo,$subgrupo,count($grupo));
 		// dd($exercicio);
@@ -1194,26 +1196,32 @@ class FuncoesTableaux extends Model
 		
 	}
 	public static function printEstrutura($grupo,$subgrupo,$indice){
-		if(isset($grupo[$indice]['filho']))
+		if(isset($grupo[$indice]['filho'])){
 			$filho = $grupo[$indice]['filho'];
-		else
+			$countFilho = count($filho)==2 ? TRUE:FALSE;
+		}
+		else{
 			$filho = null;
-		// if($indice == 4)
-		// 	dd($filho);
+			$countFilho = FALSE;
+		}
 		unset($grupo[$indice]['filho']);
 		$impressao = null;
-		$impressao .= FuncoesTableaux::printAberturaSubArvore($grupo[$indice],$subgrupo);
+		$impressao .= FuncoesTableaux::printAberturaSubArvore($grupo[$indice],$subgrupo,$countFilho);
+
 		if(is_array($filho)){
 			foreach ($filho as $key => $value) {
 				$impressao .= FuncoesTableaux::printEstrutura($grupo,$subgrupo,$value);
 			}
 		}
-		$impressao .= FuncoesTableaux::printFechamentoSubArvore($grupo[$indice],$subgrupo);
+		$impressao .= FuncoesTableaux::printFechamentoSubArvore($grupo[$indice],$subgrupo,$countFilho);
+		// if($indice == 6){
+		// 	dd($impressao);
+		// }
 		return $impressao;
 		
 	}
 
-	public static function printAberturaSubArvore($grupo,$subgrupo){
+	public static function printAberturaSubArvore($grupo,$subgrupo,$doisFilhos=FALSE){
 		$resposta = "";
 		if($subgrupo[$grupo[0]]['node']['0'] == 'central'){
 			
@@ -1223,6 +1231,7 @@ class FuncoesTableaux extends Model
 				$resposta .= $valor;
 			}
 			$resposta .= "<ul>";
+		//Se o nó for esquerdo e estiver em um grupo com um nó direito
 		}else if($subgrupo[$grupo[0]]['node']['0'] == 'esquerda' && isset($grupo[1]) ){
 			$abertura = null;
 			$fechamento = null;
@@ -1263,6 +1272,20 @@ class FuncoesTableaux extends Model
 			$resposta .= $abertura;
 			$resposta .= $fechamento;
 			$resposta .= "</ul>";
+		}else if($subgrupo[$grupo[0]]['node']['0'] == 'esquerda' && $doisFilhos){
+			$resposta .= "<li>";
+			$resposta .= $subgrupo[$grupo[0]]['string']['0'];
+			$print = false;
+			foreach ($subgrupo[$grupo[0]]['string'] as $key => $value) {
+				if(!$print){
+					$print = true;
+				}else{
+					$resposta .= "<ul><li>";
+					$resposta .= $value;
+				}
+			}
+			$resposta .= "<ul>";
+
 		}else if($subgrupo[$grupo[0]]['node']['0'] == 'direita' || $subgrupo[$grupo[0]]['node']['0'] == 'esquerda'){
 			$resposta .= "<li>";
 			$resposta .= $subgrupo[$grupo[0]]['string']['0'];
@@ -1281,7 +1304,7 @@ class FuncoesTableaux extends Model
 		return $resposta;
 	}
 
-	public static function printFechamentoSubArvore($grupo,$subgrupo){
+	public static function printFechamentoSubArvore($grupo,$subgrupo,$doisFilhos=FALSE){
 		$resposta = "";
 		
 		if($subgrupo[$grupo[0]]['node']['0'] == 'central'){
@@ -1292,6 +1315,16 @@ class FuncoesTableaux extends Model
 			}
 		}else if($subgrupo[$grupo[0]]['node']['0'] == 'esquerda' && isset($grupo[1]) ){
 			$resposta = "";
+		}else if($subgrupo[$grupo[0]]['node']['0'] == 'esquerda' && $doisFilhos){
+			$print = false;
+			foreach ($subgrupo[$grupo[0]]['string'] as $key => $value) {
+				if(!$print){
+					$print = true;
+				}else{
+					$resposta .= "</li></ul>";
+				}
+			}
+			$resposta .= "</ul></li>";
 		}else if($subgrupo[$grupo[0]]['node']['0'] == 'direita' || $subgrupo[$grupo[0]]['node']['0'] == 'esquerda'){
 			$print = false;
 			foreach ($subgrupo[$grupo[0]]['string'] as $key => $value) {

@@ -202,7 +202,6 @@ class Tableaux extends Model
 		$resultado = null;
 		//print "<br>Árvore a partir da raiz<br>";
 		FuncoesTableaux::imprimeArvore($raiz,$resultado);
-		dd($raiz);
 		//print '<br>Raiz<br>';
 		//print_r($raiz);
 		// $resultado = null;
