@@ -1087,8 +1087,8 @@ class FuncoesTableaux extends Model
 		if (@$no['info']!=NULL) {
 			FuncoesTableaux::converteFormulaStringTableaux($no['info']);
 			// FuncoesTableaux::consertaStringFormula($no['info']);
-			 // print "<br>";
-			 // print_r($no['info']);
+			 print "<br>";
+			 print_r($no['info']);
 			FuncoesTableaux::verificaStatusNo($no,$resultado);
 		}
 		
@@ -1107,15 +1107,15 @@ class FuncoesTableaux extends Model
 	public static function verificaStatusNo(&$no,&$resultado){
 		switch($no){
 			case @$no['atualCentral']:
-				// print "  Central <br>";
+				print "  Central <br>";
 				$resultado[]['central'] = $no['info'];
 				break;
 			case @$no['atualEsquerdo']:
-				// print "  Esquerdo <br>";
+				print "  Esquerdo <br>";
 				$resultado[]['esquerda'] = $no['info'];
 				break;
 			case @$no['atualDireito']:
-				// print "  Direito <br>";
+				print "  Direito <br>";
 				$resultado[]['direita'] = $no['info'];
 				break;
 			default:
@@ -1196,6 +1196,9 @@ class FuncoesTableaux extends Model
 		
 	}
 	public static function printEstrutura($grupo,$subgrupo,$indice){
+		// if($indice == 4){
+		// 	dd($subgrupo[2]);
+		// }
 		if(isset($grupo[$indice]['filho'])){
 			$filho = $grupo[$indice]['filho'];
 			$countFilho = count($filho)==2 ? TRUE:FALSE;
@@ -1272,7 +1275,7 @@ class FuncoesTableaux extends Model
 			$resposta .= $abertura;
 			$resposta .= $fechamento;
 			$resposta .= "</ul>";
-		}else if($subgrupo[$grupo[0]]['node']['0'] == 'esquerda' && $doisFilhos){
+		}else if($doisFilhos){
 			$resposta .= "<li>";
 			$resposta .= $subgrupo[$grupo[0]]['string']['0'];
 			$print = false;
@@ -1363,7 +1366,15 @@ class FuncoesTableaux extends Model
 	public static function setGrupo(&$subgrupo){
 		$controle = 1;
 		for($i = count($subgrupo) - 1 ; $i >= 0 ; $i--) {
-			if($subgrupo[$i]['node'][0] == "direita" && $subgrupo[$i-1]['node'][0] == "esquerda"){
+			if($subgrupo[$i]['node'][0] == "direita" && $subgrupo[$i-1]['node'][0] == "esquerda" && isset($subgrupo[$i+1]['node'][0]) && $subgrupo[$i+1]['node'][0] =="esquerda"){
+				$grupo[$controle][] = $i;
+				if(!array_key_exists("filho", $grupo[$controle])){
+					$grupo[$controle]['filho'] = null;
+				}
+				$grupo[$controle+2]['filho'][] = $controle;
+				$subgrupo[$i]['grupo'] = $controle;
+				$controle++;
+			}else if($subgrupo[$i]['node'][0] == "direita" && $subgrupo[$i-1]['node'][0] == "esquerda"){
 				$grupo[$controle][] = $i-1;
 				$grupo[$controle][] = $i;
 				if(!array_key_exists("filho", $grupo[$controle])){
@@ -1399,12 +1410,17 @@ class FuncoesTableaux extends Model
 				$controle++;
 			}
 			else if($subgrupo[$i]['node'][0] == "esquerda"){
+				
 				$grupo[$controle][] = $i;
 				if(array_key_exists('filho', $subgrupo[$i])){
 					$grupo[$controle]['filho'][1] = $subgrupo[$i]['filho'];
 				}
 				$controle++;
+				if(isset($grupo[$controle]['filho'][0])){
+					$grupo[$controle]['filho'][1] = $grupo[$controle]['filho'][0];
+				}
 				$grupo[$controle]['filho'][0] = $controle-1;
+				
 			}
 			else if($subgrupo[$i]['node'][0] == "central"){
 				$grupo[$controle][] = $i;
