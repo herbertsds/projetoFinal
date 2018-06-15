@@ -1087,8 +1087,8 @@ class FuncoesTableaux extends Model
 		if (@$no['info']!=NULL) {
 			FuncoesTableaux::converteFormulaStringTableaux($no['info']);
 			// FuncoesTableaux::consertaStringFormula($no['info']);
-			 print "<br>";
-			 print_r($no['info']);
+			 // print "<br>";
+			 // print_r($no['info']);
 			FuncoesTableaux::verificaStatusNo($no,$resultado);
 		}
 		
@@ -1107,15 +1107,15 @@ class FuncoesTableaux extends Model
 	public static function verificaStatusNo(&$no,&$resultado){
 		switch($no){
 			case @$no['atualCentral']:
-				print "  Central <br>";
+				// print "  Central <br>";
 				$resultado[]['central'] = $no['info'];
 				break;
 			case @$no['atualEsquerdo']:
-				print "  Esquerdo <br>";
+				// print "  Esquerdo <br>";
 				$resultado[]['esquerda'] = $no['info'];
 				break;
 			case @$no['atualDireito']:
-				print "  Direito <br>";
+				// print "  Direito <br>";
 				$resultado[]['direita'] = $no['info'];
 				break;
 			default:
@@ -1210,10 +1210,15 @@ class FuncoesTableaux extends Model
 		unset($grupo[$indice]['filho']);
 		$impressao = null;
 		$impressao .= FuncoesTableaux::printAberturaSubArvore($grupo[$indice],$subgrupo,$countFilho);
-
 		if(is_array($filho)){
 			foreach ($filho as $key => $value) {
-				$impressao .= FuncoesTableaux::printEstrutura($grupo,$subgrupo,$value);
+				$impressaoTemp = FuncoesTableaux::printEstrutura($grupo,$subgrupo,$value);
+				if(substr($impressaoTemp, 0, 4) == "<ul>" && substr($impressao, -4) == "<ul>"){
+					$impressao .= substr(substr($impressaoTemp,0, -5), 4);
+				}else{
+					$impressao .= $impressaoTemp;
+				}
+				
 			}
 		}
 		$impressao .= FuncoesTableaux::printFechamentoSubArvore($grupo[$indice],$subgrupo,$countFilho);
@@ -1238,6 +1243,7 @@ class FuncoesTableaux extends Model
 		}else if($subgrupo[$grupo[0]]['node']['0'] == 'esquerda' && isset($grupo[1]) ){
 			$abertura = null;
 			$fechamento = null;
+
 			$resposta .= "<ul>";
 
 			$abertura = "<li>";
