@@ -1520,7 +1520,15 @@ class ParsingFormulas extends Model{
 			ParsingFormulas::formataFormulasSemantica($form['direito']);
 		}
 	}
-
+	//Função que corrige parenteses em átomos de campos esquerdo ou direito da fórmula
+	public static function consertaFormula(&$form){
+		if (@strlen($form['esquerdo'])==3 && @$form['esquerdo'][0]=='(') {
+			$form['esquerdo']=$form['esquerdo'][1];
+		}
+		if (@strlen($form['direito'])==3 && @$form['direito'][0]=='(') {
+			$form['direito']=$form['direito'][1];
+		}
+	}
 	//Função que recebe um array fórmula e corrige casos em que temos um campo array do tipo fórmula dentro de outro
 	//array do tipo fórmula com um dos campos (esquerdo ou direito) vazio.
 	//Específico para Tableaux

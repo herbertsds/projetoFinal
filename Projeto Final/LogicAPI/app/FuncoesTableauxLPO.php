@@ -1890,11 +1890,12 @@ class FuncoesTableauxLPO extends Model
 	}
 
 	public static function converteFormulaStringTableaux(&$form){
+		$contador=0;
 		if (@strlen($form['info'])==1) {
 			$form="(".$form.")";
 		}
 		while (@is_array($form['info']['esquerdo']) || @is_array($form['info']['direito']) || is_array($form)) {
-			FuncoesTableauxLPO::reverteFormatacaoTableaux($form);
+			FuncoesTableauxLPO::reverteFormatacaoTableaux($form,$contador);
 		}
 	}
 	public static function consertaStringFormula(&$form){
@@ -1976,7 +1977,7 @@ class FuncoesTableauxLPO extends Model
 					$form['info']['esquerdo']="not(".$form['info']['esquerdo'];
 					$aux=$aux."ou";
 					$aux=$aux.$form['info']['direito']."))";
-					$form=$aux;
+					$form['info']=$aux;
 				}
 				else{
 					$form['esquerdo']="not(".$form['esquerdo'];
@@ -1992,7 +1993,7 @@ class FuncoesTableauxLPO extends Model
 					$form['info']['esquerdo']="not(".$form['info']['esquerdo'];
 					$aux=$aux."e";
 					$aux=$aux.$form['info']['direito']."))";
-					$form=$aux;
+					$form['info']=$aux;
 				}
 				else{
 					$form['esquerdo']="not(".$form['esquerdo'];
@@ -2007,7 +2008,7 @@ class FuncoesTableauxLPO extends Model
 					$form['info']['esquerdo']="not(".$form['info']['esquerdo'];
 					$aux=$aux."implica";
 					$aux=$aux.$form['info']['direito']."))";
-					$form=$aux;
+					$form['info']=$aux;
 				}
 				else{
 					$form['esquerdo']="not(".$form['esquerdo'];
@@ -2023,7 +2024,7 @@ class FuncoesTableauxLPO extends Model
 					$form['info']['esquerdo']="notnot(".$form['info']['esquerdo'];
 					//$aux=$aux."implica";
 					$aux=$aux.$form['info']['direito']."))";
-					$form=$aux;
+					$form['info']=$aux;
 				}
 				else{
 					$form['esquerdo']="notnot(".$form['esquerdo'];
@@ -2039,7 +2040,7 @@ class FuncoesTableauxLPO extends Model
 					$form['info']['esquerdo']="paraTodo".$form['info']['esquerdo'];
 					//$aux=$aux."implica";
 					$aux=$aux.$form['info']['direito'].")";
-					$form=$aux;
+					$form['info']=$aux;
 				}
 				else{
 					$form['esquerdo']="paraTodo".$form['esquerdo'];
@@ -2055,7 +2056,7 @@ class FuncoesTableauxLPO extends Model
 					$form['info']['esquerdo']="xist".$form['info']['esquerdo'];
 					//$aux=$aux."xist";
 					$aux=$aux.$form['info']['direito'].")";
-					$form=$aux;
+					$form['info']=$aux;
 				}
 				else{
 					$form['esquerdo']="xist".$form['esquerdo'];
@@ -2071,7 +2072,7 @@ class FuncoesTableauxLPO extends Model
 					$form['info']['esquerdo']="not_paraTodo".$form['info']['esquerdo'];
 					//$aux=$aux."implica";
 					$aux=$aux.$form['info']['direito'].")";
-					$form=$aux;
+					$form['info']=$aux;
 				}
 				else{
 					$form['esquerdo']="not_paraTodo".$form['esquerdo'];
@@ -2087,7 +2088,7 @@ class FuncoesTableauxLPO extends Model
 					$form['info']['esquerdo']="not_xist".$form['info']['esquerdo'];
 					//$aux=$aux."implica";
 					$aux=$aux.$form['info']['direito'].")";
-					$form=$aux;
+					$form['info']=$aux;
 				}
 				else{
 					$form['esquerdo']="not_xist".$form['esquerdo'];
@@ -2113,6 +2114,158 @@ class FuncoesTableauxLPO extends Model
 			//$conectivos=array("not","notnot","paraTodo","not_paraTodo","xist","not_xist");
 			//print "<br>Entrei no Caso 2<br>";
 			//print_r($form);
+			$aux=null;
+			if (@$form['conectivo']['operacao']=='not' || @$form['info']['conectivo']['operacao']=='not') {
+				if (FuncoesTableauxLPO::checaAtomicoLPO($form) || FuncoesTableauxLPO::checaAtomicoLPO($form['info'])) {
+					if (@$form['info']) {
+						$aux=$form['info']['conectivo']['operacao'];
+						$aux=$aux."(".$form['info']['direito']."))";
+					}
+					else{
+						$aux=$form['conectivo']['operacao'];
+						$aux=$aux."(".$form['direito']."))";
+					}
+					
+				}
+			}
+			if (@$form['conectivo']['operacao']=='not_ou' || @$form['info']['conectivo']['operacao']=='not_ou') {
+				if(@$form['info']){
+					$form['info']['esquerdo']="not(".$form['info']['esquerdo'];
+					$aux=$aux."ou";
+					$aux=$aux.$form['info']['direito']."))";
+					$form['info']=$aux;
+				}
+				else{
+					$form['esquerdo']="not(".$form['esquerdo'];
+					$aux=$aux."ou";
+					$aux=$aux.$form['direito']."))";
+					$form=$aux;
+				}
+				
+				return;
+			}
+			if (@$form['conectivo']['operacao']=='not_e' || @$form['info']['conectivo']['operacao']=='not_e') {
+				if (@$form['info']) {
+					$form['info']['esquerdo']="not(".$form['info']['esquerdo'];
+					$aux=$aux."e";
+					$aux=$aux.$form['info']['direito']."))";
+					$form['info']=$aux;
+				}
+				else{
+					$form['esquerdo']="not(".$form['esquerdo'];
+					$aux=$aux."e";
+					$aux=$aux.$form['direito']."))";
+					$form=$aux;
+				}
+				return;
+			}
+			if (@$form['conectivo']['operacao']=='not_implica' || @$form['info']['conectivo']['operacao']=='not_implica') {
+				if (@$form['info']) {
+					$form['info']['esquerdo']="not(".$form['info']['esquerdo'];
+					$aux=$aux."implica";
+					$aux=$aux.$form['info']['direito']."))";
+					$form['info']=$aux;
+				}
+				else{
+					$form['esquerdo']="not(".$form['esquerdo'];
+					$aux=$aux."implica";
+					$aux=$aux.$form['direito']."))";
+					$form=$aux;
+				}
+				return;
+			}
+			//Caso notnot
+			if (@$form['conectivo']['operacao']=='notnot' || @$form['info']['conectivo']['operacao']=='notnot') {
+				if (@$form['info']) {
+					$form['info']['esquerdo']="notnot(".$form['info']['esquerdo'];
+					//$aux=$aux."implica";
+					//$aux=$aux.$form['info']['direito']."))";
+					$form['info']=$aux;
+				}
+				else{
+					$form['esquerdo']="notnot(".$form['esquerdo'];
+					//$aux=$aux."implica";
+					//$aux=$aux.$form['direito']."))";
+					$form=$aux;
+				}
+				return;
+			}
+			//Caso paraTodo
+			if (@$form['conectivo']['operacao']=='paraTodo' || @$form['info']['conectivo']['operacao']=='paraTodo') {
+				if (@$form['info']) {
+					$form['info']['esquerdo']="paraTodo".$form['info']['esquerdo'];
+					//$aux=$aux."implica";
+					$aux=$aux.$form['info']['direito'].")";
+					$form['info']=$aux;
+				}
+				else{
+					$form['esquerdo']="paraTodo".$form['esquerdo'];
+					//$aux=$aux."implica";
+					$aux=$aux.$form['direito'].")";
+					$form=$aux;
+				}
+				return;
+			}
+			//Caso xist
+			if (@$form['conectivo']['operacao']=='xist' || @$form['info']['conectivo']['operacao']=='xist') {
+				if (@$form['info']) {
+					$form['info']['esquerdo']="xist".$form['info']['esquerdo'];
+					//$aux=$aux."xist";
+					$aux=$aux.$form['info']['direito'].")";
+					$form['info']=$aux;
+				}
+				else{
+					$form['esquerdo']="xist".$form['esquerdo'];
+					//$aux=$aux."implica";
+					$aux=$aux.$form['direito'].")";
+					$form=$aux;
+				}
+				return;
+			}
+			//Caso not_paraTodo
+			if (@$form['conectivo']['operacao']=='not_paraTodo' || @$form['info']['conectivo']['operacao']=='not_paraTodo') {
+				if (@$form['info']) {
+					$form['info']['esquerdo']="not_paraTodo".$form['info']['esquerdo'];
+					//$aux=$aux."implica";
+					$aux=$aux.$form['info']['direito'].")";
+					$form['info']=$aux;
+				}
+				else{
+					$form['esquerdo']="not_paraTodo".$form['esquerdo'];
+					//$aux=$aux."implica";
+					$aux=$aux.$form['direito'].")";
+					$form=$aux;
+				}
+				return;
+			}
+			//Caso not_xist
+			if (@$form['conectivo']['operacao']=='not_xist' || @$form['info']['conectivo']['operacao']=='not_xist') {
+				if (@$form['info']) {
+					$form['info']['esquerdo']="not_xist".$form['info']['esquerdo'];
+					//$aux=$aux."implica";
+					$aux=$aux.$form['info']['direito'].")";
+					$form['info']=$aux;
+				}
+				else{
+					$form['esquerdo']="not_xist".$form['esquerdo'];
+					//$aux=$aux."implica";
+					$aux=$aux.$form['direito'].")";
+					$form=$aux;
+				}
+				return;
+			}
+			if (@$form['info']) {
+				$aux=$form['info']['conectivo']['operacao'];
+				$aux=$aux.$form['info']['direito'].")";
+				$form['info']['direito']=$aux;
+			}
+			else{
+				$aux=$form['conectivo']['operacao'];
+				$aux=$aux.$form['direito'].")";
+				$form['direito']=$aux;
+			}
+			return;
+
 			if (@$form['info']) {
 				$aux="(";
 				$aux=$aux.$form['info']['esquerdo'];
@@ -2122,8 +2275,11 @@ class FuncoesTableauxLPO extends Model
 				$aux="(";
 				$aux=$aux.$form['esquerdo'];
 				$form['esquerdo']=$aux;
-			}			
-			return;
+			}
+			//print "<br><br>DEBUG -- ENTRADA NO direito é array<br><br>";
+			//print_r($form);
+			//dd('1');			
+			//return;
 		}
 		elseif(is_array($form) || @is_array($form['info'])){
 			//print "<br>Entrei no Caso 3<br>";
@@ -2142,6 +2298,7 @@ class FuncoesTableauxLPO extends Model
 						$aux=$aux.$form['info']['esquerdo'];
 						$aux=$aux."ou";
 						$aux=$aux.$form['info']['direito'].")";
+						$form['info']=$aux;
 					}
 					else{
 						if (strlen($form['esquerdo'])==1) {
@@ -2153,6 +2310,7 @@ class FuncoesTableauxLPO extends Model
 						$aux=$aux.$form['esquerdo'];
 						$aux=$aux."ou";
 						$aux=$aux.$form['direito'].")";
+						$form=$aux;
 					}
 					
 				}
@@ -2167,6 +2325,8 @@ class FuncoesTableauxLPO extends Model
 						$aux=$aux.$form['info']['esquerdo'];
 						$aux=$aux."ou";
 						$aux=$aux.$form['info']['direito']."))";
+						$form['info']=$aux;
+
 					}
 					else{
 						if (strlen($form['esquerdo'])==1) {
@@ -2178,9 +2338,11 @@ class FuncoesTableauxLPO extends Model
 						$aux=$aux.$form['esquerdo'];
 						$aux=$aux."ou";
 						$aux=$aux.$form['direito']."))";
+						$form=$aux;
+
 					}
 				}
-				$form=$aux;
+				//$form=$aux;
 				return;
 			}
 			if (@$form['conectivo']['operacao']=='not_e' || @$form['info']['conectivo']['operacao']=='not_e') {
@@ -2195,6 +2357,7 @@ class FuncoesTableauxLPO extends Model
 						$aux=$aux.$form['info']['esquerdo'];
 						$aux=$aux."e";
 						$aux=$aux.$form['info']['direito'].")";
+						$form['info']=$aux;
 					}
 					else{
 						if (strlen($form['esquerdo'])==1) {
@@ -2206,6 +2369,7 @@ class FuncoesTableauxLPO extends Model
 						$aux=$aux.$form['esquerdo'];
 						$aux=$aux."e";
 						$aux=$aux.$form['direito'].")";
+						$form=$aux;
 					}					
 				}
 				else{
@@ -2219,6 +2383,7 @@ class FuncoesTableauxLPO extends Model
 						$aux=$aux.$form['info']['esquerdo'];
 						$aux=$aux."e";
 						$aux=$aux.$form['info']['direito'].")";
+						$form['info']=$aux;
 					}
 					else{
 						if (strlen($form['esquerdo'])==1) {
@@ -2230,9 +2395,10 @@ class FuncoesTableauxLPO extends Model
 						$aux=$aux.$form['esquerdo'];
 						$aux=$aux."e";
 						$aux=$aux.$form['direito'].")";
+						$form=$aux;
 					}					
 				}
-				$form=$aux;
+				//$form=$aux;
 				return;
 			}
 			if (@$form['conectivo']=='not_implica' || @$form['info']['conectivo']=='not_implica') {
@@ -2248,6 +2414,7 @@ class FuncoesTableauxLPO extends Model
 							$aux=$aux.$form['info']['esquerdo'];
 							$aux=$aux."implica";
 							$aux=$aux.$form['info']['direito'].")";
+							$form['info']=$aux;
 						}
 					}
 					else{
@@ -2261,6 +2428,7 @@ class FuncoesTableauxLPO extends Model
 							$aux=$aux.$form['esquerdo'];
 							$aux=$aux."implica";
 							$aux=$aux.$form['direito'].")";
+							$form=$aux;
 						}
 					}
 				}
@@ -2275,6 +2443,7 @@ class FuncoesTableauxLPO extends Model
 						$aux=$aux.$form['esquerdo'];
 						$aux=$aux."implica";
 						$aux=$aux.$form['direito'].")";
+						$form['info']=$aux;
 					}
 					else{
 						if (strlen($form['esquerdo'])==1) {
@@ -2285,10 +2454,11 @@ class FuncoesTableauxLPO extends Model
 						}
 						$aux=$aux.$form['esquerdo'];
 						$aux=$aux."implica";
-						$aux=$aux.$form['direito'].")";		
+						$aux=$aux.$form['direito'].")";
+						$form=$aux;		
 					}					
 				}			
-				$form=$aux;
+				//$form=$aux;
 				return;
 			}
 			//notnot
@@ -2304,6 +2474,7 @@ class FuncoesTableauxLPO extends Model
 						$aux=$aux.$form['info']['esquerdo'];
 						//$aux=$aux."e";
 						$aux=$aux.$form['info']['direito'].")";
+						$form['info']=$aux;
 					}
 					else{
 						if (strlen($form['esquerdo'])==1) {
@@ -2315,6 +2486,7 @@ class FuncoesTableauxLPO extends Model
 						$aux=$aux.$form['esquerdo'];
 						//$aux=$aux."e";
 						$aux=$aux.$form['direito'].")";
+						$form=$aux;
 					}					
 				}
 				else{
@@ -2328,6 +2500,7 @@ class FuncoesTableauxLPO extends Model
 						$aux=$aux.$form['info']['esquerdo'];
 						//$aux=$aux."e";
 						$aux=$aux.$form['info']['direito'].")";
+						$form['info']=$aux;
 					}
 					else{
 						if (strlen($form['esquerdo'])==1) {
@@ -2339,9 +2512,10 @@ class FuncoesTableauxLPO extends Model
 						$aux=$aux.$form['esquerdo'];
 						//$aux=$aux."e";
 						$aux=$aux.$form['direito'].")";
+						$form=$aux;
 					}					
 				}
-				$form=$aux;
+				//$form=$aux;
 				return;
 			}
 			//Caso em subfórmulas com paraTodo
@@ -2357,6 +2531,7 @@ class FuncoesTableauxLPO extends Model
 						$aux=$aux.$form['info']['esquerdo'];
 						//$aux=$aux."e";
 						$aux=$aux.$form['info']['direito'].")";
+						$form['info']=$aux;
 					}
 					else{
 						if (strlen($form['esquerdo'])==1) {
@@ -2368,6 +2543,7 @@ class FuncoesTableauxLPO extends Model
 						$aux=$aux.$form['esquerdo'];
 						//$aux=$aux."e";
 						$aux=$aux.$form['direito'].")";
+						$form=$aux;
 					}					
 				}
 				else{
@@ -2381,6 +2557,7 @@ class FuncoesTableauxLPO extends Model
 						$aux=$aux.$form['info']['esquerdo'];
 						//$aux=$aux."e";
 						$aux=$aux.$form['info']['direito'].")";
+						$form['info']=$aux;
 					}
 					else{
 						if (strlen($form['esquerdo'])==1) {
@@ -2392,9 +2569,10 @@ class FuncoesTableauxLPO extends Model
 						$aux=$aux.$form['esquerdo'];
 						//$aux=$aux."e";
 						$aux=$aux.$form['direito'].")";
+						$form=$aux;
 					}					
 				}
-				$form=$aux;
+				//$form=$aux;
 				return;
 			}
 			//Caso em subfórmulas com xist
@@ -2410,6 +2588,7 @@ class FuncoesTableauxLPO extends Model
 						$aux=$aux.$form['info']['esquerdo'];
 						//$aux=$aux."e";
 						$aux=$aux.$form['info']['direito'].")";
+						$form['info']=$aux;
 					}
 					else{
 						if (strlen($form['esquerdo'])==1) {
@@ -2421,6 +2600,7 @@ class FuncoesTableauxLPO extends Model
 						$aux=$aux.$form['esquerdo'];
 						//$aux=$aux."e";
 						$aux=$aux.$form['direito'].")";
+						$form=$aux;
 					}					
 				}
 				else{
@@ -2434,6 +2614,7 @@ class FuncoesTableauxLPO extends Model
 						$aux=$aux.$form['info']['esquerdo'];
 						//$aux=$aux."e";
 						$aux=$aux.$form['info']['direito'].")";
+						$form['info']=$aux;
 					}
 					else{
 						if (strlen($form['esquerdo'])==1) {
@@ -2445,9 +2626,10 @@ class FuncoesTableauxLPO extends Model
 						$aux=$aux.$form['esquerdo'];
 						//$aux=$aux."e";
 						$aux=$aux.$form['direito'].")";
+						$form=$aux;
 					}					
 				}
-				$form=$aux;
+				//$form=$aux;
 				return;
 			}
 			//Caso em subfórmulas com not_paraTodo
@@ -2463,6 +2645,7 @@ class FuncoesTableauxLPO extends Model
 						$aux=$aux.$form['info']['esquerdo'];
 						//$aux=$aux."e";
 						$aux=$aux.$form['info']['direito'].")";
+						$form['info']=$aux;
 					}
 					else{
 						if (strlen($form['esquerdo'])==1) {
@@ -2474,6 +2657,7 @@ class FuncoesTableauxLPO extends Model
 						$aux=$aux.$form['esquerdo'];
 						//$aux=$aux."e";
 						$aux=$aux.$form['direito'].")";
+						$form=$aux;
 					}					
 				}
 				else{
@@ -2487,6 +2671,7 @@ class FuncoesTableauxLPO extends Model
 						$aux=$aux.$form['info']['esquerdo'];
 						//$aux=$aux."e";
 						$aux=$aux.$form['info']['direito'].")";
+						$form['info']=$aux;
 					}
 					else{
 						if (strlen($form['esquerdo'])==1) {
@@ -2498,9 +2683,10 @@ class FuncoesTableauxLPO extends Model
 						$aux=$aux.$form['esquerdo'];
 						//$aux=$aux."e";
 						$aux=$aux.$form['direito'].")";
+						$form=$aux;
 					}					
 				}
-				$form=$aux;
+				//$form=$aux;
 				return;
 			}
 			//Caso em subfórmulas com not_xist
@@ -2516,6 +2702,7 @@ class FuncoesTableauxLPO extends Model
 						$aux=$aux.$form['info']['esquerdo'];
 						//$aux=$aux."e";
 						$aux=$aux.$form['info']['direito'].")";
+						$form['info']=$aux;
 					}
 					else{
 						if (strlen($form['esquerdo'])==1) {
@@ -2527,6 +2714,7 @@ class FuncoesTableauxLPO extends Model
 						$aux=$aux.$form['esquerdo'];
 						//$aux=$aux."e";
 						$aux=$aux.$form['direito'].")";
+						$form=$aux;
 					}					
 				}
 				else{
@@ -2540,6 +2728,7 @@ class FuncoesTableauxLPO extends Model
 						$aux=$aux.$form['info']['esquerdo'];
 						//$aux=$aux."e";
 						$aux=$aux.$form['info']['direito'].")";
+						$form['info']=$aux;
 					}
 					else{
 						if (strlen($form['esquerdo'])==1) {
@@ -2551,9 +2740,10 @@ class FuncoesTableauxLPO extends Model
 						$aux=$aux.$form['esquerdo'];
 						//$aux=$aux."e";
 						$aux=$aux.$form['direito'].")";
+						$form=$aux;
 					}					
 				}
-				$form=$aux;
+				//$form=$aux;
 				return;
 			}
 			$aux=null;
@@ -2563,7 +2753,7 @@ class FuncoesTableauxLPO extends Model
 					if (@$form['info']) {
 						$aux=$aux.$form['info']['conectivo']['operacao'];
 						$aux=$aux."(".$form['info']['direito'].")";
-						$form=$aux;
+						$form['info']=$aux;
 					}
 					else{
 						$aux=$aux.$form['conectivo']['operacao'];
@@ -2583,7 +2773,7 @@ class FuncoesTableauxLPO extends Model
 					if (@$form['info']) {
 						//$aux=$aux.$form['info']['conectivo']['operacao'];
 						$aux="(".$form['info']['direito'].")";
-						$form=$aux;
+						$form['info']=$aux;
 					}
 					elseif(@$form){
 						//$aux=$aux.$form['conectivo']['operacao'];
@@ -2605,11 +2795,13 @@ class FuncoesTableauxLPO extends Model
 			$aux="(";
 			if (@$form['info']) {
 				$aux=$aux.$form['info']['esquerdo'];
+				$form['info']=$aux;
 			}
 			else{
 				$aux=$aux.$form['esquerdo'];
+				$form=$aux;
 			}
-			$form=$aux;
+			//$form=$aux;
 			return;
 		}
 	}

@@ -171,7 +171,9 @@ class Tableaux extends Model
 					////print_r($value['info']);
 					////print "<br>";
 				}
+
 				if(FuncoesTableaux::escolhaEficiente($this->listaFormulasDisponiveis,$this->hashInicial,$nosFolha,$historicoVariaveis,$raiz,$contador) === 'fechado')
+					
 					return ;
 				
 				if (FuncoesTableaux::todasFechadas($nosFolha,$contador)) {
@@ -202,6 +204,7 @@ class Tableaux extends Model
 		$resultado = null;
 		//print "<br>Árvore a partir da raiz<br>";
 		FuncoesTableaux::imprimeArvore($raiz,$resultado);
+		//FuncoesTableaux::imprimeArvore($raiz);
 		//print '<br>Raiz<br>';
 		//print_r($raiz);
 		// $resultado = null;
@@ -230,7 +233,8 @@ class Tableaux extends Model
 		// $resultado[]['central'] = 'Dezesseis';
 
 		$resposta = FuncoesTableaux::outputArvore($resultado,$this->exercicioEscolhido);
-		// $resposta[] = $raiz;
+		//$resposta[] = $raiz;
+		//return $resultado;
 		return $resposta;
     }
 }

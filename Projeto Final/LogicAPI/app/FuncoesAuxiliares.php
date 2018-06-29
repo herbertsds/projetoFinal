@@ -87,10 +87,12 @@ class FuncoesAuxiliares extends Model
 				if($contador<0){
 					#Criar um tratamento aqui
 					//Se o usuário digitar a entrada vamos precisar usar uma rotina de correção e chamar verifica recursivamente
-					 abort(400,"Fórmula com digitação incorreta\n".implode($form,"\n"));
-					//print $form;
+					 return true;
+					 abort(400,"Fórmula com digitação incorreta\n".implode($form, "\n"));
+					
+					//print $form; 
 					//print "<br>";
-					exit(1);
+					//exit(1);
 				}
 				
 				if($abreFormula==true){
@@ -106,6 +108,7 @@ class FuncoesAuxiliares extends Model
 			//print $form;
 			//print "<br>";
 			 abort(400,"Fórmula com digitação incorreta\n".implode($form,"\n"));
+			 return true;
 		    //print "Fórmula com digitação incorreta";
 			exit(1);
 		}

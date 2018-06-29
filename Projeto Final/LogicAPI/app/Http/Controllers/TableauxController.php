@@ -7,19 +7,20 @@ use Illuminate\Http\Request;
 use App\Exercicios;
 
 use App\Tableaux;
-
+echo "<pre>";
 class TableauxController extends Controller
 {
     public function index(Request $numeroExercicio){
-
-        $exercicio = Exercicios::getExercicio(5);
+        //Do 22 ao 71
+        $exercicio = Exercicios::getExercicio(16);
         //$exercicio = Exercicios::getExercicio($numeroExercicio->exercicio);
 
     	$resposta = new Tableaux($exercicio);
 
-    	// print_r("Exercício:<br>");
-    	// print_r($exercicio);
-    	// print_r("<br>----------------------------------------------<br><br>");
+    	print_r("Exercício:<br>");
+    	print_r($exercicio);
+    	print_r("<br>----------------------------------------------<br><br>");
+        //dd(1);
 
     	//print_r($resposta->fullSteps());
         // print_r(Exercicios::converteSaida($resposta->fullSteps()));
