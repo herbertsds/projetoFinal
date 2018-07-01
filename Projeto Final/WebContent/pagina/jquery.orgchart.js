@@ -12,6 +12,7 @@
  *
  *     http://creativecommons.org/licenses/by-sa/3.0
  */
+
 (function($) {
 
     $.fn.orgChart = function(options) {

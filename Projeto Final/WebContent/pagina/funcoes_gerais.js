@@ -282,7 +282,17 @@
 				  numLinha++;
 				$('#t_divFormulas').append("<p id='finalVetor'>"+ numLinha +": " + pergunta + " # Pergunta </p>" );
 				break;
-			
+//				  for (cont = 0; cont in vet_regras; cont++){
+//					  numLinha = cont+1;
+//					  
+//						$('#t_divFormulas').append("<ul id='" + cont+ "'><li>"+ numLinha +": " + vet_regras[cont]);
+//	
+//				  }
+//				  numLinha++;
+//				$('#t_divFormulas').append("<ul id='finalVetor'><li>"+ numLinha +": " + pergunta + " # Pergunta</li></ul>" );
+//				for(i = 0; i<=vet_regras.length +1; i++){
+//					$('#t_divFormulas').append("</li></ul>");
+//				}
 			case "resolucao":
 				  for (cont = 0; cont in vet_regras; cont++){
 					  numLinha = cont+1;

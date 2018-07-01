@@ -15,10 +15,11 @@ function f_GabTableaux(){
 	        //console.log(retorno);
 	        var obj = JSON.parse(retorno);
             console.log(obj);
+			$('#t_divFormulas').append("<article> --------------------------------------------------------- </article>" );
 
             $("#organisation").append(obj);
             $("#organisation").orgChart({container: $("#main")});
-
+           // f_teste();
 	        
 	        
 	        
