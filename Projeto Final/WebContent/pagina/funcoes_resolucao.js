@@ -432,6 +432,7 @@ var verificar = 0;
 function f_GabResolucao(){
 
 	var myData = { 'exercicio' : parseInt(numExercicio)};
+	console.log(' enviando : ' + myData);
 
 	$.ajax({
 		
