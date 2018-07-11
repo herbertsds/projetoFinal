@@ -24,9 +24,9 @@ function f_GabTableaux(){
 	        
 	        
         },
-	    error: function() { 
+	    error: function(retorno2) { 
 
-	    	console.log('ERRO: Gabarito não encontrado!'); },
+	    	console.log(retorno2); },
         });
         	
 }

@@ -31,7 +31,7 @@ class Exercicios extends Model
     public static function getExercicio($numeroExercicio=NULL){
 
     	if($numeroExercicio!=NULL){
-    		if(is_int($numeroExercicio))
+    		if(is_numeric($numeroExercicio))
     			$exercicioLista = Exercicios::find($numeroExercicio);
     		else if($numeroExercicio->exercicio != NULL)
             	$exercicioLista = Exercicios::find($numeroExercicio->exercicio);
