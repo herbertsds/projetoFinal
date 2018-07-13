@@ -288,8 +288,7 @@ var verificar = 0;
 			$("input[type=checkbox][name='ck_novasFormulas']:checked").each(function(){
 			    camposMarcados.push($(this).val());
 			    selecionadas++;
-				$(this).prop("disabled", true);
-				$(this).prop("checked", false);
+
 			});
 			
 			if(selecionadas == 0){
@@ -323,19 +322,32 @@ var verificar = 0;
 			        	console.log('retorno:');
 				        console.log(retorno);
 						console.log("-------");
+						$("input[type=checkbox][name='ck_novasFormulas']:checked").each(function(){
+
+							$(this).prop("disabled", true);
+							$(this).prop("checked", false);
+						});
 
 				        for(var i=0;i<retorno[0].length;i++){
-							
-							cont++;
-							numLinha++;
-							linhasGab++;
-							$('#r_divNovasFormulas').append("<input  type='checkbox' class='form-check-input' data-color = 'purple' name='ck_novasFormulas' id='" + cont +"' value='" + retorno[0][i] +"'> "+ numLinha + ": "  + retorno[0][i] +"</br>"  );
+							if(camposMarcados.indexOf(retorno[0][i]) != -1){
+								cont++;
+								numLinha++;
+								linhasGab++;
+								$('#r_divNovasFormulas').append("<input  type='checkbox' class='form-check-input' data-color = 'purple' name='ck_novasFormulas' id='" + cont +"' value='" + retorno[0][i] +"'> "+ numLinha + ": "  + retorno[0][i] +"</br>"  );
+	
+								vet_regras[cont]= retorno[0][i];
+								vet_verificar[verificar] = retorno[0][i];
+								verificar++;
+								
+							}
+							else{
+									// reabilitar o que repete
+									$(this).prop("disabled", false);
+									$(this).prop("checked", false);
+								}
 
-							vet_regras[cont]= retorno[0][i];
-							vet_verificar[verificar] = retorno[0][i];
-							verificar++;
-
-						}
+							}
+				        	
 				        if(retorno[1].toUpperCase() == 'NÃO FECHADO'){
 				        	console.log('ok');
 				        }
@@ -343,7 +355,7 @@ var verificar = 0;
 				        	console.log("FIM DO EXERCICIO!!");
 				        }
 						
-			
+				        	
 			//		return formula;
 				},
 				
@@ -356,18 +368,26 @@ var verificar = 0;
 	
 	function f_SepararOU(){
 		
-		
+
 		selecionadas = 0;
+	    console.log(selecionadas);
+
 		vet_Entrada = [];		
 		camposMarcados = new Array();
 		$("input[type=checkbox][name='ck_novasFormulas']:checked").each(function(){
+			console.log("aqui");
 		    camposMarcados.push($(this).val());
-		    selecionadas++;
-			$(this).prop("disabled", true);
-			$(this).prop("checked", false);
+		    selecionadas = selecionadas +1;
+		    console.log(selecionadas);
+//		    if(camposMarcados.length == 2){
+//				$(this).prop("disabled", true);
+//				$(this).prop("checked", false);
+//		    }
 		});
 		
-		if(selecionadas <2 ){
+		if(camposMarcados.length > 2 ){
+
+
 			// mostra a saída
 			console.log("Selecionados:" + camposMarcados );
 			vet_Entrada[0] = "SeparaOU";
@@ -413,6 +433,10 @@ var verificar = 0;
 			        else{
 			        	console.log("FIM DO EXERCICIO!!");
 			        }
+					$("input[type=checkbox][name='ck_novasFormulas']:checked").each(function(){
+						$(this).prop("disabled", true);
+						$(this).prop("checked", false);
+					});
 		
 		//		return formula;
 			},
@@ -425,7 +449,7 @@ var verificar = 0;
 		else{
 			selecionadas = 0;
 			vet_Entrada = [];		
-			alert("Número inválido de fórmulas para separação do OU!");
+			alert("Selecione duas fórmulas para separação do OU!");
 		}
 	}
 
@@ -607,4 +631,13 @@ function f_LimpaResolucao(){
 	erro = 0;
 	$("#r_divFormulas").empty();
 	$('#r_divNovasFormulas').empty();
+	$('#btn_Verificar').hide();
+	$('#btn_SepararE').hide();
+	$('#btn_SepararOU').hide();
+	$('#btn_TransformarRegra').text('Negar Pergunta');
+	$('#btn_TransformarRegra').show();
+	$('#r_passo1').text('- Negar a Pergunta');
+	$('#r_passo2').text('- Passar todas as fórmulas e a pergunta negada para FNC');
+	$('#r_passo3').text('- Desenvolver o exercício até encontrar o absurdo &#10066; ');
+
 }

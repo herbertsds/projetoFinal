@@ -466,7 +466,7 @@
 	// FALTA PERMITIR EXCLUSAO/ALTERACAO DA PERGUNTA E DE REGRAS
 	
 	function f_SelecionaExercicio(btn_numExercicio){
-
+		f_LimpaDesenvolvimento();
 				idnumExercicio = btn_numExercicio;
 				numExercicio = idnumExercicio;
 				console.log("id exercicio = " +idnumExercicio);
@@ -662,6 +662,14 @@ function f_LimpaTipo(){
 	vet_listas = [];
 	vet_idListas = [];
 	
+	f_LimpaTableaux();
+	f_LimpaResolucao();
+	f_LimpaDeducao();
+	f_LimpaSemantica();
+	f_LimpaLPO();
+}
+
+function f_LimpaDesenvolvimento(){
 	f_LimpaTableaux();
 	f_LimpaResolucao();
 	f_LimpaDeducao();
