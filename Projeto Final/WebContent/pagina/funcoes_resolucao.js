@@ -329,7 +329,7 @@ var verificar = 0;
 						});
 
 				        for(var i=0;i<retorno[0].length;i++){
-							if(camposMarcados.indexOf(retorno[0][i]) != -1){
+							//if(camposMarcados.indexOf(retorno[0][i]) != -1){
 								cont++;
 								numLinha++;
 								linhasGab++;
@@ -339,12 +339,12 @@ var verificar = 0;
 								vet_verificar[verificar] = retorno[0][i];
 								verificar++;
 								
-							}
-							else{
-									// reabilitar o que repete
-									$(this).prop("disabled", false);
-									$(this).prop("checked", false);
-								}
+						//	}
+//							else{
+//									// reabilitar o que repete
+//									$(this).prop("disabled", false);
+//									$(this).prop("checked", false);
+//								}
 
 							}
 				        	
@@ -385,7 +385,7 @@ var verificar = 0;
 //		    }
 		});
 		
-		if(camposMarcados.length > 2 ){
+		if(camposMarcados.length >= 2 ){
 
 
 			// mostra a saída
