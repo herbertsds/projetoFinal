@@ -21,6 +21,7 @@ class FuncoesTableaux extends Model
 		$auxForm['pai']=null;
 		$auxForm['formDisponiveis']=array();
 		$auxForm['hashAtomos']=array();
+		$auxForm['formulaGeradora']=null;
 		$aux;
 		$esquerdo=true;
 		$abreFormula=false;
@@ -416,6 +417,7 @@ class FuncoesTableaux extends Model
 		$auxForm['pai']=null;
 		$auxForm['formDisponiveis']=array();
 		$auxForm['hashAtomos']=array();
+		$auxForm['formulaGeradora']=null;
 		return $auxForm;
 
 	}
@@ -467,6 +469,8 @@ class FuncoesTableaux extends Model
 				$noAuxCen2['formDisponiveis']=$pai['formDisponiveis'];
 				$noAuxCen1['hashAtomos']=$pai['hashAtomos'];
 				$noAuxCen2['hashAtomos']=$pai['hashAtomos'];
+				$noAuxCen1['formulaGeradora']=$form['info'];
+				$noAuxCen2['formulaGeradora']=$form['info'];
 
 				//Correções na estrutura de dados
 				
@@ -531,6 +535,8 @@ class FuncoesTableaux extends Model
 				$noAuxDir['formDisponiveis']=$pai['formDisponiveis'];
 				$noAuxEsq['hashAtomos']=$pai['hashAtomos'];
 				$noAuxDir['hashAtomos']=$pai['hashAtomos'];
+				$noAuxEsq['formulaGeradora']=$form['info'];
+				$noAuxDir['formulaGeradora']=$form['info'];
 
 				//Correções na estrutura de dados
 				
@@ -586,6 +592,8 @@ class FuncoesTableaux extends Model
 				$noAuxDir['formDisponiveis']=$pai['formDisponiveis'];
 				$noAuxEsq['hashAtomos']=$pai['hashAtomos'];
 				$noAuxDir['hashAtomos']=$pai['hashAtomos'];
+				$noAuxEsq['formulaGeradora']=$form['info'];
+				$noAuxDir['formulaGeradora']=$form['info'];
 
 				//Correções na estrutura de dados
 				
@@ -664,6 +672,7 @@ class FuncoesTableaux extends Model
 				//Inicialização dos dados que são compartilhados com o pai
 				$noAuxCen1['formDisponiveis']=$pai['formDisponiveis'];
 				$noAuxCen1['hashAtomos']=$pai['hashAtomos'];
+				$noAuxCen1['formulaGeradora']=$form['info'];
 
 				//Correções na estrutura de dados
 				
@@ -729,6 +738,8 @@ class FuncoesTableaux extends Model
 				$noAuxDir['formDisponiveis']=$pai['formDisponiveis'];
 				$noAuxEsq['hashAtomos']=$pai['hashAtomos'];
 				$noAuxDir['hashAtomos']=$pai['hashAtomos'];
+				$noAuxEsq['formulaGeradora']=$form['info'];
+				$noAuxDir['formulaGeradora']=$form['info'];
 
 				//Correções na estrutura de dados
 				
@@ -817,6 +828,8 @@ class FuncoesTableaux extends Model
 				$noAuxCen2['formDisponiveis']=$pai['formDisponiveis'];
 				$noAuxCen1['hashAtomos']=$pai['hashAtomos'];
 				$noAuxCen2['hashAtomos']=$pai['hashAtomos'];
+				$noAuxCen1['formulaGeradora']=$form['info'];
+				$noAuxCen2['formulaGeradora']=$form['info'];
 
 				
 
@@ -914,6 +927,8 @@ class FuncoesTableaux extends Model
 				$noAuxCen2['formDisponiveis']=$pai['formDisponiveis'];
 				$noAuxCen1['hashAtomos']=$pai['hashAtomos'];
 				$noAuxCen2['hashAtomos']=$pai['hashAtomos'];
+				$noAuxCen1['formulaGeradora']=$form['info'];
+				$noAuxCen2['formulaGeradora']=$form['info'];
 
 				//Correções na estrutura de dados
 				
@@ -1140,6 +1155,7 @@ class FuncoesTableaux extends Model
 	public static function imprimeArvore(&$no,&$resultado=NULL){
 		if (@$no['info']!=NULL) {
 			FuncoesTableaux::converteFormulaStringTableaux($no['info']);
+			FuncoesTableaux::converteFormulaStringTableaux($no['formulaGeradora']);
 			// FuncoesTableaux::consertaStringFormula($no['info']);
 			 // print "<br>";
 			 // print_r($no['info']);
@@ -1173,15 +1189,15 @@ class FuncoesTableaux extends Model
 		switch($no){
 			case @$no['atualCentral']:
 				// print "  Central <br>";
-				$resultado[]['central'] = $no['info'];
+				$resultado[]['central'] = array($no['info'],$no['formulaGeradora']);
 				break;
 			case @$no['atualEsquerdo']:
 				// print "  Esquerdo <br>";
-				$resultado[]['esquerda'] = $no['info'];
+				$resultado[]['esquerda'] = array($no['info'],$no['formulaGeradora']);
 				break;
 			case @$no['atualDireito']:
 				// print "  Direito <br>";
-				$resultado[]['direita'] = $no['info'];
+				$resultado[]['direita'] = array($no['info'],$no['formulaGeradora']);
 				break;
 			default:
 				if(@$no['info']=="fechado"){
@@ -1849,11 +1865,11 @@ class FuncoesTableaux extends Model
 					$form=$aux;
 				}
 				else{
-					while((is_array($form['info']['esquerdo'])) && is_array($form['info']['esquerdo']['info'])) {
-						FuncoesTableaux::colocaParentesesTableaux($form['info']['esquerdo']);
+					while((is_array($form['esquerdo'])) && is_array($form['esquerdo']['info'])) {
+						FuncoesTableaux::colocaParentesesTableaux($form['esquerdo']);
 					}
-					while((is_array($form['info']['direito'])) && is_array($form['info']['direito']['info'])) {
-						FuncoesTableaux::colocaParentesesTableaux($form['info']['direito']);
+					while((is_array($form['direito'])) && is_array($form['direito']['info'])) {
+						FuncoesTableaux::colocaParentesesTableaux($form['direito']);
 					}
 					$aux="not(".$form['esquerdo'];
 					$aux=$aux."e";
@@ -1913,10 +1929,16 @@ class FuncoesTableaux extends Model
 						FuncoesTableaux::colocaParentesesTableaux($form['direito']);
 					}
 
-					$form['info']['direito']="notnot(".$form['info']['direito'];
-					//$aux=$aux."implica";
-					$aux=$aux.$form['info']['direito']."))";
-					$form['info']=$aux;
+					if (FuncoesAuxiliares::verificaFormulaCorreta($form['info']['direito'])==true) {
+						$form['info']['direito']="notnot(".$form['info']['direito'];
+						$aux=$aux.$form['info']['direito']."))";
+						$form['info']=$aux;
+					}
+					else{
+						$form['info']['direito']="notnot".$form['info']['direito'];
+						$aux=$aux.$form['info']['direito'];
+						$form['info']=$aux;
+					}
 				}
 				else{
 					while((is_array($form['direito'])) && is_array($form['direito']['info'])) {
@@ -2007,7 +2029,7 @@ class FuncoesTableaux extends Model
 					}
 					else{
 						while((is_array($form['esquerdo'])) && is_array($form['esquerdo']['info'])) {
-							FuncoesTableaux::colocaParentesesTableaux($form['info']['esquerdo']);
+							FuncoesTableaux::colocaParentesesTableaux($form['esquerdo']);
 						}
 						while((is_array($form['direito'])) && is_array($form['direito']['info'])) {
 							FuncoesTableaux::colocaParentesesTableaux($form['direito']);

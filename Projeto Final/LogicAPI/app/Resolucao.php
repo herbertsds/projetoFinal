@@ -409,9 +409,14 @@ class Resolucao extends Model
     public function stepByStep($request){
     	//[ "operação", "qtd_formulasSelecionadas",  "formula1", "formula2", .... , "formulaN" ]
     	//Entrada
-
+    	/*$request=null;
+    	$request["qtd_formulasSelecionadas"]=3;
+    	$request["operacao"]="FNC";
+		$request["formulas"]= ["(A→B)", "(B→C)", "¬(A→(B^C))"];
+		*/
 		$mudancaArray;
 		$mudancaHash=[];
+
 
 		//return $request;
 
@@ -500,9 +505,14 @@ class Resolucao extends Model
 		//Passo 3
 		if ($request['operacao']=='FNC') {
 			//Recebo as fórmulas em string do front-end e as converto
+			//print_r($request['formulas']);
 			$entradaConvertida=$request['formulas'];
+			foreach ($entradaConvertida as $key => $value) {
+				$entradaConvertida[$key]=Exercicios::converteSimbolosEntrada($value);
+			}
+			
 			ParsingFormulas::ConverteFormulasEmArray($entradaConvertida);
-
+			//print_r($entradaConvertida);
 			//Aplico a operação do FNC
 			foreach ($entradaConvertida as $key => $value) {
 				FuncoesResolucao::converteFNC($entradaConvertida[$key]);
@@ -586,6 +596,9 @@ class Resolucao extends Model
 	 				ParsingFormulas::converteFormulaString($resposta[$key]);
 	 			}
 	 		}
+	 		//print "<br>Após a aplicação de FNC<br>";
+	 		//print_r($resposta);
+	 		//dd(1);
 			return $resposta;			
 		}
 		

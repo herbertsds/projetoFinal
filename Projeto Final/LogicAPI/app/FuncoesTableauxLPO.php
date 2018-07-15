@@ -1956,18 +1956,18 @@ class FuncoesTableauxLPO extends Model
 	//Função que recebe a referência para uma fórmula array com a estrutura
 	//array ('esquerdo' => , 'conectivo' => , 'direito' =>) e transforma em string
 	public static function colocaParentesesTableaux(&$form){
-		if ((@is_array($form['info']['esquerdo']) || @is_array($form['esquerdo'])) && (@!is_array($form['direito']) || @!is_array($form['info']['direito']))) {
+		if ((@is_array($form['info']['esquerdo']) || @is_array($form['esquerdo'])) && !(@is_array($form['direito']) || @is_array($form['info']['direito']))) {
 			//print "<br>Entrei no Caso 1<br>";
 			//print_r($form);
 			if (@$form['conectivo']['operacao']=='not' || @$form['info']['conectivo']['operacao']=='not') {
 				if (FuncoesTableauxLPO::checaAtomicoLPO($form) || FuncoesTableauxLPO::checaAtomicoLPO($form['info'])) {
 					if (@$form['info']) {
 						$aux=$form['info']['conectivo']['operacao'];
-						$aux=$aux."(".$form['info']['direito']."))";
+						$aux=$aux."(".$form['info']['direito'].")";
 					}
 					else{
 						$aux=$form['conectivo']['operacao'];
-						$aux=$aux."(".$form['direito']."))";
+						$aux=$aux."(".$form['direito'].")";
 					}
 					
 				}
@@ -2099,18 +2099,31 @@ class FuncoesTableauxLPO extends Model
 				return;
 			}
 			if (@$form['info']) {
-				$aux=$form['info']['conectivo']['operacao'];
+				if (is_array($form['info']['esquerdo'])) {
+					FuncoesTableaux::colocaParentesesTableaux($form['info']['esquerdo']);
+				}
+				
+				if (is_array($form['info']['direito'])) {
+					FuncoesTableaux::colocaParentesesTableaux($form['info']['direito']);
+				}
+				//$aux=$form['info']['conectivo']['operacao'];
 				$aux=$aux.$form['info']['direito'].")";
 				$form['info']['direito']=$aux;
 			}
 			else{
-				$aux=$form['conectivo']['operacao'];
+				if (is_array($form['info']['esquerdo'])) {
+					FuncoesTableaux::colocaParentesesTableaux($form['info']['esquerdo']);
+				}
+				if (is_array($form['info']['direito'])) {
+					FuncoesTableaux::colocaParentesesTableaux($form['info']['direito']);
+				}
+				//$aux=$form['conectivo']['operacao'];
 				$aux=$aux.$form['direito'].")";
 				$form['direito']=$aux;
 			}
 			return;
 		}
-		elseif ((@!is_array($form['esquerdo']) || @!is_array($form['info']['esquerdo'])) && ((@is_array($form['direito'])) || @is_array($form['info']['direito']))) {
+		elseif (!(@is_array($form['esquerdo']) || @is_array($form['info']['esquerdo'])) && ((@is_array($form['direito'])) || @is_array($form['info']['direito']))) {
 			//$conectivos=array("not","notnot","paraTodo","not_paraTodo","xist","not_xist");
 			//print "<br>Entrei no Caso 2<br>";
 			//print_r($form);
@@ -2119,26 +2132,42 @@ class FuncoesTableauxLPO extends Model
 				if (FuncoesTableauxLPO::checaAtomicoLPO($form) || FuncoesTableauxLPO::checaAtomicoLPO($form['info'])) {
 					if (@$form['info']) {
 						$aux=$form['info']['conectivo']['operacao'];
-						$aux=$aux."(".$form['info']['direito']."))";
+						$aux=$aux."(".$form['info']['direito'].")";
 					}
 					else{
 						$aux=$form['conectivo']['operacao'];
-						$aux=$aux."(".$form['direito']."))";
+						$aux=$aux."(".$form['direito'].")";
 					}
 					
 				}
 			}
 			if (@$form['conectivo']['operacao']=='not_ou' || @$form['info']['conectivo']['operacao']=='not_ou') {
 				if(@$form['info']){
-					$form['info']['esquerdo']="not(".$form['info']['esquerdo'];
+					while((is_array($form['info']['direito'])) && is_array($form['info']['direito']['info'])) {
+						FuncoesTableaux::colocaParentesesTableaux($form['info']['direito']);
+					}
+					$aux="not(".$form['info']['esquerdo'];
 					$aux=$aux."ou";
-					$aux=$aux.$form['info']['direito']."))";
+					if (FuncoesAuxiliares::verificaFormulaCorreta($form['info']['direito'])==true) {
+						$aux=$aux.$form['info']['direito']."))";
+					}
+					else{
+						$aux=$aux.$form['info']['direito'].")";
+					}
 					$form['info']=$aux;
 				}
 				else{
-					$form['esquerdo']="not(".$form['esquerdo'];
+					while((is_array($form['direito'])) && is_array($form['direito']['info'])) {
+						FuncoesTableaux::colocaParentesesTableaux($form['direito']);
+					}
+					$aux="not(".$form['esquerdo'];
 					$aux=$aux."ou";
-					$aux=$aux.$form['direito']."))";
+					if (FuncoesAuxiliares::verificaFormulaCorreta($form['direito'])==true) {
+						$aux=$aux.$form['direito']."))";
+					}
+					else{
+						$aux=$aux.$form['direito'].")";
+					}
 					$form=$aux;
 				}
 				
@@ -2146,30 +2175,68 @@ class FuncoesTableauxLPO extends Model
 			}
 			if (@$form['conectivo']['operacao']=='not_e' || @$form['info']['conectivo']['operacao']=='not_e') {
 				if (@$form['info']) {
-					$form['info']['esquerdo']="not(".$form['info']['esquerdo'];
+					while((is_array($form['info']['esquerdo'])) && is_array($form['info']['esquerdo']['info'])) {
+						FuncoesTableaux::colocaParentesesTableaux($form['info']['esquerdo']);
+					}
+					while((is_array($form['info']['direito'])) && is_array($form['info']['direito']['info'])) {
+						FuncoesTableaux::colocaParentesesTableaux($form['info']['direito']);
+					}
+					$aux="not(".$form['info']['esquerdo'];
 					$aux=$aux."e";
-					$aux=$aux.$form['info']['direito']."))";
+					if (FuncoesAuxiliares::verificaFormulaCorreta($form['info']['direito'])==true) {
+						$aux=$aux.$form['info']['direito']."))";
+					}
+					else{
+						$aux=$aux.$form['info']['direito'].")";
+					}
 					$form['info']=$aux;
 				}
 				else{
-					$form['esquerdo']="not(".$form['esquerdo'];
+					while((is_array($form['info']['esquerdo'])) && is_array($form['info']['esquerdo']['info'])) {
+						FuncoesTableaux::colocaParentesesTableaux($form['info']['esquerdo']);
+					}
+					while((is_array($form['info']['direito'])) && is_array($form['info']['direito']['info'])) {
+						FuncoesTableaux::colocaParentesesTableaux($form['info']['direito']);
+					}
+					$aux="not(".$form['esquerdo'];
 					$aux=$aux."e";
-					$aux=$aux.$form['direito']."))";
+					if (FuncoesAuxiliares::verificaFormulaCorreta($form['direito'])==true) {
+						$aux=$aux.$form['direito']."))";
+					}
+					else{
+						$aux=$aux.$form['direito'].")";
+					}
 					$form=$aux;
 				}
 				return;
 			}
 			if (@$form['conectivo']['operacao']=='not_implica' || @$form['info']['conectivo']['operacao']=='not_implica') {
 				if (@$form['info']) {
-					$form['info']['esquerdo']="not(".$form['info']['esquerdo'];
+					while((is_array($form['info']['direito'])) && is_array($form['info']['direito']['info'])) {
+						FuncoesTableaux::colocaParentesesTableaux($form['direito']);
+					}
+					$form['info']['direito']="not(".$form['info']['direito'];
 					$aux=$aux."implica";
-					$aux=$aux.$form['info']['direito']."))";
+					if (FuncoesAuxiliares::verificaFormulaCorreta($form['info']['direito'])==true) {
+						$aux=$aux.$form['info']['direito']."))";
+					}
+					else{
+						$aux=$aux.$form['info']['direito'].")";
+					}
 					$form['info']=$aux;
 				}
 				else{
-					$form['esquerdo']="not(".$form['esquerdo'];
+				while((is_array($form['direito'])) && is_array($form['direito']['info'])) {
+						FuncoesTableaux::colocaParentesesTableaux($form['direito']);
+					}
+					$aux="not(".$form['esquerdo'];
 					$aux=$aux."implica";
-					$aux=$aux.$form['direito']."))";
+					if (FuncoesAuxiliares::verificaFormulaCorreta($form['direito'])==true) {
+						$aux=$aux.$form['direito']."))";
+					}
+					else{
+						$aux=$aux.$form['direito'].")";
+					}
 					$form=$aux;
 				}
 				return;
@@ -2177,16 +2244,33 @@ class FuncoesTableauxLPO extends Model
 			//Caso notnot
 			if (@$form['conectivo']['operacao']=='notnot' || @$form['info']['conectivo']['operacao']=='notnot') {
 				if (@$form['info']) {
-					$form['info']['esquerdo']="notnot(".$form['info']['esquerdo'];
+					while((is_array($form['info']['direito'])) && is_array($form['info']['direito']['info'])) {
+						FuncoesTableaux::colocaParentesesTableaux($form['direito']);
+					}
+
+					$form['info']['direito']="notnot(".$form['info']['direito'];
 					//$aux=$aux."implica";
-					//$aux=$aux.$form['info']['direito']."))";
+					$aux=$aux.$form['info']['direito']."))";
+					//$form['info']['esquerdo']="notnot(".$form['info']['esquerdo'];
+
 					$form['info']=$aux;
 				}
 				else{
-					$form['esquerdo']="notnot(".$form['esquerdo'];
-					//$aux=$aux."implica";
-					//$aux=$aux.$form['direito']."))";
-					$form=$aux;
+					while((is_array($form['direito'])) && is_array($form['direito']['info'])) {
+						FuncoesTableaux::colocaParentesesTableaux($form['direito']);
+					}
+					if (FuncoesAuxiliares::verificaFormulaCorreta($form['direito'])==true) {
+						$form['direito']="notnot(".$form['direito'];
+						$aux=$aux.$form['direito']."))";
+						$form=$aux;
+					}
+					else{
+						$form['direito']="notnot".$form['direito'];
+						$aux=$aux.$form['direito'];
+						$form=$aux;
+					}
+					//$form['esquerdo']="notnot(".$form['esquerdo'];
+					//$form=$aux;
 				}
 				return;
 			}
@@ -2233,6 +2317,9 @@ class FuncoesTableauxLPO extends Model
 				else{
 					$form['esquerdo']="not_paraTodo".$form['esquerdo'];
 					//$aux=$aux."implica";
+					//print "<br>Teste<br>";
+					//print_r($form);
+					//dd(1);
 					$aux=$aux.$form['direito'].")";
 					$form=$aux;
 				}
@@ -2267,15 +2354,38 @@ class FuncoesTableauxLPO extends Model
 			return;
 
 			if (@$form['info']) {
-				$aux="(";
+				if (strlen($form['info']['esquerdo'])==1) {
+					//$aux="(";
+				}
+				elseif (FuncoesAuxiliares::verificaFormulaCorreta($aux2)==true) {
+					$aux="(";
+				}
+				else{
+					//$aux="(";
+				}
 				$aux=$aux.$form['info']['esquerdo'];
 				$form['info']['esquerdo']=$aux;
 			}
 			else{
-				$aux="(";
+				//$aux="(";
+				if (strlen($form['esquerdo'])==1) {
+					//$aux="(";
+				}
+				elseif (FuncoesAuxiliares::verificaFormulaCorreta($aux2)==true) {
+					$aux="(";
+				}
+				else{
+					//$aux="not";
+				}
 				$aux=$aux.$form['esquerdo'];
 				$form['esquerdo']=$aux;
 			}
+			if (@is_array($form['direito'])) {
+					FuncoesTableaux::colocaParentesesTableaux($form['direito']);
+			}
+			if (@is_array($form['info']['direito'])) {
+					FuncoesTableaux::colocaParentesesTableaux($form['info']['direito']);
+			}	
 			//print "<br><br>DEBUG -- ENTRADA NO direito é array<br><br>";
 			//print_r($form);
 			//dd('1');			
@@ -2289,11 +2399,21 @@ class FuncoesTableauxLPO extends Model
 				
 				if(@$form['esquerdo'][0]=="(" || @$form['info']['esquerdo'][0]=="(") {
 					if (@$form['info']) {
+						while((is_array($form['info']['esquerdo'])) && is_array($form['info']['esquerdo']['info'])) {
+							FuncoesTableaux::colocaParentesesTableaux($form['info']['esquerdo']);
+						}
+						while((is_array($form['info']['direito'])) && is_array($form['info']['direito']['info'])) {
+							FuncoesTableaux::colocaParentesesTableaux($form['info']['direito']);
+						}
+						$aux2="not".$form['info']['esquerdo']."implica".$form['info']['direito'].")";
 						if (strlen($form['info']['esquerdo'])==1) {
 							$aux="not";
 						}
-						else{
+						elseif (FuncoesAuxiliares::verificaFormulaCorreta($aux2)==true) {
 							$aux="not(";
+						}
+						else{
+							$aux="not";
 						}
 						$aux=$aux.$form['info']['esquerdo'];
 						$aux=$aux."ou";
@@ -2301,11 +2421,21 @@ class FuncoesTableauxLPO extends Model
 						$form['info']=$aux;
 					}
 					else{
+						while((is_array($form['esquerdo'])) && is_array($form['esquerdo']['info'])) {
+							FuncoesTableaux::colocaParentesesTableaux($form['info']['esquerdo']);
+						}
+						while((is_array($form['direito'])) && is_array($form['direito']['info'])) {
+							FuncoesTableaux::colocaParentesesTableaux($form['direito']);
+						}
+						$aux2="not".$form['esquerdo']."implica".$form['direito'].")";
 						if (strlen($form['esquerdo'])==1) {
 							$aux="not";
 						}
-						else{
+						elseif (FuncoesAuxiliares::verificaFormulaCorreta($aux2)==true) {
 							$aux="not(";
+						}
+						else{
+							$aux="not";
 						}
 						$aux=$aux.$form['esquerdo'];
 						$aux=$aux."ou";
@@ -2316,11 +2446,21 @@ class FuncoesTableauxLPO extends Model
 				}
 				else{
 					if (@$form['info']) {
+						while((is_array($form['info']['esquerdo'])) && is_array($form['info']['esquerdo']['info'])) {
+							FuncoesTableaux::colocaParentesesTableaux($form['info']['esquerdo']);
+						}
+						while((is_array($form['info']['direito'])) && is_array($form['info']['direito']['info'])) {
+							FuncoesTableaux::colocaParentesesTableaux($form['info']['direito']);
+						}
+						$aux2="not(".$form['info']['esquerdo']."implica".$form['info']['direito'].")";
 						if (strlen($form['info']['esquerdo'])==1) {
 							$aux="not(";
 						}
-						else{
+						elseif (FuncoesAuxiliares::verificaFormulaCorreta($aux2)==true) {
 							$aux="not((";
+						}
+						else{
+							$aux="not(";
 						}
 						$aux=$aux.$form['info']['esquerdo'];
 						$aux=$aux."ou";
@@ -2329,11 +2469,21 @@ class FuncoesTableauxLPO extends Model
 
 					}
 					else{
+						while((is_array($form['esquerdo'])) && is_array($form['esquerdo']['info'])) {
+							FuncoesTableaux::colocaParentesesTableaux($form['esquerdo']);
+						}
+						while((is_array($form['direito'])) && is_array($form['direito']['info'])) {
+							FuncoesTableaux::colocaParentesesTableaux($form['direito']);
+						}
+						$aux2="not(".$form['esquerdo']."implica".$form['direito'].")";
 						if (strlen($form['esquerdo'])==1) {
 							$aux="not(";
 						}
-						else{
+						elseif (FuncoesAuxiliares::verificaFormulaCorreta($aux2)==true) {
 							$aux="not((";
+						}
+						else{
+							$aux="not(";
 						}
 						$aux=$aux.$form['esquerdo'];
 						$aux=$aux."ou";
@@ -2348,11 +2498,21 @@ class FuncoesTableauxLPO extends Model
 			if (@$form['conectivo']['operacao']=='not_e' || @$form['info']['conectivo']['operacao']=='not_e') {
 				if (@$form['esquerdo'][0]=="(" || @$form['info']['esquerdo'][0]=="(") {
 					if (@$form['info']) {
+						while((is_array($form['info']['esquerdo'])) && is_array($form['info']['esquerdo']['info'])) {
+							FuncoesTableaux::colocaParentesesTableaux($form['info']['esquerdo']);
+						}
+						while((is_array($form['info']['direito'])) && is_array($form['info']['direito']['info'])) {
+							FuncoesTableaux::colocaParentesesTableaux($form['info']['direito']);
+						}
+						$aux2="not".$form['info']['esquerdo']."implica".$form['info']['direito'].")";
 						if (strlen($form['info']['esquerdo'])==1) {
 							$aux="not";
 						}
-						else{
+						elseif (FuncoesAuxiliares::verificaFormulaCorreta($aux2)==true) {
 							$aux="not(";
+						}
+						else{
+							$aux="not";
 						}
 						$aux=$aux.$form['info']['esquerdo'];
 						$aux=$aux."e";
@@ -2360,11 +2520,21 @@ class FuncoesTableauxLPO extends Model
 						$form['info']=$aux;
 					}
 					else{
+						while((is_array($form['esquerdo'])) && is_array($form['esquerdo']['info'])) {
+							FuncoesTableaux::colocaParentesesTableaux($form['esquerdo']);
+						}
+						while((is_array($form['direito'])) && is_array($form['direito']['info'])) {
+							FuncoesTableaux::colocaParentesesTableaux($form['direito']);
+						}
+						$aux2="not".$form['esquerdo']."implica".$form['direito'].")";
 						if (strlen($form['esquerdo'])==1) {
 							$aux="not";
 						}
-						else{
+						elseif (FuncoesAuxiliares::verificaFormulaCorreta($aux2)==true) {
 							$aux="not(";
+						}
+						else{
+							$aux="not";
 						}
 						$aux=$aux.$form['esquerdo'];
 						$aux=$aux."e";
@@ -2374,11 +2544,21 @@ class FuncoesTableauxLPO extends Model
 				}
 				else{
 					if (@$form['info']) {
+						while((is_array($form['info']['esquerdo'])) && is_array($form['info']['esquerdo']['info'])) {
+							FuncoesTableaux::colocaParentesesTableaux($form['info']['esquerdo']);
+						}
+						while((is_array($form['info']['direito'])) && is_array($form['info']['direito']['info'])) {
+							FuncoesTableaux::colocaParentesesTableaux($form['info']['direito']);
+						}
+						$aux2="not".$form['info']['esquerdo']."implica".$form['info']['direito'].")";
 						if (strlen($form['info']['esquerdo'])==1) {
 							$aux="not(";
 						}
-						else{
+						elseif (FuncoesAuxiliares::verificaFormulaCorreta($aux2)==true) {
 							$aux="not((";
+						}
+						else{
+							$aux="not(";
 						}
 						$aux=$aux.$form['info']['esquerdo'];
 						$aux=$aux."e";
@@ -2386,11 +2566,21 @@ class FuncoesTableauxLPO extends Model
 						$form['info']=$aux;
 					}
 					else{
+						while((is_array($form['esquerdo'])) && is_array($form['esquerdo']['info'])) {
+							FuncoesTableaux::colocaParentesesTableaux($form['esquerdo']);
+						}
+						while((is_array($form['direito'])) && is_array($form['direito']['info'])) {
+							FuncoesTableaux::colocaParentesesTableaux($form['direito']);
+						}
+						$aux2="not".$form['esquerdo']."implica".$form['direito'].")";
 						if (strlen($form['esquerdo'])==1) {
 							$aux="not(";
 						}
-						else{
+						elseif (FuncoesAuxiliares::verificaFormulaCorreta($aux2)==true) {
 							$aux="not((";
+						}
+						else{
+							$aux="not(";
 						}
 						$aux=$aux.$form['esquerdo'];
 						$aux=$aux."e";
@@ -2405,11 +2595,21 @@ class FuncoesTableauxLPO extends Model
 				if (@$form['esquerdo'][0]=="(" || @$form['info']['esquerdo'][0]=="(") {
 					if (@$form['info']) {
 						if ($form['info']['esquerdo'][0]=="(") {
+							while((is_array($form['info']['esquerdo'])) && is_array($form['info']['esquerdo']['info'])) {
+								FuncoesTableaux::colocaParentesesTableaux($form['info']['esquerdo']);
+							}
+							while((is_array($form['info']['direito'])) && is_array($form['info']['direito']['info'])) {
+								FuncoesTableaux::colocaParentesesTableaux($form['info']['direito']);
+							}
+							$aux2="not".$form['info']['esquerdo']."implica".$form['info']['direito'].")";
 							if (strlen($form['info']['esquerdo'])==1) {
 								$aux="not";
 							}
-							else{
+							elseif (FuncoesAuxiliares::verificaFormulaCorreta($aux2)==true) {
 								$aux="not(";
+							}
+							else{
+								$aux="not";
 							}
 							$aux=$aux.$form['info']['esquerdo'];
 							$aux=$aux."implica";
@@ -2419,11 +2619,21 @@ class FuncoesTableauxLPO extends Model
 					}
 					else{
 						if ($form['esquerdo'][0]=="(") {
+							while((is_array($form['esquerdo'])) && is_array($form['esquerdo']['info'])) {
+								FuncoesTableaux::colocaParentesesTableaux($form['esquerdo']);
+							}
+							while((is_array($form['direito'])) && is_array($form['direito']['info'])) {
+								FuncoesTableaux::colocaParentesesTableaux($form['direito']);
+							}
+							$aux2="not".$form['esquerdo']."implica".$form['direito'].")";
 							if (strlen($form['esquerdo'])==1) {
 								$aux="not";
 							}
-							else{
+							elseif (FuncoesAuxiliares::verificaFormulaCorreta($aux2)==true) {
 								$aux="not(";
+							}
+							else{
+								$aux="not";
 							}
 							$aux=$aux.$form['esquerdo'];
 							$aux=$aux."implica";
@@ -2434,11 +2644,21 @@ class FuncoesTableauxLPO extends Model
 				}
 				else{
 					if (@$form['info']) {
-							if (strlen($form['info']['esquerdo'])==1) {
+						while((is_array($form['info']['esquerdo'])) && is_array($form['info']['esquerdo']['info'])) {
+							FuncoesTableaux::colocaParentesesTableaux($form['info']['esquerdo']);
+						}
+						while((is_array($form['info']['direito'])) && is_array($form['info']['direito']['info'])) {
+							FuncoesTableaux::colocaParentesesTableaux($form['info']['direito']);
+						}
+						$aux2="not".$form['info']['esquerdo']."implica".$form['info']['direito'].")";
+						if (strlen($form['info']['esquerdo'])==1) {
 							$aux="not(";
 						}
-						else{
+						elseif (FuncoesAuxiliares::verificaFormulaCorreta($aux2)==true) {
 							$aux="not((";
+						}
+						else{
+							$aux="not(";
 						}
 						$aux=$aux.$form['esquerdo'];
 						$aux=$aux."implica";
@@ -2446,11 +2666,21 @@ class FuncoesTableauxLPO extends Model
 						$form['info']=$aux;
 					}
 					else{
+						while((is_array($form['esquerdo'])) && is_array($form['esquerdo']['info'])) {
+							FuncoesTableaux::colocaParentesesTableaux($form['esquerdo']);
+						}
+						while((is_array($form['direito'])) && is_array($form['direito']['info'])) {
+							FuncoesTableaux::colocaParentesesTableaux($form['direito']);
+						}
+						$aux2="not".$form['esquerdo']."implica".$form['direito'].")";
 						if (strlen($form['esquerdo'])==1) {
 							$aux="not(";
 						}
-						else{
+						elseif (FuncoesAuxiliares::verificaFormulaCorreta($aux2)==true) {
 							$aux="not((";
+						}
+						else{
+							$aux="not(";
 						}
 						$aux=$aux.$form['esquerdo'];
 						$aux=$aux."implica";
@@ -2465,11 +2695,21 @@ class FuncoesTableauxLPO extends Model
 			if (@$form['conectivo']['operacao']=='notnot' || @$form['info']['conectivo']['operacao']=='notnot') {
 				if (@$form['esquerdo'][0]=="(" || @$form['info']['esquerdo'][0]=="(") {
 					if (@$form['info']) {
+						while((is_array($form['info']['esquerdo'])) && is_array($form['info']['esquerdo']['info'])) {
+							FuncoesTableaux::colocaParentesesTableaux($form['info']['esquerdo']);
+						}
+						while((is_array($form['info']['direito'])) && is_array($form['info']['direito']['info'])) {
+							FuncoesTableaux::colocaParentesesTableaux($form['info']['direito']);
+						}
+						$aux2="not".$form['info']['esquerdo']."implica".$form['info']['direito'].")";
 						if (strlen($form['info']['esquerdo'])==1) {
 							$aux="notnot";
 						}
-						else{
+						elseif (FuncoesAuxiliares::verificaFormulaCorreta($aux2)==true) {
 							$aux="notnot(";
+						}
+						else{
+							$aux="notnot";
 						}
 						$aux=$aux.$form['info']['esquerdo'];
 						//$aux=$aux."e";
@@ -2477,11 +2717,21 @@ class FuncoesTableauxLPO extends Model
 						$form['info']=$aux;
 					}
 					else{
+						while((is_array($form['esquerdo'])) && is_array($form['esquerdo']['info'])) {
+							FuncoesTableaux::colocaParentesesTableaux($form['esquerdo']);
+						}
+						while((is_array($form['direito'])) && is_array($form['direito']['info'])) {
+							FuncoesTableaux::colocaParentesesTableaux($form['direito']);
+						}
+						$aux2="not".$form['esquerdo']."implica".$form['direito'].")";
 						if (strlen($form['esquerdo'])==1) {
 							$aux="notnot";
 						}
-						else{
+						elseif (FuncoesAuxiliares::verificaFormulaCorreta($aux2)==true) {
 							$aux="notnot(";
+						}
+						else{
+							$aux="notnot";
 						}
 						$aux=$aux.$form['esquerdo'];
 						//$aux=$aux."e";
@@ -2491,8 +2741,18 @@ class FuncoesTableauxLPO extends Model
 				}
 				else{
 					if (@$form['info']) {
+						while((is_array($form['info']['esquerdo'])) && is_array($form['info']['esquerdo']['info'])) {
+							FuncoesTableaux::colocaParentesesTableaux($form['info']['esquerdo']);
+						}
+						while((is_array($form['info']['direito'])) && is_array($form['info']['direito']['info'])) {
+							FuncoesTableaux::colocaParentesesTableaux($form['info']['direito']);
+						}
+						$aux2="not".$form['info']['esquerdo']."implica".$form['info']['direito'].")";
 						if (strlen($form['info']['esquerdo'])==1) {
-							$aux="notnot";
+							$aux="notnot(";
+						}
+						elseif (FuncoesAuxiliares::verificaFormulaCorreta($aux2)==true) {
+							$aux="notnot((";
 						}
 						else{
 							$aux="notnot(";
@@ -2503,12 +2763,25 @@ class FuncoesTableauxLPO extends Model
 						$form['info']=$aux;
 					}
 					else{
+						while((is_array($form['esquerdo'])) && is_array($form['esquerdo']['info'])) {
+							FuncoesTableaux::colocaParentesesTableaux($form['esquerdo']);
+						}
+						while((is_array($form['direito'])) && is_array($form['direito']['info'])) {
+							FuncoesTableaux::colocaParentesesTableaux($form['direito']);
+						}
+						$aux2="not".$form['esquerdo']."implica".$form['direito'].")";
 						if (strlen($form['esquerdo'])==1) {
-							$aux="notnot";
+							$aux="notnot(";
+						}
+						elseif (FuncoesAuxiliares::verificaFormulaCorreta($aux2)==true) {
+							$aux="notnot((";
 						}
 						else{
 							$aux="notnot(";
 						}
+						$aux=$aux.$form['esquerdo'];
+						//$aux=$aux."e";
+						$aux=$aux.$form['direito'].")";
 						$aux=$aux.$form['esquerdo'];
 						//$aux=$aux."e";
 						$aux=$aux.$form['direito'].")";
@@ -2784,20 +3057,38 @@ class FuncoesTableauxLPO extends Model
 				}
 			}
 			if (@$form['info']) {
+				while((is_array($form['info']['esquerdo'])) && is_array($form['info']['esquerdo']['info'])) {
+						FuncoesTableaux::colocaParentesesTableaux($form['info']['esquerdo']);
+				}
+				while((is_array($form['info']['direito'])) && is_array($form['info']['direito']['info'])) {
+					FuncoesTableaux::colocaParentesesTableaux($form['info']['direito']);
+				}
 				$aux=$aux.$form['info']['conectivo']['operacao'];
 				$aux=$aux.$form['info']['direito'].")";
 			}
 			else{
+				while((is_array($form['esquerdo'])) && is_array($form['esquerdo']['info'])) {
+						FuncoesTableaux::colocaParentesesTableaux($form['esquerdo']);
+				}
+				while((is_array($form['direito'])) && is_array($form['direito']['info'])) {
+					FuncoesTableaux::colocaParentesesTableaux($form['direito']);
+				}
 				$aux=$aux.$form['conectivo']['operacao'];
 				$aux=$aux.$form['direito'].")";
 			}
 			//Ajustes
 			$aux="(";
 			if (@$form['info']) {
+				while((is_array($form['info']['esquerdo'])) && is_array($form['info']['esquerdo']['info'])) {
+						FuncoesTableaux::colocaParentesesTableaux($form['info']['esquerdo']);
+				}
 				$aux=$aux.$form['info']['esquerdo'];
 				$form['info']=$aux;
 			}
 			else{
+				while((is_array($form['esquerdo'])) && is_array($form['esquerdo']['info'])) {
+						FuncoesTableaux::colocaParentesesTableaux($form['esquerdo']);
+				}
 				$aux=$aux.$form['esquerdo'];
 				$form=$aux;
 			}
