@@ -166,12 +166,23 @@
 			      
 			    }
 			 );
+	     $("#botaoLPO").click( function()
+	 		    {
+	 				tipoEx = "lpo";
+	 				//categoriaExercicio = 2;
+	 				carregaTela("lpo");
+	 				$("#proximo").removeAttr("disabled");
+	 		      
+	 		    }
+	 		 );
+	 		
 		
 	});
 	
 	function carregaTela(exercicio){
 		switch (exercicio) {
 		case "tableaux":
+			$("#divLPO").attr("style", 'display:none');
 			$("#divTableaux").removeAttr("style");
 			$("#divResolucao").attr("style", 'display:none');
 			$("#divDeducao").attr("style", 'display:none');
@@ -200,7 +211,7 @@
 			$("#divDeducao").attr("style", 'display:none');
 			$("#divSemantica").attr("style", 'display:none');
 			$("#exercicio").removeAttr("style");
-
+			$("#divLPO").attr("style", 'display:none');
 			$("#liExercicio").removeAttr("style");
 			$("#liExecucao").removeAttr("style");
 			$('#tabExercicio').click();
@@ -227,7 +238,7 @@
 			$("#liExercicio").removeAttr("style");
 			$("#liExecucao").removeAttr("style");
 			$('#tabExercicio').click();
-			
+			$("#divLPO").attr("style", 'display:none');
 			$('#div_ListasSup').attr("style", 'display : none');
 			$('#div_Escolha').removeAttr("style");
 			$('#adicaoExercicio').attr("style", 'display : none');
@@ -245,6 +256,8 @@
 			$("#divTableaux").attr("style", 'display:none');
 			$("#divResolucao").attr("style", 'display:none');
 			$("#divDeducao").attr("style", 'display:none');
+			$("#divLPO").attr("style", 'display:none');
+
 			$("#exercicio").removeAttr("style");
 			$("#liExercicio").removeAttr("style");
 			$("#liExecucao").removeAttr("style");
@@ -260,7 +273,31 @@
 			
 			f_LimpaTipo();
 //			f_BuscaListas();
+			break;
 			
+		case "lpo":
+			console.log("aqui");
+			$("#divLPO").removeAttr("style");
+			
+			$("#divTableaux").attr("style", 'display:none');
+			$("#divResolucao").attr("style", 'display:none');
+			$("#divDeducao").attr("style", 'display:none');
+			$("#divSemantica").attr("style", 'display:none');
+			$("#exercicio").removeAttr("style");
+			$("#liExercicio").removeAttr("style");
+			$("#liExecucao").removeAttr("style");
+			$('#tabExercicio').click();
+			
+			$('#div_ListasSup').attr("style", 'display : none');
+			$('#div_Escolha').removeAttr("style");
+			$('#adicaoExercicio').attr("style", 'display : none');
+			$('#regra').prop('disabled', false);
+			$('#pergunta').prop('disabled', false);
+			$('#buttonRegra').show();
+			$('#buttonPergunta').show();
+			
+			f_LimpaTipo();
+//			f_BuscaListas();			
 
 			break;	
 		default:
@@ -282,7 +319,17 @@
 				  numLinha++;
 				$('#t_divFormulas').append("<p id='finalVetor'>"+ numLinha +": " + pergunta + " # Pergunta </p>" );
 				break;
-			
+//				  for (cont = 0; cont in vet_regras; cont++){
+//					  numLinha = cont+1;
+//					  
+//						$('#t_divFormulas').append("<ul id='" + cont+ "'><li>"+ numLinha +": " + vet_regras[cont]);
+//	
+//				  }
+//				  numLinha++;
+//				$('#t_divFormulas').append("<ul id='finalVetor'><li>"+ numLinha +": " + pergunta + " # Pergunta</li></ul>" );
+//				for(i = 0; i<=vet_regras.length +1; i++){
+//					$('#t_divFormulas').append("</li></ul>");
+//				}
 			case "resolucao":
 				  for (cont = 0; cont in vet_regras; cont++){
 					  numLinha = cont+1;
@@ -303,7 +350,17 @@
 				
 			case "semantica":
 				$('#formulas').append("<br/>" + pergunta );
-				break;	
+				break;
+				
+			case "lpo":
+				  for (cont = 0; cont in vet_regras; cont++){
+					  numLinha = cont+1;
+						$('#lpo_divFormulas').append("<p id='" + cont+ "'>"+ numLinha +": " + vet_regras[cont] + "</p>" );
+	
+				  }
+				  numLinha++;
+				$('#lpo_divFormulas').append("<p id='finalVetor'>"+ numLinha +": " + pergunta + " # Pergunta </p>" );
+				break;
 		}
 	}	
 //-------------------------------------------------------------------------------------------------------
@@ -409,7 +466,7 @@
 	// FALTA PERMITIR EXCLUSAO/ALTERACAO DA PERGUNTA E DE REGRAS
 	
 	function f_SelecionaExercicio(btn_numExercicio){
-
+		f_LimpaDesenvolvimento();
 				idnumExercicio = btn_numExercicio;
 				numExercicio = idnumExercicio;
 				console.log("id exercicio = " +idnumExercicio);
@@ -473,6 +530,9 @@
 			break;
 		case "semantica":	
 			//f_gabSemantica();
+		case "lpo":
+			f_GabLPO();
+			break;
 		}
 			
 	}
@@ -606,4 +666,13 @@ function f_LimpaTipo(){
 	f_LimpaResolucao();
 	f_LimpaDeducao();
 	f_LimpaSemantica();
+	f_LimpaLPO();
+}
+
+function f_LimpaDesenvolvimento(){
+	f_LimpaTableaux();
+	f_LimpaResolucao();
+	f_LimpaDeducao();
+	f_LimpaSemantica();
+	f_LimpaLPO();
 }

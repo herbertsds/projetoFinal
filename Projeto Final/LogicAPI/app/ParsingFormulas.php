@@ -1520,7 +1520,15 @@ class ParsingFormulas extends Model{
 			ParsingFormulas::formataFormulasSemantica($form['direito']);
 		}
 	}
-
+	//Função que corrige parenteses em átomos de campos esquerdo ou direito da fórmula
+	public static function consertaFormula(&$form){
+		if (@strlen($form['esquerdo'])==3 && @$form['esquerdo'][0]=='(') {
+			$form['esquerdo']=$form['esquerdo'][1];
+		}
+		if (@strlen($form['direito'])==3 && @$form['direito'][0]=='(') {
+			$form['direito']=$form['direito'][1];
+		}
+	}
 	//Função que recebe um array fórmula e corrige casos em que temos um campo array do tipo fórmula dentro de outro
 	//array do tipo fórmula com um dos campos (esquerdo ou direito) vazio.
 	//Específico para Tableaux
@@ -1670,7 +1678,7 @@ class ParsingFormulas extends Model{
 			if ($form['conectivo']=='not') {
 				if (FuncoesResolucao::checaAtomico($form)) {
 					$aux=$form['conectivo'];
-					$aux=$aux."(".$form['direito']."))";
+					$aux=$aux."(".$form['direito'].")";
 				}
 			}
 			if ($form['conectivo']=='not_ou') {
@@ -1702,32 +1710,136 @@ class ParsingFormulas extends Model{
 
 		}
 		elseif (@!is_array($form['esquerdo']) && @is_array($form['direito'])) {
-			$aux="(";
+			$aux=null;
+			//Caso haja prefixo not
+			if (@$form['conectivo']=='not') {
+				if (FuncoesResolucao::checaAtomico($form)) {
+						$aux=$form['conectivo'];
+						$aux=$aux."(".$form['direito'].")";					
+				}
+			}
+			//Caso haja conectivo central not_ou
+			if (@$form['conectivo']=='not_ou') {
+				while(is_array($form['direito'])) {
+					ParsingFormulas::colocaParenteses($form['direito']);
+				}
+				$aux="not(".$form['esquerdo'];
+				$aux=$aux."ou";
+				if (FuncoesAuxiliares::verificaFormulaCorreta($form['direito'])==true) {
+					$aux=$aux.$form['direito']."))";
+				}
+				else{
+					$aux=$aux.$form['direito'].")";
+				}
+				$form=$aux;
+				return;			
+			}
+			//Caso haja conectivo central not_e
+			if (@$form['conectivo']=='not_e') {
+				while((is_array($form['esquerdo']))) {
+					ParsingFormulas::colocaParenteses($form['esquerdo']);
+				}
+				while((is_array($form['direito']))) {
+					ParsingFormulas::colocaParenteses($form['direito']);
+				}
+				$aux="not(".$form['esquerdo'];
+				$aux=$aux."e";
+				if (FuncoesAuxiliares::verificaFormulaCorreta($form['direito'])==true) {
+					$aux=$aux.$form['direito']."))";
+				}
+				else{
+					$aux=$aux.$form['direito'].")";
+				}
+				$form=$aux;			
+				return;
+			}
+			//Caso haja conectivo central not_implica
+			if (@$form['conectivo']=='not_implica') {
+				while((is_array($form['direito']))) {
+					ParsingFormulas::colocaParenteses($form['direito']);
+				}
+				$aux="not(".$form['esquerdo'];
+				$aux=$aux."implica";
+				if (FuncoesAuxiliares::verificaFormulaCorreta($form['direito'])==true) {
+					$aux=$aux.$form['direito']."))";
+				}
+				else{
+					$aux=$aux.$form['direito'].")";
+				}
+				$form=$aux;
+				return;
+			}
+			//Caso notnot
+			if (@$form['conectivo']=='notnot') {
+					while((is_array($form['direito']))) {
+						ParsingFormulas::colocaParenteses($form['direito']);
+					}
+					if (FuncoesAuxiliares::verificaFormulaCorreta($form['direito'])==true) {
+						$form['direito']="notnot(".$form['direito'];
+						$aux=$aux.$form['direito']."))";
+						$form=$aux;
+					}
+					else{
+						$form['direito']="notnot".$form['direito'];
+						$aux=$aux.$form['direito'];
+						$form=$aux;
+					}
+				return;
+			}
+			$aux2=$form['esquerdo'];
+			if (strlen($form['esquerdo'])==1) {
+				//$aux="(";
+			}
+			elseif (FuncoesAuxiliares::verificaFormulaCorreta($aux2)==true) {
+				$aux="(";
+			}
 			$aux=$aux.$form['esquerdo'];
 			$form['esquerdo']=$aux;
-			return;
+			if (@is_array($form['direito'])) {
+				ParsingFormulas::colocaParenteses($form['direito']);
+			}			
 		}
 		elseif(is_array($form)){
 
 			if ($form['conectivo']=='not_ou') {
 				
 				if ($form['esquerdo'][0]=="(") {
+					while((is_array($form['esquerdo']))) {
+						ParsingFormulas::colocaParenteses($form['esquerdo']);
+					}
+					while((is_array($form['direito']))) {
+						ParsingFormulas::colocaParenteses($form['direito']);
+					}
+					$aux2="not".$form['esquerdo']."implica".$form['direito'].")";
 					if (strlen($form['esquerdo'])==1) {
 						$aux="not";
 					}
-					else{
+					elseif (FuncoesAuxiliares::verificaFormulaCorreta($aux2)==true) {
 						$aux="not(";
+					}
+					else{
+						$aux="not";
 					}
 					$aux=$aux.$form['esquerdo'];
 					$aux=$aux."ou";
 					$aux=$aux.$form['direito'].")";
 				}
 				else{
+					while((is_array($form['esquerdo']))) {
+						ParsingFormulas::colocaParenteses($form['esquerdo']);
+					}
+					while((is_array($form['direito']))) {
+						ParsingFormulas::colocaParenteses($form['direito']);
+					}
+					$aux2="not(".$form['esquerdo']."implica".$form['direito'].")";
 					if (strlen($form['esquerdo'])==1) {
 						$aux="not(";
 					}
-					else{
+					elseif (FuncoesAuxiliares::verificaFormulaCorreta($aux2)==true) {
 						$aux="not((";
+					}
+					else{
+						$aux="not(";
 					}
 					$aux=$aux.$form['esquerdo'];
 					$aux=$aux."ou";
@@ -1738,22 +1850,42 @@ class ParsingFormulas extends Model{
 			}
 			if ($form['conectivo']=='not_e') {
 				if ($form['esquerdo'][0]=="(") {
+					while((is_array($form['esquerdo']))) {
+						ParsingFormulas::colocaParenteses($form['esquerdo']);
+					}
+					while((is_array($form['direito']))) {
+						ParsingFormulas::colocaParenteses($form['direito']);
+					}
+					$aux2="not".$form['esquerdo']."implica".$form['direito'].")";
 					if (strlen($form['esquerdo'])==1) {
 						$aux="not";
 					}
-					else{
+					elseif (FuncoesAuxiliares::verificaFormulaCorreta($aux2)==true) {
 						$aux="not(";
+					}
+					else{
+						$aux="not";
 					}
 					$aux=$aux.$form['esquerdo'];
 					$aux=$aux."e";
 					$aux=$aux.$form['direito'].")";
 				}
 				else{
+					while((is_array($form['esquerdo']))) {
+						ParsingFormulas::colocaParenteses($form['esquerdo']);
+					}
+					while((is_array($form['direito']))) {
+						ParsingFormulas::colocaParenteses($form['direito']);
+					}
+					$aux2="not".$form['esquerdo']."implica".$form['direito'].")";
 					if (strlen($form['esquerdo'])==1) {
 						$aux="not(";
 					}
-					else{
+					elseif (FuncoesAuxiliares::verificaFormulaCorreta($aux2)==true) {
 						$aux="not((";
+					}
+					else{
+						$aux="not(";
 					}
 					$aux=$aux.$form['esquerdo'];
 					$aux=$aux."e";
@@ -1767,22 +1899,42 @@ class ParsingFormulas extends Model{
 			if ($form['conectivo']=='not_implica') {
 				
 				if ($form['esquerdo'][0]=="(") {
+					while((is_array($form['esquerdo']))) {
+						ParsingFormulas::colocaParenteses($form['esquerdo']);
+					}
+					while((is_array($form['direito']))) {
+						ParsingFormulas::colocaParenteses($form['direito']);
+					}
+					$aux2="not".$form['esquerdo']."implica".$form['direito'].")";
 					if (strlen($form['esquerdo'])==1) {
 						$aux="not";
 					}
-					else{
+					elseif (FuncoesAuxiliares::verificaFormulaCorreta($aux2)==true) {
 						$aux="not(";
+					}
+					else{
+						$aux="not";
 					}
 					$aux=$aux.$form['esquerdo'];
 					$aux=$aux."implica";
 					$aux=$aux.$form['direito'].")";
 				}
-				else{					
+				else{
+					while((is_array($form['esquerdo']))) {
+						ParsingFormulas::colocaParenteses($form['esquerdo']);
+					}
+					while((is_array($form['direito']))) {
+						ParsingFormulas::colocaParenteses($form['direito']);
+					}				
+					$aux2="not".$form['esquerdo']."implica".$form['direito'].")";
 					if (strlen($form['esquerdo'])==1) {
 						$aux="not(";
 					}
-					else{
+					elseif (FuncoesAuxiliares::verificaFormulaCorreta($aux2)==true) {
 						$aux="not((";
+					}
+					else{
+						$aux="not(";
 					}
 					$aux=$aux.$form['esquerdo'];
 					$aux=$aux."implica";
@@ -1792,17 +1944,75 @@ class ParsingFormulas extends Model{
 				$form=$aux;
 				return;
 			}
-			$aux="(";
-			$aux=$aux.$form['esquerdo'];
+			//notnot
+			if (@$form['conectivo']=='notnot') {
+				if (@$form['esquerdo'][0]=="(") {
+					while((is_array($form['esquerdo']))) {
+						ParsingFormulas::colocaParenteses($form['esquerdo']);
+					}
+					while((is_array($form['direito']))) {
+						ParsingFormulas::colocaParenteses($form['direito']);
+					}
+					$aux2="not".$form['esquerdo']."implica".$form['direito'].")";
+					if (strlen($form['esquerdo'])==1) {
+						$aux="notnot";
+					}
+					elseif (FuncoesAuxiliares::verificaFormulaCorreta($aux2)==true) {
+						$aux="notnot(";
+					}
+					else{
+						$aux="notnot";
+					}
+					$aux=$aux.$form['esquerdo'];
+					//$aux=$aux."e";
+					$aux=$aux.$form['direito'].")";
+					$form=$aux;
+				}				
+				
+				else{
+					while((is_array($form['esquerdo']))) {
+						ParsingFormulas::colocaParenteses($form['esquerdo']);
+					}
+					while((is_array($form['direito']))) {
+						ParsingFormulas::colocaParenteses($form['direito']);
+					}
+					$aux2="not".$form['esquerdo']."implica".$form['direito'].")";
+					if (strlen($form['esquerdo'])==1) {
+						$aux="notnot(";
+					}
+					elseif (FuncoesAuxiliares::verificaFormulaCorreta($aux2)==true) {
+						$aux="notnot((";
+					}
+					else{
+						$aux="notnot(";
+					}
+					$aux=$aux.$form['esquerdo'];
+					//$aux=$aux."e";
+					$aux=$aux.$form['direito'].")";
+					$form=$aux;
+				}					
+				//$form=$aux;
+				return;
+			}
 			if ($form['conectivo']=='not') {
+				$aux=null;
 				if (FuncoesResolucao::checaAtomico($form)) {
 					$aux=$aux.$form['conectivo'];
-					$aux=$aux."(".$form['direito']."))";
+					$aux=$aux."(".$form['direito'].")";
 					$form=$aux;
 					return;
 				}
 			}
+			
+			while((is_array($form['esquerdo']))) {
+				ParsingFormulas::colocaParenteses($form['esquerdo']);
+			}
+			while((is_array($form['direito']))) {
+				ParsingFormulas::colocaParenteses($form['direito']);
+			}
 
+			$aux="(";
+			$aux=$aux.$form['esquerdo'];
 			$aux=$aux.$form['conectivo'];
 			$aux=$aux.$form['direito'].")";
 			$form=$aux;
@@ -1819,7 +2029,7 @@ class ParsingFormulas extends Model{
 			$aux[$key]=ParsingFormulas::resolveParenteses($value);
 		}
 		$array=$aux;
-
+		//print_r($array);
 
 		//Repete a opetaração em profundidade
 		foreach ($array as $key => $value) {

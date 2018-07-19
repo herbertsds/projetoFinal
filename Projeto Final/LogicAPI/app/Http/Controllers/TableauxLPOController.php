@@ -12,7 +12,11 @@ class TableauxLPOController extends Controller
 {   
     public function index(Request $numeroExercicio){
         //Exercícios 72 até o 138
+<<<<<<< HEAD
     	$exercicio = Exercicios::getExercicio(50);
+=======
+    	$exercicio = Exercicios::getExercicio(72);
+>>>>>>> eea4105a9f6cb27de109972a2d343d3d6a4628bb
         //$exercicio = Exercicios::getExercicio($numeroExercicio->exercicio);
 
     	$resposta = new TableauxLPO($exercicio);

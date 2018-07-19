@@ -21,18 +21,26 @@
 
 	<!-- CSS Just for demo purpose, don't include it in your project -->
 	<link href="assets/css/demo.css" rel="stylesheet" />
+<!--     <link rel="stylesheet" href="demo_arvore.css"/> -->
+    <link rel="stylesheet" href="jquery.orgchart.css"/>
+	
 	
 	<script src="assets/js/jquery-1-12-4.js"></script> 	
 	
-
+	
+	<script src="./assets/js/orgchart/jquery.orgchart.js" type="text/javascript"></script>
+<!-- 	<script src="/js/orgchart/jquery.orgchart.min.js" type="text/javascript"></script> -->
+	<script src="teste.js" type="text/javascript"></script>
 	<script src="assets/js/w3.js"></script>
 	<script src="funcoes_gerais.js" type="text/javascript"></script>
-	<script src="teste.js" type="text/javascript"></script>
+	
 	<script src="funcoes_resolucao.js" type="text/javascript"></script>
 	<script src="funcoes_tableaux.js" type="text/javascript"></script>
 	<script src="funcoes_deducao.js" type="text/javascript"></script>
 	<script src="funcoes_semantica.js" type="text/javascript"></script>
-	<script src="jquery.orgchart.js" type="text/javascript"></script>
+	<script src="funcoes_lpo.js" type="text/javascript"></script>
+	
+
 <!-- 	<script src="funcoes_deducao.js" type="text/javascript"></script> -->
 	
 		<style>
@@ -81,7 +89,6 @@
 		 </style>	
 
 </head>
-
 <body onload="load()">
 	
 <!-- 	    <a target="_blank" href="https://ufrj.br/"> -->
@@ -175,6 +182,16 @@
 		                                                    <i class="material-icons">clear_all</i>
 		                                                </div>
 		                                                <h6>Semântica</h6>
+		                                            </div>
+		                                        </div>
+		                                        <div class="col-sm-4">
+		                                            <div class="choice" data-toggle="wizard-radio" rel="tooltip" title="Lógica de primeira ordem">
+		                                                <input type="radio" name="escolha" value="lpo">
+		                    
+		                                                <div class="icon" id="botaoLPO">
+		                                                    <i class="material-icons">call_split</i>
+		                                                </div>
+		                                                <h6>LPO</h6>
 		                                            </div>
 		                                        </div>
 		                                    </div>
@@ -272,11 +289,7 @@
 											<div class="col-sm-8 col-sm-offset-2">
 											
 												<div class="regrasTableaux" id='divTableaux' style="display: none">											
-<!-- 													<div class="alert alert-info alert-dismissible" id='alertResolucao' > -->
-<!-- 													    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a> -->
-													
-<!-- 													    <strong>Atenção!</strong> Todas as fórmulas devem passar uma vez pelo passo de transformação para FNC, mesmo que já estejam inicialmente em FNC. -->
-<!-- 													</div> -->
+ 									
 													<div class="passos" id="t_passos">
 														<h4 class="control-label"><strong> > Passo-a-passo Para Tableaux:</strong></h4>
 														
@@ -296,12 +309,13 @@
 														
 													</style>
 														</div>	
-														--- arvore abaixo --- 
 									<!-- ############################################################################################### -->					
 														<div  class="form-check"  id="t_divNovasFormulas">
+														
 															<div id="content">
 																<div id="main">
 													            	<ul id="organisation">
+													            		
 													                </ul>
 													            </div>
 													    	</div>	
@@ -315,6 +329,69 @@
 												</div>
 											</div> <!--FIM TABLEAUX	-->
 					
+<!--  DIV PARA DEDUCAO NATURAL-->
+												<div class="col-sm-8 col-sm-offset-2">
+					
+													<div class="regrasDeducao" id='divDeducao' style="display: none">		
+														<h4 class="info-text"> Execução da Dedução Natural...</h4>
+																						
+													</div>
+												</div> <!--FIM DEDUCAO	-->											
+													<!--  DIV PARA SEMANTICA-->
+												<div class="col-sm-8 col-sm-offset-2">
+					
+													<div class="regrasSemantica" id='divSemantica' style="display: none">		
+														<h4 class="info-text"> Execução da SEMANTICA...</h4>
+																						
+													</div>
+												</div> <!--FIM semantica	-->		
+<!--  --LPO ------------------------------------------------------------------------------------------------------------------------------------->
+											<!--  DIV PARA LPO #############################################################################-->
+											<div class="col-sm-8 col-sm-offset-2">
+											
+												<div class="regrasLPO" id='divLPO' style="display: none">											
+ 									
+													<div class="passos" id="lpo_passos">
+														<h4 class="control-label"><strong> > Passo-a-passo Para LPO:</strong></h4>
+														
+														<article id='info1'>- Selecione a fórmula que deseja expandir</article>
+														<article id='info2'>- Desenvolver o exercício até fechar todos os ramos da árvore </article>
+														 
+														<button type="button"  class="btn btn-success btn-sm" data-trigger="focus" data-toggle="popover" data-placement="left" data-content="<ol><li>Negar a pergunta</li><li>.....</li></ol>" data-html="true"  title="Algoritmo Base" >Algoritmo completo aqui</button>
+					
+													</div>
+									<!-- ############################################################################################### -->			
+													<div class="lpo_inicioEx">
+														<h4><strong>> Início do Exercício</strong> </h4>
+														
+														<div class="col-sm-8 col-sm-offset-0">
+														
+														<div  id="lpo_divFormulas">
+														
+													</style>
+														</div>	
+									<!-- ############################################################################################### -->					
+														<div  class="form-check"  id="lpo_divNovasFormulas">
+														
+															<div id="lpo_content">
+																<div id="lpo_main">
+													            	<ul id="lpo_organisation">
+													            		
+													                </ul>
+													            </div>
+													    	</div>	
+														</div>
+														</br>
+<!-- 														<button type="button" id="btn_ConfrontarRegra" class="btn btn-info btn-sm"  onclick='f_Confrontar()'  >Confrontar fórmulas</button> -->
+<!-- 														<button type="button" id="btn_TransformarRegra" class="btn btn-info btn-sm"  onclick="f_Transformar()" >Transformar fórmula</button>			 -->
+<!-- 														<button type="button" id="btn_ProximoPasso" class="btn btn-danger btn-sm"  onclick='f_Next()' >Próximo passo </button>			 -->
+														</div>													
+													</div>
+												</div>
+											</div> <!--FIM LPO	-->
+					
+		
+		
 <!------------------------------------------  DIV PARA RESOLUCAO ---------------------------------------------------------------------->
 										<div class="regrasResolucao" id='divResolucao' style="display: none">											
 
@@ -366,25 +443,9 @@
 																											
 													</div>
 												</div>
+												</div>
 											</div> <!--FIM RESOLUCAO	-->
-												
-												<!--  DIV PARA DEDUCAO NATURAL-->
-												<div class="col-sm-8 col-sm-offset-2">
-					
-													<div class="regrasDeducao" id='divDeducao' style="display: none">		
-														<h4 class="info-text"> Execução da Dedução Natural...</h4>
-																						
-													</div>
-												</div> <!--FIM DEDUCAO	-->											
-													<!--  DIV PARA SEMANTICA-->
-												<div class="col-sm-8 col-sm-offset-2">
-					
-													<div class="regrasSemantica" id='divSemantica' style="display: none">		
-														<h4 class="info-text"> Execução da Dedução Natural...</h4>
-																						
-													</div>
-												</div> <!--FIM DEDUCAO	-->											
-											
+																					
 										</div> <!-- FIM ROW -->
 		                            </div> <!--  FIM TAB EXERCICIO -->
 <!-- fechando div do tabpane -->				    				
@@ -426,7 +487,7 @@
 
 
 	<!--   Core JS Files   -->
-	<script src="assets/js/jquery-2.2.4.min.js" type="text/javascript"></script>
+<!-- 	<script src="assets/js/jquery-2.2.4.min.js" type="text/javascript"></script> -->
 	<script src="assets/js/bootstrap.min.js" type="text/javascript"></script>
 	<script src="assets/js/jquery.bootstrap.js" type="text/javascript"></script>
 
