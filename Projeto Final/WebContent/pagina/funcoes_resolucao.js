@@ -269,10 +269,34 @@ var verificar = 0;
 	        datatype: 'application/json',
 	       
 	        success: function(retorno) {
-	        	console.log('retorno:');
-		        console.log(retorno);
-				console.log("-------");
+	        	 if(retorno[1].toUpperCase() == 'NÃO FECHADO'){
+			        	console.log('ok');
+			        }
+			        else{
+			        	cont++;
+						numLinha++;
+						$('#r_divNovasFormulas').append("<p id='" + cont +"'>"  + numLinha +"<b>: &#10066; Contradição Encontrada!</b> </p>" );
+						$('#r_divNovasFormulas').append("<article><b> Fim do Exercício</b></article>");
+						$('#btn_TransformarRegra').hide();
+						$('#btn_ProximoPasso').hide();
+						$('#btn_ConfrontarRegra').hide();
+						$('#btn_SepararE').hide();
+						$('#btn_SepararOU').hide();
+						$("#r_divFormulas").unbind();
+						$('#btn_Verificar').hide();
+						$("input[type=checkbox]").prop("disabled", true);
+						$("input[type=checkbox]").prop("checked", true);
+//						$('span').css({
+//		   					'color':'black'
+//			        	});	
+//			        	$('p').css({
+//		   					'color':'black'
+//			        	});	
+						$('#alertResolucao').fadeOut();
+						console.log("resolvido!");
 
+						$('#r_passo3').append(" &#10004;");			        }
+					
 	        },
 			error: function() {
 				console.log('ERRO: Função f_SeparaE!');
@@ -329,32 +353,26 @@ var verificar = 0;
 						});
 
 				        for(var i=0;i<retorno[0].length;i++){
-							//if(camposMarcados.indexOf(retorno[0][i]) != -1){
+				        	if(camposMarcados.indexOf(retorno[0][i]) < 0){
 								cont++;
 								numLinha++;
 								linhasGab++;
 								$('#r_divNovasFormulas').append("<input  type='checkbox' class='form-check-input' data-color = 'purple' name='ck_novasFormulas' id='" + cont +"' value='" + retorno[0][i] +"'> "+ numLinha + ": "  + retorno[0][i] +"</br>"  );
-	
+								console.log(camposMarcados.indexOf(retorno[0][i]));
 								vet_regras[cont]= retorno[0][i];
 								vet_verificar[verificar] = retorno[0][i];
 								verificar++;
 								
-						//	}
-//							else{
-//									// reabilitar o que repete
-//									$(this).prop("disabled", false);
-//									$(this).prop("checked", false);
-//								}
+							}
+							else{
+									// reabilitar o que repete
+									$('input[id='+vet_regras.indexOf(retorno[0][i])+']').prop("disabled", false);
+									$('input[id='+vet_regras.indexOf(retorno[0][i])+']').prop("checked", false);
+								}
 
 							}
 				        	
-				        if(retorno[1].toUpperCase() == 'NÃO FECHADO'){
-				        	console.log('ok');
-				        }
-				        else{
-				        	console.log("FIM DO EXERCICIO!!");
-				        }
-						
+				       
 				        	
 			//		return formula;
 				},
