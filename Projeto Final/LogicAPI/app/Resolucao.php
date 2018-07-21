@@ -409,10 +409,10 @@ class Resolucao extends Model
     public function stepByStep($request){
     	//[ "operação", "qtd_formulasSelecionadas",  "formula1", "formula2", .... , "formulaN" ]
     	//Entrada
-    	$request=null;
+    	/*$request=null;
     	$request["qtd_formulasSelecionadas"]=4;
     	$request["operacao"]="SeparaOU";
-		$request["formulas"]= [ "(not(B)ouC)", "(not(B)ounot(C))"];
+		$request["formulas"]= [ "(not(B)ouC)", "(not(B)ounot(C))"];*/
 		
 		$mudancaArray;
 		$mudancaHash=[];
@@ -720,9 +720,9 @@ class Resolucao extends Model
 			}
 
 			FuncoesResolucao::separarOU3($arrayFormulas,$hashResolucao,$formAntesDoOu1, $formAntesDoOu2, $formsDepoisDoOu);
-			print_r($arrayFormulas);
-			print_r($formsDepoisDoOu);
-			dd(1);
+			//print_r($arrayFormulas);
+			//print_r($formsDepoisDoOu);
+			//dd(1);
 
 			foreach ($arrayFormulas as $key => $value) {
 		 		ParsingFormulas::corrigeArrays($arrayFormulas[$key]);
@@ -753,8 +753,8 @@ class Resolucao extends Model
 	 				ParsingFormulas::converteFormulaString($resposta[$key]);
 	 			}
 	 		}
-	 	print_r($resposta);
-	 	dd(1);
+	 	//print_r($resposta);
+	 	//dd(1);
 		return array($resposta,$statusFechado);
 		}
 		if ($request['operacao']=="PassarNotParaDentro") {

@@ -998,9 +998,8 @@ class FuncoesResolucao extends Model
 							//Possibilidade 1
 							//Se o not estiver no beta da primeira fórmula
 							if (is_array($value['direito']) && $value['direito']['conectivo']=='not') {
-								p
 								if ((is_array($value2['direito']) && $value2['direito']['conectivo']==NULL && $value['direito']['direito']==$value2['direito']['direito']) || ($value['direito']==$value2['direito']) || (FuncoesResolucao::checaAtomico($value2['direito'])) ) {
-									dd("Devo entrar aqui");
+									//dd("Devo entrar aqui");
 									array_push($formAntesDoOu1, $arrayFormulas[$key]);
 									array_push($formAntesDoOu2, $arrayFormulas[$key2]);
 									$arrayFormulas[$key]['direito']=NULL;
