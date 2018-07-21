@@ -428,6 +428,19 @@ class FuncoesResolucao extends Model
 			$conectivo=null;
 		}
 	}
+	public static function resolveNOTNOT(&$form){
+		if ($form['conectivo']=="notnot") {
+			$form['conectivo']=NULL;
+			return;
+		}
+		elseif ($form['conectivo']=="notnotnot") {
+			$form['conectivo']='not';
+			return;
+		}
+		else{
+			return;
+		}
+	}
 	public static function resolveNOT(&$form){
 		if ($form['conectivo']=='not_ou') {
 			if (!is_array($form['esquerdo']) ||  (is_array($form['esquerdo']) && $form['esquerdo']['conectivo']=='not')) {
@@ -646,6 +659,7 @@ class FuncoesResolucao extends Model
 		}	
 	}
 
+
 	public static function checaExisteArray($listaFormulas){
 		foreach ($listaFormulas as $key => $value) {
 			if (is_array($listaFormulas[$key])) {
@@ -672,6 +686,7 @@ class FuncoesResolucao extends Model
 		}
 		return false;
 	}
+
 
 	public static function separarE(&$arrayFormulas,&$entradaConvertida,&$aux1,&$aux2,$contador,&$formAntesDoE,&$formsDepoisDoE){
 		if ($contador==0) {
@@ -983,7 +998,9 @@ class FuncoesResolucao extends Model
 							//Possibilidade 1
 							//Se o not estiver no beta da primeira fórmula
 							if (is_array($value['direito']) && $value['direito']['conectivo']=='not') {
-								if ((is_array($value2['direito']) && $value2['direito']['conectivo']==NULL && $value['direito']['direito']==$value2['direito']['direito']) || $value['direito']==$value2['direito'] ) {
+								p
+								if ((is_array($value2['direito']) && $value2['direito']['conectivo']==NULL && $value['direito']['direito']==$value2['direito']['direito']) || ($value['direito']==$value2['direito']) || (FuncoesResolucao::checaAtomico($value2['direito'])) ) {
+									dd("Devo entrar aqui");
 									array_push($formAntesDoOu1, $arrayFormulas[$key]);
 									array_push($formAntesDoOu2, $arrayFormulas[$key2]);
 									$arrayFormulas[$key]['direito']=NULL;
@@ -1004,6 +1021,7 @@ class FuncoesResolucao extends Model
 							//Se o not estiver no beta da segunda fórmula
 							if (is_array($value2['direito']) && $value2['direito']['conectivo']=='not') {
 								if ((is_array($value['direito']) && $value['direito']['conectivo']==NULL && $value2['direito']['direito']==$value2['direito']['direito']) || $value['direito']==$value2['direito'] ) {
+
 									array_push($formAntesDoOu1, $arrayFormulas[$key]);
 									array_push($formAntesDoOu2, $arrayFormulas[$key2]);
 									$arrayFormulas[$key]['direito']=NULL;
@@ -1021,6 +1039,7 @@ class FuncoesResolucao extends Model
 									array_push($formsDepoisDoOu, $arrayFormulas[$key]);			
 								}
 							}
+
 							//Possibilidade 2
 							//Se os beta forem diferentes, não preciso fazer nada						
 						}
