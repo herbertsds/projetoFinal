@@ -1844,8 +1844,7 @@ class FuncoesTableaux extends Model
 						$aux=$aux.$form['direito'].")";
 					}
 					$form=$aux;
-				}
-				
+				}				
 				return;
 			}
 			if (@$form['conectivo']=='not_e' || @$form['info']['conectivo']=='not_e') {

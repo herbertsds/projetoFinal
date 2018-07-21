@@ -409,10 +409,10 @@ class Resolucao extends Model
     public function stepByStep($request){
     	//[ "operação", "qtd_formulasSelecionadas",  "formula1", "formula2", .... , "formulaN" ]
     	//Entrada
-    	/*$request=null;
+    	$request=null;
     	$request["qtd_formulasSelecionadas"]=2;
-    	$request["operacao"]="notnot";
-		$request["formulas"]= [ "notnot(((A))"];*/
+    	$request["operacao"]="SeparaOU";
+		$request["formulas"]= [ "(not(C)ouB)", "(not(B)ounot(C))"];
 		
 		$mudancaArray;
 		$mudancaHash=[];
@@ -693,7 +693,10 @@ class Resolucao extends Model
 
 			//Simplificação do tipo: Se Av¬B e AvB então A.
 			FuncoesResolucao::separarOU2($arrayFormulas,$formAntesDoOu1, $formAntesDoOu2, $formsDepoisDoOu);
-
+			/*print "<br>Após a execução do separarOU2<br>";
+			print_r($arrayFormulas);
+			print_r($formsDepoisDoOu);
+			dd(1);*/
 
 			foreach ($arrayFormulas as $key => $value) {
 		 		ParsingFormulas::corrigeArrays($arrayFormulas[$key]);
@@ -712,9 +715,7 @@ class Resolucao extends Model
 			}
 
 			FuncoesResolucao::separarOU3($arrayFormulas,$hashResolucao,$formAntesDoOu1, $formAntesDoOu2, $formsDepoisDoOu);
-			print_r($arrayFormulas);
-			//print_r($formsDepoisDoOu);
-			dd(1);
+			
 
 			foreach ($arrayFormulas as $key => $value) {
 		 		ParsingFormulas::corrigeArrays($arrayFormulas[$key]);

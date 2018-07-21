@@ -1702,9 +1702,23 @@ class ParsingFormulas extends Model{
 				$form=$aux;
 				return;
 			}
-			$aux=$form['conectivo'];
-			$aux=$aux.$form['direito'].")";
-			$form['direito']=$aux;
+			if($form['conectivo']=='notnot'){
+				$form['esquerdo']='notnot('.$form['esquerdo'];
+				$aux=$aux.$form['direito']."))";
+				$form=$aux;
+				return;
+			}
+			if ($form) {
+				if (is_array($form['esquerdo'])) {
+					ParsingFormulas::colocaParenteses($form['esquerdo']);
+				}
+				if (is_array($form['direito'])) {
+					ParsingFormulas::colocaParenteses($form['direito']);
+				}
+				//$aux=$aux.$form['direito'].")";
+				$aux=$form['direito'].")";
+				$form['direito']=$aux;
+			}
 
 			return;
 

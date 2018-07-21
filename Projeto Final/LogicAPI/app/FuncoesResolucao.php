@@ -651,7 +651,7 @@ class FuncoesResolucao extends Model
 	}
 	public static function checaAtomico($form){
 		//@ colocado para previnir que fórmulas não instanciadas deem warning
-		if (@$form['esquerdo']==NULL && (@$form['conectivo']==NULL || @$form['conectivo']=='not')) {
+		if ((@$form['esquerdo']==NULL && (@$form['conectivo']==NULL || @$form['conectivo']=='not')) || (!is_array($form) && strlen($form)<=4)) {
 			return true;
 		}
 		else{
@@ -988,15 +988,18 @@ class FuncoesResolucao extends Model
 						//print "Os dois lados são iguais<br><br>";
 						break;
 					}
-					//Haverão 4 possibilidades
+					//Haverão 6 possibilidades
 					//1- Os Alfas são iguais e os betas são diferentes com o not sendo a diferença
 					//2- Os Alfas são iguais e os betas são totalmente diferentes
 					//3- Os Betas são iguais e os alfas são diferentes com o not sendo a diferença
 					//4- Os Betas são iguais e os alfas são totalmente diferentes
-					if ($value2['conectivo']=='ou') {					
+					//5- O Alfa do primeiro é igual ao Beta do segundo com o not sendo a diferença
+					//6- O Alfa do segundo é igual ao Beta do primeiro com o not sendo a diferença
+					if ($value2['conectivo']=='ou') {			
 						if ($value['esquerdo']==$value2['esquerdo']){
 							//Possibilidade 1
 							//Se o not estiver no beta da primeira fórmula
+							
 							if (is_array($value['direito']) && $value['direito']['conectivo']=='not') {
 								if ((is_array($value2['direito']) && $value2['direito']['conectivo']==NULL && $value['direito']['direito']==$value2['direito']['direito']) || ($value['direito']==$value2['direito']) || (FuncoesResolucao::checaAtomico($value2['direito'])) ) {
 									//dd("Devo entrar aqui");
@@ -1019,7 +1022,8 @@ class FuncoesResolucao extends Model
 							}
 							//Se o not estiver no beta da segunda fórmula
 							if (is_array($value2['direito']) && $value2['direito']['conectivo']=='not') {
-								if ((is_array($value['direito']) && $value['direito']['conectivo']==NULL && $value2['direito']['direito']==$value2['direito']['direito']) || $value['direito']==$value2['direito'] ) {
+								dd($value2);
+								if ((is_array($value['direito']) && $value['direito']['conectivo']==NULL && $value2['direito']['direito']==$value2['direito']['direito']) || $value['direito']==$value2['direito'] || (FuncoesResolucao::checaAtomico($value['direito']))) {
 
 									array_push($formAntesDoOu1, $arrayFormulas[$key]);
 									array_push($formAntesDoOu2, $arrayFormulas[$key2]);
@@ -1047,7 +1051,7 @@ class FuncoesResolucao extends Model
 							//Possibilidade 3
 							//Se o not estiver no primeiro alfa
 							if (is_array($value['esquerdo']) && $value['esquerdo']['conectivo']=='not') {
-								if ((is_array($value2['esquerdo']) && $value2['esquerdo']['conectivo']==NULL && $value['esquerdo']['direito']==$value2['esquerdo']['direito']) || $value['esquerdo']==$value2['esquerdo'] ) {
+								if ((is_array($value2['esquerdo']) && $value2['esquerdo']['conectivo']==NULL && $value['esquerdo']['direito']==$value2['esquerdo']['direito']) || $value['esquerdo']==$value2['esquerdo']  || (FuncoesResolucao::checaAtomico($value2['esquerdo']))) {
 									array_push($formAntesDoOu1, $arrayFormulas[$key]);
 									array_push($formAntesDoOu2, $arrayFormulas[$key2]);
 									$arrayFormulas[$key]['esquerdo']=NULL;
@@ -1056,7 +1060,7 @@ class FuncoesResolucao extends Model
 							}
 							//Se o not estiver no segundo alfa
 							if (is_array($value2['esquerdo']) && $value2['esquerdo']['conectivo']=='not') {
-								if ((is_array($value['esquerdo']) && $value['esquerdo']['conectivo']==NULL && $value['esquerdo']['direito']==$value2['esquerdo']['direito']) || $value['esquerdo']==$value2['esquerdo'] ) {
+								if ((is_array($value['esquerdo']) && $value['esquerdo']['conectivo']==NULL && $value['esquerdo']['direito']==$value2['esquerdo']['direito']) || $value['esquerdo']==$value2['esquerdo'] || (FuncoesResolucao::checaAtomico($value['esquerdo']))) {
 									array_push($formAntesDoOu1, $arrayFormulas[$key]);
 									array_push($formAntesDoOu2, $arrayFormulas[$key2]);
 									$arrayFormulas[$key]['esquerdo']=NULL;	
@@ -1065,6 +1069,56 @@ class FuncoesResolucao extends Model
 							}
 							//Possibilidade 4
 							//Se os alfa forem diferentes, não preciso fazer nada
+						}
+						//Possibilidade 5
+						if ($value['direito']==$value2['esquerdo']) {
+							//Se o not estiver no primeiro alfa
+							if (is_array($value2['esquerdo']) && $value2['esquerdo']['conectivo']=='not') {
+								if ((is_array($value['direito']) && $value['direito']['conectivo']==NULL && $value2['esquerdo']['direito']==$value['direito']['direito']) || $value['direito']==$value2['esquerdo'] || (FuncoesResolucao::checaAtomico($value['direito']))) {
+									array_push($formAntesDoOu1, $arrayFormulas[$key]);
+									array_push($formAntesDoOu2, $arrayFormulas[$key2]);
+									$arrayFormulas[$key]['direito']=NULL;
+									$arrayFormulas[$key]['conectivo']=NULL;	
+									array_push($formsDepoisDoOu, $arrayFormulas[$key]);
+									return;				
+								}
+							}
+							//Se o not estiver no segundo beta
+							if (is_array($value['direito']) && $value['direito']['conectivo']=='not') {
+								//dd("Parada técnica");
+								if ((is_array($value2['esquerdo']) && $value2['esquerdo']['conectivo']==NULL && $value['direito']['direito']==$value2['esquerdo']['direito']) || $value['direito']==$value2['esquerdo'] || (FuncoesResolucao::checaAtomico($value2['esquerdo']))) {
+									array_push($formAntesDoOu1, $arrayFormulas[$key]);
+									array_push($formAntesDoOu2, $arrayFormulas[$key2]);
+									$arrayFormulas[$key]['direito']=NULL;
+									$arrayFormulas[$key]['conectivo']=NULL;	
+									array_push($formsDepoisDoOu, $arrayFormulas[$key]);
+									return;		
+								}
+							}
+							
+						}
+						//Possibilidade 6
+						if ($value['esquerdo']==$value2['direito']) {
+							//Se o not estiver no primeiro beta
+							if (is_array($value2['direito']) && $value2['direito']['conectivo']=='not') {
+								if ((is_array($value['esquerdo']) && $value['esquerdo']['conectivo']==NULL && $value2['direito']['direito']==$value['esquerdo']['direito']) || $value['esquerdo']==$value2['direito'] || (FuncoesResolucao::checaAtomico($value['esquerdo']))) {
+									array_push($formAntesDoOu1, $arrayFormulas[$key]);
+									array_push($formAntesDoOu2, $arrayFormulas[$key2]);
+									$arrayFormulas[$key]['esquerdo']=NULL;
+									array_push($formsDepoisDoOu, $arrayFormulas[$key]);
+									return;				
+								}
+							}
+							//Se o not estiver no segundo alfa
+							if (is_array($value['esquerdo']) && $value['esquerdo']['conectivo']=='not') {
+								if ((is_array($value2['direito']) && $value2['direito']['conectivo']==NULL && $value['esquerdo']['direito']==$value2['direito']['direito']) || $value['esquerdo']==$value2['direito'] || (FuncoesResolucao::checaAtomico($value2['direito']))) {
+									array_push($formAntesDoOu1, $arrayFormulas[$key]);
+									array_push($formAntesDoOu2, $arrayFormulas[$key2]);
+									$arrayFormulas[$key]['esquerdo']=NULL;	
+									array_push($formsDepoisDoOu, $arrayFormulas[$key]);	
+									return;	
+								}
+							}
 						}
 					}
 				}
