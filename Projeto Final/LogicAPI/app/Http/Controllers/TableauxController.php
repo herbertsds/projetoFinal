@@ -11,10 +11,9 @@ use App\Tableaux;
 class TableauxController extends Controller
 {
     public function index(Request $numeroExercicio){
-        //Do 22 ao 71
-//         return $numeroExercicio->exercicio;
-//         $exercicio = Exercicios::getExercicio(15);
-        $exercicio = Exercicios::getExercicio($numeroExercicio->exercicio);
+
+        $exercicio = Exercicios::getExercicio(14);
+        //$exercicio = Exercicios::getExercicio($numeroExercicio->exercicio);
 
     	$resposta = new Tableaux($exercicio);
 

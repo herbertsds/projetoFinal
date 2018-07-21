@@ -122,13 +122,63 @@
 //--------------------------------------------------------------------------------------------------------------------------                
 
 // EXIBIR A TAB DE EXECUCAO DE ACORDO COM O TIPO DE EX ---------------------------------------------------------------------
-		
+        $("#1aba").click( function()
+    		    {
+    		console.log("1aba");
+
+//    		$("#tiposLogica").removeAttr("style");
+    		$("#tipo").removeAttr("style");  
+    		$("#metodoProposicional").attr("style",'display:none');    		      
+    		$("#metodoLpo").attr("style",'display:none');  
+    		    }
+    		 );
+        $("#botaoLpo").click( function()
+    		    {
+    		console.log("aqui");
+
+    		$("#metodoLpo").removeAttr("style");
+    		$("#tipo").attr("style",'display:none');    		      
+    		    }
+    		 );
+        $("#botaoLpo2").click( function()
+    		    {
+    		console.log("aqui");
+
+    		$("#metodoLpo").removeAttr("style");
+    		$("#tipo").attr("style",'display:none');  
+    		$("#metodoProposicional").attr("style",'display:none');    		      
+
+    		    }
+    		 );
+        $("#botaoProposicional").click( function()
+			{	
+        		console.log("aqui");
+        		$("#metodoProposicional").removeAttr("style");
+        		$("#tipo").attr("style",'display:none');
+
+
+ 		    }
+ 		 );
+        
+        $("#botaoProposicional2").click( function()
+    			{	
+            		console.log("aqui");
+            		$("#metodoProposicional").removeAttr("style");
+            		$("#tipo").attr("style",'display:none');
+    	    		$("#metodoLpo").attr("style",'display:none');    		      
+
+
+     		    }
+     		 );
 	     $("#botaoTableaux").click( function()
 		    {
 				tipoEx = "tableaux";
 				categoriaExercicio = 2;
 				carregaTela("tableaux");
 				$("#proximo").removeAttr("disabled");
+	    		$("#metodoProposicional").attr("style",'display:none');    		      
+	    		$("#metodoLpo").attr("style",'display:none');    		      
+
 		      
 		    }
 		 );
@@ -141,7 +191,8 @@
 					carregaTela("resolucao");
 					
 					$("#proximo").removeAttr("disabled");
-					
+		    		$("#metodoProposicional").attr("style",'display:none');    		      
+		    		$("#metodoLpo").attr("style",'display:none');   
 			      
 			    }
 			 );
@@ -152,7 +203,8 @@
 
 					carregaTela("deducao");
 					$("#proximo").removeAttr("disabled");
-			      
+		    		$("#metodoProposicional").attr("style",'display:none');    		      
+		    		$("#metodoLpo").attr("style",'display:none');   
 			    }
 			 );
 		
@@ -163,7 +215,8 @@
 
 					carregaTela("semantica");
 					$("#proximo").removeAttr("disabled");
-			      
+		    		$("#metodoProposicional").attr("style",'display:none');    		      
+		    		$("#metodoLpo").attr("style",'display:none');   
 			    }
 			 );
 	     $("#botaoLPO").click( function()
@@ -172,7 +225,8 @@
 	 				//categoriaExercicio = 2;
 	 				carregaTela("lpo");
 	 				$("#proximo").removeAttr("disabled");
-	 		      
+		    		$("#metodoProposicional").attr("style",'display:none');    		      
+		    		$("#metodoLpo").attr("style",'display:none');   
 	 		    }
 	 		 );
 	 		
