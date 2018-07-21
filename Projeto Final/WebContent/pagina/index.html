@@ -131,7 +131,7 @@
 								<div class="wizard-navigation">
 									<ul>
 										<!--  style="display:none" -->
-			                            <li><a href="#tipo"  data-toggle="tab">Tipo de Exercício</a></li>								
+			                            <li><a href="#tipo" id="1aba" data-toggle="tab">Tipo de Exercício</a></li>								
 			                            <li><a href="#exercicio" id='tabExercicio' data-toggle="tab">Seleção do Exercício</a></li>
 			                            <li><a href="#execucao" id='tabExecucao' data-toggle="tab">Solução</a></li>
 			                        </ul>
@@ -141,9 +141,66 @@
 <!---------------------------------------------------------------------------------------------------------------------------------->         
 		                        
 <!------------------  TAB DOS TIPOS DE EXERCICIOS  --------------------------------------------------------------------------------->      
-   
-		                        <div class="tab-pane" id="tipo">
+   		                        <div class="tab-pane" id="tipo">
+   		                        	<div id="tiposLogica">
 		                                <h4 class="info-text">Qual tipo de exercício deseja praticar? </h4>
+		                                <div class="row">
+					                         <div class="col-sm-10 col-sm-offset-3">
+					                                        <div class="col-sm-4">
+					                                            <div class="choice" data-toggle="wizard-radio" rel="tooltip" >
+					                                                <input type="radio" name="tipo" value="tipoLpo">
+					                    
+					                                                <div class="icon" id="botaoLpo">
+					                                                    <i class="material-icons">call_split</i>
+					                                                </div>
+					                                                <h6>Lógica de primeira ordem</h6>
+					                                            </div>
+					                                        </div>
+					                        
+	                                        <div class="col-sm-4">
+		                                            <div class="choice" data-toggle="wizard-radio" rel="tooltip">
+		                                                <input type="radio" name="tipo" value="tipoProposicional">
+		                    
+		                                                <div class="icon" id="botaoProposicional">
+		                                                    <i class="material-icons">call_split</i>
+		                                                </div>
+		                                                <h6>Lógica proposicional</h6>
+		                                            </div>
+		                        			</div>
+		                        		</div>
+		                        			
+		                        		</div>
+		                        	</div>
+		                        </div>	
+		                        <div id="metodoLpo" style="display:none">
+		                        	 <h4 class="info-text">Qual tipo o método que deseja praticar? </h4>
+		                                <div class="row">
+		                                    <div class="col-sm-10 col-sm-offset-1">
+					                        <div class="col-sm-4">
+					                                            <div class="choice" data-toggle="wizard-radio" rel="tooltip" title="Lógica de primeira ordem">
+					                                                <input type="radio" name="escolha" value="lpo">
+					                    
+					                                                <div class="icon" id="botaoLPO">
+					                                                    <i class="material-icons">call_split</i>
+					                                                </div>
+					                                                <h6>Tableaux - LPO</h6>
+					                                            </div>
+					                                        </div>
+					                         <div class="col-sm-4">
+		                                            <div class="choice" data-toggle="wizard-radio" rel="tooltip">
+		                                                <input type="radio" name="escolha" value="tipoProposicional2">
+		                    
+		                                                <div class="icon" id="botaoProposicional2">
+		                                                    <i class="material-icons">call_split</i>
+		                                                </div>
+		                                                <h6>Lógica proposicional</h6>
+		                                            </div>
+		                        			</div>
+		                        		</div>
+		                        	</div>
+		                        </div>       
+		                        <div id="metodoProposicional" style="display:none">
+		                                <h4 class="info-text">Qual tipo o método que deseja praticar? </h4>
 		                                <div class="row">
 		                                    <div class="col-sm-10 col-sm-offset-1">
 		                                        <div class="col-sm-4">
@@ -184,16 +241,16 @@
 		                                                <h6>Semântica</h6>
 		                                            </div>
 		                                        </div>
-		                                        <div class="col-sm-4">
-		                                            <div class="choice" data-toggle="wizard-radio" rel="tooltip" title="Lógica de primeira ordem">
-		                                                <input type="radio" name="escolha" value="lpo">
-		                    
-		                                                <div class="icon" id="botaoLPO">
-		                                                    <i class="material-icons">call_split</i>
-		                                                </div>
-		                                                <h6>LPO</h6>
-		                                            </div>
-		                                        </div>
+		                                          <div class="col-sm-4">
+					                                            <div class="choice" data-toggle="wizard-radio" rel="tooltip" >
+					                                                <input type="radio" name="escolha" value="tipoLpo2">
+					                    
+					                                                <div class="icon" id="botaoLpo2">
+					                                                    <i class="material-icons">call_split</i>
+					                                                </div>
+					                                                <h6>Lógica de primeira ordem</h6>
+					                                            </div>
+					                              </div>
 		                                    </div>
 		                                </div>
 		                            </div>
