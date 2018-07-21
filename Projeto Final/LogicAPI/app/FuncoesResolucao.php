@@ -48,9 +48,9 @@ class FuncoesResolucao extends Model
 		//Primeiro, remover a implicação, se houver
 		
 		FuncoesResolucao::resolveImplicacoes($form);
-		//print "<br>PRIMEIRO PASSO CONCLUÍDO<br>";
 		//print_r($form);
-			
+		//dd(1);
+		//print "<br>PRIMEIRO PASSO CONCLUÍDO<br>";
 		//Segundo Passar todos os not fora de parênteses para dentro
 
 		ParsingFormulas::formataFormulas($form);
@@ -600,6 +600,28 @@ class FuncoesResolucao extends Model
 						$form['esquerdo']['conectivo']='not';
 					}
 				}
+				elseif (!FuncoesResolucao::checaAtomico($form['esquerdo'])) {
+					//Caso não seja átomo eu preciso negar o conectivo externo da fórmula,
+					//que seria equivalente a pôr um not no exterior do parênteses
+					if ($form['esquerdo']['conectivo']=='e') {
+						$form['esquerdo']['conectivo']='not_e';
+					}
+					elseif ($form['esquerdo']['conectivo']=='not_e') {
+						$form['esquerdo']['conectivo']='e';
+					}
+					elseif ($form['esquerdo']['conectivo']=='ou') {
+						$form['esquerdo']['conectivo']='not_ou';
+					}
+					elseif ($form['esquerdo']['conectivo']=='not_ou') {
+						$form['esquerdo']['conectivo']='ou';
+					}
+					elseif ($form['esquerdo']['conectivo']=='implica') {
+						$form['esquerdo']['conectivo']='not_implica';
+					}
+					elseif ($form['esquerdo']['conectivo']=='not_implica') {
+						$form['esquerdo']['conectivo']='implica';
+					}
+				}
 				elseif (!FuncoesResolucao::checaAtomico($form['direito'])) {
 					//Caso não seja átomo eu preciso negar o conectivo externo da fórmula,
 					//que seria equivalente a pôr um not no exterior do parênteses
@@ -651,7 +673,7 @@ class FuncoesResolucao extends Model
 	}
 	public static function checaAtomico($form){
 		//@ colocado para previnir que fórmulas não instanciadas deem warning
-		if ((@$form['esquerdo']==NULL && (@$form['conectivo']==NULL || @$form['conectivo']=='not')) || (!is_array($form) && strlen($form)<=4)) {
+		if ((@$form['esquerdo']==NULL && (@$form['conectivo']==NULL || @$form['conectivo']=='not' || @$form['conectivo']=='notnot')) || (!is_array($form) && strlen($form)<=4)) {
 			return true;
 		}
 		else{

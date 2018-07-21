@@ -411,8 +411,8 @@ class Resolucao extends Model
     	//Entrada
     	/*$request=null;
     	$request["qtd_formulasSelecionadas"]=2;
-    	$request["operacao"]="SeparaOU";
-		$request["formulas"]= [ "(not(C)ouB)", "(not(B)ounot(C))"];*/
+    	$request["operacao"]="FNC";
+		$request["formulas"]= [ "(Bimplica(notnot(C)))"];*/
 		
 		$mudancaArray;
 		$mudancaHash=[];
@@ -499,16 +499,19 @@ class Resolucao extends Model
 			//Recebo as fórmulas em string do front-end e as converto
 			//print_r($request['formulas']);
 			$entradaConvertida=$request['formulas'];
-			foreach ($entradaConvertida as $key => $value) {
+			/*foreach ($entradaConvertida as $key => $value) {
 				$entradaConvertida[$key]=Exercicios::converteSimbolosEntrada($value);
-			}
+			}*/
 			
 			ParsingFormulas::ConverteFormulasEmArray($entradaConvertida);
 			//print_r($entradaConvertida);
+			
 			//Aplico a operação do FNC
 			foreach ($entradaConvertida as $key => $value) {
 				FuncoesResolucao::converteFNC($entradaConvertida[$key]);
 			}
+			//print_r($entradaConvertida);
+			//dd(1);
 			/*
 			if ($entradaConvertida!=$mudancaArray) {
 				foreach ($entradaConvertida as $key => $value) {
@@ -736,7 +739,7 @@ class Resolucao extends Model
 				goto fim;
 			}
 			else{
-				$resposta=null;
+				$resposta=$arrayFormulas;
 			}
 			fim:
 			//return $arrayFormulas;
@@ -779,7 +782,7 @@ class Resolucao extends Model
 			}
 			else{
 				$resposta=NULL;
-				return array($resposta,$statusFechado);
+				$resposta=$arrayFormulas;
 			}
 			fim2:
 			foreach ($resposta as $key => $value) {
@@ -819,8 +822,7 @@ class Resolucao extends Model
 				goto fim3;
 			}
 			else{
-				$resposta=NULL;
-				return array($resposta,$statusFechado);
+				$resposta=$arrayFormulas;
 			}
 			fim3:
 			foreach ($resposta as $key => $value) {
