@@ -578,20 +578,13 @@ var verificar = 0;
 			        console.log(retorno);
 					console.log("-------");
 					$("input[type=checkbox][name='ck_novasFormulas']:checked").each(function(){
-						$(this).prop("disabled", true);
-						$(this).prop("checked", false);
+						var myRe = /¬?(\w+)/;
+//						if(myRe.test($(this).val()))
+						if(myRe.exec($(this).val())['index'] >2){
+							$(this).prop("disabled", true);
+							$(this).prop("checked", false);
+						}
 					});
-					console.log("tam ="+ retorno[0].length );
-					 if(retorno[0].length == 0){
-				        	
-								alert("As fórmulas não puderam ser separadas!" );
-								$("input[type=checkbox][name='ck_novasFormulas']:checked").each(function(){
-
-									$(this).prop("disabled", false);
-									$(this).prop("checked", false);
-								});
-							}
-					 else{
 							 for(var i=0;i<retorno[0].length;i++){
 						 
 					        	if(camposMarcados.indexOf(retorno[0][i]) < 0){
@@ -621,8 +614,7 @@ var verificar = 0;
 									$('input[id='+counts[counts.length-1]+']').prop("checked", false);
 								}
 					        	
-						}
-					}
+							 }
 			        if(retorno[1].toUpperCase() == 'NÃO FECHADO'){
 			        	console.log('ok');
 			        }
@@ -660,6 +652,8 @@ var verificar = 0;
 			},
 			
 			error: function() {
+				alert("As fórmulas não puderam ser separadas!" );
+
 				console.log('ERRO: função f_SeparaOU!');
 				},
 		    });
