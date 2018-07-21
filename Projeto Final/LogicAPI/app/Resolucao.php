@@ -409,10 +409,10 @@ class Resolucao extends Model
     public function stepByStep($request){
     	//[ "operação", "qtd_formulasSelecionadas",  "formula1", "formula2", .... , "formulaN" ]
     	//Entrada
-    	$request=null;
+    	/*$request=null;
     	$request["qtd_formulasSelecionadas"]=2;
     	$request["operacao"]="SeparaOU";
-		$request["formulas"]= [ "(not(C)ouB)", "(not(B)ounot(C))"];
+		$request["formulas"]= [ "(not(C)ouB)", "(not(B)ounot(C))"];*/
 		
 		$mudancaArray;
 		$mudancaHash=[];

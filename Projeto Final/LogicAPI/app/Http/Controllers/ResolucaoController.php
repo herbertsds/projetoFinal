@@ -12,7 +12,7 @@ use App\Categorias;
 
 use App\Listas;
 
-echo "<pre>";
+//echo "<pre>";
 class ResolucaoController extends Controller
 {
 	//Resolve um exercício específico
@@ -58,8 +58,8 @@ class ResolucaoController extends Controller
 
     	// return json_encode($resposta->stepByStep(Exercicios::converteEntrada($request)), JSON_UNESCAPED_UNICODE);
       //dd($resposta->stepByStep(Exercicios::converteEntrada($request)));
-      print_r($resposta->stepByStep($request));
+      //print_r($resposta->stepByStep($request));
 
-    	//return Exercicios::converteSaida($resposta->stepByStep(Exercicios::converteEntrada($request)));
+    	return Exercicios::converteSaida($resposta->stepByStep(Exercicios::converteEntrada($request)));
     }
 }
