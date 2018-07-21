@@ -560,7 +560,7 @@
 				$('#tabExecucao').click();
 
 				$('#btn_TransformarRegra').show();
-				$('#btn_ProximoPasso').show();
+//				$('#btn_ProximoPasso').show();
 		
 	}
 	
