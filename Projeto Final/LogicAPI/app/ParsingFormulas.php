@@ -1673,7 +1673,8 @@ class ParsingFormulas extends Model{
 	//Função que recebe a referência para uma fórmula array com a estrutura
 	//array ('esquerdo' => , 'conectivo' => , 'direito' =>) e transforma em string
 	public static function colocaParenteses(&$form){
-		//print_r($form);
+
+
 		if (@is_array($form['esquerdo']) && @!is_array($form['direito'])) {
 			if ($form['conectivo']=='not') {
 				if (FuncoesResolucao::checaAtomico($form)) {
@@ -1702,9 +1703,23 @@ class ParsingFormulas extends Model{
 				$form=$aux;
 				return;
 			}
-			$aux=$form['conectivo'];
-			$aux=$aux.$form['direito'].")";
-			$form['direito']=$aux;
+			if($form['conectivo']=='notnot'){
+				$form['esquerdo']='notnot('.$form['esquerdo'];
+				$aux=$aux.$form['direito']."))";
+				$form=$aux;
+				return;
+			}
+			if ($form) {
+				if (is_array($form['esquerdo'])) {
+					ParsingFormulas::colocaParenteses($form['esquerdo']);
+				}
+				if (is_array($form['direito'])) {
+					ParsingFormulas::colocaParenteses($form['direito']);
+				}
+				//$aux=$aux.$form['direito'].")";
+				$aux=$form['direito'].")";
+				$form['direito']=$aux;
+			}
 
 			return;
 
@@ -1946,6 +1961,7 @@ class ParsingFormulas extends Model{
 			}
 			//notnot
 			if (@$form['conectivo']=='notnot') {
+				
 				if (@$form['esquerdo'][0]=="(") {
 					while((is_array($form['esquerdo']))) {
 						ParsingFormulas::colocaParenteses($form['esquerdo']);
@@ -1970,6 +1986,8 @@ class ParsingFormulas extends Model{
 				}				
 				
 				else{
+
+
 					while((is_array($form['esquerdo']))) {
 						ParsingFormulas::colocaParenteses($form['esquerdo']);
 					}
@@ -1977,15 +1995,24 @@ class ParsingFormulas extends Model{
 						ParsingFormulas::colocaParenteses($form['direito']);
 					}
 					$aux2="not".$form['esquerdo']."implica".$form['direito'].")";
-					if (strlen($form['esquerdo'])==1) {
+
+					if (!FuncoesResolucao::checaAtomico($form)) {
+						if (FuncoesResolucao::checaAtomico($form['esquerdo'])) {
+							$aux="notnot(";
+						}
+					}
+					elseif (FuncoesResolucao::checaAtomico($form)) {
 						$aux="notnot(";
 					}
+					
 					elseif (FuncoesAuxiliares::verificaFormulaCorreta($aux2)==true) {
 						$aux="notnot((";
 					}
 					else{
 						$aux="notnot(";
 					}
+					//print_r($form);
+					//dd(1);
 					$aux=$aux.$form['esquerdo'];
 					//$aux=$aux."e";
 					$aux=$aux.$form['direito'].")";
@@ -2003,13 +2030,14 @@ class ParsingFormulas extends Model{
 					return;
 				}
 			}
-			
 			while((is_array($form['esquerdo']))) {
 				ParsingFormulas::colocaParenteses($form['esquerdo']);
 			}
+
 			while((is_array($form['direito']))) {
 				ParsingFormulas::colocaParenteses($form['direito']);
 			}
+
 
 			$aux="(";
 			$aux=$aux.$form['esquerdo'];

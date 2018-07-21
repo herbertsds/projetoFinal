@@ -118,7 +118,8 @@ var verificar = 0;
 					$('#btn_SepararE').show();
 					$('#btn_SepararOU').show();
 					$('#btn_TransformarRegra').hide();
-					
+					$('#btn_PassarNot').show();
+					$('#btn_Notnot').show();
 					$("#r_divFormulas").unbind();
 //					$('#alertResolucao').fadeOut();
 
@@ -213,7 +214,8 @@ var verificar = 0;
 		}
 		
 		else{
-			
+				vet_Entrada[0] = "PassarNotParaDentro";
+				vet_Entrada[1] = selecionadas;
 				vet_Entrada[2] = camposMarcados;
 	
 				// mostra a saída
@@ -233,9 +235,54 @@ var verificar = 0;
 		        datatype: 'application/json',
 		       
 		        success: function(retorno) {
-			        console.log(retorno);
-					
-//					return formula;
+			        console.log("retorno:"+retorno);
+			        if(retorno[0].length == 0){
+			        	console.log(vet_regras.indexOf(retorno[0][i]));
+						var counts = [];
+					    for (j = 0; j < vet_regras.length; j++){
+					      if (vet_regras[j] === retorno[0][i]) {  
+					        counts.push(j);
+					        
+					      }
+					    }
+					    console.log(counts);
+							alert("Formula "+ retorno[0][i]+ " não pode ser separada!" );
+							$('input[id='+counts[counts.length-1]+']').prop("disabled", false);
+							$('input[id='+counts[counts.length-1]+']').prop("checked", false);
+						}
+			        
+				
+			else{
+			        for(var i=0;i<retorno[0].length;i++){
+			        	console.log("len" + retorno[0].length);
+			        	if(camposMarcados.indexOf(retorno[0][i]) < 0){
+							cont++;
+							numLinha++;
+							linhasGab++;
+							$('#r_divNovasFormulas').append("<input  type='checkbox' class='form-check-input' data-color = 'purple' name='ck_novasFormulas' id='" + cont +"' value='" + retorno[0][i] +"'> "+ numLinha + ": "  + retorno[0][i] +"</br>"  );
+							console.log(camposMarcados.indexOf(retorno[0][i]));
+							vet_regras[cont]= retorno[0][i];
+							vet_verificar[verificar] = retorno[0][i];
+							verificar++;
+							
+						}
+			        	else{
+							// reabilitar o que repete
+						console.log(vet_regras.indexOf(retorno[0][i]));
+						var counts = [];
+					    for (j = 0; j < vet_regras.length; j++){
+					      if (vet_regras[j] === retorno[0][i]) {  
+					        counts.push(j);
+					        
+					      }
+					    }
+					    console.log(counts);
+							alert("Formula "+ retorno[0][i]+ " não pode ser separada!" );
+							$('input[id='+counts[counts.length-1]+']').prop("disabled", false);
+							$('input[id='+counts[counts.length-1]+']').prop("checked", false);
+						}
+					}
+			}  
 			},
 			
 			error: function() {
@@ -246,6 +293,79 @@ var verificar = 0;
 		}	
 	}
 	
+	function f_Notnot(){
+		vet_Entrada = [];
+		selecionadas = 0;
+		camposMarcados = new Array();
+		$("input[type=checkbox][name='ck_novasFormulas']:checked").each(function(){
+		    camposMarcados.push($(this).val());
+		    selecionadas++;
+		});
+		
+		if(selecionadas == 0){
+			alert("Número inválido de fórmulas selecionadas!");
+		}
+		
+		else{
+				vet_Entrada[0] = "notnot";
+				vet_Entrada[1] = selecionadas;
+				vet_Entrada[2] = camposMarcados;
+	
+				// mostra a saída
+				console.log("Selecionados:" + camposMarcados );
+			var myData = { 'operacao' : vet_Entrada[0],
+							'qtd_formulasSelecionadas' : selecionadas,
+							'formulas' : vet_Entrada[2]
+		
+			};
+			//console.log(myData);
+			$.ajax({
+	    		
+		        url: 'http://127.0.0.1:8000/api/resolucao/stepByStep',
+		    	type: 'GET',
+		        callback: '?',
+		        data: myData, 
+		        datatype: 'application/json',
+		       
+		        success: function(retorno) {
+			        console.log("retorno:"+retorno);
+			        for(var i=0;i<retorno[0].length;i++){
+			        	if(camposMarcados.indexOf(retorno[0][i]) < 0){
+							cont++;
+							numLinha++;
+							linhasGab++;
+							$('#r_divNovasFormulas').append("<input  type='checkbox' class='form-check-input' data-color = 'purple' name='ck_novasFormulas' id='" + cont +"' value='" + retorno[0][i] +"'> "+ numLinha + ": "  + retorno[0][i] +"</br>"  );
+							console.log(camposMarcados.indexOf(retorno[0][i]));
+							vet_regras[cont]= retorno[0][i];
+							vet_verificar[verificar] = retorno[0][i];
+							verificar++;
+							
+						}
+				        	else{
+								// reabilitar o que repete
+							console.log(vet_regras.indexOf(retorno[0][i]));
+							var counts = [];
+						    for (j = 0; j < vet_regras.length; j++){
+						      if (vet_regras[j] === retorno[0][i]) {  
+						        counts.push(j);
+						        
+						      }
+						    }
+						    console.log(counts);
+								alert("Formula "+ retorno[0][i]+ " não pode ser separada!" );
+								$('input[id='+counts[counts.length-1]+']').prop("disabled", false);
+								$('input[id='+counts[counts.length-1]+']').prop("checked", false);
+							}
+						}
+			},
+			
+			error: function() {
+				console.log('ERRO: função  f_Notnot!');
+				return 1;
+				},
+		    });
+		}	
+	}
 	
 	function f_Verificar(){
 		vet_Entrada[0] = "SeparaE";
@@ -269,13 +389,42 @@ var verificar = 0;
 	        datatype: 'application/json',
 	       
 	        success: function(retorno) {
-	        	console.log('retorno:');
-		        console.log(retorno);
-				console.log("-------");
+	        	 if(retorno[1].toUpperCase() == 'NÃO FECHADO'){
+			        	console.log('ok');
+			        }
+			        else{
+			        	cont++;
+						numLinha++;
+						$('#r_divNovasFormulas').append("<p id='" + cont +"'>"  + numLinha +"<b>: &#10066; Contradição Encontrada!</b> </p>" );
+						$('#r_divNovasFormulas').append("<article><b> Fim do Exercício</b></article>");
+						$('#btn_TransformarRegra').hide();
+						$('#btn_ProximoPasso').hide();
+						$('#btn_ConfrontarRegra').hide();
+						$('#btn_SepararE').hide();
+						$('#btn_SepararOU').hide();
+						$("#r_divFormulas").unbind();
+						$('#btn_Verificar').hide();
+						$('#btn_PassarNot').hide();
+						$('#btn_Notnot').hide();
 
+						$("input[type=checkbox]").prop("disabled", true);
+						$("input[type=checkbox]").prop("checked", true);
+//						$('span').css({
+//		   					'color':'black'
+//			        	});	
+//			        	$('p').css({
+//		   					'color':'black'
+//			        	});	
+						$('#alertResolucao').fadeOut();
+						console.log("resolvido!");
+
+						$('#r_passo3').append(" &#10004;");		
+						
+			        }
+					
 	        },
 			error: function() {
-				console.log('ERRO: Função f_SeparaE!');
+				console.log('ERRO: Função f_Verificar!');
 				},
 		    });	        
 
@@ -327,34 +476,48 @@ var verificar = 0;
 							$(this).prop("disabled", true);
 							$(this).prop("checked", false);
 						});
+						console.log("tam ="+ retorno[0].length );
+						 if(retorno[0].length == 0){
+					        	
+									alert("Formula "+ retorno[0][i]+ " não pode ser separada!" );
+									$("input[type=checkbox][name='ck_novasFormulas']:checked").each(function(){
 
-				        for(var i=0;i<retorno[0].length;i++){
-							//if(camposMarcados.indexOf(retorno[0][i]) != -1){
-								cont++;
-								numLinha++;
-								linhasGab++;
-								$('#r_divNovasFormulas').append("<input  type='checkbox' class='form-check-input' data-color = 'purple' name='ck_novasFormulas' id='" + cont +"' value='" + retorno[0][i] +"'> "+ numLinha + ": "  + retorno[0][i] +"</br>"  );
+										$(this).prop("disabled", false);
+										$(this).prop("checked", false);
+									});
+								}
+						 else{ 
+					        for(var i=0;i<retorno[0].length;i++){
+					        	if(camposMarcados.indexOf(retorno[0][i]) < 0){
+									cont++;
+									numLinha++;
+									linhasGab++;
+									$('#r_divNovasFormulas').append("<input  type='checkbox' class='form-check-input' data-color = 'purple' name='ck_novasFormulas' id='" + cont +"' value='" + retorno[0][i] +"'> "+ numLinha + ": "  + retorno[0][i] +"</br>"  );
+									console.log(camposMarcados.indexOf(retorno[0][i]));
+									vet_regras[cont]= retorno[0][i];
+									vet_verificar[verificar] = retorno[0][i];
+									verificar++;
+									
+								}
+								else{
+										// reabilitar o que repete
+									console.log(vet_regras.indexOf(retorno[0][i]));
+									var counts = [];
+								    for (j = 0; j < vet_regras.length; j++){
+								      if (vet_regras[j] === retorno[0][i]) {  
+								        counts.push(j);
+								        
+								      }
+								    }
+								    console.log(counts);
+										alert("Formula "+ retorno[0][i]+ " não pode ser separada!" );
+										$('input[id='+counts[counts.length-1]+']').prop("disabled", false);
+										$('input[id='+counts[counts.length-1]+']').prop("checked", false);
+									}
 	
-								vet_regras[cont]= retorno[0][i];
-								vet_verificar[verificar] = retorno[0][i];
-								verificar++;
-								
-						//	}
-//							else{
-//									// reabilitar o que repete
-//									$(this).prop("disabled", false);
-//									$(this).prop("checked", false);
-//								}
-
-							}
+								}
 				        	
-				        if(retorno[1].toUpperCase() == 'NÃO FECHADO'){
-				        	console.log('ok');
-				        }
-				        else{
-				        	console.log("FIM DO EXERCICIO!!");
-				        }
-						
+						 }
 				        	
 			//		return formula;
 				},
@@ -414,34 +577,83 @@ var verificar = 0;
 		        	console.log('retorno:');
 			        console.log(retorno);
 					console.log("-------");
-
-			        for(var i=0;i<retorno[0].length;i++){
-						
-						cont++;
-						numLinha++;
-						linhasGab++;
-						$('#r_divNovasFormulas').append("<input  type='checkbox' class='form-check-input' data-color = 'purple' name='ck_novasFormulas' id='" + cont +"' value='" + retorno[0][i] +"'> "+ numLinha + ": "  + retorno[0][i] +"</br>"  );
-
-						vet_regras[cont]= retorno[0][i];
-						vet_verificar[verificar] = retorno[0][i];
-						verificar++;
-
-					}
+					$("input[type=checkbox][name='ck_novasFormulas']:checked").each(function(){
+						var myRe = /¬?(\w+)/;
+//						if(myRe.test($(this).val()))
+						if(myRe.exec($(this).val())['index'] >2){
+							$(this).prop("disabled", true);
+							$(this).prop("checked", false);
+						}
+					});
+							 for(var i=0;i<retorno[0].length;i++){
+						 
+					        	if(camposMarcados.indexOf(retorno[0][i]) < 0){
+						        		console.log(camposMarcados.indexOf(retorno[0][i]));
+									cont++;
+									numLinha++;
+									linhasGab++;
+									$('#r_divNovasFormulas').append("<input  type='checkbox' class='form-check-input' data-color = 'purple' name='ck_novasFormulas' id='" + cont +"' value='" + retorno[0][i] +"'> "+ numLinha + ": "  + retorno[0][i] +"</br>"  );
+			
+									vet_regras[cont]= retorno[0][i];
+									vet_verificar[verificar] = retorno[0][i];
+									verificar++;
+					        	}
+					        	else{
+										// reabilitar o que repete
+									console.log(vet_regras.indexOf(retorno[0][i]));
+									var counts = [];
+								    for (j = 0; j < vet_regras.length; j++){
+								      if (vet_regras[j] === retorno[0][i]) {  
+								        counts.push(j);
+								        
+								      }
+								    }
+							    console.log(counts);
+									alert("Formula "+ retorno[0][i]+ " não pode ser separada!" );
+									$('input[id='+counts[counts.length-1]+']').prop("disabled", false);
+									$('input[id='+counts[counts.length-1]+']').prop("checked", false);
+								}
+					        	
+							 }
 			        if(retorno[1].toUpperCase() == 'NÃO FECHADO'){
 			        	console.log('ok');
 			        }
 			        else{
 			        	console.log("FIM DO EXERCICIO!!");
+			        	cont++;
+						numLinha++;
+						$('#r_divNovasFormulas').append("<p id='" + cont +"'>"  + numLinha +"<b>: &#10066; Contradição Encontrada!</b> </p>" );
+						$('#r_divNovasFormulas').append("<article><b> Fim do Exercício</b></article>");
+						$('#btn_TransformarRegra').hide();
+						$('#btn_ProximoPasso').hide();
+						$('#btn_ConfrontarRegra').hide();
+						$('#btn_SepararE').hide();
+						$('#btn_SepararOU').hide();
+						$("#r_divFormulas").unbind();
+						$('#btn_Verificar').hide();
+						$('#btn_PassarNot').hide();
+						$('#btn_Notnot').hide();
+
+						$("input[type=checkbox]").prop("disabled", true);
+						$("input[type=checkbox]").prop("checked", true);
+//						$('span').css({
+//		   					'color':'black'
+//			        	});	
+//			        	$('p').css({
+//		   					'color':'black'
+//			        	});	
+						$('#alertResolucao').fadeOut();
+						console.log("resolvido!");
+
+						$('#r_passo3').append(" &#10004;");			        
 			        }
-					$("input[type=checkbox][name='ck_novasFormulas']:checked").each(function(){
-						$(this).prop("disabled", true);
-						$(this).prop("checked", false);
-					});
-		
+
 		//		return formula;
 			},
 			
 			error: function() {
+				alert("As fórmulas não puderam ser separadas!" );
+
 				console.log('ERRO: função f_SeparaOU!');
 				},
 		    });
@@ -552,6 +764,8 @@ function f_GabResolucao(){
 						$('#btn_SepararE').hide();
 						$('#btn_SepararOU').hide();
 						$("#r_divFormulas").unbind();
+						$('#btn_PassarNot').hide();
+						$('#btn_Notnot').hide();
 						$('span').css({
 		   					'color':'black'
 			        	});	
@@ -634,6 +848,8 @@ function f_LimpaResolucao(){
 	$('#btn_Verificar').hide();
 	$('#btn_SepararE').hide();
 	$('#btn_SepararOU').hide();
+	$('#btn_PassarNot').hide();
+	$('#btn_Notnot').hide();
 	$('#btn_TransformarRegra').text('Negar Pergunta');
 	$('#btn_TransformarRegra').show();
 	$('#r_passo1').text('- Negar a Pergunta');
