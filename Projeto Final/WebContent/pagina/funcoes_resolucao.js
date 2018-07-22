@@ -391,6 +391,7 @@ var verificar = 0;
 	        success: function(retorno) {
 	        	 if(retorno[1].toUpperCase() == 'NÃO FECHADO'){
 			        	console.log('ok');
+			        	alert("Exercício ainda não resolvido!");
 			        }
 			        else{
 			        	cont++;
@@ -578,11 +579,18 @@ var verificar = 0;
 			        console.log(retorno);
 					console.log("-------");
 					$("input[type=checkbox][name='ck_novasFormulas']:checked").each(function(){
-						var myRe = /¬?(\w+)/;
-//						if(myRe.test($(this).val()))
-						if(myRe.exec($(this).val())['index'] >2){
+//						var myRe = /¬?(\w+)/;
+////						if(myRe.test($(this).val()))
+//						console.log(myRe.exec($(this).val())['index'])
+//						if(myRe.exec($(this).val())['index'] >2){
+						if($(this).val().length > 4){
 							$(this).prop("disabled", true);
 							$(this).prop("checked", false);
+						}
+						else{
+							$(this).prop("disabled", false);
+							$(this).prop("checked", false);
+							
 						}
 					});
 							 for(var i=0;i<retorno[0].length;i++){
@@ -600,7 +608,7 @@ var verificar = 0;
 					        	}
 					        	else{
 										// reabilitar o que repete
-									console.log(vet_regras.indexOf(retorno[0][i]));
+									console.log("retorno" + vet_regras.indexOf(retorno[0][i]));
 									var counts = [];
 								    for (j = 0; j < vet_regras.length; j++){
 								      if (vet_regras[j] === retorno[0][i]) {  
