@@ -849,6 +849,7 @@ function f_LimpaResolucao(){
 	vet_Entrada = [];
 	selecionadas = 0;
 	linhasGab =0;
+	verificar = 0;
 	idPergNegada = "";
 	camposMarcados = "";
 	erro = 0;
