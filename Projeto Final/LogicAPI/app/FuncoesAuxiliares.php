@@ -109,8 +109,9 @@ class FuncoesAuxiliares extends Model
 			//Se o usuário digitar a entrada vamos precisar usar uma rotina de correção e chamar verifica recursivamente
 			//print $form;
 			//print "<br>";
+			return true;
 			 abort(400,"Fórmula com digitação incorreta\n".implode($form,"\n"));
-			 return true;
+			 
 		    //print "Fórmula com digitação incorreta";
 			exit(1);
 		}

@@ -909,7 +909,7 @@ class FuncoesResolucao extends Model
 							}	
 							
 						}
-					}
+					}					
 					//Pode ser um array de átomo positivo
 					//Neste caso, temos que verificar, se há algum correspondente na hash com valor 0
 					//Se houver significa que podemos cortar esse cara do "ou"
@@ -1077,6 +1077,7 @@ class FuncoesResolucao extends Model
 									array_push($formAntesDoOu1, $arrayFormulas[$key]);
 									array_push($formAntesDoOu2, $arrayFormulas[$key2]);
 									$arrayFormulas[$key]['esquerdo']=NULL;
+									$arrayFormulas[$key]['conectivo']=NULL;	
 									array_push($formsDepoisDoOu, $arrayFormulas[$key]);				
 								}
 							}
@@ -1085,7 +1086,8 @@ class FuncoesResolucao extends Model
 								if ((is_array($value['esquerdo']) && $value['esquerdo']['conectivo']==NULL && $value['esquerdo']['direito']==$value2['esquerdo']['direito']) || $value['esquerdo']==$value2['esquerdo'] || (FuncoesResolucao::checaAtomico($value['esquerdo']))) {
 									array_push($formAntesDoOu1, $arrayFormulas[$key]);
 									array_push($formAntesDoOu2, $arrayFormulas[$key2]);
-									$arrayFormulas[$key]['esquerdo']=NULL;	
+									$arrayFormulas[$key]['esquerdo']=NULL;
+									$arrayFormulas[$key]['conectivo']=NULL;		
 									array_push($formsDepoisDoOu, $arrayFormulas[$key]);		
 								}
 							}

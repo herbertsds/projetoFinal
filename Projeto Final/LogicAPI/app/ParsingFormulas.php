@@ -1673,8 +1673,6 @@ class ParsingFormulas extends Model{
 	//Função que recebe a referência para uma fórmula array com a estrutura
 	//array ('esquerdo' => , 'conectivo' => , 'direito' =>) e transforma em string
 	public static function colocaParenteses(&$form){
-
-
 		if (@is_array($form['esquerdo']) && @!is_array($form['direito'])) {
 			if ($form['conectivo']=='not') {
 				if (FuncoesResolucao::checaAtomico($form)) {
@@ -1892,7 +1890,7 @@ class ParsingFormulas extends Model{
 					while((is_array($form['direito']))) {
 						ParsingFormulas::colocaParenteses($form['direito']);
 					}
-					$aux2="not".$form['esquerdo']."implica".$form['direito'].")";
+					$aux2="not(".$form['esquerdo']."implica".$form['direito'].")";
 					if (strlen($form['esquerdo'])==1) {
 						$aux="not(";
 					}
@@ -1912,6 +1910,7 @@ class ParsingFormulas extends Model{
 				return;
 			}
 			if ($form['conectivo']=='not_implica') {
+
 				
 				if ($form['esquerdo'][0]=="(") {
 					while((is_array($form['esquerdo']))) {
@@ -1941,7 +1940,7 @@ class ParsingFormulas extends Model{
 					while((is_array($form['direito']))) {
 						ParsingFormulas::colocaParenteses($form['direito']);
 					}				
-					$aux2="not".$form['esquerdo']."implica".$form['direito'].")";
+					$aux2="not(".$form['esquerdo']."implica".$form['direito'].")";
 					if (strlen($form['esquerdo'])==1) {
 						$aux="not(";
 					}
@@ -1953,8 +1952,7 @@ class ParsingFormulas extends Model{
 					}
 					$aux=$aux.$form['esquerdo'];
 					$aux=$aux."implica";
-					$aux=$aux.$form['direito'].")";
-
+					$aux=$aux.$form['direito'].")";					
 				}			
 				$form=$aux;
 				return;

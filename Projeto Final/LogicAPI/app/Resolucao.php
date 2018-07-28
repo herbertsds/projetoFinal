@@ -411,8 +411,8 @@ class Resolucao extends Model
     	//Entrada
     	/*$request=null;
     	$request["qtd_formulasSelecionadas"]=2;
-    	$request["operacao"]="FNC";
-		$request["formulas"]= [ "(Bimplica(notnot(C)))"];*/
+    	$request["operacao"]="SeparaOU";
+		$request["formulas"]= ["not(B)","(not(B)ouB)"];*/
 		
 		$mudancaArray;
 		$mudancaHash=[];
@@ -480,12 +480,11 @@ class Resolucao extends Model
 				}
 				$mudancaArray=$entradaConvertida;
 			}
-			//print_r($resposta);
 			foreach ($resposta as $key => $value) {
 				if (is_array($value)) {
 		 			ParsingFormulas::converteFormulaString($resposta[$key]);
 		 		} 			
- 			} 			
+ 			}			
  			return $resposta;
 		}		
 		
@@ -505,6 +504,7 @@ class Resolucao extends Model
 			
 			ParsingFormulas::ConverteFormulasEmArray($entradaConvertida);
 			//print_r($entradaConvertida);
+			//dd(1);
 			
 			//Aplico a operação do FNC
 			foreach ($entradaConvertida as $key => $value) {
@@ -676,8 +676,7 @@ class Resolucao extends Model
 
 
 			$mudancaArray=$arrayFormulas;
-			FuncoesResolucao::separarOU1($arrayFormulas,$hashResolucao,$formAntesDoOu1, $formAntesDoOu2, $formsDepoisDoOu);
-			
+			FuncoesResolucao::separarOU1($arrayFormulas,$hashResolucao,$formAntesDoOu1, $formAntesDoOu2, $formsDepoisDoOu);;
 
 			foreach ($arrayFormulas as $key => $value) {
 		 		ParsingFormulas::corrigeArrays($arrayFormulas[$key]);
