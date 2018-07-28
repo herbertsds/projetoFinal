@@ -394,6 +394,7 @@ var verificar = 0;
 			        	alert("Exercício ainda não resolvido!");
 			        }
 			        else{
+			        	console.log(retorno);
 			        	cont++;
 						numLinha++;
 						$('#r_divNovasFormulas').append("<p id='" + cont +"'>"  + numLinha +"<b>: &#10066; Contradição Encontrada!</b> </p>" );
@@ -851,6 +852,7 @@ function f_LimpaResolucao(){
 	idPergNegada = "";
 	camposMarcados = "";
 	erro = 0;
+	vet_verificar = [];
 	$("#r_divFormulas").empty();
 	$('#r_divNovasFormulas').empty();
 	$('#btn_Verificar').hide();
