@@ -843,8 +843,9 @@ class FuncoesResolucao extends Model
 					//Se for um array atômico, pode ser not
 					//Sendo not, se houver o mesmo átomo positivo na hash, ou seja átomo==1
 					//Significa que esse membro é falso e eu posso isolar o lado direito do "ou"
-					if(is_array($value['direito']) && $value['direito']['esquerdo']==NULL && $value['direito']['conectivo']=='not'){		
+					if(is_array($value['direito']) && $value['direito']['esquerdo']==NULL && $value['direito']['conectivo']=='not'){
 						if(@$hashResolucao[$value['direito']['direito']]=='1'){
+
 							//O lado direito também pode ser array, porém não importa o que ele contém. Será verdade
 							if(is_array($value['esquerdo']) && $value['esquerdo']['conectivo']!='not'){
 								array_push($formsDepoisDoOu,$value['esquerdo']);
@@ -1021,7 +1022,6 @@ class FuncoesResolucao extends Model
 						if ($value['esquerdo']==$value2['esquerdo']){
 							//Possibilidade 1
 							//Se o not estiver no beta da primeira fórmula
-							
 							if (is_array($value['direito']) && $value['direito']['conectivo']=='not') {
 								if ((is_array($value2['direito']) && $value2['direito']['conectivo']==NULL && $value['direito']['direito']==$value2['direito']['direito']) || ($value['direito']==$value2['direito']) || (FuncoesResolucao::checaAtomico($value2['direito'])) ) {
 									//dd("Devo entrar aqui");
@@ -1029,12 +1029,12 @@ class FuncoesResolucao extends Model
 									array_push($formAntesDoOu2, $arrayFormulas[$key2]);
 									$arrayFormulas[$key]['direito']=NULL;
 									//Se o esquerdo for átomo, vou corrigir e passar pra direita
-									if($value['esquerdo']) {
+									if(@$value['esquerdo']) {
 										$arrayFormulas[$key]['direito']=$value['esquerdo'];
 										$arrayFormulas[$key]['esquerdo']=NULL;
 										$arrayFormulas[$key]['conectivo']=NULL;
 									}
-									if ($value['esquerdo']['conectivo']=='not') {
+									if (@$value['esquerdo']['conectivo']=='not') {
 										$arrayFormulas[$key]['direito']['conectivo']='not';
 										$arrayFormulas[$key]['direito']['direito']=$value['esquerdo']['direito'];
 										$arrayFormulas[$key]['esquerdo']=NULL;
@@ -1044,7 +1044,7 @@ class FuncoesResolucao extends Model
 							}
 							//Se o not estiver no beta da segunda fórmula
 							if (is_array($value2['direito']) && $value2['direito']['conectivo']=='not') {
-								dd($value2);
+								//dd($value2);
 								if ((is_array($value['direito']) && $value['direito']['conectivo']==NULL && $value2['direito']['direito']==$value2['direito']['direito']) || $value['direito']==$value2['direito'] || (FuncoesResolucao::checaAtomico($value['direito']))) {
 
 									array_push($formAntesDoOu1, $arrayFormulas[$key]);
@@ -1060,6 +1060,7 @@ class FuncoesResolucao extends Model
 										$arrayFormulas[$key]['direito']['conectivo']='not';
 										$arrayFormulas[$key]['direito']['direito']=$value['esquerdo']['direito'];
 										$arrayFormulas[$key]['esquerdo']=NULL;
+										$arrayFormulas[$key]['conectivo']=NULL;
 									}
 									array_push($formsDepoisDoOu, $arrayFormulas[$key]);			
 								}

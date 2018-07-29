@@ -410,9 +410,9 @@ class Resolucao extends Model
     	//[ "operação", "qtd_formulasSelecionadas",  "formula1", "formula2", .... , "formulaN" ]
     	//Entrada
     	/*$request=null;
-    	$request["qtd_formulasSelecionadas"]=2;
+    	$request["qtd_formulasSelecionadas"]=4;
     	$request["operacao"]="SeparaOU";
-		$request["formulas"]= ["not(B)","(not(B)ouB)"];*/
+		$request["formulas"]= ["(not(A)ouC)","(not(B)ouC","(not(C))"];*/
 		
 		$mudancaArray;
 		$mudancaHash=[];
@@ -672,11 +672,14 @@ class Resolucao extends Model
 			//print_r($arrayFormulas);
 			//dd(1);
 			//Inicializa a hash
-			$hashResolucao=FuncoesResolucao::inicializaHash($arrayFormulas);
 
+			$hashResolucao=FuncoesResolucao::inicializaHash($arrayFormulas);
+			$hashInicial=$hashResolucao;
 
 			$mudancaArray=$arrayFormulas;
-			FuncoesResolucao::separarOU1($arrayFormulas,$hashResolucao,$formAntesDoOu1, $formAntesDoOu2, $formsDepoisDoOu);;
+
+			FuncoesResolucao::separarOU1($arrayFormulas,$hashResolucao,$formAntesDoOu1, $formAntesDoOu2, $formsDepoisDoOu);
+
 
 			foreach ($arrayFormulas as $key => $value) {
 		 		ParsingFormulas::corrigeArrays($arrayFormulas[$key]);
@@ -690,6 +693,17 @@ class Resolucao extends Model
 			if (($arrayFormulas!=$mudancaArray) || $flag) {
 				//array_push($retorno, $formsDepoisDoOu);
 				$resposta=$formsDepoisDoOu;
+				foreach ($arrayFormulas as $key => $valor) {
+					if ($arrayFormulas[$key]==$mudancaArray[$key]) {
+						if (@$hashInicial[$valor['direito']]!=null) {
+							//Não quero adicionar átomos
+						}
+						else{
+							array_push($resposta,$arrayFormulas[$key]);
+						}
+						
+					}
+				}
 				goto fim;
 			}			
 
@@ -713,6 +727,16 @@ class Resolucao extends Model
 			if (($arrayFormulas!=$mudancaArray) || $flag) {
 				//array_push($retorno, $formsDepoisDoOu);
 				$resposta=$formsDepoisDoOu;
+				foreach ($arrayFormulas as $key => $valor) {
+					if ($arrayFormulas[$key]==$mudancaArray[$key]) {
+						if (@$hashInicial[$valor['direito']]!=null) {
+							//Não quero adicionar átomos
+						}
+						else{
+							array_push($resposta,$arrayFormulas[$key]);
+						}
+					}
+				}
 				goto fim;
 			}
 
@@ -735,6 +759,16 @@ class Resolucao extends Model
 			if (($arrayFormulas!=$mudancaArray) || $flag) {
 				//array_push($retorno, $formsDepoisDoOu);
 				$resposta=$formsDepoisDoOu;
+				foreach ($arrayFormulas as $key => $valor) {
+					if ($arrayFormulas[$key]==$mudancaArray[$key]) {
+						if (@$hashInicial[$valor['direito']]!=null) {
+							//Não quero adicionar átomos
+						}
+						else{
+							array_push($resposta,$arrayFormulas[$key]);
+						}
+					}
+				}
 				goto fim;
 			}
 			else{
@@ -759,7 +793,6 @@ class Resolucao extends Model
 			//Recebo as fórmulas em string do front-end e as converto
 			$arrayFormulas=$request['formulas'];
 			ParsingFormulas::ConverteFormulasEmArray($arrayFormulas);
-
 			//Inicializa a hash
 			$hashResolucao=FuncoesResolucao::inicializaHash($arrayFormulas);
 
@@ -776,11 +809,10 @@ class Resolucao extends Model
 			}
 			if (($arrayFormulas!=$mudancaArray)) {
 				//array_push($retorno, $formsDepoisDoOu);
-				$resposta=$mudancaArray;
+				$resposta=$arrayFormulas;
 				goto fim2;
 			}
 			else{
-				$resposta=NULL;
 				$resposta=$arrayFormulas;
 			}
 			fim2:
