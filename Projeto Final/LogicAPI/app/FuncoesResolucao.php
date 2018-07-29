@@ -910,7 +910,7 @@ class FuncoesResolucao extends Model
 							}	
 							
 						}
-					}					
+					}				
 					//Pode ser um array de átomo positivo
 					//Neste caso, temos que verificar, se há algum correspondente na hash com valor 0
 					//Se houver significa que podemos cortar esse cara do "ou"

@@ -1575,7 +1575,7 @@ class ParsingFormulas extends Model{
 	public static function corrigeArrays(&$form){
 		if (@$form['esquerdo']==NULL && @is_array($form['direito'])) {
 			$aux1=$form['direito'];
-			$aux1['esquerdo']=null;
+			//$aux1['esquerdo']=null;
 			$form['esquerdo']=$aux1['esquerdo'];
 			$form['conectivo']=$aux1['conectivo'];
 			$form['direito']=$aux1['direito'];

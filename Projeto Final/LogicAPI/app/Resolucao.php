@@ -410,9 +410,9 @@ class Resolucao extends Model
     	//[ "operação", "qtd_formulasSelecionadas",  "formula1", "formula2", .... , "formulaN" ]
     	//Entrada
     	/*$request=null;
-    	$request["qtd_formulasSelecionadas"]=4;
+    	$request["qtd_formulasSelecionadas"]=5;
     	$request["operacao"]="SeparaOU";
-		$request["formulas"]= ["(not(A)ouC)","(not(B)ouC","(not(C))"];*/
+		$request["formulas"]= ["(not(C)ouD)","((not(B)ounot(D))ouF))","(D)","not(G)","not(F)"];*/
 		
 		$mudancaArray;
 		$mudancaHash=[];
@@ -657,6 +657,7 @@ class Resolucao extends Model
 			$hashResolucao=[];
 			$arrayFormulas=[];
 			$retorno=[];
+			$resposta=[];
 			//Recebo as fórmulas em string do front-end e as converto
 			$arrayFormulas=$request['formulas'];
 
@@ -669,8 +670,6 @@ class Resolucao extends Model
 				ParsingFormulas::corrigeArrays($arrayFormulas[$key]);
 				ParsingFormulas::corrigeAtomos($arrayFormulas[$key]);
 			}
-			//print_r($arrayFormulas);
-			//dd(1);
 			//Inicializa a hash
 
 			$hashResolucao=FuncoesResolucao::inicializaHash($arrayFormulas);
@@ -693,6 +692,7 @@ class Resolucao extends Model
 			if (($arrayFormulas!=$mudancaArray) || $flag) {
 				//array_push($retorno, $formsDepoisDoOu);
 				$resposta=$formsDepoisDoOu;
+				//print_r($formsDepoisDoOu);
 				foreach ($arrayFormulas as $key => $valor) {
 					if ($arrayFormulas[$key]==$mudancaArray[$key]) {
 						if (@$hashInicial[$valor['direito']]!=null) {
@@ -703,7 +703,11 @@ class Resolucao extends Model
 						}
 						
 					}
+					/*else{
+						array_push($resposta,$arrayFormulas[$key]);
+					}*/
 				}
+
 				goto fim;
 			}			
 
