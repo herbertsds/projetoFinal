@@ -91,9 +91,9 @@ class TableauxLPO extends Model
 			$this->listaFormulasDisponiveis[$key]=$value;
 			//Checa se é átomo para adicionar na hash
 
-			if($value['info']['esquerdo']==NULL && ($value['info']['conectivo']['operacao']==NULL || $value['info']['conectivo']['operacao']=='not')){
-				$this->hashInicial[$value['info']['direito']]=$value['info']['conectivo']['operacao'] == "not" ? 0:1;
-			}
+			//if(FuncoesTableauxLPO::checaAtomicoLPO($value['info'])){
+			//	$this->hashInicial[$value['info']['direito']]=$value['info']['conectivo']['operacao'] == "not" ? 0:1;
+			//}
 			if (FuncoesTableauxLPO::checaAtomicoLPO($value['info'])) {
 				$this->hashFuncaoInicial[$value['info']['direito']]=$value['info']['conectivo']['operacao'] == "not" ? 0:1;
 				for ($i=0; $i < strlen($value['info']['direito']) ; $i++) { 
