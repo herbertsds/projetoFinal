@@ -865,6 +865,6 @@ function f_LimpaResolucao(){
 	$('#btn_TransformarRegra').show();
 	$('#r_passo1').text('- Negar a Pergunta');
 	$('#r_passo2').text('- Passar todas as fórmulas e a pergunta negada para FNC');
-	$('#r_passo3').text('- Desenvolver o exercício até encontrar o absurdo &#10066; ');
+	$('#r_passo3').text('- Desenvolver o exercício até encontrar uma contradição ou não tiver mais operações disponíveis. ');
 
 }

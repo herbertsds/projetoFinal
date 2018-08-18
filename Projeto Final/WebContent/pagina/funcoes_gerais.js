@@ -1,6 +1,3 @@
-// problemas:  passo a passo + gabarito gera numLinha errado
-// permitir selecionar mais de uma formula para passar para fnc
-
 	var vet_regras = [];
 	var pergunta;
 	var tipoEx = "";
@@ -22,6 +19,7 @@
 	var vet_listas = [];
 	var vet_idListas = [];
 	var exercicios;
+	var inicio =0;
 	// funcao apenas para testes de eventos
 	function teste(){
 		
@@ -133,13 +131,13 @@
     		    }
     		 );
         $("#botaoLpo").click( function()
-    		    {
-    		console.log("aqui");
+        		{
 
     		$("#metodoLpo").removeAttr("style");
     		$("#tipo").attr("style",'display:none');    		      
     		    }
     		 );
+        
         $("#botaoLpo2").click( function()
     		    {
     		console.log("aqui");
@@ -219,11 +217,11 @@
 		    		$("#metodoLpo").attr("style",'display:none');   
 			    }
 			 );
-	     $("#botaoLPO").click( function()
+	     $("#botaot_lpo").click( function()
 	 		    {
-	 				tipoEx = "lpo";
-	 				//categoriaExercicio = 2;
-	 				carregaTela("lpo");
+	 				tipoEx = "t_lpo";
+	 				categoriaExercicio = 4;
+	 				carregaTela("t_lpo");
 	 				$("#proximo").removeAttr("disabled");
 		    		$("#metodoProposicional").attr("style",'display:none');    		      
 		    		$("#metodoLpo").attr("style",'display:none');   
@@ -236,7 +234,7 @@
 	function carregaTela(exercicio){
 		switch (exercicio) {
 		case "tableaux":
-			$("#divLPO").attr("style", 'display:none');
+			$("#divt_lpo").attr("style", 'display:none');
 			$("#divTableaux").removeAttr("style");
 			$("#divResolucao").attr("style", 'display:none');
 			$("#divDeducao").attr("style", 'display:none');
@@ -265,7 +263,7 @@
 			$("#divDeducao").attr("style", 'display:none');
 			$("#divSemantica").attr("style", 'display:none');
 			$("#exercicio").removeAttr("style");
-			$("#divLPO").attr("style", 'display:none');
+			$("#divt_lpo").attr("style", 'display:none');
 			$("#liExercicio").removeAttr("style");
 			$("#liExecucao").removeAttr("style");
 			$('#tabExercicio').click();
@@ -292,7 +290,7 @@
 			$("#liExercicio").removeAttr("style");
 			$("#liExecucao").removeAttr("style");
 			$('#tabExercicio').click();
-			$("#divLPO").attr("style", 'display:none');
+			$("#divt_lpo").attr("style", 'display:none');
 			$('#div_ListasSup').attr("style", 'display : none');
 			$('#div_Escolha').removeAttr("style");
 			$('#adicaoExercicio').attr("style", 'display : none');
@@ -310,7 +308,7 @@
 			$("#divTableaux").attr("style", 'display:none');
 			$("#divResolucao").attr("style", 'display:none');
 			$("#divDeducao").attr("style", 'display:none');
-			$("#divLPO").attr("style", 'display:none');
+			$("#divt_lpo").attr("style", 'display:none');
 
 			$("#exercicio").removeAttr("style");
 			$("#liExercicio").removeAttr("style");
@@ -329,9 +327,9 @@
 //			f_BuscaListas();
 			break;
 			
-		case "lpo":
+		case "t_lpo":
 			console.log("aqui");
-			$("#divLPO").removeAttr("style");
+			$("#divt_lpo").removeAttr("style");
 			
 			$("#divTableaux").attr("style", 'display:none');
 			$("#divResolucao").attr("style", 'display:none');
@@ -406,14 +404,14 @@
 				$('#formulas').append("<br/>" + pergunta );
 				break;
 				
-			case "lpo":
+			case "t_lpo":
 				  for (cont = 0; cont in vet_regras; cont++){
 					  numLinha = cont+1;
-						$('#lpo_divFormulas').append("<p id='" + cont+ "'>"+ numLinha +": " + vet_regras[cont] + "</p>" );
+						$('#t_lpo_divFormulas').append("<p id='" + cont+ "'>"+ numLinha +": " + vet_regras[cont] + "</p>" );
 	
 				  }
 				  numLinha++;
-				$('#lpo_divFormulas').append("<p id='finalVetor'>"+ numLinha +": " + pergunta + " # Pergunta </p>" );
+				$('#t_lpo_divFormulas').append("<p id='finalVetor'>"+ numLinha +": " + pergunta + " # Pergunta </p>" );
 				break;
 		}
 	}	
@@ -445,33 +443,16 @@
 		
 	}
 	function f_PreencherDivListas(){
-		$("#div_ListasSup").append("<div class='col-sm-14 col-sm-offset-1' id='div_ListasInf'></div>");
 
-		$("#div_ListasInf").empty();
-
-  	    $('#div_ListasInf').append("<br/><h8 color='gray'>Total de Listas Encontradas: "+ listas.length.toString() +"</h8>");
-  	    
-  	    //console.log(categoriaExercicio);
-    	for(var i =0; i<listas.length;i++){
-    		vet_idListas[i] = listas[i]['id'];
-    		vet_listas[i]= listas[i]['nome'];
-    		
-    		$("#div_ListasInf").append("<h6 >&#10022; "+listas[i]['nome']+": </h6><div id='div_ListaEx"+ vet_idListas[i]+"' </div>");
-
-
-    		
-    	}
-		for(i=0; i < vet_idListas.length; i++){
-			$('#div_ListaEx'+vet_idListas[i]).empty();
-			
-		}
-		for(j=0;j<vet_exercicios.length;j++){
+//		console.log("inicio " + inicio);
+//		console.log(vet_exercicios.length);
+		for(j=inicio;j<vet_exercicios.length;j++){
 			$('#div_ListaEx'+vet_exercicios[j]['pivot']['listas_id']).append("<button id='"+ vet_exercicios[j]['id'] + 
 					"' class='btn btn-info btn-sm dropdown-item' type='button' data-toggle='tooltip' data-placement='top'" +
 					" onclick='f_SelecionaExercicio(this.id)'>Ex."+ vet_exercicios[j]['id'] +"</button>");
         	
 			$("button[id='" + vet_exercicios[j]['id'] + "']").prop('title', vet_exercicios[j]['sentenca']);
-			//console.log("listando...");
+			console.log("listando...");
 			
 		}
 
@@ -534,7 +515,7 @@
 				
 				vet_regras = [];
 
-		    	exercicioBuscado = vet_exercicios[idnumExercicio-1]['sentenca'].split(',');
+		    	exercicioBuscado = vet_exercicios[idnumExercicio]['sentenca'].split(',');
 		    	//console.log("f_buscaExercicio() = " + exercicio);
 		    	var limiteFormulas = ((exercicioBuscado.length) -1);
 		    				//console.log(limiteFormulas);
@@ -564,10 +545,7 @@
 		
 	}
 	
-	function f_Next(){
-		alert("next");
-	}
-	
+
 	
 	function f_Gabarito(){
 		
@@ -584,8 +562,8 @@
 			break;
 		case "semantica":	
 			//f_gabSemantica();
-		case "lpo":
-			f_GabLPO();
+		case "t_lpo":
+			f_Gabt_lpo();
 			break;
 		}
 			
@@ -611,6 +589,27 @@
 	        success: function(retorno) {
 	        	listas = JSON.parse(retorno);
 	      	    $('#listaEx').append("<h8 color='gray'>Total de Listas Encontradas: "+ listas.length.toString() +"</h8>");
+	    		$("#div_ListasSup").append("<div class='col-sm-14 col-sm-offset-1' id='div_ListasInf'></div>");
+
+	    		$("#div_ListasInf").empty();
+
+	      	    $('#div_ListasInf').append("<br/><h8 color='gray'>Total de Listas Encontradas: "+ listas.length.toString() +"</h8>");
+	      	    
+	      	    //console.log(categoriaExercicio);
+	        	for(var i =0; i<listas.length;i++){
+	        		vet_idListas[i] = listas[i]['id'];
+	        		vet_listas[i]= listas[i]['nome'];
+	        		
+	        		$("#div_ListasInf").append("<h6 >&#10022; "+listas[i]['nome']+": </h6><div id='div_ListaEx"+ vet_idListas[i]+"' </div>");
+
+
+	        		
+	        	}
+	    		for(i=0; i < vet_idListas.length; i++){
+	    			$('#div_ListaEx'+vet_idListas[i]).empty();
+	    			
+	    		}
+	      	    
 	      	    
 	      	    //console.log(categoriaExercicio);
 	        	for(var i =0; i<listas.length;i++){
@@ -639,7 +638,6 @@
 		// BUSCAR EXERCICIOS DAS LISTAS
 		indice_vet_Ex = 0;
 		vet_exercicios= [];
-		vet_exercicios = [];
 		n=0;
 		for( i=0; i<vet_idListas.length;i++){
 			var myData = {'lista_id' : vet_idListas[i]};
@@ -653,15 +651,15 @@
 		        success: function(retorno) {
 		        	exercicios = JSON.parse(retorno);
 		        	//console.log(exercicios);
-					
+					inicio =  exercicios[0]['id'];
 		        	for( k=0,j=indice_vet_Ex; j<(n+exercicios.length);j++, k++){
-			    		vet_exercicios[j] = exercicios[k];
+			    		vet_exercicios[exercicios[k]['id']] = exercicios[k];
 			    		indice_vet_Ex++;
 
 					}
 		        	n = indice_vet_Ex;
 					f_PreencherDivListas();
-
+					
 
 		        },
 		        error: function() { console.log('ERRO: exercicios não encontrados!'); },
@@ -720,7 +718,7 @@ function f_LimpaTipo(){
 	f_LimpaResolucao();
 	f_LimpaDeducao();
 	f_LimpaSemantica();
-	f_LimpaLPO();
+	f_Limpat_lpo();
 }
 
 function f_LimpaDesenvolvimento(){
@@ -728,5 +726,5 @@ function f_LimpaDesenvolvimento(){
 	f_LimpaResolucao();
 	f_LimpaDeducao();
 	f_LimpaSemantica();
-	f_LimpaLPO();
+	f_Limpat_lpo();
 }

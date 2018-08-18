@@ -38,7 +38,7 @@
 	<script src="funcoes_tableaux.js" type="text/javascript"></script>
 	<script src="funcoes_deducao.js" type="text/javascript"></script>
 	<script src="funcoes_semantica.js" type="text/javascript"></script>
-	<script src="funcoes_lpo.js" type="text/javascript"></script>
+	<script src="funcoes_t_lpo.js" type="text/javascript"></script>
 	
 
 <!-- 	<script src="funcoes_deducao.js" type="text/javascript"></script> -->
@@ -148,7 +148,7 @@
 					                         <div class="col-sm-10 col-sm-offset-3">
 					                                        <div class="col-sm-4">
 					                                            <div class="choice" data-toggle="wizard-radio" rel="tooltip" >
-					                                                <input type="radio" name="tipo" value="tipoLpo">
+					                                                <input type="radio" name="tipo" value="tipolpo">
 					                    
 					                                                <div class="icon" id="botaoLpo">
 					                                                    <i class="material-icons">call_split</i>
@@ -173,17 +173,17 @@
 		                        	</div>
 		                        </div>	
 		                        <div id="metodoLpo" style="display:none">
-		                        	 <h4 class="info-text">Qual tipo o método que deseja praticar? </h4>
+		                        	 <h4 class="info-text">Qual o método que deseja praticar? </h4>
 		                                <div class="row">
 		                                    <div class="col-sm-10 col-sm-offset-1">
 					                        <div class="col-sm-4">
 					                                            <div class="choice" data-toggle="wizard-radio" rel="tooltip" title="Lógica de primeira ordem">
-					                                                <input type="radio" name="escolha" value="lpo">
+					                                                <input type="radio" name="escolha" value="t_lpo">
 					                    
-					                                                <div class="icon" id="botaoLPO">
+					                                                <div class="icon" id="botaot_lpo">
 					                                                    <i class="material-icons">call_split</i>
 					                                                </div>
-					                                                <h6>Tableaux - LPO</h6>
+					                                                <h6>Tableaux</h6>
 					                                            </div>
 					                                        </div>
 					                         <div class="col-sm-4">
@@ -200,7 +200,7 @@
 		                        	</div>
 		                        </div>       
 		                        <div id="metodoProposicional" style="display:none">
-		                                <h4 class="info-text">Qual tipo o método que deseja praticar? </h4>
+		                                <h4 class="info-text">Qual o método que deseja praticar? </h4>
 		                                <div class="row">
 		                                    <div class="col-sm-10 col-sm-offset-1">
 		                                        <div class="col-sm-4">
@@ -243,9 +243,9 @@
 		                                        </div>
 		                                          <div class="col-sm-4">
 					                                            <div class="choice" data-toggle="wizard-radio" rel="tooltip" >
-					                                                <input type="radio" name="escolha" value="tipoLpo2">
+					                                                <input type="radio" name="escolha" value="tipot_lpo2">
 					                    
-					                                                <div class="icon" id="botaoLpo2">
+					                                                <div class="icon" id="botaot_lpo2">
 					                                                    <i class="material-icons">call_split</i>
 					                                                </div>
 					                                                <h6>Lógica de primeira ordem</h6>
@@ -402,14 +402,14 @@
 																						
 													</div>
 												</div> <!--FIM semantica	-->		
-<!--  --LPO ------------------------------------------------------------------------------------------------------------------------------------->
-											<!--  DIV PARA LPO #############################################################################-->
+<!--  --t_lpo ------------------------------------------------------------------------------------------------------------------------------------->
+											<!--  DIV PARA t_lpo #############################################################################-->
 											<div class="col-sm-8 col-sm-offset-2">
 											
-												<div class="regrasLPO" id='divLPO' style="display: none">											
+												<div class="regrast_lpo" id='divt_lpo' style="display: none">											
  									
-													<div class="passos" id="lpo_passos">
-														<h4 class="control-label"><strong> > Passo-a-passo Para LPO:</strong></h4>
+													<div class="passos" id="t_lpo_passos">
+														<h4 class="control-label"><strong> > Passo-a-passo Para Tableaux LPO:</strong></h4>
 														
 														<article id='info1'>- Selecione a fórmula que deseja expandir</article>
 														<article id='info2'>- Desenvolver o exercício até fechar todos os ramos da árvore </article>
@@ -418,21 +418,21 @@
 					
 													</div>
 									<!-- ############################################################################################### -->			
-													<div class="lpo_inicioEx">
+													<div class="t_lpo_inicioEx">
 														<h4><strong>> Início do Exercício</strong> </h4>
 														
 														<div class="col-sm-8 col-sm-offset-0">
 														
-														<div  id="lpo_divFormulas">
+														<div  id="t_lpo_divFormulas">
 														
 													</style>
 														</div>	
 									<!-- ############################################################################################### -->					
-														<div  class="form-check"  id="lpo_divNovasFormulas">
+														<div  class="form-check"  id="t_lpo_divNovasFormulas">
 														
-															<div id="lpo_content">
-																<div id="lpo_main">
-													            	<ul id="lpo_organisation">
+															<div id="t_lpo_content">
+																<div id="t_lpo_main">
+													            	<ul id="t_lpo_organisation">
 													            		
 													                </ul>
 													            </div>
@@ -445,7 +445,7 @@
 														</div>													
 													</div>
 												</div>
-											</div> <!--FIM LPO	-->
+											</div> <!--FIM t_lpo	-->
 					
 		
 		
