@@ -350,8 +350,21 @@ class FuncoesTableauxLPO extends Model
 	//Método que recebe uma fórmula na última camada do array, a variável que deseja substituir, a constante
 	//e aplica a substituição.
 	public static function substituiPorConstante($constante, &$form, $variavel){
+		if (@is_array($form['info'])) {
+			FuncoesTableauxLPO::substituiPorConstante($constante,$form['info']['esquerdo'],$variavel);
+			FuncoesTableauxLPO::substituiPorConstante($constante,$form['info']['direito'],$variavel);
+		}
+		if ((@is_array($form['esquerdo']) || @is_string($form['esquerdo'])) && @!is_string($form)) {
+			FuncoesTableauxLPO::substituiPorConstante($constante,$form['esquerdo'],$variavel);
+		}
+		if ((@is_array($form['direito']) || @is_string($form['direito'])) && @!is_string($form)) {
+			FuncoesTableauxLPO::substituiPorConstante($constante,$form['direito'],$variavel);
+		}
+		if (!is_string($form)) {
+			return;
+		}
 		for ($i=0; $i < strlen($form); $i++) { 
-			if ($form[$i]==$variavel) {
+			if (@$form[$i]==$variavel) {
 				$form[$i]=$constante;
 			}
 		}
@@ -363,7 +376,9 @@ class FuncoesTableauxLPO extends Model
 		$constante=null;
 		if (is_array($form['info']['esquerdo'])) {
 			$aux=$form;
-			$form['info']['conectivo']['variavel']=null;
+			if ($variavel==$form['info']['conectivo']['variavel']) {
+				$form['info']['conectivo']['variavel']=null;
+			}
 			FuncoesTableauxLPO::corrigeArraysLPO($form);
 			//Pega todos os átomos contidos na fórmula para aplicar a substituição por constante em todos eles
 			if ((@FuncoesTableauxLPO::checaAtomicoLPO($form['info']['esquerdo']) || !is_array($form['info']['esquerdo'])) &&($form['info']['esquerdo']!=null)) {
@@ -377,18 +392,19 @@ class FuncoesTableauxLPO extends Model
 				FuncoesTableauxLPO::atribuiConstanteFormulaArray($form['info']['esquerdo'],$repetir,$listaGlobalConstantes,$variavel,$listaAcumuladora,$listaConstantes,$hashAtomosFuncoes);
 			}
 		}
-
 		if (is_array($form['info']['direito'])) {
 			$aux=$form;
-			$form['info']['conectivo']['variavel']=null;
+			if ($variavel==$form['info']['conectivo']['variavel']) {
+				$form['info']['conectivo']['variavel']=null;
+			}
 			FuncoesTableauxLPO::corrigeArraysLPO($form);
 			//Pega todos os átomos contidos na fórmula para aplicar a substituição por constante em todos eles
-			if ((@FuncoesTableauxLPO::checaAtomicoLPO($form['info']['esquerdo']) || !is_array($form['info']['esquerdo'])) &&($form['info']['esquerdo']!=null)) {
+			if ((@FuncoesTableauxLPO::checaAtomicoLPO($form['info']['esquerdo']) || !is_array($form['info']['esquerdo'])) && ($form['info']['esquerdo']!=null) && (is_array($form['info']['direito']))) {
 				if (!in_array($form['info']['esquerdo'], $listaAcumuladora)) {
 					FuncoesTableauxLPO::adicionaArray($listaAcumuladora, $form['info']['esquerdo']);
 				}				
 			}
-			if ($aux!=$form) {
+			if ($aux!=$form) {				
 				FuncoesTableauxLPO::atribuiConstanteFormulaArray($form,$repetir,$listaGlobalConstantes,$variavel,$listaAcumuladora,$listaConstantes,$hashAtomosFuncoes);			
 			}
 			else{
@@ -399,27 +415,42 @@ class FuncoesTableauxLPO extends Model
 			$aux=$form['info'];
 			$valor=null;
 			$funcao=$form['info']['direito'][0];
+			if (@$form['info']['esquerdo']!=null && @is_string($form['info']['esquerdo'])) {
+				$funcao2=$form['info']['esquerdo'][0];
+			}
 			//Inicialização da hash de funções
 			if (@$form['funcoesComSubstituicao'][$funcao]==null) {
 				$form['funcoesComSubstituicao'][$funcao]=array();
 			}
-			
+			if (@$form['funcoesComSubstituicao'][$funcao2]==null && @$funcao2!=null) {
+				$form['funcoesComSubstituicao'][$funcao2]=array();
+			}
 			if ($repetir) {
 				foreach ($listaGlobalConstantes as $key => $value) {
 					$aux=$form['info'];
 					$valor=$value;
-					foreach ($listaAcumuladora as $key2 => $value2) {
-						FuncoesTableauxLPO::substituiPorConstante($value,$listaAcumuladora[$key2],$variavel);
-					}
+					$constante=$value;
 					//Caso já exista uma constante definida para esta variável e função
 					//Devo manter a constante para substituições futuras
 
 					if (@$form['funcoesComSubstituicao'][$funcao][$variavel]) {
 						FuncoesTableauxLPO::substituiPorConstante($form['funcoesComSubstituicao'][$funcao][$variavel],$aux['direito'],$variavel);
-						if ($aux['esquerdo']!=null) {
-							FuncoesTableauxLPO::substituiPorConstante($form['funcoesComSubstituicao'][$funcao][$variavel],$aux['direito'],$variavel);
+						if ($aux['esquerdo']!=null && @$form['funcoesComSubstituicao'][$funcao2][$variavel] && $funcao2!=null) {
+							FuncoesTableauxLPO::substituiPorConstante($form['funcoesComSubstituicao'][$funcao2][$variavel],$aux['esquerdo'],$variavel);
+						}
+						elseif ($aux['esquerdo']!=null) {
+							FuncoesTableauxLPO::substituiPorConstante($form['funcoesComSubstituicao'][$funcao][$variavel],$aux['esquerdo'],$variavel);
+							$form['funcoesComSubstituicao'][$funcao2][$variavel]=$form['funcoesComSubstituicao'][$funcao][$variavel];
 						}
 						break;
+					}
+					//Caso o lado esquerdo possua uma variavel diferente do lado direito, devo passar aqui
+					if ($aux['esquerdo']!=null && @$form['funcoesComSubstituicao'][$funcao2][$variavel] && $funcao2!=null){
+						FuncoesTableauxLPO::substituiPorConstante($form['funcoesComSubstituicao'][$funcao2][$variavel],$aux['esquerdo'],$variavel);
+					}
+
+					foreach ($listaAcumuladora as $key2 => $value2) {
+						FuncoesTableauxLPO::substituiPorConstante($value,$listaAcumuladora[$key2],$variavel);
 					}
 					FuncoesTableauxLPO::substituiPorConstante($value,$aux['direito'],$variavel);
 					if ($aux['esquerdo']!=null) {
@@ -457,6 +488,7 @@ class FuncoesTableauxLPO extends Model
 				if ($valor=='z') {
 					$aux2=$form['info'];
 					foreach ($form['constantesUsadas'] as $key => $value){
+						$constante=$value;
 						FuncoesTableauxLPO::substituiPorConstante($value,$aux2['direito'],$variavel);
 						if ($aux['esquerdo']!=null) {
 							FuncoesTableauxLPO::substituiPorConstante($value,$aux2['esquerdo'],$variavel);
@@ -479,6 +511,20 @@ class FuncoesTableauxLPO extends Model
 								array_push($form['constantesUsadas'],$value);
 								return;
 							}
+							if ($value2['info']['esquerdo']==$aux2['esquerdo']) {
+								if ($aux2['conectivo']['variavel']==$variavel) {
+									$aux['conectivo']['variavel']=null;
+								}
+								$aux=$aux2;
+								$form['info']=$aux;
+								foreach ($listaAcumuladora as $key2 => $value2) {
+									FuncoesTableauxLPO::substituiPorConstante($value,$listaAcumuladora[$key2],$variavel);
+								}
+								if (!in_array($value, $form['constantesUsadas'])) {
+									array_push($form['constantesUsadas'],$value);
+								}
+								return;
+							}
 						}
 					}
 				}
@@ -492,9 +538,13 @@ class FuncoesTableauxLPO extends Model
 							//Devo manter a constante para substituições futuras
 							if (@$form['funcoesComSubstituicao'][$funcao][$variavel]) {
 								FuncoesTableauxLPO::substituiPorConstante($form['funcoesComSubstituicao'][$funcao][$variavel],$aux['direito'],$variavel);
-								if ($aux['esquerdo']!=null) {
-									FuncoesTableauxLPO::substituiPorConstante($form['funcoesComSubstituicao'][$funcao][$variavel],$aux['direito'],$variavel);
+								if ($aux['esquerdo']!=null && @$form['funcoesComSubstituicao'][$funcao2][$variavel]) {
+									FuncoesTableauxLPO::substituiPorConstante($form['funcoesComSubstituicao'][$funcao2][$variavel],$aux['esquerdo'],$variavel);
 								}
+								break;
+							}
+							if ($aux['esquerdo']!=null && @$form['funcoesComSubstituicao'][$funcao2][$variavel]) {
+								FuncoesTableauxLPO::substituiPorConstante($form['funcoesComSubstituicao'][$funcao2][$variavel],$aux['esquerdo'],$variavel);
 								break;
 							}
 							FuncoesTableauxLPO::substituiPorConstante($value,$listaAcumuladora[$key2],$variavel);
@@ -518,7 +568,14 @@ class FuncoesTableauxLPO extends Model
 			if (@$form['funcoesComSubstituicao'][$funcao][$variavel]==null) {
 				$form['funcoesComSubstituicao'][$funcao][$variavel]=$constante;
 			}
+			if (@$form['funcoesComSubstituicao'][$funcao2][$variavel]==null && @$funcao2!=null) {
+				$form['funcoesComSubstituicao'][$funcao2][$variavel]=$constante;
+			}
 			$form['info']=$aux;
+			print "<br>Funcoes com substituição<br>";
+			print_r($form['funcoesComSubstituicao']);
+			print "<br>substituição feita<br>";
+			print_r($form['info']);
 			array_push($form['constantesUsadas'],$valor);
 		}
 	}
@@ -604,6 +661,9 @@ class FuncoesTableauxLPO extends Model
 				$noAuxCen2['hashAtomosFuncoes']=$pai['hashAtomosFuncoes'];
 				$noAuxCen1['constantesUsadas']=$pai['constantesUsadas'];
 				$noAuxCen2['constantesUsadas']=$pai['constantesUsadas'];
+				$noAuxCen1['funcoesComSubstituicao']=$pai['funcoesComSubstituicao'];
+				$noAuxCen2['funcoesComSubstituicao']=$pai['funcoesComSubstituicao'];
+
 
 				//Correções na estrutura de dados
 				
@@ -676,6 +736,8 @@ class FuncoesTableauxLPO extends Model
 				$noAuxDir['hashAtomosFuncoes']=$pai['hashAtomosFuncoes'];
 				$noAuxEsq['constantesUsadas']=$pai['constantesUsadas'];
 				$noAuxDir['constantesUsadas']=$pai['constantesUsadas'];
+				$noAuxCen1['funcoesComSubstituicao']=$pai['funcoesComSubstituicao'];
+				$noAuxCen2['funcoesComSubstituicao']=$pai['funcoesComSubstituicao'];
 
 				//Correções na estrutura de dados
 				
@@ -741,6 +803,8 @@ class FuncoesTableauxLPO extends Model
 				$noAuxDir['hashAtomosFuncoes']=$pai['hashAtomosFuncoes'];
 				$noAuxEsq['constantesUsadas']=$pai['constantesUsadas'];
 				$noAuxDir['constantesUsadas']=$pai['constantesUsadas'];
+				$noAuxCen1['funcoesComSubstituicao']=$pai['funcoesComSubstituicao'];
+				$noAuxCen2['funcoesComSubstituicao']=$pai['funcoesComSubstituicao'];
 
 
 				//Correções na estrutura de dados
@@ -824,6 +888,7 @@ class FuncoesTableauxLPO extends Model
 				$noAuxCen1['hashAtomos']=$pai['hashAtomos'];
 				$noAuxCen1['hashAtomosFuncoes']=$pai['hashAtomosFuncoes'];
 				$noAuxCen1['constantesUsadas']=$pai['constantesUsadas'];
+				$noAuxCen1['funcoesComSubstituicao']=$pai['funcoesComSubstituicao'];
 
 				//Correções na estrutura de dados
 				
@@ -895,6 +960,8 @@ class FuncoesTableauxLPO extends Model
 				$noAuxDir['hashAtomosFuncoes']=$pai['hashAtomosFuncoes'];
 				$noAuxEsq['constantesUsadas']=$pai['constantesUsadas'];
 				$noAuxDir['constantesUsadas']=$pai['constantesUsadas'];
+				$noAuxCen1['funcoesComSubstituicao']=$pai['funcoesComSubstituicao'];
+				$noAuxCen2['funcoesComSubstituicao']=$pai['funcoesComSubstituicao'];
 
 				//Correções na estrutura de dados
 				
@@ -994,6 +1061,8 @@ class FuncoesTableauxLPO extends Model
 				$noAuxCen2['hashAtomosFuncoes']=$pai['hashAtomosFuncoes'];
 				$noAuxCen1['constantesUsadas']=$pai['constantesUsadas'];
 				$noAuxCen2['constantesUsadas']=$pai['constantesUsadas'];
+				$noAuxCen1['funcoesComSubstituicao']=$pai['funcoesComSubstituicao'];
+				$noAuxCen2['funcoesComSubstituicao']=$pai['funcoesComSubstituicao'];
 
 				
 
@@ -1107,6 +1176,8 @@ class FuncoesTableauxLPO extends Model
 				$noAuxCen2['hashAtomosFuncoes']=$pai['hashAtomosFuncoes'];
 				$noAuxCen1['constantesUsadas']=$pai['constantesUsadas'];
 				$noAuxCen2['constantesUsadas']=$pai['constantesUsadas'];
+				$noAuxCen1['funcoesComSubstituicao']=$pai['funcoesComSubstituicao'];
+				$noAuxCen2['funcoesComSubstituicao']=$pai['funcoesComSubstituicao'];
 
 				//Correções na estrutura de dados
 				
@@ -1198,7 +1269,6 @@ class FuncoesTableauxLPO extends Model
 				$noAuxCen1['hashAtomosFuncoes']=$pai['hashAtomosFuncoes'];
 				$noAuxCen1['constantesUsadas']=$pai['constantesUsadas'];
 				$noAuxCen1['funcoesComSubstituicao']=$pai['funcoesComSubstituicao'];
-
 				//Correções na estrutura de dados
 				
 				FuncoesTableauxLPO::corrigeArrays($noAuxCen1);
@@ -1310,11 +1380,11 @@ class FuncoesTableauxLPO extends Model
 
 				//Caso haja uma fórmula no lado direito com conectivo, devemos negar o conectivo
 				elseif (@in_array($noAuxCen1['info']['direito']['info']['conectivo']['operacao'], $listaGlobalConectivos)) {
-
 					FuncoesTableauxLPO::negaConectivo($noAuxCen1['info']['direito']['info']['conectivo']['operacao']);
 					FuncoesTableauxLPO::atribuiConstanteFormulaArray($noAuxCen1,false,$listaGlobalConstantes,$noAuxCen1['info']['conectivo']['variavel'],$listaAcumuladora,$noAuxCen1['constantesUsadas'],$noAuxCen1['hashAtomosFuncoes']);
 				}
 				else{
+
 					$noAuxCen1['info']['conectivo']['operacao']='not';
 					FuncoesTableauxLPO::atribuiConstanteFormulaArray($noAuxCen1,false,$listaGlobalConstantes,$noAuxCen1['info']['conectivo']['variavel'],$listaAcumuladora,$noAuxCen1['constantesUsadas'],$noAuxCen1['hashAtomosFuncoes']);
 				}
@@ -1352,7 +1422,6 @@ class FuncoesTableauxLPO extends Model
 				$noAuxCen1['hashAtomosFuncoes']=$pai['hashAtomosFuncoes'];
 				$noAuxCen1['constantesUsadas']=$pai['constantesUsadas'];
 				$noAuxCen1['funcoesComSubstituicao']=$pai['funcoesComSubstituicao'];
-
 				//Correções na estrutura de dados
 				FuncoesTableauxLPO::corrigeArrays($noAuxCen1);
 
@@ -1964,7 +2033,7 @@ class FuncoesTableauxLPO extends Model
 				if (is_array($form['info']['direito'])) {
 					FuncoesTableauxLPO::colocaParentesesTableaux($form['info']['direito']);
 				}
-				//$aux=$form['info']['conectivo']['operacao'];
+				$aux=$form['info']['conectivo']['operacao'];
 				$aux=$aux.$form['info']['direito'].")";
 				$form['info']['direito']=$aux;
 			}
@@ -1975,7 +2044,7 @@ class FuncoesTableauxLPO extends Model
 				if (is_array($form['direito'])) {
 					FuncoesTableauxLPO::colocaParentesesTableaux($form['direito']);
 				}
-				//$aux=$form['conectivo']['operacao'];
+				$aux=$form['conectivo']['operacao'];
 				$aux=$aux.$form['direito'].")";
 				$form['direito']=$aux;
 			}
@@ -2127,15 +2196,16 @@ class FuncoesTableauxLPO extends Model
 					}
 					$aux="not(".$form['esquerdo'];
 					$aux=$aux."implica";
-					if (@FuncoesAuxiliares::verificaFormulaCorreta($form['direito'])==true || @FuncoesAuxiliares::verificaFormulaCorreta($form['direito']['info'])==true) {
+					//dd(1);
+					if (@FuncoesAuxiliares::verificaFormulaCorreta($form['direito'])==true || @FuncoesAuxiliares::verificaFormulaCorreta(@$form['direito']['info'])==true) {
 						$aux=$aux.$form['direito']."))";
 					}
 					else{
-						if (@$form['direito']['info']) {
+						if (@$form['info']['direito']['info']) {
 							$aux=$aux.$form['info']['direito']['info'];
 						}
 						else{
-							if ($form['direito']['info']) {
+							if ($form['direito']['info']!=null && $form['direito']['info']!=true) {
 								$aux=$aux.$form['direito']['info'];
 							}
 							else{

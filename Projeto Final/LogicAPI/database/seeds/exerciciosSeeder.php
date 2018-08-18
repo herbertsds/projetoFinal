@@ -130,7 +130,7 @@ class exerciciosSeeder extends Seeder
 			array ('sentenca'=>"(xistx((F(x))e(not(F(x))))),(P)"),
 			array ('sentenca'=>"(xistx(xisty(L(x|y)))),(xisty(xistx(L(x|y))))"),
 			array ('sentenca'=>"not(xistx(F(x))),(paraTodox(F(x)implicaP))"),
-			array ('sentenca'=>"(paraTodox(paraTodoy(F(x,y)))),(paraTodox(F(x|x)))"),
+			array ('sentenca'=>"(paraTodox(paraTodoy(F(x;y)))),(paraTodox(F(x;x)))"),
 			array ('sentenca'=>"(paraTodox((Q(y))implica(P(x)))),((Q(y))implica(paraTodox(P(x))))"),
 			array ('sentenca'=>"((paraTodox(A(x)))e(paraTodox(B(x)))),(paraTodox(A(x)eB(x)))"),
 			array ('sentenca'=>"(paraTodox(A(x)eB(x))),((paraTodox(A(x)))e(paraTodox(B(x))))"),
