@@ -1,12 +1,12 @@
 //import { org } from 'jquery.orgchart.js';
-function f_GabLPO(){
+function f_Gabt_lpo(){
 
 	var myData = { 'exercicio' : parseInt(numExercicio)};
 	console.log(' enviando : ' + myData);
 
 	$.ajax({
 		
-        url: 'http://127.0.0.1:8000/api/LPO/',
+        url: 'http://127.0.0.1:8000/api/t_lpo/',
     	type: 'GET',
         callback: '?',
         data: myData, 
@@ -17,8 +17,8 @@ function f_GabLPO(){
             console.log(obj);
 			$('#t_divFormulas').append("<article> --------------------------------------------------------- </article>" );
 
-            $("#lpo_organisation").append(obj);
-            $("#lpo_organisation").orgChart({container: $("#lpo_main")});
+            $("#t_lpo_organisation").append(obj);
+            $("#t_lpo_organisation").orgChart({container: $("#t_lpo_main")});
            // f_teste();
 	        
 	        
@@ -34,6 +34,6 @@ function f_GabLPO(){
 
 
 
-function f_LimpaLPO(){
+function f_Limpat_lpo(){
 }
 
