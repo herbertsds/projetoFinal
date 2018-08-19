@@ -12,7 +12,6 @@ class FuncoesTableauxLPO extends Model
 	public static function escolhaEficiente(&$listaFormulasDisponiveis,&$hashInicial,&$hashFuncaoInicial,&$constantesInicial,&$nosFolha,&$historicoVariaveis,&$raiz,&$contador){
 		//Verificação para saber se a função foi chamada mesmo
 		//que todas os ramos já estejam fechados
-
 		if (FuncoesTableauxLPO::todasFechadas($nosFolha,$contador)) {
 			return "fechado";
 		}
@@ -145,7 +144,7 @@ class FuncoesTableauxLPO extends Model
 
 				//Percorre a lista de fórmulas disponíveis do nó folha atual
 				foreach ($noFolhaAtual['formDisponiveis'] as $key2 => $formDispAtual) {
-					//Caso 1.1 - Pega um conectivo que só cuja a substituição por constante só pode tê-la aparecendo pela primeira vez
+					//Caso 1.1 - Pega um conectivo cuja a substituição por constante só pode tê-la aparecendo pela primeira vez
 					foreach ($noFolhaAtual['formDisponiveis'] as $key3 => $value3) {
 						if (in_array($value3['info']['conectivo']['operacao'], $conectivosUmaVez)) {
 							$formDispAtual=$value3;
@@ -178,6 +177,8 @@ class FuncoesTableauxLPO extends Model
 					//Correções na fórmula
 					ParsingFormulas::formataFormulasTableauxLPO($noFolhaAtual['formDisponiveis'][$key2]);
 					FuncoesTableauxLPO::corrigeArrays($noFolhaAtual['formDisponiveis'][$key2]);
+					//FuncoesTableauxLPO::corrigeArraysLPO($noFolhaAtual['formDisponiveis'][$key2]);
+					//FuncoesTableauxLPO::corrigeArraysLPO($formDispAtual);
 					
 					//Se achar conectivo eficiente aplique a regra
 					if (in_array($formDispAtual['info']['conectivo']['operacao'],$conectivosEficientes)){
@@ -243,6 +244,11 @@ class FuncoesTableauxLPO extends Model
 					//Correções na fórmula
 					ParsingFormulas::formataFormulasTableauxLPO($noFolhaAtual['formDisponiveis'][$key2]);
 					FuncoesTableauxLPO::corrigeArrays($noFolhaAtual['formDisponiveis'][$key2]);
+					//$formDispAtual=$noFolhaAtual['formDisponiveis'][$key2];
+					//FuncoesTableauxLPO::corrigeArrays($formDispAtual);
+					//FuncoesTableauxLPO::corrigeArraysLPO2($noFolhaAtual['formDisponiveis'][$key2]);
+					//FuncoesTableauxLPO::corrigeArraysLPO2($formDispAtual);
+
 					FuncoesTableauxLPO::aplicaRegraLPO($formDispAtual,$nosFolha[$key],$nosFolha,$contador);
 					FuncoesTableauxLPO::removerFormula($listaFormulasDisponiveis,$formDispAtual['info']);
 					FuncoesTableauxLPO::armazenaHistorico($historicoVariaveis,$nosFolha,$raiz,$contador+1,$listaFormulasDisponiveis);
@@ -636,6 +642,11 @@ class FuncoesTableauxLPO extends Model
 			abort(400,"<br>Este ramo já foi fechado<br>O nó folha é<br>".json_encode($pai['info']));
 			return;
 		}
+		//print "<br>Antes da correção<br>";
+		//print_r($form);
+		//FuncoesTableauxLPO::corrigeArraysLPO($form);
+		//print "<br>aplicaRegraLPO<br>";
+		//print_r($form);
 		//Verifico o conectivo da fórmula que foi aplicada
 		//NOTA:O pai não necessariamente será o mesmo cara o qual está sendo aplicada a fórmula
 		switch ($form['info']['conectivo']['operacao']) {
@@ -1424,7 +1435,6 @@ class FuncoesTableauxLPO extends Model
 				$noAuxCen1['funcoesComSubstituicao']=$pai['funcoesComSubstituicao'];
 				//Correções na estrutura de dados
 				FuncoesTableauxLPO::corrigeArrays($noAuxCen1);
-
 				//Manipulação específica de paraTodo
 				$noAuxCen1['filhoCentral']=null;
 				//Caso haja um átomo com not, fazer a correção do array
@@ -1468,6 +1478,9 @@ class FuncoesTableauxLPO extends Model
 				return;
 			//Caso extra
 			case 'not':
+				if ($contador!=0) {
+					FuncoesTableauxLPO::removerFormula($nosFolha,$pai['info']);
+				}
 				//Se for atômico devemos adicionar na hash e verificar se casa com alguma fórmula
 				if(FuncoesTableauxLPO::checaAtomicoLPO($pai['info'])){
 					if(FuncoesTableauxLPO::casarFormulaLPO($pai['hashAtomosFuncoes'],$pai['info'])){
@@ -1481,6 +1494,9 @@ class FuncoesTableauxLPO extends Model
 
 				return;
 			case null:
+				if ($contador!=0) {
+					FuncoesTableauxLPO::removerFormula($nosFolha,$pai['info']);
+				}
 				//Se for atômico devemos adicionar na hash e verificar se casa com alguma fórmula
 				if(FuncoesTableauxLPO::checaAtomicoLPO($pai['info'])){
 					if(FuncoesTableauxLPO::casarFormulaLPO($pai['hashAtomos'],$pai['info'])){
@@ -1678,6 +1694,12 @@ class FuncoesTableauxLPO extends Model
 				}
 			}
 			$form=$aux;
+		}		
+	}
+	//Remove campos direito e conectivo de um array se eles estão vazios
+	public static function corrigeArraysLPO2(&$form){
+		if (@$form['info']['direito']==NULL && @$form['info']['conectivo']['operacao']==null && @is_array($form['info']['esquerdo'])) {
+			$form['info']=$form['info']['esquerdo']['info'];
 		}
 	}
 	public static function temConectivo($form){
@@ -2201,16 +2223,11 @@ class FuncoesTableauxLPO extends Model
 						$aux=$aux.$form['direito']."))";
 					}
 					else{
-						if (@$form['info']['direito']['info']) {
-							$aux=$aux.$form['info']['direito']['info'];
+						if (@$form['direito']['info']!=null && @$form['direito']['info']!=true) {
+							$aux=$aux.$form['direito']['info'];
 						}
 						else{
-							if ($form['direito']['info']!=null && $form['direito']['info']!=true) {
-								$aux=$aux.$form['direito']['info'];
-							}
-							else{
-								$aux=$aux.$form['direito'].")";
-							}
+							$aux=$aux.$form['direito'].")";
 						}
 					}
 					$form=$aux;
