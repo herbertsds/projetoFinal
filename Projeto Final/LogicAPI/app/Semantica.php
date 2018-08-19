@@ -25,7 +25,7 @@ class Semantica extends Model
     	$entrada=null;
     	//Passo 1 - Recebe entrada e parâmetros
     	$entrada = $this->exercicioEscolhido;
-		$dominio= array ('0','1','2');
+		$dominio= array ('0','1');
 		$tamanho=count($entrada);		
 		$entradaConvertida=FuncoesSemantica::processaEntradaSemantica($entrada);
 		print_r($entradaConvertida);

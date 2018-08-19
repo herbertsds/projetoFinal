@@ -11,7 +11,7 @@ use App\TableauxLPO;
 class TableauxLPOController extends Controller
 {   
     public function index(Request $numeroExercicio){
-        //Exercícios 72 até o 138
+        //Exercícios 72 até o 137
 
 
     	$exercicio = Exercicios::getExercicio(115);
