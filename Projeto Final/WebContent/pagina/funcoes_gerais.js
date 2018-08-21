@@ -20,6 +20,7 @@
 	var vet_idListas = [];
 	var exercicios;
 	var inicio =0;
+	var manual = false;
 	// funcao apenas para testes de eventos
 	function teste(){
 		
@@ -464,14 +465,43 @@
 			alert("Regra inválida!");
 		}
 		else{
+			var myData = {
+			        'formulas': $('#regra').val()
+			    };
+		
+			$.ajax({
 
-			regras++;
+			url: 'http://127.0.0.1:8000/api/exercicios/verificaFormula',
+	    	type: 'GET',
+	        callback: '?',
+	        data: myData, 
+	        datatype: 'application/json',
+	       
+	        success: function(retorno) {
+	        	
+	        	console.log(retorno);
+	        	if(retorno ==0){
+					regras++;
+		
+					vet_regras.push($('#regra').val().replace(/\s/gi, ''));
+					adicionadas = $('#regra').val();
+					
+					$('#regrasAdicionadas').append("<br/>" + regras + ": " + adicionadas );
+					$('#regra').val("");
+	        	}
+	        	
+	        	else{
+	        		alert("Fórmula inválida! Verifique os parênteses e conectivos!" );
 
-			vet_regras.push($('#regra').val().replace(/\s/gi, ''));
-			adicionadas = $('#regra').val();
+	        	}
+	        },
+
 			
-			$('#regrasAdicionadas').append("<br/>" + regras + ": " + adicionadas );
-			$('#regra').val("");
+			error: function() {
+				
+				console.log('ERRO: fórmula invalida');
+				},
+		    });
 		}
 	} 
 	
@@ -480,20 +510,55 @@
 			alert("Pergunta inválida!");
 		}
 		else{
-			encerrado = confirm("Tem certeza que todas as regras do BD foram adicionadas?");
-			if(encerrado){
-				linhaPerg = regras + 1;
-				pergunta = $('#pergunta').val().replace(/\s/gi, '');
-				$('#perguntaAdicionada').append("<br/>" +linhaPerg + ": " + $('#pergunta').val() );
-				$('#pergunta').val("Pergunta Adicionada!!");
-				$('#regra').prop('disabled', true);
-				$('#pergunta').prop('disabled', true);
-				$('#buttonRegra').hide();
-				$('#buttonPergunta').hide();
-				atualizaTela(tipoEx);
-				$('#tabExecucao').click();
+			var myData = {
+			        'formulas': $('#pergunta').val().replace(/\s/gi, '')
+			    };
+		
+			$.ajax({
+
+			url: 'http://127.0.0.1:8000/api/exercicios/verificaFormula',
+	    	type: 'GET',
+	        callback: '?',
+	        data: myData, 
+	        datatype: 'application/json',
+	       
+	        success: function(retorno) { 
+	        	
+	        if(retorno==0){
+	        	
+				encerrado = confirm("Tem certeza que todas as regras do BD foram adicionadas?");
 				
-			}
+				if(encerrado){
+					pergunta = $('#pergunta').val().replace(/\s/gi, '');
+					exercicioBuscado = [];
+					for(i=0;i in vet_regras;i++){
+						exercicioBuscado[i] = vet_regras[i];
+					}
+					
+					exercicioBuscado[exercicioBuscado.length] = pergunta;
+					linhaPerg = regras + 1;
+					$('#perguntaAdicionada').append("<br/>" +linhaPerg + ": " + $('#pergunta').val() );
+					$('#pergunta').val("Pergunta Adicionada!!");
+					$('#regra').prop('disabled', true);
+					$('#pergunta').prop('disabled', true);
+					$('#buttonRegra').hide();
+					$('#buttonPergunta').hide();
+					atualizaTela(tipoEx);
+					$('#tabExecucao').click();
+					manual = true;
+				}
+	        }
+	        else{
+	        	alert("Pergunta Inválida!");
+	        	
+	        	}
+	        },
+	    	
+			error: function() {
+				
+				console.log('ERRO: fórmula invalida');
+				},
+		    });		
 		}
 		
 	}

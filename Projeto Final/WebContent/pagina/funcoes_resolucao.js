@@ -167,7 +167,6 @@ var verificar = 0;
 				console.log("-------");
 
 				perguntaNegada = retorno[retorno.length -1];
-				//console.log(perguntaNegada);
 		        numLinha++;
 				linhasGab++;
 				idPergNegada = cont;
@@ -186,9 +185,7 @@ var verificar = 0;
 				perguntaNegada = true;
 				
 				$('#btn_TransformarRegra').text("Passar para FNC");
-				
-//				$(this).prop("disabled", true);
-//				$(this).prop("checked", true);
+
 		},
 		
 		error: function() {
@@ -225,7 +222,6 @@ var verificar = 0;
 							'formulas' : vet_Entrada[2]
 		
 			};
-			//console.log(myData);
 			$.ajax({
 	    		
 		        url: 'http://127.0.0.1:8000/api/resolucao/stepByStep',
@@ -318,7 +314,6 @@ var verificar = 0;
 							'formulas' : vet_Entrada[2]
 		
 			};
-			//console.log(myData);
 			$.ajax({
 	    		
 		        url: 'http://127.0.0.1:8000/api/resolucao/stepByStep',
@@ -411,12 +406,7 @@ var verificar = 0;
 
 						$("input[type=checkbox]").prop("disabled", true);
 						$("input[type=checkbox]").prop("checked", true);
-//						$('span').css({
-//		   					'color':'black'
-//			        	});	
-//			        	$('p').css({
-//		   					'color':'black'
-//			        	});	
+
 						$('#alertResolucao').fadeOut();
 						console.log("resolvido!");
 
@@ -521,7 +511,6 @@ var verificar = 0;
 				        	
 						 }
 				        	
-			//		return formula;
 				},
 				
 				error: function() {
@@ -544,10 +533,7 @@ var verificar = 0;
 		    camposMarcados.push($(this).val());
 		    selecionadas = selecionadas +1;
 		    console.log(selecionadas);
-//		    if(camposMarcados.length == 2){
-//				$(this).prop("disabled", true);
-//				$(this).prop("checked", false);
-//		    }
+
 		});
 		
 		if(camposMarcados.length >= 2 ){
@@ -580,10 +566,8 @@ var verificar = 0;
 			        console.log(retorno);
 					console.log("-------");
 					$("input[type=checkbox][name='ck_novasFormulas']:checked").each(function(){
-//						var myRe = /¬?(\w+)/;
-////						if(myRe.test($(this).val()))
-//						console.log(myRe.exec($(this).val())['index'])
-//						if(myRe.exec($(this).val())['index'] >2){
+
+						
 						if($(this).val().length > 4){
 							$(this).prop("disabled", true);
 							$(this).prop("checked", false);
@@ -645,12 +629,7 @@ var verificar = 0;
 
 						$("input[type=checkbox]").prop("disabled", true);
 						$("input[type=checkbox]").prop("checked", true);
-//						$('span').css({
-//		   					'color':'black'
-//			        	});	
-//			        	$('p').css({
-//		   					'color':'black'
-//			        	});	
+
 						$('#alertResolucao').fadeOut();
 						console.log("resolvido!");
 
@@ -675,10 +654,14 @@ var verificar = 0;
 	}
 
 function f_GabResolucao(){
-
-	var myData = { 'exercicio' : parseInt(numExercicio)};
-	console.log(' enviando : ' + myData);
-
+	if(manual = false){
+		var myData = { 'exercicio' : parseInt(numExercicio)};
+		console.log(' enviando : ' + myData);
+		}
+	else{
+		var myData = { 'formulas' : exercicioBuscado};
+		console.log(' enviando : ' + myData);
+	}
 	$.ajax({
 		
         url: 'http://127.0.0.1:8000/api/resolucao/',
