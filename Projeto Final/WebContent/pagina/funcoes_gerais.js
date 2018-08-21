@@ -422,7 +422,8 @@
 		switch(forma){
 			case "novoExercicio":
 				//console.log("aqui");
-//				f_LimpaTipo();
+				f_LimpaTipo();
+				f_LimpaDesenvolvimento();
 				$('#adicaoExercicio').removeAttr("style");
 				$('#div_Escolha').attr("style", 'display : none');
 				$('#div_ListasSup').attr("style", 'display : none');
@@ -431,8 +432,8 @@
 				
 			case "listarEx":
 				//console.log("listar");
-//				f_LimpaTipo();
-				
+				f_LimpaTipo();
+				f_LimpaDesenvolvimento();
 				f_BuscaListas();
 
 				
@@ -488,6 +489,8 @@
 					
 					$('#regrasAdicionadas').append("<br/>" + regras + ": " + adicionadas );
 					$('#regra').val("");
+            		$("#buttonRemoverRegra").removeAttr("style");
+
 	        	}
 	        	
 	        	else{
@@ -546,6 +549,10 @@
 					atualizaTela(tipoEx);
 					$('#tabExecucao').click();
 					manual = true;
+            		$("#buttonRemoverPerg").removeAttr("style");
+		    		$("#buttonRemoverRegra").attr("style",'display:none');   
+
+
 				}
 	        }
 	        else{
@@ -610,8 +617,43 @@
 		
 	}
 	
+	function f_RemoverRegra(){
+			if(regras>0){
+				vet_regras.splice(-1,1);
+				regras--;
+				
+				$('#regrasAdicionadas').html(function(_,html) { 
+				    return html.split(/<br\s*\/?>/i).slice(0,-1).join('<br>')
+				});
+				if(regras ==0){
+		    		$("#buttonRemoverRegra").attr("style",'display:none');   
 
+				}
+			}
+    		f_LimpaDesenvolvimento();
+
+	}
 	
+	function f_RemoverPerg(){
+		if(regras>0){
+			exercicioBuscado.splice(-1,1);
+			
+			$('#perguntaAdicionada').html(function(_,html) { 
+			    return html.split(/<br\s*\/?>/i).slice(0,-1).join('<br>')
+
+			});
+			$('#regra').prop('disabled', false);
+			$('#pergunta').prop('disabled', false);
+			$('#buttonRegra').show();
+			$('#buttonPergunta').show();
+			$('#pergunta').val("");
+	    		$("#buttonRemoverPerg").attr("style",'display:none');   
+        		$("#buttonRemoverRegra").removeAttr("style");
+        		f_LimpaDesenvolvimento();
+
+			
+		}
+}
 	function f_Gabarito(){
 		
 		switch(tipoEx){
@@ -778,12 +820,20 @@ function f_LimpaTipo(){
 	indice = 0;
 	vet_listas = [];
 	vet_idListas = [];
-	
+	exercicioBuscado = [];
 	f_LimpaTableaux();
 	f_LimpaResolucao();
 	f_LimpaDeducao();
 	f_LimpaSemantica();
 	f_Limpat_lpo();
+	$("#buttonRemoverRegra").attr("style",'display:none');   
+	$('#regra').prop('disabled', false);
+	$('#pergunta').prop('disabled', false);
+	$('#buttonRegra').show();
+	$('#buttonPergunta').show();
+	$('#pergunta').val("");
+	$('#regra').val("");
+
 }
 
 function f_LimpaDesenvolvimento(){
