@@ -35,17 +35,31 @@ class Exercicios extends Model
     			$exercicioLista = Exercicios::find($numeroExercicio);
     		else if($numeroExercicio->exercicio != NULL)
             	$exercicioLista = Exercicios::find($numeroExercicio->exercicio);
+            else if($numeroExercicio->formulas != NULL)
+				$exercicioLista = Exercicios::formatarExercicio($numeroExercicio);
 	        else
 	            $exercicioLista = Exercicios::find(rand(1,Exercicios::contar('tableaux')));
     	}
         if(is_object($exercicioLista))
         	$exercicio = explode(',',$exercicioLista->sentenca);
+        else if(is_string($exercicioLista))
+        	$exercicio = explode(',',$exercicioLista);
         else{
-        	
         	abort(404,"Exercício não encontrado");
         }
 
         return $exercicio;
+    }
+
+    public static function formatarExercicio($exercicios){
+
+        $exercicios_request = "";
+        foreach ($exercicios->formulas as $formula) {
+                $exercicios_request .= $formula.",";
+        }
+        $exercicios_request = substr($exercicios_request, 0, -1);
+
+        return $exercicios_request;
     }
 
     public static function converteEntrada($request){

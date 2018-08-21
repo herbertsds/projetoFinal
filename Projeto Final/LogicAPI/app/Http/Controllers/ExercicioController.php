@@ -10,6 +10,8 @@ use App\Categorias;
 
 use App\Listas;
 
+use App\FuncoesAuxiliares;
+
 class ExercicioController extends Controller
 {
 
@@ -62,6 +64,18 @@ class ExercicioController extends Controller
 
     	// return json_encode($resposta, JSON_UNESCAPED_UNICODE);
     	return Exercicios::converteSaida(json_encode($exercicio, JSON_UNESCAPED_UNICODE));
+    }
+
+    public function verificaFormula(Request $exercicio_request){
+
+   
+        $exercicio = Exercicios::converteEntrada($exercicio_request);
+        // return json_encode($resposta, JSON_UNESCAPED_UNICODE);
+        if(FuncoesAuxiliares::verificaFormulaCorreta($exercicio['formulas']))
+            return 1;
+        else
+            return 0;
+       
     }
 
     public function teste(Request $request){

@@ -38,12 +38,16 @@ Route::group(['prefix' => 'exercicios', 'middleware' => 'cors'], function(){
 	//Pega um exercício específico
 	Route::get('/getExercicio', 'ExercicioController@getExercicio');
 
+	//Recebe um exercício e verifica se o exercício está correto
+	Route::get('/verificaFormula', 'ExercicioController@verificaFormula');
+
 
 	Route::get('/teste', 'ExercicioController@teste');
 	
-	Route::post('', function () {
-	    return 'Exercicios';
-	});
+	Route::post('', 'ExercicioController@gravarExercicio');
+	// Route::post('', function () {
+	//     return 'Exercicios';
+	// });
 
 });
 

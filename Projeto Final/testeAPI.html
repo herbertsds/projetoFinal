@@ -6,13 +6,11 @@
 $(document).ready(function(){
     $("button").click(function(){
     	var myData = {
-	        'operacao': 'SeparaOU',
-	        'qtd_formulasSelecionadas': 2,
-	        'formulas': ["((not(A))ouB)", "(A)"]
+	        'formulas': ["(((not(A))ouB)", "(CouD)", "(AouB)"]
 	    };
 
         $.ajax({
-	        url: 'http://127.0.0.1:8000/api/resolucao/stepByStep',
+	        url: 'http://127.0.0.1:8000/api/resolucao/',
 	        type: 'GET',
 	        callback: '?',
 	        data: myData,
@@ -29,7 +27,7 @@ $(document).ready(function(){
 
 	        },
 	        error: function(erro) {
-				alert(erro.responseText);
+				console.log(erro.responseText);
 			}
 	    });
     });
