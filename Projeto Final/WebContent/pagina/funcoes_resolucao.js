@@ -250,13 +250,13 @@ var verificar = 0;
 				
 			else{
 			        for(var i=0;i<retorno[0].length;i++){
-			        	console.log("len" + retorno[0].length);
+			        	//console.log("len" + retorno[0].length);
 			        	if(camposMarcados.indexOf(retorno[0][i]) < 0){
 							cont++;
 							numLinha++;
 							linhasGab++;
 							$('#r_divNovasFormulas').append("<input  type='checkbox' class='form-check-input' data-color = 'purple' name='ck_novasFormulas' id='" + cont +"' value='" + retorno[0][i] +"'> "+ numLinha + ": "  + retorno[0][i] +"</br>"  );
-							console.log(camposMarcados.indexOf(retorno[0][i]));
+							//console.log(camposMarcados.indexOf(retorno[0][i]));
 							vet_regras[cont]= retorno[0][i];
 							vet_verificar[verificar] = retorno[0][i];
 							verificar++;
@@ -264,7 +264,7 @@ var verificar = 0;
 						}
 			        	else{
 							// reabilitar o que repete
-						console.log(vet_regras.indexOf(retorno[0][i]));
+						//console.log(vet_regras.indexOf(retorno[0][i]));
 						var counts = [];
 					    for (j = 0; j < vet_regras.length; j++){
 					      if (vet_regras[j] === retorno[0][i]) {  
@@ -272,7 +272,7 @@ var verificar = 0;
 					        
 					      }
 					    }
-					    console.log(counts);
+					    //console.log(counts);
 							alert("Formula "+ retorno[0][i]+ " não pode ser separada!" );
 							$('input[id='+counts[counts.length-1]+']').prop("disabled", false);
 							$('input[id='+counts[counts.length-1]+']').prop("checked", false);
@@ -330,7 +330,7 @@ var verificar = 0;
 							numLinha++;
 							linhasGab++;
 							$('#r_divNovasFormulas').append("<input  type='checkbox' class='form-check-input' data-color = 'purple' name='ck_novasFormulas' id='" + cont +"' value='" + retorno[0][i] +"'> "+ numLinha + ": "  + retorno[0][i] +"</br>"  );
-							console.log(camposMarcados.indexOf(retorno[0][i]));
+							//console.log(camposMarcados.indexOf(retorno[0][i]));
 							vet_regras[cont]= retorno[0][i];
 							vet_verificar[verificar] = retorno[0][i];
 							verificar++;
@@ -338,7 +338,7 @@ var verificar = 0;
 						}
 				        	else{
 								// reabilitar o que repete
-							console.log(vet_regras.indexOf(retorno[0][i]));
+							//console.log(vet_regras.indexOf(retorno[0][i]));
 							var counts = [];
 						    for (j = 0; j < vet_regras.length; j++){
 						      if (vet_regras[j] === retorno[0][i]) {  
@@ -346,7 +346,7 @@ var verificar = 0;
 						        
 						      }
 						    }
-						    console.log(counts);
+						    //console.log(counts);
 								alert("Formula "+ retorno[0][i]+ " não pode ser separada!" );
 								$('input[id='+counts[counts.length-1]+']').prop("disabled", false);
 								$('input[id='+counts[counts.length-1]+']').prop("checked", false);
@@ -385,7 +385,7 @@ var verificar = 0;
 	       
 	        success: function(retorno) {
 	        	 if(retorno[1].toUpperCase() == 'NÃO FECHADO'){
-			        	console.log('ok');
+			        	//console.log('ok');
 			        	alert("Exercício ainda não resolvido!");
 			        }
 			        else{
@@ -468,7 +468,7 @@ var verificar = 0;
 							$(this).prop("disabled", true);
 							$(this).prop("checked", false);
 						});
-						console.log("tam ="+ retorno[0].length );
+						//console.log("tam ="+ retorno[0].length );
 						 if(retorno[0].length == 0){
 					        	
 									alert("Formula "+ retorno[0][i]+ " não pode ser separada!" );
@@ -485,7 +485,7 @@ var verificar = 0;
 									numLinha++;
 									linhasGab++;
 									$('#r_divNovasFormulas').append("<input  type='checkbox' class='form-check-input' data-color = 'purple' name='ck_novasFormulas' id='" + cont +"' value='" + retorno[0][i] +"'> "+ numLinha + ": "  + retorno[0][i] +"</br>"  );
-									console.log(camposMarcados.indexOf(retorno[0][i]));
+									//console.log(camposMarcados.indexOf(retorno[0][i]));
 									vet_regras[cont]= retorno[0][i];
 									vet_verificar[verificar] = retorno[0][i];
 									verificar++;
@@ -493,7 +493,7 @@ var verificar = 0;
 								}
 								else{
 										// reabilitar o que repete
-									console.log(vet_regras.indexOf(retorno[0][i]));
+									//console.log(vet_regras.indexOf(retorno[0][i]));
 									var counts = [];
 								    for (j = 0; j < vet_regras.length; j++){
 								      if (vet_regras[j] === retorno[0][i]) {  
@@ -501,7 +501,7 @@ var verificar = 0;
 								        
 								      }
 								    }
-								    console.log(counts);
+								    //console.log(counts);
 										alert("Formula "+ retorno[0][i]+ " não pode ser separada!" );
 										$('input[id='+counts[counts.length-1]+']').prop("disabled", false);
 										$('input[id='+counts[counts.length-1]+']').prop("checked", false);
@@ -524,15 +524,15 @@ var verificar = 0;
 		
 
 		selecionadas = 0;
-	    console.log(selecionadas);
+	    //console.log(selecionadas);
 
 		vet_Entrada = [];		
 		camposMarcados = new Array();
 		$("input[type=checkbox][name='ck_novasFormulas']:checked").each(function(){
-			console.log("aqui");
+			//console.log("aqui");
 		    camposMarcados.push($(this).val());
 		    selecionadas = selecionadas +1;
-		    console.log(selecionadas);
+		    //console.log(selecionadas);
 
 		});
 		
@@ -581,7 +581,7 @@ var verificar = 0;
 							 for(var i=0;i<retorno[0].length;i++){
 						 
 					        	if(camposMarcados.indexOf(retorno[0][i]) < 0){
-						        		console.log(camposMarcados.indexOf(retorno[0][i]));
+						        		//console.log(camposMarcados.indexOf(retorno[0][i]));
 									cont++;
 									numLinha++;
 									linhasGab++;
@@ -593,7 +593,7 @@ var verificar = 0;
 					        	}
 					        	else{
 										// reabilitar o que repete
-									console.log("retorno" + vet_regras.indexOf(retorno[0][i]));
+									//console.log("retorno" + vet_regras.indexOf(retorno[0][i]));
 									var counts = [];
 								    for (j = 0; j < vet_regras.length; j++){
 								      if (vet_regras[j] === retorno[0][i]) {  
@@ -601,7 +601,7 @@ var verificar = 0;
 								        
 								      }
 								    }
-							    console.log(counts);
+							    //console.log(counts);
 									alert("Formula "+ retorno[0][i]+ " não pode ser separada!" );
 									$('input[id='+counts[counts.length-1]+']').prop("disabled", false);
 									$('input[id='+counts[counts.length-1]+']').prop("checked", false);
@@ -609,7 +609,7 @@ var verificar = 0;
 					        	
 							 }
 			        if(retorno[1].toUpperCase() == 'NÃO FECHADO'){
-			        	console.log('ok');
+			        	//console.log('ok');
 			        }
 			        else{
 			        	console.log("FIM DO EXERCICIO!!");

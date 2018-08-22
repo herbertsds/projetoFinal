@@ -141,7 +141,7 @@
         
         $("#botaoLpo2").click( function()
     		    {
-    		console.log("aqui");
+    	//	console.log("aqui");
 
     		$("#metodoLpo").removeAttr("style");
     		$("#tipo").attr("style",'display:none');  
@@ -151,7 +151,7 @@
     		 );
         $("#botaoProposicional").click( function()
 			{	
-        		console.log("aqui");
+       // 		console.log("aqui");
         		$("#metodoProposicional").removeAttr("style");
         		$("#tipo").attr("style",'display:none');
 
@@ -161,7 +161,7 @@
         
         $("#botaoProposicional2").click( function()
     			{	
-            		console.log("aqui");
+            //		console.log("aqui");
             		$("#metodoProposicional").removeAttr("style");
             		$("#tipo").attr("style",'display:none');
     	    		$("#metodoLpo").attr("style",'display:none');    		      
@@ -329,7 +329,7 @@
 			break;
 			
 		case "t_lpo":
-			console.log("aqui");
+			//console.log("aqui");
 			$("#divt_lpo").removeAttr("style");
 			
 			$("#divTableaux").attr("style", 'display:none');
@@ -480,7 +480,7 @@
 	       
 	        success: function(retorno) {
 	        	
-	        	console.log(retorno);
+	        	//console.log(retorno);
 	        	if(retorno ==0){
 					regras++;
 		
@@ -827,6 +827,8 @@ function f_LimpaTipo(){
 	f_LimpaSemantica();
 	f_Limpat_lpo();
 	$("#buttonRemoverRegra").attr("style",'display:none');   
+	$("#buttonRemoverPerg").attr("style",'display:none');   
+
 	$('#regra').prop('disabled', false);
 	$('#pergunta').prop('disabled', false);
 	$('#buttonRegra').show();
