@@ -72,9 +72,9 @@ class ExercicioController extends Controller
         $exercicio = Exercicios::converteEntrada($exercicio_request);
         // return json_encode($resposta, JSON_UNESCAPED_UNICODE);
         if(FuncoesAuxiliares::verificaFormulaCorreta($exercicio['formulas']))
-            return Exercicios::converteSaida(json_encode($exercicio, JSON_UNESCAPED_UNICODE));
+            return 1;
         else
-            return 0;
+            return Exercicios::converteSaida(json_encode($exercicio, JSON_UNESCAPED_UNICODE));
        
     }
 
