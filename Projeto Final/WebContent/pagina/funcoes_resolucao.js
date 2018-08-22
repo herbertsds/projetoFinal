@@ -656,11 +656,11 @@ var verificar = 0;
 function f_GabResolucao(){
 	if(manual == false){
 		var myData = { 'exercicio' : parseInt(numExercicio)};
-		console.log(' enviando : ' + myData);
+		console.log(' enviando : ' + parseInt(numExercicio));
 		}
 	else{
 		var myData = { 'formulas' : exercicioBuscado};
-		console.log(' enviando : ' + myData);
+		console.log(' enviando : ' + exercicioBuscado);
 	}
 	$.ajax({
 		

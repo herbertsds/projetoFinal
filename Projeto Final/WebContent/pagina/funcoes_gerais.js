@@ -427,7 +427,6 @@
 				$('#adicaoExercicio').removeAttr("style");
 				$('#div_Escolha').attr("style", 'display : none');
 				$('#div_ListasSup').attr("style", 'display : none');
-				manual = true;
 				break;
 				
 			case "listarEx":
@@ -480,12 +479,15 @@
 	       
 	        success: function(retorno) {
 	        	
-	        	//console.log(retorno);
-	        	if(retorno ==0){
-					regras++;
-		
-					vet_regras.push($('#regra').val().replace(/\s/gi, ''));
-					adicionadas = $('#regra').val();
+	        	
+	        	if(retorno != 1){
+	        		retorno = JSON.parse(retorno);
+					manual = true;
+
+	        		regras++;
+	        		//console.log(retorno['formulas']);
+					vet_regras.push(retorno['formulas']);
+					adicionadas =retorno['formulas'];
 					
 					$('#regrasAdicionadas').append("<br/>" + regras + ": " + adicionadas );
 					$('#regra').val("");
@@ -527,20 +529,22 @@
 	       
 	        success: function(retorno) { 
 	        	
-	        if(retorno==0){
+	        if(retorno!=1){
 	        	
 				encerrado = confirm("Tem certeza que todas as regras do BD foram adicionadas?");
 				
 				if(encerrado){
-					pergunta = $('#pergunta').val().replace(/\s/gi, '');
+	        		retorno = JSON.parse(retorno);
+					pergunta = retorno['formulas'];
 					exercicioBuscado = [];
 					for(i=0;i in vet_regras;i++){
 						exercicioBuscado[i] = vet_regras[i];
 					}
-					
+					manual = true;
+
 					exercicioBuscado[exercicioBuscado.length] = pergunta;
 					linhaPerg = regras + 1;
-					$('#perguntaAdicionada').append("<br/>" +linhaPerg + ": " + $('#pergunta').val() );
+					$('#perguntaAdicionada').append("<br/>" +linhaPerg + ": " + retorno['formulas'] );
 					$('#pergunta').val("Pergunta Adicionada!!");
 					$('#regra').prop('disabled', true);
 					$('#pergunta').prop('disabled', true);
@@ -835,7 +839,7 @@ function f_LimpaTipo(){
 	$('#buttonPergunta').show();
 	$('#pergunta').val("");
 	$('#regra').val("");
-	
+	manual = false;
 }
 
 function f_LimpaDesenvolvimento(){
