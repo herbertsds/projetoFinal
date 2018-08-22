@@ -262,26 +262,44 @@
 		                            	<div class="row">
 											<div class="col-sm-14 col-sm-offset-4" id='div_Escolha'>
 											
-<!-- 		                                		<div class="dropdown"> -->
-<!-- 												  <button onclick='f_PreencheDrop()' class="btn btn-success btn-sm dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> -->
-<!-- 												    Lista de Exercícíos TEMP &#8711;  -->
-<!-- 												  </button> -->
-<!-- 												  <div id="listaEx" class="dropdown-menu" aria-labelledby="dropdownMenu2"> -->
-<!-- 												    <button class="dropdown-item" type="button">Ex.1</button>  -->
-												    
-<!-- 												  </div> -->
-<!-- 												</div> -->
 												<br/>
 												<button class='btn btn-info btn-sm' type="button" id="listarEx" onClick="f_Escolha(this.id)">Listas de Exercícios</button>
-												<button class='btn btn-info btn-sm' type="button" id="novoExercicio" onClick="f_Escolha(this.id)">Criar Exercício</button>
+												<button class='btn btn-info btn-sm' type="button" id="novoExercicio" onClick="f_Escolha(this.id)" data-toggle="modal" data-target="#exampleModal">Criar Exercício</button>
 												
 
 											</div>
-											
+											<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<!-- #######  MODAL		 -->
+						  <div class="modal-dialog" role="document">
+						    <div class="modal-content">
+						      <div class="modal-header">
+						        <h5 class="modal-title" id="exampleModalLabel">Instruções</h5>
+
+						      </div>
+						      <div class="modal-body">			                            	
+			                            		<article>&#10022; <b>Exemplo de adição de fórmula:</b></article>
+			                            		<article>&nbsp;&nbsp;&nbsp; ¬A∨((B^C)&#x279D; D) deve ser escrita como (notA)ou((BeC)implica(D))</article>			
+			                            		<br/>
+			                            		<article>&#10022; <b>Tradução de símbolos: </b></article>
+			                            		<article>&nbsp;&nbsp;&nbsp; ¬ : not</article>
+												<article>&nbsp;&nbsp;&nbsp; ^ : e</article>
+												<article>&nbsp;&nbsp;&nbsp; ∨ : ou</article>		
+												<article>&nbsp;&nbsp;&nbsp; &#x279D; : implica</article>		
+													      
+			                            					      
+			                  </div>
+						      <div class="modal-footer">
+						        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						      </div>
+						    </div>
+						  </div>
+						</div>
+<!-- ------------------------				 -->
+				
 											<div  id='div_ListasSup' style="display: none">		
 												<div class="col-sm-14 col-sm-offset-1">
 																						
-													<button class='btn btn-default btn-xs' type="button" onClick="f_Escolha('novoExercicio')"> Novo Exercício </button>
+													<button class='btn btn-default btn-xs' type="button" onClick="f_Escolha('novoExercicio')"data-toggle="modal" data-target="#exampleModal"> Novo Exercício </button>
 			                            		</div>									
 											
 											</div>
@@ -292,13 +310,10 @@
 																					
 												<button class='btn btn-default btn-xs' type="button" onClick="f_Escolha('listarEx')"> Listas </button>
 		                            		</div>
-			                            	<div class="col-sm-8 col-sm-offset-3">
 			                            	
-			                            		<article>&#10022; Adicione um novo exercício</article>
-			                            		<article>&#10022; Exemplo de adição de fórmula:</article>
-			                            		<article> ¬A∨((B^C)&#x279D; D) deve ser escrita como (notA)ou((BeC)implica(D))</article>
+												<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#exampleModal">
+												Instruções </button>
 			                            	</br>
-			                            	</div>
 			                            	<div class="col-sm-4 col-sm-offset-1">
 												
 												<div class="input-group">											
