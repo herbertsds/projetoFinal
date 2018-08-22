@@ -427,7 +427,7 @@
 				$('#adicaoExercicio').removeAttr("style");
 				$('#div_Escolha').attr("style", 'display : none');
 				$('#div_ListasSup').attr("style", 'display : none');
-
+				manual = true;
 				break;
 				
 			case "listarEx":
@@ -436,7 +436,7 @@
 				f_LimpaDesenvolvimento();
 				f_BuscaListas();
 
-				
+				manual = false;
 				$('#div_ListasSup').removeAttr("style");
 				$('#div_Escolha').attr("style", 'display : none');
 				$('#adicaoExercicio').attr("style", 'display : none');
@@ -835,7 +835,7 @@ function f_LimpaTipo(){
 	$('#buttonPergunta').show();
 	$('#pergunta').val("");
 	$('#regra').val("");
-
+	
 }
 
 function f_LimpaDesenvolvimento(){

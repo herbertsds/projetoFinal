@@ -654,7 +654,7 @@ var verificar = 0;
 	}
 
 function f_GabResolucao(){
-	if(manual = false){
+	if(manual == false){
 		var myData = { 'exercicio' : parseInt(numExercicio)};
 		console.log(' enviando : ' + myData);
 		}
