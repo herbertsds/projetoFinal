@@ -58,6 +58,9 @@ Route::group(['prefix' => 'resolucao', 'middleware' => 'cors'], function(){
 	Route::get('/', 'ResolucaoController@index');
 
 	Route::get('/stepByStep', 'ResolucaoController@stepByStep');
+
+	//Validação de exercício de resolução
+	Route::get('/validaExercicio', 'ResolucaoController@validaExercicio');
 	
 	//Teste de relacionamento (não usar)
 	Route::get('/teste', 'ResolucaoController@teste');

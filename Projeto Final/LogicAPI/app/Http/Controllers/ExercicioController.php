@@ -71,7 +71,7 @@ class ExercicioController extends Controller
     public function verificaFormula(Request $exercicio_request){
 
         $exercicio = Exercicios::converteEntrada($exercicio_request);
-        // return $exercicio['formulas'];
+        // return $exercicio;
         // return json_encode($resposta, JSON_UNESCAPED_UNICODE);
         if(FuncoesAuxiliares::verificaFormulaCorreta($exercicio['formulas']))
             return 1;

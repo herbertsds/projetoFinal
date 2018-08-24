@@ -870,9 +870,14 @@ class Resolucao extends Model
 		return array($resposta,$statusFechado);
     }
 
-    public function validaExercicio($numeroExercicio){
+    public static function validaExercicio($numeroExercicio){
 
     	$exercicio = Exercicios::getExercicio($numeroExercicio);
+    	if(is_array($exercicio)){
+	          foreach ($exercicio as $key => $value) {
+	              $exercicio[$key] = Exercicios::converteSimbolosEntrada($exercicio[$key]);
+	          }
+	      }
         //$exercicio = Exercicios::getExercicio(1);
 
         // $exercicioLista = new Exercicios('resolucao');

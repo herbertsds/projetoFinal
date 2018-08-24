@@ -478,7 +478,7 @@
 	        datatype: 'application/json',
 	       
 	        success: function(retorno) {
-	        	
+	        	console.log(retorno);
 	        	
 	        	if(retorno != 1){
 	        		retorno = JSON.parse(retorno);
@@ -502,9 +502,10 @@
 	        },
 
 			
-			error: function() {
+			error: function(erro) {
 				
 				console.log('ERRO: fórmula invalida');
+				// console.log(erro.responseText);
 				},
 		    });
 		}
