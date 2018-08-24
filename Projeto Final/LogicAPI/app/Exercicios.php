@@ -98,6 +98,8 @@ class Exercicios extends Model
     	$string = str_replace("f∧chado","fechado",$string);
 
     	$string = str_replace("F∧chado","Fechado",$string);
+
+    	$string = str_replace("fals∧","false",$string);
     	
     	
 

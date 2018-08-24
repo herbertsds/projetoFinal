@@ -12,6 +12,8 @@ use App\Listas;
 
 use App\FuncoesAuxiliares;
 
+use App\Resolucao;
+
 class ExercicioController extends Controller
 {
 
@@ -68,8 +70,8 @@ class ExercicioController extends Controller
 
     public function verificaFormula(Request $exercicio_request){
 
-   
         $exercicio = Exercicios::converteEntrada($exercicio_request);
+        // return $exercicio['formulas'];
         // return json_encode($resposta, JSON_UNESCAPED_UNICODE);
         if(FuncoesAuxiliares::verificaFormulaCorreta($exercicio['formulas']))
             return 1;

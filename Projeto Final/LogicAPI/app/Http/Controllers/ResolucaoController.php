@@ -18,6 +18,10 @@ class ResolucaoController extends Controller
 	//Resolve um exercício específico
     public function index(Request $numeroExercicio){
 
+      if(Resolucao::verificaExercicio($numeroExercicio)){
+          return 1;
+      }
+
     	$exercicio = Exercicios::getExercicio($numeroExercicio);
       //$exercicio = Exercicios::getExercicio(1);
 
@@ -53,6 +57,10 @@ class ResolucaoController extends Controller
     }
 
     public function stepByStep(Request $request){
+
+      if(Resolucao::verificaExercicio($request)){
+          return 1;
+      }
     	//return Exercicios::converteEntrada($request);
     	$resposta = new Resolucao();
 

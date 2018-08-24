@@ -103,3 +103,14 @@ Route::group(['prefix' => 'semantica', 'middleware' => 'cors'], function(){
 	});
 
 });
+
+// api/resolucao/
+Route::group(['prefix' => 'deducaoNatural', 'middleware' => 'cors'], function(){
+	
+	//Inicia a construção da árvore de DN
+	Route::get('/', 'DNController@index');
+
+	//Resolve um passo de um exercício específico
+	Route::get('/step', 'DNController@step');
+
+});
