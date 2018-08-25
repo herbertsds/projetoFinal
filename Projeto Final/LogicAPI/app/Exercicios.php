@@ -63,10 +63,21 @@ class Exercicios extends Model
     }
 
     public static function converteEntrada($request){
-    	$request = $request->all();
-    	$request['formulas'] = Exercicios::converteSimbolosEntrada($request['formulas']);
-    	return $request;
-    	
+
+		$request = $request->all();
+		
+		$request['formulas'] = Exercicios::converteSimbolosEntrada($request['formulas']);
+		return $request;
+    }
+
+    public static function converteNEntradas($request){
+    	if(is_array($request['formulas'])){
+			$requestNovo = $request;
+			foreach ($request['formulas'] as $key => $value) {
+				$requestNovo['formulas'][$key] = Exercicios::converteSimbolosEntrada($value);
+				return $requestNovo;
+			}
+		}
     }
 
     public static function converteSaida($string){
@@ -98,6 +109,8 @@ class Exercicios extends Model
     	$string = str_replace("f∧chado","fechado",$string);
 
     	$string = str_replace("F∧chado","Fechado",$string);
+
+    	$string = str_replace("fals∧","false",$string);
     	
     	
 

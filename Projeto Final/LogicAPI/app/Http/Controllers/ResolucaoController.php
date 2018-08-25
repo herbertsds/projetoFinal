@@ -18,9 +18,18 @@ class ResolucaoController extends Controller
 	//Resolve um exercício específico
     public function index(Request $numeroExercicio){
 
-    	$exercicio = Exercicios::getExercicio($numeroExercicio);
-      //$exercicio = Exercicios::getExercicio(1);
+      if(Resolucao::validaExercicio($numeroExercicio)){
+        return 1;
+      }
 
+    	$exercicio = Exercicios::getExercicio($numeroExercicio);
+      if(is_array($exercicio)){
+          foreach ($exercicio as $key => $value) {
+              $exercicio[$key] = Exercicios::converteSimbolosEntrada($exercicio[$key]);
+          }
+      }
+      // $exercicio = Exercicios::getExercicio(1);
+      // return $exercicio;
     	// $exercicioLista = new Exercicios('resolucao');
     	$resposta = new Resolucao($exercicio);
 
@@ -53,6 +62,8 @@ class ResolucaoController extends Controller
     }
 
     public function stepByStep(Request $request){
+
+      // return ;
     	//return Exercicios::converteEntrada($request);
     	$resposta = new Resolucao();
 
@@ -61,5 +72,12 @@ class ResolucaoController extends Controller
       //print_r($resposta->stepByStep($request));
 
     	return Exercicios::converteSaida($resposta->stepByStep(Exercicios::converteEntrada($request)));
+    }
+
+    public function validaExercicio(Request $request){
+//         return $request;
+        if(Resolucao::validaExercicio($request)){
+          return 1;
+        }
     }
 }

@@ -58,6 +58,9 @@ Route::group(['prefix' => 'resolucao', 'middleware' => 'cors'], function(){
 	Route::get('/', 'ResolucaoController@index');
 
 	Route::get('/stepByStep', 'ResolucaoController@stepByStep');
+
+	//Validação de exercício de resolução
+	Route::get('/validaExercicio', 'ResolucaoController@validaExercicio');
 	
 	//Teste de relacionamento (não usar)
 	Route::get('/teste', 'ResolucaoController@teste');
@@ -101,5 +104,16 @@ Route::group(['prefix' => 'semantica', 'middleware' => 'cors'], function(){
 	Route::post('', function () {
 	    return request();
 	});
+
+});
+
+// api/resolucao/
+Route::group(['prefix' => 'deducaoNatural', 'middleware' => 'cors'], function(){
+	
+	//Inicia a construção da árvore de DN
+	Route::get('/', 'DNController@index');
+
+	//Resolve um passo de um exercício específico
+	Route::get('/step', 'DNController@step');
 
 });

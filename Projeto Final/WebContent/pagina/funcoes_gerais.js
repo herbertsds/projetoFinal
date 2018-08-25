@@ -427,6 +427,8 @@
 				$('#adicaoExercicio').removeAttr("style");
 				$('#div_Escolha').attr("style", 'display : none');
 				$('#div_ListasSup').attr("style", 'display : none');
+				$('#proximo').prop('disabled', true);
+				$('#tabExecucao').prop('disabled', true);
 				break;
 				
 			case "listarEx":
@@ -439,6 +441,8 @@
 				$('#div_ListasSup').removeAttr("style");
 				$('#div_Escolha').attr("style", 'display : none');
 				$('#adicaoExercicio').attr("style", 'display : none');
+				$('#proximo').prop('disabled', false);
+				$('#tabExecucao').prop('disabled', false);
 				break;
 		}
 		
@@ -466,7 +470,7 @@
 		}
 		else{
 			var myData = {
-			        'formulas': $('#regra').val()
+			        'formulas': $('#regra').val().replace(/\s/gi, '')
 			    };
 		
 			$.ajax({
@@ -478,7 +482,7 @@
 	        datatype: 'application/json',
 	       
 	        success: function(retorno) {
-	        	
+	        	//console.log(retorno);
 	        	
 	        	if(retorno != 1){
 	        		retorno = JSON.parse(retorno);
@@ -502,9 +506,10 @@
 	        },
 
 			
-			error: function() {
+			error: function(erro) {
 				
 				console.log('ERRO: fórmula invalida');
+				// console.log(erro.responseText);
 				},
 		    });
 		}
@@ -522,6 +527,7 @@
 			$.ajax({
 
 			url: 'http://127.0.0.1:8000/api/exercicios/verificaFormula',
+			async: false,
 	    	type: 'GET',
 	        callback: '?',
 	        data: myData, 
@@ -533,7 +539,7 @@
 	        	
 				encerrado = confirm("Tem certeza que todas as regras do BD foram adicionadas?");
 				
-				if(encerrado){
+				if(encerrado ==true){
 	        		retorno = JSON.parse(retorno);
 					pergunta = retorno['formulas'];
 					exercicioBuscado = [];
@@ -543,6 +549,8 @@
 					manual = true;
 
 					exercicioBuscado[exercicioBuscado.length] = pergunta;
+				
+					
 					linhaPerg = regras + 1;
 					$('#perguntaAdicionada').append("<br/>" +linhaPerg + ": " + retorno['formulas'] );
 					$('#pergunta').val("Pergunta Adicionada!!");
@@ -551,11 +559,10 @@
 					$('#buttonRegra').hide();
 					$('#buttonPergunta').hide();
 					atualizaTela(tipoEx);
-					$('#tabExecucao').click();
 					manual = true;
             		$("#buttonRemoverPerg").removeAttr("style");
-		    		$("#buttonRemoverRegra").attr("style",'display:none');   
-
+		    		$("#buttonRemoverRegra").prop("disabled",true);   
+					f_verificaEx();	
 
 				}
 	        }
@@ -569,11 +576,56 @@
 				
 				console.log('ERRO: fórmula invalida');
 				},
-		    });		
-		}
+		    });	
+
+
+			}
 		
 	}
 	
+	function f_verificaEx(){
+		console.log("verificando EX");
+
+		var myData2 = {
+				'formulas': exercicioBuscado
+		};
+	  //     console.log(myData2);
+
+		$.ajax({
+
+			url: 'http://127.0.0.1:8000/api/resolucao/validaExercicio',
+	    	type: 'GET',
+	    	async: false,
+	        callback: '?',
+	        data: myData2, 
+	        datatype: 'application/json',
+	        success: function(retorno2) {
+	        //console.log(retorno2);	
+	        
+	        if(retorno2!=1){
+	        	console.log("exercicio possui solução.")
+				$('#proximo').prop('disabled', false);
+				$('#tabExecucao').prop('disabled', false);
+				$('#tabExecucao').click();
+
+	        }
+	        else{
+				$('#tabExercicio').click();
+				$('#proximo').prop('disabled', true);
+				$('#tabExecucao').prop('disabled', true);
+	        	alert("Exercício inválido!\nOu ele não possui solução ou está digitado incorretamente.");
+	        	
+	        	return;
+	        }
+	        },
+			error: function() {
+				
+				console.log('ERRO: url valida ex falhou! no verificaEX() linha 580');
+				},
+		    });	
+			
+
+	}
 	// FALTA PERMITIR EXCLUSAO/ALTERACAO DA PERGUNTA E DE REGRAS
 	
 	function f_SelecionaExercicio(btn_numExercicio){
@@ -639,7 +691,7 @@
 	}
 	
 	function f_RemoverPerg(){
-		if(regras>0){
+		if(pergunta!= ""){
 			exercicioBuscado.splice(-1,1);
 			
 			$('#perguntaAdicionada').html(function(_,html) { 
@@ -651,10 +703,11 @@
 			$('#buttonRegra').show();
 			$('#buttonPergunta').show();
 			$('#pergunta').val("");
-	    		$("#buttonRemoverPerg").attr("style",'display:none');   
-        		$("#buttonRemoverRegra").removeAttr("style");
-        		f_LimpaDesenvolvimento();
-
+    		$("#buttonRemoverRegra").prop("disabled",false);   
+	    	if(regras>0){$("#buttonRemoverRegra").removeAttr("style");}
+        	f_LimpaDesenvolvimento();
+			$('#proximo').prop('disabled', true);
+			$('#tabExecucao').prop('disabled', true);
 			
 		}
 }
@@ -832,6 +885,7 @@ function f_LimpaTipo(){
 	f_Limpat_lpo();
 	$("#buttonRemoverRegra").attr("style",'display:none');   
 	$("#buttonRemoverPerg").attr("style",'display:none');   
+	$("#buttonRemoverRegra").prop("disabled",false);   
 
 	$('#regra').prop('disabled', false);
 	$('#pergunta').prop('disabled', false);
@@ -840,6 +894,8 @@ function f_LimpaTipo(){
 	$('#pergunta').val("");
 	$('#regra').val("");
 	manual = false;
+	$('#proximo').prop('disabled', true);
+	$('#tabExecucao').prop('disabled', true);
 }
 
 function f_LimpaDesenvolvimento(){

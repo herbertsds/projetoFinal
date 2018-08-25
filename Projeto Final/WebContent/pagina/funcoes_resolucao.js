@@ -188,8 +188,9 @@ var verificar = 0;
 
 		},
 		
-		error: function() {
+		error: function(erro) {
 			console.log('ERRO: função  f_Negar!');
+			// console.log(erro.responseText);
 			return 1;
 			},
 	    });
@@ -671,7 +672,7 @@ function f_GabResolucao(){
         datatype: 'application/json',
        
         success: function(retorno) {
-	        //console.log(retorno);
+	        // console.log(retorno);
         	
         	$('#r_divNovasFormulas').text("");
         	$("p[id='" + idPergNegada+"']").text("");
@@ -805,7 +806,10 @@ function f_GabResolucao(){
 
 			
         },
-        error: function() { console.log('ERRO: Gabarito não encontrado!'); },
+        error: function(erro) { 
+        	console.log('ERRO: Gabarito não encontrado!'); 
+        	// console.log(erro.responseText);
+        },
     });
 
 	

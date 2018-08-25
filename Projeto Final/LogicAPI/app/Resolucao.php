@@ -869,4 +869,27 @@ class Resolucao extends Model
 		}
 		return array($resposta,$statusFechado);
     }
+
+    public static function validaExercicio($numeroExercicio){
+
+    	$exercicio = Exercicios::getExercicio($numeroExercicio);
+    	if(is_array($exercicio)){
+	          foreach ($exercicio as $key => $value) {
+	              $exercicio[$key] = Exercicios::converteSimbolosEntrada($exercicio[$key]);
+	          }
+	      }
+        //$exercicio = Exercicios::getExercicio(1);
+
+        // $exercicioLista = new Exercicios('resolucao');
+        $resposta = new Resolucao($exercicio);
+
+        $retorno = $resposta->fullSteps();
+
+        if ($retorno[count($retorno) - 1] == "Fechado" || $retorno[count($retorno) - 1] == "fechado")
+            return 0;
+        else
+            return 1;
+    	
+    }
+
 }
