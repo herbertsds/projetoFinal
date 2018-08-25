@@ -10,6 +10,7 @@ use App\ParsingFormulas;
 
 class FuncoesSemantica extends Model
 {	
+
 	public static function processaEntradaSemantica($listaFormulas){
 		//Tratar a entrada, verificação de digitação correta
 		foreach ($listaFormulas as $key => $value) {
@@ -194,12 +195,15 @@ class FuncoesSemantica extends Model
 		}
 	}
 	public static function criaFormulaSemantica(){
+		global $id;
 		$aux['info']=array('esquerdo' => null, 'conectivo' => array('operacao' => null, 'variavel'=> null), 'direito' =>null);
 		$aux['filhos']=[];
 		$aux['pai']=NULL;
 		$aux['valor']=false;
 		$aux['usado']=false;
 		$aux['proximo']=NULL;
+		$aux['id']=$id+1;
+		$id++;
 		return $aux;
 	}
 
@@ -253,7 +257,7 @@ class FuncoesSemantica extends Model
 		}
 	}
 
-	public static function imprimeArvore(&$raiz){
+	public static function imprimeArvore(&$raiz,&$arvoreSaida,&$listaDeNos,&$indice){
 		
 		print "<br>Fórmula inicial<br>";
 		print "<br>Valor: ";
@@ -272,6 +276,7 @@ class FuncoesSemantica extends Model
 			}
 		//$raiz['proximo']=null;
 		FuncoesSemantica::converteFormulaStringSemantica($raiz['info']);
+
 		print_r($raiz['info']);
 		print "<br>Filhos no próximo nível<br>";
 		foreach ($raiz['filhos'] as $key => $value) {
@@ -418,11 +423,13 @@ class FuncoesSemantica extends Model
 
 		//print "<br>Imprime Filhos<br>";
 		//print_r($navega['filhos']);
-
+		$contador=0;
 		retorno:
-		while (1) {
+		while (1 || $contador<10) {
+			$aux=null;
 			$usados=0;
 			$total=0;
+
 			$lista1=[];
 			
 			if ($navega['info']==$raiz['info']) {
@@ -446,8 +453,13 @@ class FuncoesSemantica extends Model
 					}
 					
 				}
+				$aux=$navega;
 				$navega=&$navega['proximo'];
 			}
+			/*if ($navega['filhos'][0]['usado']==true) {
+				print_r($navega['info']);
+				dd(1);
+			}*/
 			//Se eu veriricar que todos os filhos são verdadeiros, quebro o loop
 			foreach ($lista1 as $key => $elemento) {
 				if ($elemento['filhos']!=null) {
@@ -459,7 +471,8 @@ class FuncoesSemantica extends Model
 					}
 				}
 			}
-			if ($total==$usados && $total!=0) {
+			//Fim do código de debug
+			if ($total===$usados && $total!==0) {
 				break;
 			}
 			//Se todos os filhos foram null então quebro o loop
@@ -469,16 +482,17 @@ class FuncoesSemantica extends Model
 					$total++;
 				}
 			}
-
 			if (count($lista1)==$total) {
 				break;
 			}
 			$navega=&$lista1[0];
-			
+			$contador++;			
 		}
+		
 		foreach ($lista1 as $key => $value) {		
 			FuncoesSemantica::validaConectivo($lista1[$key],$relacoes);
 		}
+		
 		if ($raiz['usado']==false) {
 			$navega=$raiz;
 			$lista1=[];
@@ -488,6 +502,12 @@ class FuncoesSemantica extends Model
 		return;
 	}
 	public static function validaConectivo(&$pai,$relacoes){
+		//Correção de átomos
+		if ($pai['info']['esquerdo']!=null && $pai['info']['direito']==null) {
+			$pai['info']['direito']=$pai['info']['esquerdo'];
+			$pai['info']['esquerdo']=null;
+
+		}
 		switch ($pai['info']['conectivo']['operacao']) {
 			case 'e':
 				foreach ($pai['filhos'] as $key => $value) {
@@ -541,8 +561,8 @@ class FuncoesSemantica extends Model
 						return;
 					}
 				}
-				$pai['usado']=false;
-				$pai['valor']=true;
+				$pai['usado']=true;
+				$pai['valor']=false;
 				return;
 			case null:
 				if (FuncoesSemantica::checaAtomicoSemantica($pai)) {
@@ -552,6 +572,9 @@ class FuncoesSemantica extends Model
 					$pai['usado']=true;
 				}
 				else{
+					print "<br>Deveria lançar uma exceção<br>";
+					print_r($pai['info']);
+					dd(1);
 					//lançar uma exceção aqui
 				}
 			default:

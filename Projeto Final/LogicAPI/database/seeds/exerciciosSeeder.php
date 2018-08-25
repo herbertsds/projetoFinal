@@ -172,11 +172,11 @@ class exerciciosSeeder extends Seeder
 
 			//Lista de semantica Parte 2 - Verificar e justificar se as fórmulas podem ser verdadeiras e falsas dando relações para elas
 
-			array ('sentenca'=>"(paraTodox(paraTodoy((xistz(R(x,z)e(R(z,y))))implica(R(x,y)))))"),
-			array ('sentenca'=>"(paraTodox(paraTodoy((R(x,y))implica(R(y,x)))))"),
-			array ('sentenca'=>"(paraTodox(paraTodoy((xistz(R(z,x)e(R(z,y))))implica(R(x,y)))))"),
-			array ('sentenca'=>"(paraTodox(paraTodoy((xistz(R(z,x)e(R(z,y))))implica((xistz(R(z,x)))e(xistz(Q(z,y)))))))"),
-			array ('sentenca'=>"(paraTodox(paraTodoy((paraTodoz((R(x,z))e(R(x,y))))implica(xistw((R(z,w))e(Q(y,w)))))))")
+			array ('sentenca'=>"(paraTodox(paraTodoy((xistz(R(x;z)e(R(z;y))))implica(R(x;y)))))"),
+			array ('sentenca'=>"(paraTodox(paraTodoy((R(x;y))implica(R(y;x)))))"),
+			array ('sentenca'=>"(paraTodox(paraTodoy((xistz(R(z;x)e(R(z;y))))implica(R(x;y)))))"),
+			array ('sentenca'=>"(paraTodox(paraTodoy((xistz(R(z;x)e(R(z;y))))implica((xistz(R(z;x)))e(xistz(Q(z;y)))))))"),
+			array ('sentenca'=>"(paraTodox(paraTodoy((paraTodoz((R(x;z))e(R(x;y))))implica(xistw((R(z;w))e(Q(y;w)))))))")
 		);
 		
 		App\Exercicios::insert($dados);

@@ -7,6 +7,7 @@ use App\FuncoesResolucao;
 use App\Formula;
 
 class ParsingFormulas extends Model{
+	public $id;
 	//Função que recebe uma fórmula em string e retorna a fórmula no formato de array
 	//Retorno é array ('esquerdo' => , 'conectivo' => , 'direito' =>)
 	//Métodos que usarão: Resolução, Dedução natural proposicionais
@@ -777,6 +778,7 @@ class ParsingFormulas extends Model{
 	//Para saber todos os campos do array, checar a inicialização de auxForm abaixo
 	//Métodos que usarão: Semantica
 	public static function resolveParentesesSemantica($form){
+		global $id;
 		$listaConectivos = Formula::getListaConectivos();
 		$auxForm['info']=array('esquerdo' => null, 'conectivo' => array('operacao' => null, 'variavel'=> null), 'direito' =>null);
 		$auxForm['filhos']=[];
@@ -784,6 +786,8 @@ class ParsingFormulas extends Model{
 		$auxForm['valor']=false;
 		$auxForm['usado']=false;
 		$auxForm['proximo']=NULL;
+		$auxForm['id']=$id;
+		$id++;
 		$aux;
 		$esquerdo=true;
 		$abreFormula=false;

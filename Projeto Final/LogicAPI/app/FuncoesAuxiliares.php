@@ -143,10 +143,19 @@ class FuncoesAuxiliares extends Model
 		$str=$str1.$str2;
 	}
 	//método que verifica se uma fórmula está num array antes de adicioná-la a outro
-	public static function adicionaArray($form,$array1,$array2){
+	/*public static function adicionaArray($form,$array1,$array2){
 		//Percorre o primeiro array verificando se a fórmula
 		foreach ($array as $key => $value) {
 			if ($form1==$array[$key]) {
+				return;
+			}
+		}
+		array_push($array, $form1);
+	}*/
+	public static function adicionaArray($form,$array1,$array2){
+		//Percorre o primeiro array verificando se a fórmula
+		foreach ($array as $key => $value) {
+			if ($form1['id']==$array[$key]['id']) {
 				return;
 			}
 		}
