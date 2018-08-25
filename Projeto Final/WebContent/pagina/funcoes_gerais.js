@@ -466,7 +466,7 @@
 		}
 		else{
 			var myData = {
-			        'formulas': $('#regra').val()
+			        'formulas': $('#regra').val().replace(/\s/gi, '')
 			    };
 		
 			$.ajax({
@@ -478,7 +478,7 @@
 	        datatype: 'application/json',
 	       
 	        success: function(retorno) {
-	        	console.log(retorno);
+	        	//console.log(retorno);
 	        	
 	        	if(retorno != 1){
 	        		retorno = JSON.parse(retorno);
@@ -544,6 +544,8 @@
 					manual = true;
 
 					exercicioBuscado[exercicioBuscado.length] = pergunta;
+				
+					
 					linhaPerg = regras + 1;
 					$('#perguntaAdicionada').append("<br/>" +linhaPerg + ": " + retorno['formulas'] );
 					$('#pergunta').val("Pergunta Adicionada!!");
@@ -552,11 +554,10 @@
 					$('#buttonRegra').hide();
 					$('#buttonPergunta').hide();
 					atualizaTela(tipoEx);
-					$('#tabExecucao').click();
 					manual = true;
             		$("#buttonRemoverPerg").removeAttr("style");
-		    		$("#buttonRemoverRegra").attr("style",'display:none');   
-
+		    		$("#buttonRemoverRegra").prop("disabled",true);   
+					$('#tabExecucao').click();
 
 				}
 	        }
@@ -570,11 +571,49 @@
 				
 				console.log('ERRO: fórmula invalida');
 				},
-		    });		
-		}
+		    });	
+
+			f_verificaEx();	
+
+			}
 		
 	}
 	
+	function f_verificaEx(){
+		console.log("verificando EX");
+		var myData2 = exercicioBuscado;
+	       console.log(myData2);
+
+		$.ajax({
+
+			url: 'http://127.0.0.1:8000/api/resolucao/validaExercicio',
+	    	type: 'GET',
+	        callback: '?',
+	        data: myData2, 
+	        datatype: 'application/json',
+	        success: function(retorno2) {
+	        console.log(retorno2);	
+	        
+	        if(retorno2!=1){
+	        	console.log("exercicio possui solução.")
+
+	        }
+	        else{
+				$('#tabExercicio').click();
+
+	        	alert("Exercício inválido!\nOu ele não possui solução ou está digitado incorretamente.");
+	        	
+	        	return;
+	        }
+	        },
+			error: function() {
+				
+				console.log('ERRO: url valida ex falhou! no verificaEX() linha 580');
+				},
+		    });	
+			
+
+	}
 	// FALTA PERMITIR EXCLUSAO/ALTERACAO DA PERGUNTA E DE REGRAS
 	
 	function f_SelecionaExercicio(btn_numExercicio){
@@ -640,7 +679,7 @@
 	}
 	
 	function f_RemoverPerg(){
-		if(regras>0){
+		if(pergunta!= ""){
 			exercicioBuscado.splice(-1,1);
 			
 			$('#perguntaAdicionada').html(function(_,html) { 
@@ -652,9 +691,9 @@
 			$('#buttonRegra').show();
 			$('#buttonPergunta').show();
 			$('#pergunta').val("");
-	    		$("#buttonRemoverPerg").attr("style",'display:none');   
-        		$("#buttonRemoverRegra").removeAttr("style");
-        		f_LimpaDesenvolvimento();
+    		$("#buttonRemoverRegra").prop("disabled",false);   
+	    	if(regras>0){$("#buttonRemoverRegra").removeAttr("style");}
+        	f_LimpaDesenvolvimento();
 
 			
 		}
@@ -833,6 +872,7 @@ function f_LimpaTipo(){
 	f_Limpat_lpo();
 	$("#buttonRemoverRegra").attr("style",'display:none');   
 	$("#buttonRemoverPerg").attr("style",'display:none');   
+	$("#buttonRemoverRegra").prop("disabled",false);   
 
 	$('#regra').prop('disabled', false);
 	$('#pergunta').prop('disabled', false);
