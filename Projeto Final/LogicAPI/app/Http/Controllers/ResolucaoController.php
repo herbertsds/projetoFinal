@@ -75,6 +75,7 @@ class ResolucaoController extends Controller
     }
 
     public function validaExercicio(Request $request){
+//         return $request;
         if(Resolucao::validaExercicio($request)){
           return 1;
         }
