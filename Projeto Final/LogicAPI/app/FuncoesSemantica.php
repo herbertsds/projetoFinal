@@ -258,7 +258,13 @@ class FuncoesSemantica extends Model
 	}
 
 	public static function imprimeArvore(&$raiz,&$arvoreSaida,&$listaDeNos,&$indice){
-		
+		//Os arrays auxiliares foram criados meramente para formatar a saída
+		//de um jeito fácil para utilizar no plugin do front-end
+		//Caso queira-se usar outra maneira pra imprimir a árvore
+		//esses arrays não são necessários
+		$arvoreSaida=[];
+		$raiz['id']=0;
+		$arvoreSaida[]['id']=$raiz['id'];
 		print "<br>Fórmula inicial<br>";
 		print "<br>Valor: ";
 			if ($raiz['valor']==false) {
@@ -274,10 +280,19 @@ class FuncoesSemantica extends Model
 			elseif($raiz['usado']==true){
 				print "Verdade<br>";
 			}
+			print "<br>Id: ".$raiz['id']." <br>";
 		//$raiz['proximo']=null;
 		FuncoesSemantica::converteFormulaStringSemantica($raiz['info']);
+		array_push($listaDeNos,array($raiz['id'],$raiz['info']));
 
 		print_r($raiz['info']);
+		$arrayFilhos=[];
+		$arrayFilhos[0]=[];
+		$arrayFilhos[1]=[];
+		$arrayFilhos[0]['id']=$raiz['filhos'][0]['id'];
+		$arrayFilhos[1]['id']=$raiz['filhos'][1]['id'];
+		@FuncoesSemantica::adicionaArray($arvoreSaida[0],$arrayFilhos[0]);
+		@FuncoesSemantica::adicionaArray($arvoreSaida[0],$arrayFilhos[1]);
 		print "<br>Filhos no próximo nível<br>";
 		foreach ($raiz['filhos'] as $key => $value) {
 			print "<br>Valor: ";
@@ -294,8 +309,11 @@ class FuncoesSemantica extends Model
 			elseif($value['usado']==true){
 				print "Verdade<br>";
 			}
+			print "<br>Id: ".$value['id']." <br>";
 			//$raiz['filhos'][$key]['proximo']=null;
 			FuncoesSemantica::converteFormulaStringSemantica($value['info']);
+			array_push($listaDeNos, array($arrayFilhos[0]['id'],$value['info']));
+			array_push($listaDeNos, array($arrayFilhos[1]['id'],$value['info']));
 			print_r($value['info']);
 			//print "<br>Próximo: <br>";
 			//print_r($value['proximo']['info']);
@@ -306,12 +324,19 @@ class FuncoesSemantica extends Model
 			$lista1=$raiz['filhos'];
 		}
 		$lista2=[];
+		$arrayFilhos2=[];
+
 		retorno:
 		if ($lista1[0]['filhos']!=null) {
 			print "<br>Filhos no próximo nível<br>";
 		}
+		$contador=0;
 		foreach ($lista1 as $key => $value) {
 			foreach ($lista1[$key]['filhos'] as $key2 => $value2) {
+				$arrayFilhos2[$contador]=[];
+				$arrayFilhos2[$contador]['id']=$value2['id'];
+				@FuncoesSemantica::adicionaArray($arrayFilhos[$key],$arrayFilhos2[$contador]);
+				//@array_push($arrayFilhos[$key],$arrayFilhos2[$contador]);
 				array_push($lista2, $value2);
 				print "<br>Valor: ";
 				if ($value2['valor']==false) {
@@ -327,9 +352,12 @@ class FuncoesSemantica extends Model
 				elseif($value2['usado']==true){
 					print "Verdade<br>";
 				}
+				print "<br>Id: ".$value2['id']." <br>";
 				//$lista1[$key]['filhos'][$key2]['proximo']=null;
 				FuncoesSemantica::converteFormulaStringSemantica($value2['info']);
+				array_push($listaDeNos, array($value2['id'],$value2['info']));
 				print_r($value2['info']);
+				$contador++;
 				//print "<br>Próximo: <br>";
 				//print_r($value['proximo']['info']);
 			}
@@ -339,7 +367,10 @@ class FuncoesSemantica extends Model
 				//para imprimir todos os seus filhos que são do mesmo nível
 				if (@$lista2!=null) {
 					$lista1=$lista2;
+					$arrayFilhos=$arrayFilhos2;
+					$arrayFilhos2=[];
 					$lista2=[];
+
 					goto retorno;
 				}
 				else{

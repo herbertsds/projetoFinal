@@ -55,6 +55,10 @@ class Semantica extends Model
 		print "<br>Imprime a arvore toda<br>";
 		FuncoesSemantica::imprimeArvore($entradaConvertida[0],$arvoreSaida,$listaDeNos,$indice);
 		$resposta[] = $entradaConvertida[0];
+		print "<br>Arvore Saida<br>";
+		print_r($arvoreSaida);
+		print "<br>Lista de nos<br>";
+		print_r($listaDeNos);
 		//print_r($entradaConvertida[0]['filhos'][1]['filhos'][1]['proximo']);
 		//$resposta[] = $entradaConvertida[0]['filhos'][1]['filhos'][1]['proximo'];
 		return $resposta;

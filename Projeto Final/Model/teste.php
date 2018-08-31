@@ -1,44 +1,60 @@
 <?php
-require_once("funcAuxiliares.php");
-//require_once("funcTableaux.php");
-//require_once("funcResolucao.php");
-//require_once("exerciciosListas.php");
-require_once("funcSemantica.php");
+//Não serve pra nada, apenas testando código e funções internas para aplicar no código principal
 echo "<pre>";
 
-$var1=null;
-$var2=null;
-$var3=null;
-$arvore=null;
-$lista=[];
-$var1['campo1']['campo2'];
-$var1['campo1']='info1';
-$var1['campo2']='info2';
-$indice=0;
-array_push($lista, $var1);
-$arvore[$indice]=[];
-print "<br>Arvore<br>";
-print_r($arvore);
-print "<br>Lista<br>";
-print_r($lista);
-$var2['campo1']['campo2'];
-$var2['campo1']='info1';
-$var2['campo2']='info2';
-$indice++;
-array_push($arvore[0],$indice);
-array_push($lista, $var2);
-$var3['campo1']['campo2'];
-$var3['campo1']='info1';
-$var3['campo2']='info2';
-$indice++;
-array_push($arvore[0],$indice);
-array_push($lista, $var3);
-print "<br>Arvore<br>";
-print_r($arvore);
-print "<br>Lista<br>";
-print_r($lista);
+$form1['id']=5;
+$form1['campos']='campo1';
+$form2['id']=6;
+$form2['campos']='campo2';
+$form3['id']=7;
+$form3['campos']='campo3';
+$form4['id']=8;
+$form4['campos']='campo4';
+$form5['id']=9;
+$form5['campos']='campo5';
 
-//$arvore=
+$array=[];
+$array[]['id']=$form1['id'];
+//$array[]=[];
+//array_push($array[0], $form2['id']);
+//array_push($array[0], $form3['id']);
+
+$array2=[];
+$array2['id']=$form2['id'];
+//$array2[]=[];
+$array3=[];
+$array3['id']=$form3['id'];
+//$array3[]=[];
+
+adicionaArray($array[0], $array2);
+adicionaArray($array[0], $array3);
+
+$array4=[];
+$array4['id']=$form4['id'];
+$array5=[];
+$array5['id']=$form5['id'];
+
+@adicionaArray($array2[0], $array4);
+@adicionaArray($array2[0], $array5);
+
+print_r($array);
+
+function adicionaArray(&$array,&$valor){
+		$tam=count($array);
+		$soma=1;
+		if ($tam!=0) {
+			//Consertar o índice do array para evitar sobreposição
+			while (@$array[$tam+$soma]!=null) {
+				$soma++;
+			}
+			if (@$array[$tam+$soma-1]==null) {
+				$soma--;
+			}
+			$array[$tam+$soma]=&$valor;
+		}
+		else{
+			$array[0]=&$valor;
+		}
+	}
+
 ?>
-
-
