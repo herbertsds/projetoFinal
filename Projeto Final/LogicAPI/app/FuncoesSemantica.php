@@ -17,8 +17,8 @@ class FuncoesSemantica extends Model
 			FuncoesAuxiliares::verificaFormulaCorreta($listaFormulas[$key]);
 
 			$entradaConvertida[$key]=ParsingFormulas::resolveParentesesSemantica($listaFormulas[$key]);
-			print "<br>Fórmula Correta<br>";
-			print_r($entradaConvertida[$key]);
+			//print "<br>Fórmula Correta<br>";
+			//print_r($entradaConvertida[$key]);
 		}
 		
 		return $entradaConvertida;
@@ -265,27 +265,27 @@ class FuncoesSemantica extends Model
 		$arvoreSaida=[];
 		$raiz['id']=0;
 		$arvoreSaida[]['id']=$raiz['id'];
-		print "<br>Fórmula inicial<br>";
-		print "<br>Valor: ";
+		//print "<br>Fórmula inicial<br>";
+		//print "<br>Valor: ";
 			if ($raiz['valor']==false) {
-				print "Falso<br>";
+				//print "Falso<br>";
 			}
 			else{
-				print "Verdade<br>";
+				//print "Verdade<br>";
 			}
-			print "<br>Usado: ";
+			//print "<br>Usado: ";
 			if ($raiz['usado']==false) {
-				print "Falso<br>";
+				//print "Falso<br>";
 			}
 			elseif($raiz['usado']==true){
-				print "Verdade<br>";
+				//print "Verdade<br>";
 			}
-			print "<br>Id: ".$raiz['id']." <br>";
+			//print "<br>Id: ".$raiz['id']." <br>";
 		//$raiz['proximo']=null;
 		FuncoesSemantica::converteFormulaStringSemantica($raiz['info']);
 		$listaDeNos[$raiz['id']]=$raiz['info'];
 
-		print_r($raiz['info']);
+		//print_r($raiz['info']);
 		$arrayFilhos=[];
 		$arrayFilhos[0]=[];
 		$arrayFilhos[1]=[];
@@ -293,31 +293,31 @@ class FuncoesSemantica extends Model
 		$arrayFilhos[1]['id']=$raiz['filhos'][1]['id'];
 		@FuncoesSemantica::adicionaArray($arvoreSaida[0],$arrayFilhos[0]);
 		@FuncoesSemantica::adicionaArray($arvoreSaida[0],$arrayFilhos[1]);
-		print "<br>Filhos no próximo nível<br>";
+		//print "<br>Filhos no próximo nível<br>";
 		foreach ($raiz['filhos'] as $key => $value) {
-			print "<br>Valor: ";
+			//print "<br>Valor: ";
 			if ($value['valor']==false) {
-				print "Falso<br>";
+				//print "Falso<br>";
 			}
 			else{
-				print "Verdade<br>";
+				//print "Verdade<br>";
 			}
-			print "<br>Usado: ";
+			//print "<br>Usado: ";
 			if ($value['usado']==false) {
-				print "Falso<br>";
+				//print "Falso<br>";
 			}
 			elseif($value['usado']==true){
-				print "Verdade<br>";
+				//print "Verdade<br>";
 			}
-			print "<br>Id: ".$value['id']." <br>";
+			//print "<br>Id: ".$value['id']." <br>";
 			//$raiz['filhos'][$key]['proximo']=null;
 			FuncoesSemantica::converteFormulaStringSemantica($value['info']);
 			$listaDeNos[$value['id']]=$value['info'];
 			//array_push($listaDeNos, array($arrayFilhos[0]['id'],$value['info']));
 			//array_push($listaDeNos, array($arrayFilhos[1]['id'],$value['info']));
-			print_r($value['info']);
-			//print "<br>Próximo: <br>";
-			//print_r($value['proximo']['info']);
+			//print_r($value['info']);
+			////print "<br>Próximo: <br>";
+			////print_r($value['proximo']['info']);
 		}
 		$posicao=0;
 		//$posicao2=0;
@@ -329,7 +329,7 @@ class FuncoesSemantica extends Model
 
 		retorno:
 		if ($lista1[0]['filhos']!=null) {
-			print "<br>Filhos no próximo nível<br>";
+			//print "<br>Filhos no próximo nível<br>";
 		}
 		$contador=0;
 		foreach ($lista1 as $key => $value) {
@@ -339,28 +339,28 @@ class FuncoesSemantica extends Model
 				@FuncoesSemantica::adicionaArray($arrayFilhos[$key],$arrayFilhos2[$contador]);
 				//@array_push($arrayFilhos[$key],$arrayFilhos2[$contador]);
 				array_push($lista2, $value2);
-				print "<br>Valor: ";
+				//print "<br>Valor: ";
 				if ($value2['valor']==false) {
-					print "Falso<br>";
+					//print "Falso<br>";
 				}
 				elseif ($value2['valor']==true) {
-					print "Verdade<br>";
+					//print "Verdade<br>";
 				}
-				print "<br>Usado: ";
+				//print "<br>Usado: ";
 				if ($value2['usado']==false) {
-					print "Falso<br>";
+					//print "Falso<br>";
 				}
 				elseif($value2['usado']==true){
-					print "Verdade<br>";
+					//print "Verdade<br>";
 				}
-				print "<br>Id: ".$value2['id']." <br>";
+				//print "<br>Id: ".$value2['id']." <br>";
 				//$lista1[$key]['filhos'][$key2]['proximo']=null;
 				FuncoesSemantica::converteFormulaStringSemantica($value2['info']);
 				$listaDeNos[$value2['id']]=$value2['info'];
-				print_r($value2['info']);
+				//print_r($value2['info']);
 				$contador++;
-				//print "<br>Próximo: <br>";
-				//print_r($value['proximo']['info']);
+				////print "<br>Próximo: <br>";
+				////print_r($value['proximo']['info']);
 			}
 			//Se os filhos deste nó acabarem
 			if ($key==(count($lista1)-1)) {
@@ -421,8 +421,8 @@ class FuncoesSemantica extends Model
 				FuncoesSemantica::adicionaArray($lista1,$raiz['filhos'][$key]);
 			}
 		}
-		//print "<br>Imprime Filhos<br>";
-		//print_r($navega['filhos']);
+		////print "<br>Imprime Filhos<br>";
+		////print_r($navega['filhos']);
 		while ($flag) {
 			$flag=false;
 			foreach ($lista1 as $key => $value) {
@@ -453,8 +453,8 @@ class FuncoesSemantica extends Model
 		$navega;
 		$navega=&$raiz;
 
-		//print "<br>Imprime Filhos<br>";
-		//print_r($navega['filhos']);
+		////print "<br>Imprime Filhos<br>";
+		////print_r($navega['filhos']);
 		$contador=0;
 		retorno:
 		while (1 || $contador<10) {
@@ -489,7 +489,7 @@ class FuncoesSemantica extends Model
 				$navega=&$navega['proximo'];
 			}
 			/*if ($navega['filhos'][0]['usado']==true) {
-				print_r($navega['info']);
+				//print_r($navega['info']);
 				dd(1);
 			}*/
 			//Se eu veriricar que todos os filhos são verdadeiros, quebro o loop
@@ -604,8 +604,8 @@ class FuncoesSemantica extends Model
 					$pai['usado']=true;
 				}
 				else{
-					print "<br>Deveria lançar uma exceção<br>";
-					print_r($pai['info']);
+					//print "<br>Deveria lançar uma exceção<br>";
+					//print_r($pai['info']);
 					dd(1);
 					//lançar uma exceção aqui
 				}
@@ -677,10 +677,10 @@ class FuncoesSemantica extends Model
 	//Função que recebe a referência para uma fórmula array com a estrutura
 	//array ('esquerdo' => , 'conectivo' => , 'direito' =>) e transforma em string
 	public static function colocaParentesesSemantica(&$form){
-		//print_r($form);
+		////print_r($form);
 		if ((@is_array($form['info']['esquerdo']) || @is_array($form['esquerdo'])) && !(@is_array($form['direito']) || @is_array($form['info']['direito']))) {
-			//print "<br>Entrei no Caso 1<br>";
-			//print_r($form);
+			////print "<br>Entrei no Caso 1<br>";
+			////print_r($form);
 			if (@$form['conectivo']['operacao']=='not' || @$form['info']['conectivo']['operacao']=='not') {
 				if (FuncoesTableauxLPO::checaAtomicoLPO($form) || FuncoesTableauxLPO::checaAtomicoLPO($form['info'])) {
 					if (@$form['info']) {
@@ -873,8 +873,8 @@ class FuncoesSemantica extends Model
 		}
 		elseif (!(@is_array($form['esquerdo']) || @is_array($form['info']['esquerdo'])) && ((@is_array($form['direito'])) || @is_array($form['info']['direito']))) {
 			//$conectivos=array("not","notnot","paraTodo","not_paraTodo","xist","not_xist");
-			//print "<br>Entrei no Caso 2<br>";
-			//print_r($form);
+			////print "<br>Entrei no Caso 2<br>";
+			////print_r($form);
 			$aux=null;
 			if (@$form['conectivo']['operacao']=='not' || @$form['info']['conectivo']['operacao']=='not') {
 				if (FuncoesTableauxLPO::checaAtomicoLPO($form) || FuncoesTableauxLPO::checaAtomicoLPO($form['info'])) {
@@ -1300,7 +1300,7 @@ class FuncoesSemantica extends Model
 					}
 					
 			}
-			//print "<br><br>DEBUG -- ENTRADA NO direito é array<br><br>";			
+			////print "<br><br>DEBUG -- ENTRADA NO direito é array<br><br>";			
 			return;
 		}
 		elseif(is_array($form) || @is_array($form['info'])){

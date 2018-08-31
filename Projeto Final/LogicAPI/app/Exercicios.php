@@ -98,13 +98,19 @@ class Exercicios extends Model
 		$string = str_replace("ou","∨",$string);
     	$string = str_replace("e","∧",$string);
     	$string = str_replace("^","∧",$string);
+
+    	$string = str_replace("v","∨",$string);
     	
     	$string = str_replace("implica","→",$string);
     	$string = str_replace("-","→",$string);
     	$string = str_replace("not","¬",$string);
     	$string = str_replace("!","¬",$string);
     	$string = str_replace("paraTodo", "∀",$string);
+    	$string = str_replace("@", "∀",$string);
     	$string = str_replace("xist", "∃",$string);
+    	$string = str_replace("&", "∃",$string);
+
+    	$string = str_replace(";", ",",$string);
 
     	$string = str_replace("f∧chado","fechado",$string);
 
