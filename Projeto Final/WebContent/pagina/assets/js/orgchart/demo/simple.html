@@ -40,27 +40,28 @@ $("#organisation").orgChart({container: $("#main")});
 $(document).ready(function(){
     $("button").click(function(){
         var myData = {
-            'operacao' : 'negaPergunta',
-            'qtd_formulasSelecionadas': 2,
-            'formulas' : ['AeB','AeC']
+            // 'operacao' : 'negaPergunta',
+            // 'qtd_formulasSelecionadas': 2,
+            // 'formulas' : ['AeB','AeC']
         };
         $.ajax({
 
-            url: 'http://127.0.0.1:8000/api/tableaux/',
+            url: 'http://127.0.0.1:8000/api/semantica/',
             type: 'GET',
             callback: '?',
             data: myData,
             datatype: 'application/json',
-            success: function(teste) { 
+            success: function(obj) { 
             // console.log(teste);
             // $("#teste").append('<li>Teste</li>');
-            var obj = JSON.parse(teste);
-            console.log(obj);
+            // var obj = JSON.parse(teste);
+            // console.log(obj);
+            // obj = "<ul><li>Nó 1<ul><li>Nó2</li><li>Nó3</li><ul><li><ul>";
             $("#organisation").append(obj);
             $("#organisation").orgChart({container: $("#main")});
 
             },
-            error: function() { alert('Failed!'); },
+            error: function(erro) { console.log(erro.responseText); },
         });
     });
 });

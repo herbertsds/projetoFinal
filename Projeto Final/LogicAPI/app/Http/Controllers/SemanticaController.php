@@ -20,7 +20,7 @@ class SemanticaController extends Controller
 	//Resolve um exercício específico
     public function index(Request $numeroExercicio){
 
-    	$exercicio = Exercicios::getExercicio(138);
+    	$exercicio = Exercicios::getExercicio(150);
      // $exercicio = Exercicios::getExercicio(40);
 
     	// $exercicioLista = new Exercicios('resolucao');
@@ -28,7 +28,7 @@ class SemanticaController extends Controller
 
       //print_r($resposta->fullSteps());
     	//return json_encode($resposta->fullSteps(), JSON_UNESCAPED_UNICODE);
-      dd($resposta->fullSteps());
+      return $resposta->fullSteps();
     	//print_r($resposta->fullSteps());
       
       // dd($exercicio);

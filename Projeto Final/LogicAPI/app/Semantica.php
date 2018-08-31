@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\FuncoesSemantica;
 use App\Formula;
 use App\ParsingFormulas;
- echo "<pre>";
+use App\Exercicios;
 
 
 //Remover a repetição das fórmulas em cada passo
@@ -31,7 +31,7 @@ class Semantica extends Model
 		$dominio= array ('0','1');
 		$tamanho=count($entrada);		
 		$entradaConvertida=FuncoesSemantica::processaEntradaSemantica($entrada);
-		print_r($entradaConvertida);
+		// print_r($entradaConvertida);
 
 		FuncoesSemantica::adicionaArray($nosFolha, $entradaConvertida[0]);
 		
@@ -52,17 +52,60 @@ class Semantica extends Model
 		FuncoesSemantica::validaFormulas($relacoes,$entradaConvertida[0]);
 		//dd(1);
 
-		print "<br>Imprime a arvore toda<br>";
+		// print "<br>Imprime a arvore toda<br>";
 		FuncoesSemantica::imprimeArvore($entradaConvertida[0],$arvoreSaida,$listaDeNos,$indice);
-		$resposta[] = $entradaConvertida[0];
-		print "<br>Arvore Saida<br>";
-		print_r($arvoreSaida);
-		print "<br>Lista de nos<br>";
-		print_r($listaDeNos);
+		// $resposta[] = $entradaConvertida[0];
+		// print "<br>Arvore Saida<br>";
+		// print_r($arvoreSaida);
+		// print "<br>Lista de nos<br>";
+		// print_r($listaDeNos);
+		$resposta[] = $arvoreSaida;
+		$resposta[] = $listaDeNos;
+
+		$respostaFinal = $this->retornaArvore($resposta);
+
 		//print_r($entradaConvertida[0]['filhos'][1]['filhos'][1]['proximo']);
 		//$resposta[] = $entradaConvertida[0]['filhos'][1]['filhos'][1]['proximo'];
-		return $resposta;
+		return $respostaFinal;
 
     	
     }
+
+    private function retornaArvore($resposta){
+ 		// echo "<pre>";
+
+    	$arrayArvore = $resposta[0];
+    	$hash = $resposta[1];
+    	// dd($resposta);
+
+		$respostaFinal = "<ul><li>";
+			//Colocar ['formula']
+			$respostaFinal .= Exercicios::converteSaida($hash[$arrayArvore[0]['id']]['info']);
+				$respostaFinal .= "<ul>";
+					$respostaFinal .= $this->retornaNo($arrayArvore[0],$hash);
+				$respostaFinal .= "</ul>";
+		$respostaFinal .= "</li></ul>";
+    	
+
+    	return $respostaFinal;
+
+
+    }
+
+    private function retornaNo($arrayArvore,$hash){
+    	$respostaFinal = "";
+    	for($i = 1; $i < count($arrayArvore); $i++){
+    		$respostaFinal .= "<li>";
+    			//Colocar ['formula']
+    			$respostaFinal .= Exercicios::converteSaida($hash[$arrayArvore[$i]['id']]['info']);
+    				$respostaFinal .= "<ul>";
+    					if(is_array($arrayArvore[$i]))
+    						$respostaFinal .= $this->retornaNo($arrayArvore[$i],$hash);
+    				$respostaFinal .= "</ul>";
+    		$respostaFinal .= "</li>";
+    	}
+    	// dd($respostaFinal);
+    	return $respostaFinal;
+    }
+
 }
