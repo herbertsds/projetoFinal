@@ -283,7 +283,7 @@ class FuncoesSemantica extends Model
 			//print "<br>Id: ".$raiz['id']." <br>";
 		//$raiz['proximo']=null;
 		FuncoesSemantica::converteFormulaStringSemantica($raiz['info']);
-		$listaDeNos[$raiz['id']]=$raiz['info'];
+		$listaDeNos[$raiz['id']]=array('info'=>$raiz['info'],'valor'=>$raiz['valor']);
 
 		//print_r($raiz['info']);
 		$arrayFilhos=[];
@@ -312,7 +312,7 @@ class FuncoesSemantica extends Model
 			//print "<br>Id: ".$value['id']." <br>";
 			//$raiz['filhos'][$key]['proximo']=null;
 			FuncoesSemantica::converteFormulaStringSemantica($value['info']);
-			$listaDeNos[$value['id']]=$value['info'];
+			$listaDeNos[$value['id']]=array('info'=>$value['info'],'valor'=>$value['valor']);
 			//array_push($listaDeNos, array($arrayFilhos[0]['id'],$value['info']));
 			//array_push($listaDeNos, array($arrayFilhos[1]['id'],$value['info']));
 			//print_r($value['info']);
@@ -356,8 +356,10 @@ class FuncoesSemantica extends Model
 				//print "<br>Id: ".$value2['id']." <br>";
 				//$lista1[$key]['filhos'][$key2]['proximo']=null;
 				FuncoesSemantica::converteFormulaStringSemantica($value2['info']);
-				$listaDeNos[$value2['id']]=$value2['info'];
+
+				$listaDeNos[$value2['id']]=array('info'=>$value2['info'],'valor'=>$value2['valor']);
 				//print_r($value2['info']);
+
 				$contador++;
 				////print "<br>Próximo: <br>";
 				////print_r($value['proximo']['info']);

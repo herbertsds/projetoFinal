@@ -80,7 +80,7 @@ class Semantica extends Model
 
 		$respostaFinal = "<ul><li>";
 			//Colocar ['formula']
-			$respostaFinal .= Exercicios::converteSaida($hash[$arrayArvore[0]['id']]);
+			$respostaFinal .= Exercicios::converteSaida($hash[$arrayArvore[0]['id']]['info']);
 				$respostaFinal .= "<ul>";
 					$respostaFinal .= $this->retornaNo($arrayArvore[0],$hash);
 				$respostaFinal .= "</ul>";
@@ -97,7 +97,7 @@ class Semantica extends Model
     	for($i = 1; $i < count($arrayArvore); $i++){
     		$respostaFinal .= "<li>";
     			//Colocar ['formula']
-    			$respostaFinal .= Exercicios::converteSaida($hash[$arrayArvore[$i]['id']]);
+    			$respostaFinal .= Exercicios::converteSaida($hash[$arrayArvore[$i]['id']]['info']);
     				$respostaFinal .= "<ul>";
     					if(is_array($arrayArvore[$i]))
     						$respostaFinal .= $this->retornaNo($arrayArvore[$i],$hash);
