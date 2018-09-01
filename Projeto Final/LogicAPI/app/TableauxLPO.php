@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 use App\FuncoesTableauxLPO;
 
-echo "<pre>";
+//echo "<pre>";
 
 class TableauxLPO extends Model
 {
@@ -33,6 +33,9 @@ class TableauxLPO extends Model
 		$this->listaFormulasDisponiveis = array();
 		$this->numRamoGlobal=1;
 		$listaGlobalConstantes=Formula::getListaConstantesGlobal();
+		$arvoreSaida=[];
+		$array=[];
+		$listaDeNos=[];
 		//-------------------------------------VARIÁVEIS--GLOBAIS--------------------------------------------
 
 		//Inicialização das fórmulas, aqui recebo os dados para resolver o tableaux
@@ -81,8 +84,8 @@ class TableauxLPO extends Model
     	//Passo 2
     	
 		$entradaTeste=FuncoesTableauxLPO::negaPerguntaLPO($entradaTeste,$tamanho);
-		print "<br>Entrada com a pergunta negada<br>";
-		print_r($entradaTeste);
+		//print "<br>Entrada com a pergunta negada<br>";
+		//print_r($entradaTeste);
 
 		
 		
@@ -108,7 +111,7 @@ class TableauxLPO extends Model
 					$aux="(".$aux.")";
 				}
 				$aux=ParsingFormulas::resolveParentesesTableauxLPO($aux);
-				//print_r($aux);
+				////print_r($aux);
 				//Condição anterior
 				//if (FuncoesTableauxLPO::checaAtomicoLPO($aux['info']) && !is_array($aux)) {
 				if (FuncoesTableauxLPO::checaAtomicoLPO($aux['info'])) {
@@ -120,11 +123,11 @@ class TableauxLPO extends Model
 				}				
 			}
 		}
-		print "<br>Hash inicial de funções<br>";
-		print_r($this->hashFuncaoInicial);
+		//print "<br>Hash inicial de funções<br>";
+		//print_r($this->hashFuncaoInicial);
 
-		print "<br>Lista de constantes inicial<br>";
-		print_r($this->constantesInicial);
+		//print "<br>Lista de constantes inicial<br>";
+		//print_r($this->constantesInicial);
 		
 		
 		//Passo 5
@@ -141,16 +144,16 @@ class TableauxLPO extends Model
 			
 			if ($escolhaAleatoria) {
 				# Chama a função de escolha aleatória
-				//print "<br>Não está feito ainda a função de escolha aleatória<br>";
+				////print "<br>Não está feito ainda a função de escolha aleatória<br>";
 				break;
 			}
 			elseif ($escolhaEficiente) {
 				# Chama a função de escolha eficiente
-				//print "<br>Chamando a função de escolha eficiente<br>";
+				////print "<br>Chamando a função de escolha eficiente<br>";
 				foreach ($this->listaFormulasDisponiveis as $key => $value) {
-					print "key ".$key."<br>";
-					print_r($value['info']);
-					print "<br>";
+					//print "key ".$key."<br>";
+					//print_r($value['info']);
+					//print "<br>";
 				}
 				if(FuncoesTableauxLPO::escolhaEficiente($this->listaFormulasDisponiveis,$this->hashInicial,$this->hashFuncaoInicial,$this->constantesInicial,$nosFolha,$historicoVariaveis,$raiz,$contador) === 'fechado')
 					break ;
@@ -158,12 +161,12 @@ class TableauxLPO extends Model
 				if (FuncoesTableaux::todasFechadas($nosFolha,$contador)) {
 					break;
 				}
-				//print "<br>Contador ".$contador."<br>";
+				////print "<br>Contador ".$contador."<br>";
 				
 			}
 			elseif ($escolhaUsuario) {
 				# Chama a função de escolha do usuário
-				//print "<br>Não está feito ainda a função de escolha do usuário<br>";
+				////print "<br>Não está feito ainda a função de escolha do usuário<br>";
 				break;
 			}
 
@@ -173,18 +176,22 @@ class TableauxLPO extends Model
 
 
 		if (FuncoesTableaux::todasFechadas($nosFolha,$contador)) {
-			//print "<br>Todos os ramos foram fechados com sucesso<br>";
-			//print $contador."<br>";
+			////print "<br>Todos os ramos foram fechados com sucesso<br>";
+			////print $contador."<br>";
 		}
 		else{
-			//print "<br>Nem todos os ramos foram fechados<br>Este Tableaux não fecha<br>";
+			////print "<br>Nem todos os ramos foram fechados<br>Este Tableaux não fecha<br>";
 		}
-		print "<br>Árvore a partir da raiz<br>";
+		$raiz['id']=0;
+		//print "<br>Árvore a partir da raiz<br>";
 		$contador=0;
-		FuncoesTableauxLPO::imprimeArvore($raiz,$contador);
-		//print '<br>Raiz<br>';
-		//print_r($raiz);
-		$resposta[] = $raiz;		
+		FuncoesTableauxLPO::imprimeArvore($raiz,$contador,$listaDeNos,$arvoreSaida,$array);
+		//print_r($array);
+		//print_r($listaDeNos);
+		////print '<br>Raiz<br>';
+		////print_r($raiz);
+		$resposta[] = $array;
+		$resposta[] = $listaDeNos;		
 		return $resposta;
     }
 }

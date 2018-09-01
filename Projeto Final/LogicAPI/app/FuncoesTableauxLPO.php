@@ -5,9 +5,11 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 
 use App\FuncoesAuxiliares;
+use App\ParsingFormulas;
 
 class FuncoesTableauxLPO extends Model
 {
+	public $id;
     
 	public static function escolhaEficiente(&$listaFormulasDisponiveis,&$hashInicial,&$hashFuncaoInicial,&$constantesInicial,&$nosFolha,&$historicoVariaveis,&$raiz,&$contador){
 		//Verificação para saber se a função foi chamada mesmo
@@ -69,8 +71,8 @@ class FuncoesTableauxLPO extends Model
 						$raiz['hashAtomos']=$hashInicial;
 						$raiz['hashAtomosFuncoes']=$hashFuncaoInicial;
 						$raiz['constantesUsadas']=$constantesInicial;
-						//print "<br>Aplicando regra em<br>";
-						//print_r($raiz['info']);
+						////print "<br>Aplicando regra em<br>";
+						////print_r($raiz['info']);
 						FuncoesTableauxLPO::aplicaRegraLPO($raiz,$raiz,$nosFolha,$contador);
 						FuncoesTableauxLPO::removerFormula($listaFormulasDisponiveis,$raiz['info']);
 						FuncoesTableauxLPO::armazenaHistorico($historicoVariaveis,$nosFolha,$raiz,$contador+1,$listaFormulasDisponiveis);
@@ -121,8 +123,8 @@ class FuncoesTableauxLPO extends Model
 			$raiz['hashAtomosFuncoes']=$hashFuncaoInicial;
 			$raiz['constantesUsadas']=$constantesInicial;
 			FuncoesTableauxLPO::aplicaRegraLPO($raiz,$raiz,$nosFolha,$contador);
-			//print "<br>Aplicando regra em<br>";
-			//print_r($raiz['info']);
+			////print "<br>Aplicando regra em<br>";
+			////print_r($raiz['info']);
 			FuncoesTableauxLPO::removerFormula($listaFormulasDisponiveis,$raiz['info']);
 			FuncoesTableauxLPO::armazenaHistorico($historicoVariaveis,$nosFolha,$raiz,$contador+1,$listaFormulasDisponiveis);
 			return;
@@ -189,8 +191,8 @@ class FuncoesTableauxLPO extends Model
 						//Verificação para saber se a função foi chamada mesmo
 						//que todas os ramos já estejam fechados
 						if (FuncoesTableauxLPO::todasFechadas($nosFolha,$contador)) {
-							//print "<br>Todos os ramos já estão fechados<br>";
-							//print $contador."<br>";
+							////print "<br>Todos os ramos já estão fechados<br>";
+							////print $contador."<br>";
 							return;
 						}
 						
@@ -256,8 +258,8 @@ class FuncoesTableauxLPO extends Model
 					//Verificação para saber se a função foi chamada mesmo
 					//que todas os ramos já estejam fechados
 					if (FuncoesTableauxLPO::todasFechadas($nosFolha,$contador)) {
-						//print "<br>Todos os ramos já estão fechados<br>";
-						//print $contador."<br>";
+						////print "<br>Todos os ramos já estão fechados<br>";
+						////print $contador."<br>";
 						return;
 					}
 					
@@ -265,7 +267,7 @@ class FuncoesTableauxLPO extends Model
 				}
 			}	
 		}	
-		//print "<br>Erro, não houve nó para aplicar a fórmula<br>Verificar se todas as fórmulas estão fechadas<br>";	
+		////print "<br>Erro, não houve nó para aplicar a fórmula<br>Verificar se todas as fórmulas estão fechadas<br>";	
 		return;
 	}
 	public static function escolhaUsuario(&$listaFormulasDisponiveis,&$hashInicial,$formEscolhida,&$nosFolha,&$raiz,&$contador,&$noFolhaEscolhido=NULL){
@@ -290,8 +292,8 @@ class FuncoesTableauxLPO extends Model
 	//Só deve ser usado na impressão
 	public static function limpaFormulaTableaux(&$form){
 		if (@is_string($form) || @$form['esquerdo']) {
-			//print "<br>Info não está disponível<br>";
-			//print_r($form);
+			////print "<br>Info não está disponível<br>";
+			////print_r($form);
 			return;
 		}
 		
@@ -312,6 +314,7 @@ class FuncoesTableauxLPO extends Model
 	}
 	//Serve apenas pra instânciar todos os campos do array fórmula para trabalhar evitando erros ou warnings
 	public static function criaFormulaTableauxLPO(){
+		global $id;
 		$auxForm['info']=array('esquerdo' => null, 'conectivo'=> array('operacao' => null, 'variavel'=> null), 'direito'=>null);
 		$auxForm['atualEsquerdo']=false;
 		$auxForm['atualDireito']=false;
@@ -325,6 +328,9 @@ class FuncoesTableauxLPO extends Model
 		$auxForm['hashAtomos']=array();
 		$auxForm['hashAtomosFuncoes']=array();
 		$auxForm['funcoesComSubstituicao']=null;
+		$auxForm['id']=$id;
+		$auxForm['formulaGeradora']=null;
+		$id++;
 		return $auxForm;
 
 	}
@@ -578,10 +584,10 @@ class FuncoesTableauxLPO extends Model
 				$form['funcoesComSubstituicao'][$funcao2][$variavel]=$constante;
 			}
 			$form['info']=$aux;
-			print "<br>Funcoes com substituição<br>";
-			print_r($form['funcoesComSubstituicao']);
-			print "<br>substituição feita<br>";
-			print_r($form['info']);
+			//print "<br>Funcoes com substituição<br>";
+			//print_r($form['funcoesComSubstituicao']);
+			//print "<br>substituição feita<br>";
+			//print_r($form['info']);
 			array_push($form['constantesUsadas'],$valor);
 		}
 	}
@@ -627,14 +633,18 @@ class FuncoesTableauxLPO extends Model
 		//Inicializando variáveis auxiliares com suas respectivas estruturas de dados
 		$noAuxCen1=FuncoesTableauxLPO::criaFormulaTableauxLPO();
 		$noAuxCen1['atualCentral']=true;
+		$noAuxCen1['formulaGeradora']=$form['info'];
 		$noAuxCen2=FuncoesTableauxLPO::criaFormulaTableauxLPO();
 		$noAuxCen1['filhoCentral']=&$noAuxCen2;
 		$noAuxCen2['pai']=&$noAuxCen1;
 		$noAuxCen2['atualCentral']=true;
+		$noAuxCen2['formulaGeradora']=$form['info'];
 		$noAuxEsq=FuncoesTableauxLPO::criaFormulaTableauxLPO();
 		$noAuxEsq['atualEsquerdo']=true;
+		$noAuxEsq['formulaGeradora']=$form['info'];
 		$noAuxDir=FuncoesTableauxLPO::criaFormulaTableauxLPO();
 		$noAuxDir['atualDireito']=true;
+		$noAuxDir['formulaGeradora']=$form['info'];
 
 		//Verificação para o caso de haver tentativa de aplciar fórmula
 		//num ramo que já foi fechado
@@ -642,11 +652,11 @@ class FuncoesTableauxLPO extends Model
 			abort(400,"<br>Este ramo já foi fechado<br>O nó folha é<br>".json_encode($pai['info']));
 			return;
 		}
-		//print "<br>Antes da correção<br>";
-		//print_r($form);
+		////print "<br>Antes da correção<br>";
+		////print_r($form);
 		//FuncoesTableauxLPO::corrigeArraysLPO($form);
-		//print "<br>aplicaRegraLPO<br>";
-		//print_r($form);
+		////print "<br>aplicaRegraLPO<br>";
+		////print_r($form);
 		//Verifico o conectivo da fórmula que foi aplicada
 		//NOTA:O pai não necessariamente será o mesmo cara o qual está sendo aplicada a fórmula
 		switch ($form['info']['conectivo']['operacao']) {
@@ -1617,32 +1627,92 @@ class FuncoesTableauxLPO extends Model
 			return false;
 		}
 	}
-	public static function imprimeArvore(&$no,&$contador){
+	public static function imprimeArvore(&$no,&$contador,&$listaDeNos,&$arvoreSaida,&$array){
 		
 		if (@$no['info']!=NULL) {
 			FuncoesTableauxLPO::converteFormulaStringTableaux($no['info']);
-			print_r($no['info']);
+			FuncoesTableauxLPO::converteFormulaStringTableaux($no['formulaGeradora']);
+			//print_r($no['info']);
 			FuncoesTableauxLPO::verificaStatusNo($no);
-			//print "<br>Lista de hashs<br>";
-			//print_r($no['funcoesComSubstituicao']);
+			////print "<br>Lista de hashs<br>";
+			////print_r($no['funcoesComSubstituicao']);
 		}
 		if ($contador==0) {
 			$contador++;
-			print "<br>";
+			//print "<br>";
 		}
 		if (@$no['filhoCentral']=='fechado'){
-			print "<br>Fechado<br>";
+			//print "<br>Fechado<br>";
 		}
 
+		$array2=null;
+		$array3=null;
+		if($no['id']==0){
+			$array[]['id']=$no['id'];
+			$listaDeNos[$no['id']]=array('info'=>$no['info'],'formulaGeradora'=>$no['formulaGeradora']);
+
+			$arvoreSaida=&$array;
+			if ($no['filhoCentral']!=null) {
+				$array2=[];
+				$array2['id']=$no['filhoCentral']['id'];
+				$array[0][1]=&$array2;
+				FuncoesTableauxLPO::converteFormulaStringTableaux($no['filhoCentral']['info']);
+				FuncoesTableauxLPO::converteFormulaStringTableaux($no['filhoCentral']['formulaGeradora']);
+				$listaDeNos[$no['filhoCentral']['id']]=array('info'=>$no['filhoCentral']['info'],'formulaGeradora'=>$no['filhoCentral']['formulaGeradora']);
+			}
+			elseif ($no['filhoEsquerdo']!=null) {
+				$array2=[];
+				$array2['id']=$no['filhoEsquerdo']['id'];
+				$array[0][1]=&$array2;
+				$array3=[];
+				$array3['id']=$no['filhoDireito']['id'];
+				$array[0][2]=&$array3;
+				FuncoesTableauxLPO::converteFormulaStringTableaux($no['filhoEsquerdo']['info']);
+				FuncoesTableauxLPO::converteFormulaStringTableaux($no['filhoDireito']['info']);
+				FuncoesTableauxLPO::converteFormulaStringTableaux($no['filhoEsquerdo']['formulaGeradora']);
+				FuncoesTableauxLPO::converteFormulaStringTableaux($no['filhoDireito']['formulaGeradora']);
+				$listaDeNos[$no['filhoEsquerdo']['id']]=array('info'=>$no['filhoEsquerdo']['info'],'formulaGeradora'=>$no['filhoEsquerdo']['formulaGeradora']);
+				$listaDeNos[$no['filhoDireito']['id']]=array('info'=>$no['filhoDireito']['info'],'formulaGeradora'=>$no['filhoDireito']['formulaGeradora']);
+			}
+		}
+
+		$listaDeNos[$no['id']]=array('info'=>$no['info'],'formulaGeradora'=>$no['formulaGeradora']);	
 		
 		if(@$no['filhoCentral']!=NULL && @$no['filhoCentral']!='fechado'){
-			@FuncoesTableauxLPO::imprimeArvore($no['filhoCentral'],$contador);
+			if ($no['id']==0) {
+				@FuncoesTableauxLPO::imprimeArvore($no['filhoCentral'],$contador,$listaDeNos,$arvoreSaida,$array2);
+			}
+			else{
+				$array2=[];
+				$array2['id']=$no['filhoCentral']['id'];
+				$array[1]=&$array2;
+				@FuncoesTableauxLPO::imprimeArvore(@$no['filhoCentral'],$contador,$listaDeNos,$arvoreSaida,$array2);
+			}	
 		}
 		if(@$no['filhoEsquerdo'] && @$no['filhoEsquerdo']!='fechado'){
-			FuncoesTableauxLPO::imprimeArvore(@$no['filhoEsquerdo'],$contador);
+			if ($no['id']==0) {
+				@FuncoesTableauxLPO::imprimeArvore(@$no['filhoEsquerdo'],$contador,$listaDeNos,$arvoreSaida,$array2);
+			}
+			else{
+				$array2=[];
+				$array2['id']=$no['filhoEsquerdo']['id'];
+				$array[1]=&$array2;
+				/*$array3=[];
+				$array3['id']=$no['filhoDireito']['id'];
+				$array[2]=&$array3;*/
+				@FuncoesTableauxLPO::imprimeArvore(@$no['filhoEsquerdo'],$contador,$listaDeNos,$arvoreSaida,$array2);
+			}
 		}
 		if(@$no['filhoDireito'] && @$no['filhoDireito']!='fechado'){
-			FuncoesTableauxLPO::imprimeArvore(@$no['filhoDireito'],$contador);
+			if ($no['id']==0) {
+				@FuncoesTableauxLPO::imprimeArvore(@$no['filhoEsquerdo'],$contador,$listaDeNos,$arvoreSaida,$array2);
+			}
+			else{
+				$array3=[];
+				$array3['id']=$no['filhoDireito']['id'];
+				$array[2]=&$array3;
+				@FuncoesTableauxLPO::imprimeArvore(@$no['filhoDireito'],$contador,$listaDeNos,$arvoreSaida,$array3);
+			}
 		}
 	}
 
@@ -1650,19 +1720,19 @@ class FuncoesTableauxLPO extends Model
 	public static function verificaStatusNo(&$no){
 		switch($no){
 			case @$no['atualCentral']:
-				print "  Central <br>";
+				//print "  Central <br>";
 				break;
 			case @$no['atualEsquerdo']:
-				print "  Esquerda ------ ";
+				//print "  Esquerda ------ ";
 				break;
 			case @$no['atualDireito']:
-				print "  Direita <br>";
+				//print "  Direita <br>";
 				break;
 			default:
 				if(@$no['info']=="fechado"){
 					break;
 				}
-				//print "<br>Nó não categorizado<br>";
+				////print "<br>Nó não categorizado<br>";
 		}
 	}
 	//Função que corrige casos em que temos um campo array do tipo fórmula dentro de outro
@@ -1878,10 +1948,10 @@ class FuncoesTableauxLPO extends Model
 	//Função que recebe a referência para uma fórmula array com a estrutura
 	//array ('esquerdo' => , 'conectivo' => , 'direito' =>) e transforma em string
 	public static function colocaParentesesTableaux(&$form){
-		//print_r($form);
+		////print_r($form);
 		if ((@is_array($form['info']['esquerdo']) || @is_array($form['esquerdo'])) && !(@is_array($form['direito']) || @is_array($form['info']['direito']))) {
-			//print "<br>Entrei no Caso 1<br>";
-			//print_r($form);
+			////print "<br>Entrei no Caso 1<br>";
+			////print_r($form);
 			if (@$form['conectivo']['operacao']=='not' || @$form['info']['conectivo']['operacao']=='not') {
 				if (FuncoesTableauxLPO::checaAtomicoLPO($form) || FuncoesTableauxLPO::checaAtomicoLPO($form['info'])) {
 					if (@$form['info']) {
@@ -2074,8 +2144,8 @@ class FuncoesTableauxLPO extends Model
 		}
 		elseif (!(@is_array($form['esquerdo']) || @is_array($form['info']['esquerdo'])) && ((@is_array($form['direito'])) || @is_array($form['info']['direito']))) {
 			//$conectivos=array("not","notnot","paraTodo","not_paraTodo","xist","not_xist");
-			//print "<br>Entrei no Caso 2<br>";
-			//print_r($form);
+			////print "<br>Entrei no Caso 2<br>";
+			////print_r($form);
 			$aux=null;
 			if (@$form['conectivo']['operacao']=='not' || @$form['info']['conectivo']['operacao']=='not') {
 				if (FuncoesTableauxLPO::checaAtomicoLPO($form) || FuncoesTableauxLPO::checaAtomicoLPO($form['info'])) {
@@ -2501,7 +2571,7 @@ class FuncoesTableauxLPO extends Model
 					}
 					
 			}
-			//print "<br><br>DEBUG -- ENTRADA NO direito é array<br><br>";			
+			////print "<br><br>DEBUG -- ENTRADA NO direito é array<br><br>";			
 			return;
 		}
 		elseif(is_array($form) || @is_array($form['info'])){

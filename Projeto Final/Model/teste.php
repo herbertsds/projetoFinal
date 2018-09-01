@@ -28,7 +28,7 @@ $array3['id']=$form3['id'];
 
 //adicionaArray($array[0], $array2);
 //adicionaArray($array[0], $array3);
-$array[][1]=&$array2;
+$array[0][1]=&$array2;
 $array2[1]=&$array3;
 $array4=[];
 $array4['id']=$form4['id'];
