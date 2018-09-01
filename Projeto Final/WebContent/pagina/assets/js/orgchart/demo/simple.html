@@ -43,18 +43,19 @@ $(document).ready(function(){
             // 'operacao' : 'negaPergunta',
             // 'qtd_formulasSelecionadas': 2,
             // 'formulas' : ['AeB','AeC']
+            'exercicio': 14
         };
         $.ajax({
 
-            url: 'http://127.0.0.1:8000/api/tableaux/',
+            url: 'http://127.0.0.1:8000/api/tableauxLPO/',
             type: 'GET',
             callback: '?',
             data: myData,
             datatype: 'application/json',
             success: function(obj) { 
-            // console.log(obj);
+            console.log(obj);
             // $("#teste").append('<li>Teste</li>');
-            // var obj = JSON.parse(teste);
+            var obj = JSON.parse(obj);
             // console.log(obj);
             // obj = "<ul><li>Nó 1<ul><li>Nó2</li><li>Nó3</li><ul><li><ul>";
             $("#organisation").append(obj);

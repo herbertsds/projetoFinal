@@ -14,7 +14,7 @@ class TableauxLPOController extends Controller
         //Exercícios 72 até o 137
 
 
-    	$exercicio = Exercicios::getExercicio(135);
+    	$exercicio = Exercicios::getExercicio(137);
 
         //$exercicio = Exercicios::getExercicio($numeroExercicio->exercicio);
 

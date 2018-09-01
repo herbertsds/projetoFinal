@@ -101,6 +101,12 @@ class Exercicios extends Model
 
     	$string = str_replace("v","∨",$string);
     	
+    	$string = str_replace("not_xist","¬∃",$string);
+    	$string = str_replace("not_ou","¬∨",$string);
+    	$string = str_replace("not_e","¬∧",$string);
+    	$string = str_replace("not_implica","¬→",$string);
+    	$string = str_replace("not_paraTodo","¬∀",$string);
+
     	$string = str_replace("implica","→",$string);
     	$string = str_replace("-","→",$string);
     	$string = str_replace("not","¬",$string);
