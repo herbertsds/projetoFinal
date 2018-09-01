@@ -14,18 +14,18 @@ class TableauxLPOController extends Controller
         //Exercícios 72 até o 137
 
 
-    	$exercicio = Exercicios::getExercicio(115);
+    	$exercicio = Exercicios::getExercicio(135);
 
         //$exercicio = Exercicios::getExercicio($numeroExercicio->exercicio);
 
     	$resposta = new TableauxLPO($exercicio);
 
-    	print_r("Exercício:<br>");
-    	print_r($exercicio);
-    	print_r("<br>----------------------------------------------<br><br>");
+    	//print_r("Exercício:<br>");
+    	//print_r($exercicio);
+    	//print_r("<br>----------------------------------------------<br><br>");
         //dd(1);
 
-    	//return json_encode($resposta->fullSteps(), JSON_UNESCAPED_UNICODE);
-    	 dd($resposta->fullSteps());
+    	return json_encode($resposta->fullSteps(), JSON_UNESCAPED_UNICODE);
+    	 //dd($resposta->fullSteps());
     }
 }

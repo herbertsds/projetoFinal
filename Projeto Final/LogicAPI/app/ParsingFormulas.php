@@ -7,7 +7,7 @@ use App\FuncoesResolucao;
 use App\Formula;
 
 class ParsingFormulas extends Model{
-	public $id;
+	public $id=0;
 	//Função que recebe uma fórmula em string e retorna a fórmula no formato de array
 	//Retorno é array ('esquerdo' => , 'conectivo' => , 'direito' =>)
 	//Métodos que usarão: Resolução, Dedução natural proposicionais
@@ -463,6 +463,7 @@ class ParsingFormulas extends Model{
 	//Para saber todos os campos do array, checar a inicialização de auxForm abaixo
 	//Métodos que usarão: Tableaux (Proposicional e primeira ordem)
 	public static function resolveParentesesTableauxLPO($form){
+		global $id;
 		$listaConectivos = Formula::getListaConectivos();
 		$auxForm['info']=array('esquerdo' => null, 'conectivo' => array('operacao' => null, 'variavel'=> null), 'direito'=>null);
 		$auxForm['atualEsquerdo']=false;
@@ -477,6 +478,9 @@ class ParsingFormulas extends Model{
 		$auxForm['hashAtomos']=array();
 		$auxForm['hashAtomosFuncoes']=array();
 		$auxForm['funcoesComSubstituicao']=null;
+		$auxForm['id']=$id;
+		$auxForm['formulaGeradora']=null;
+		$id++;
 		$aux;
 		$esquerdo=true;
 		$abreFormula=false;
