@@ -247,6 +247,50 @@ class Tableaux extends Model
 		//return $resultado;
 		$resposta[]=$array;
 		$resposta[]=$listaDeNos;
+		$resposta = $this->retornaArvore($resposta,$this->exercicioEscolhido);
 		return $resposta;
+    }
+
+    private function retornaArvore($resposta,$exercicio){
+ 		// echo "<pre>";
+
+    	$arrayArvore = $resposta[0];
+    	$hash = $resposta[1];
+    	// dd($resposta);
+    	$respostaFinal = "";
+		// $respostaFinal = "<ul><li>";
+			//Colocar ['formula']
+			// $respostaFinal .= Exercicios::converteSaida($hash[$arrayArvore[0]['id']]['info']);
+				$respostaFinal .= "<ul>";
+					$respostaFinal .= $this->retornaNo($arrayArvore[0],$hash);
+				$respostaFinal .= "</ul>";
+		// $respostaFinal .= "</li></ul>";
+
+
+		$exercicio[count($exercicio) - 1] = "not(".$exercicio[count($exercicio) - 1].")";
+
+		for($i = count($exercicio) - 1; $i >=0 ; $i--){
+			$respostaFinal = "<ul><li>" . Exercicios::converteSaida($exercicio[$i]) .  $respostaFinal . "</li></ul>";
+		}
+
+    	return $respostaFinal;
+
+
+    }
+
+    private function retornaNo($arrayArvore,$hash){
+    	$respostaFinal = "";
+    	for($i = 1; $i < count($arrayArvore); $i++){
+    		$respostaFinal .= "<li>";
+    			//Colocar ['formula']
+    			$respostaFinal .= Exercicios::converteSaida($hash[$arrayArvore[$i]['id']]['info']);
+    				$respostaFinal .= "<ul>";
+    					if(is_array($arrayArvore[$i]))
+    						$respostaFinal .= $this->retornaNo($arrayArvore[$i],$hash);
+    				$respostaFinal .= "</ul>";
+    		$respostaFinal .= "</li>";
+    	}
+    	// dd($respostaFinal);
+    	return $respostaFinal;
     }
 }

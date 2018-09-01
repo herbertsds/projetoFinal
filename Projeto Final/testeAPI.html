@@ -10,14 +10,14 @@ $(document).ready(function(){
 	    };
 
         $.ajax({
-	        url: 'http://127.0.0.1:8000/api/resolucao/',
+	        url: 'http://127.0.0.1:8000/api/tableaux/',
 	        type: 'GET',
 	        callback: '?',
 	        data: myData,
 	        datatype: 'application/json',
 	        success: function(teste) { 
 			
-	        console.log(teste);
+	        // console.log(teste);
 	        // var obj = JSON.parse(teste);
 	        // console.log(obj[0]['sentenca'].split(","));
 
