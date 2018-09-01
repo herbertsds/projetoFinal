@@ -31,6 +31,8 @@ class Tableaux extends Model
 		$this->listaFormulasDisponiveis = array();
 		$this->nivelG=0;
 		$this->numRamoGlobal=1;
+		$arvoreSaida=[];
+		$listaDeNos=[];
 		//-------------------------------------VARIÁVEIS--GLOBAIS--------------------------------------------
 
 		//Inicialização das fórmulas, aqui recebo os dados para resolver o tableaux
@@ -202,8 +204,15 @@ class Tableaux extends Model
 			}
 		}
 		$resultado = null;
+		$array = [];
 		//print "<br>Árvore a partir da raiz<br>";
-		FuncoesTableaux::imprimeArvore($raiz,$resultado);
+		$raiz['id']=0;
+		FuncoesTableaux::imprimeArvore($raiz,$resultado,$listaDeNos,$arvoreSaida,$array);
+		//FuncoesTableaux::imprimeArvore2($raiz);
+		//print_r($arvoreSaida);
+		//print_r($array);
+		//print_r($listaDeNos);
+		//dd(1);
 		//FuncoesTableaux::imprimeArvore($raiz);
 		//print '<br>Raiz<br>';
 		//print_r($raiz);
@@ -232,9 +241,12 @@ class Tableaux extends Model
 		// $resultado[]['direita'] = 'Quinze';
 		// $resultado[]['central'] = 'Dezesseis';
 
-		$resposta = FuncoesTableaux::outputArvore($resultado,$this->exercicioEscolhido);
+
+		//$resposta = FuncoesTableaux::outputArvore($resultado,$this->exercicioEscolhido);
 		//$resposta[] = $raiz;
 		//return $resultado;
+		$resposta[]=$array;
+		$resposta[]=$listaDeNos;
 		return $resposta;
     }
 }

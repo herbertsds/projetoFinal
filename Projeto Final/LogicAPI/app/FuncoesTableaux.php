@@ -8,8 +8,10 @@ use App\FuncoesAuxiliares;
 
 class FuncoesTableaux extends Model
 {
+	public $id=0;
     //Versão que retorna um array fórmula deixando os campos específicos do Tableaux "declarados"
 	public static function resolveParentesesTableaux($form){
+		global $id;
 		$listaConectivos = Formula::getListaConectivos();
 		$auxForm['info']=array('esquerdo' => null, 'conectivo'=> null, 'direito'=>null);
 		$auxForm['atualEsquerdo']=false;
@@ -22,6 +24,8 @@ class FuncoesTableaux extends Model
 		$auxForm['formDisponiveis']=array();
 		$auxForm['hashAtomos']=array();
 		$auxForm['formulaGeradora']=null;
+		$auxForm['id']=$id;
+		$id++;
 		$aux;
 		$esquerdo=true;
 		$abreFormula=false;
@@ -407,6 +411,7 @@ class FuncoesTableaux extends Model
 	}
 	//Serve apenas pra instânciar todos os campos do array fórmula para trabalhar evitando erros ou warnings
 	public static function criaFormulaTableaux(){
+		global $id;
 		$auxForm['info']=array('esquerdo' => null, 'conectivo'=> null, 'direito'=>null);
 		$auxForm['atualEsquerdo']=false;
 		$auxForm['atualDireito']=false;
@@ -418,6 +423,8 @@ class FuncoesTableaux extends Model
 		$auxForm['formDisponiveis']=array();
 		$auxForm['hashAtomos']=array();
 		$auxForm['formulaGeradora']=null;
+		$auxForm['id']=$id;
+		$id++;
 		return $auxForm;
 
 	}
@@ -1152,7 +1159,7 @@ class FuncoesTableaux extends Model
 		}
 	}*/
 	
-	public static function imprimeArvore(&$no,&$resultado=NULL){
+	public static function imprimeArvore(&$no,&$resultado=NULL,&$listaDeNos,&$arvoreSaida,&$array){
 		if (@$no['info']!=NULL) {
 			FuncoesTableaux::converteFormulaStringTableaux($no['info']);
 			FuncoesTableaux::converteFormulaStringTableaux($no['formulaGeradora']);
@@ -1169,17 +1176,85 @@ class FuncoesTableaux extends Model
 			else{
 				FuncoesTableaux::verificaStatusNo($no,$resultado);
 			}
+			if (@$no=='fechado' ) {
+				return;
+			}
 			
 		}
-		
+		$array2=null;
+		$array3=null;
+		if($no['id']==0){
+			$array[]['id']=$no['id'];
+			$listaDeNos[$no['id']]=array('info'=>$no['info'],'formulaGeradora'=>$no['formulaGeradora']);
+
+			$arvoreSaida=&$array;
+			if ($no['filhoCentral']!=null) {
+				$array2=[];
+				$array2['id']=$no['filhoCentral']['id'];
+				$array[0][1]=&$array2;
+				FuncoesTableaux::converteFormulaStringTableaux($no['filhoCentral']['info']);
+				FuncoesTableaux::converteFormulaStringTableaux($no['filhoCentral']['formulaGeradora']);
+				$listaDeNos[$no['filhoCentral']['id']]=array('info'=>$no['filhoCentral']['info'],'formulaGeradora'=>$no['filhoCentral']['formulaGeradora']);
+			}
+			elseif ($no['filhoEsquerdo']!=null) {
+				$array2=[];
+				$array2['id']=$no['filhoEsquerdo']['id'];
+				$array[0][1]=&$array2;
+				$array3=[];
+				$array3['id']=$no['filhoDireito']['id'];
+				$array[0][2]=&$array3;
+				FuncoesTableaux::converteFormulaStringTableaux($no['filhoEsquerdo']['info']);
+				FuncoesTableaux::converteFormulaStringTableaux($no['filhoDireito']['info']);
+				FuncoesTableaux::converteFormulaStringTableaux($no['filhoEsquerdo']['formulaGeradora']);
+				FuncoesTableaux::converteFormulaStringTableaux($no['filhoDireito']['formulaGeradora']);
+				$listaDeNos[$no['filhoEsquerdo']['id']]=array('info'=>$no['filhoEsquerdo']['info'],'formulaGeradora'=>$no['filhoEsquerdo']['formulaGeradora']);
+				$listaDeNos[$no['filhoDireito']['id']]=array('info'=>$no['filhoDireito']['info'],'formulaGeradora'=>$no['filhoDireito']['formulaGeradora']);
+			}
+		}
+		//print_r($arvoreSaida);
+		//dd(1);
+		$listaDeNos[$no['id']]=array('info'=>$no['info'],'formulaGeradora'=>$no['formulaGeradora']);
 		if(@$no['filhoCentral']!=NULL && @$no['filhoCentral']!='fechado'){
-			@FuncoesTableaux::imprimeArvore(@$no['filhoCentral'],$resultado);
+			if ($no['id']==0) {
+				@FuncoesTableaux::imprimeArvore(@$no['filhoCentral'],$resultado,$listaDeNos,$arvoreSaida,$array2);
+			}
+			/*elseif ($no['atualDireito']) {				
+				@FuncoesTableaux::imprimeArvore(@$no['filhoCentral'],$resultado,$listaDeNos,$arvoreSaida,$array);
+			}*/
+			else{
+				$array2=[];
+				$array2['id']=$no['filhoCentral']['id'];
+				$array[1]=&$array2;
+				@FuncoesTableaux::imprimeArvore(@$no['filhoCentral'],$resultado,$listaDeNos,$arvoreSaida,$array2);
+			}			
 		}
 		if(@$no['filhoEsquerdo'] && @$no['filhoEsquerdo']!='fechado'){
-			@FuncoesTableaux::imprimeArvore(@$no['filhoEsquerdo'],$resultado);
+			if ($no['id']==0) {
+				@FuncoesTableaux::imprimeArvore(@$no['filhoEsquerdo'],$resultado,$listaDeNos,$arvoreSaida,$array2);
+			}
+			/*elseif ($no['atualDireito']) {
+				@FuncoesTableaux::imprimeArvore(@$no['filhoEsquerdo'],$resultado,$listaDeNos,$arvoreSaida,$array);
+			}*/
+			else{
+				$array2=[];
+				$array2['id']=$no['filhoEsquerdo']['id'];
+				$array[1]=&$array2;
+				/*$array3=[];
+				$array3['id']=$no['filhoDireito']['id'];
+				$array[2]=&$array3;*/
+				@FuncoesTableaux::imprimeArvore(@$no['filhoEsquerdo'],$resultado,$listaDeNos,$arvoreSaida,$array2);
+			}
 		}
 		if(@$no['filhoDireito'] && @$no['filhoDireito']!='fechado'){
-			@FuncoesTableaux::imprimeArvore(@$no['filhoDireito'],$resultado);
+			if ($no['id']==0) {
+				@FuncoesTableaux::imprimeArvore(@$no['filhoEsquerdo'],$resultado,$listaDeNos,$arvoreSaida,$array2);
+			}
+			else{
+				$array3=[];
+				$array3['id']=$no['filhoDireito']['id'];
+				$array[2]=&$array3;
+				@FuncoesTableaux::imprimeArvore(@$no['filhoDireito'],$resultado,$listaDeNos,$arvoreSaida,$array3);
+			}
 		}
 	}
 
@@ -1237,8 +1312,8 @@ class FuncoesTableaux extends Model
 		}
 	}*/
 	public static function imprimeArvore2(&$no){
-		if (@$no['info']!=NULL) {
-			//FuncoesTableaux::converteFormulaStringTableaux($no['info']);
+		if (@$no['info']!=NULL && $no!='fechado') {
+			FuncoesTableaux::converteFormulaStringTableaux($no['info']);
 			 print "<br>";
 			 print_r($no['info']);
 			FuncoesTableaux::verificaStatusNo2($no);
@@ -1459,9 +1534,10 @@ class FuncoesTableaux extends Model
 	private static function setSubGrupos($resultado){
 		$subgrupo = NULL;
 		$controle = 0;
+
 		foreach ($resultado as $key => $value) {
 			if(array_key_exists("central", $value)){
-				$subgrupo[$controle]['string'][] = $value['central'];
+				$subgrupo[$controle]['string'][] = $value['central'][0];
 				$subgrupo[$controle]['node'][] = 'central';
 			}
 			else if(array_key_exists("raiz", $value)){

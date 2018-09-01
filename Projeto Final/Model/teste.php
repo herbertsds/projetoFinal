@@ -26,16 +26,19 @@ $array3=[];
 $array3['id']=$form3['id'];
 //$array3[]=[];
 
-adicionaArray($array[0], $array2);
-adicionaArray($array[0], $array3);
-
+//adicionaArray($array[0], $array2);
+//adicionaArray($array[0], $array3);
+$array[][1]=&$array2;
+$array2[1]=&$array3;
 $array4=[];
 $array4['id']=$form4['id'];
 $array5=[];
 $array5['id']=$form5['id'];
 
-@adicionaArray($array2[0], $array4);
-@adicionaArray($array2[0], $array5);
+$array3[0]=&$array4;
+$array3[2]=&$array5;
+//@adicionaArray($array3[0], $array4);
+//@adicionaArray($array4[0], $array5);
 
 print_r($array);
 
