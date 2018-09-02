@@ -737,7 +737,7 @@
 			f_abreGabSem();
 			break;
 		case "t_lpo":
-			f_GabTab_lpo();
+			f_abreGabTab_lpo();
 			break;
 		}
 			
