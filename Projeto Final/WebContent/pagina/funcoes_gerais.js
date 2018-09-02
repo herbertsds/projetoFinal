@@ -725,7 +725,8 @@
 			f_gabDeducao();
 			break;
 		case "semantica":	
-			//f_gabSemantica();
+			f_GabSemantica();
+			break;
 		case "t_lpo":
 			f_Gabt_lpo();
 			break;
