@@ -33,7 +33,7 @@ div.orgChart table {
 
 div.orgChart tr.lines td.line {
     width                 : 1px;
-    height                : 10px;
+    height                : 30px;
 }
 
 div.orgChart tr.lines td.top {

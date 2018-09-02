@@ -1,39 +1,43 @@
-//import { org } from 'jquery.orgchart.js';
-function f_GabTableaux(){
+        function f_GabTableaux(){
+        	var myData = { 'exercicio' : exercicioBuscado}; // parseInt(numExercicio)
+        	console.log(' enviando : ' + myData);
 
-	var myData = { 'exercicio' : parseInt(numExercicio)};
-	console.log(' enviando : ' + myData);
+        	$.ajax({
+        		
+                url: 'http://127.0.0.1:8000/api/tableaux/',
+            	type: 'GET',
+                callback: '?',
+                data: myData, 
+                datatype: 'application/json',
+                success: function(obj) {
+        	        //console.log(retorno);
+        	        //var obj = JSON.parse(retorno);
+                    //console.log(obj);
+                	$('#iframe').contents().find('head').append('    <link rel="stylesheet" href="jquery.orgchart.css"/>');
+                	$('#iframe').css('height', $(window).height()+'px');
+        			
+                	$('#iframe').contents().find('body').append('<div  class="form-check"  id="s_divNovasFormulas"><div id="s_content"><div id="s_main"><ul id="s_organisation"></ul></div></div></div>');
+                	$('#iframe').contents().find("#s_organisation").append(obj);
+                	$('#iframe').contents().find("#s_organisation").orgChart({container: $('#iframe').contents().find("#s_main")});
+                    
+                	//$("#s_organisation").append(obj);
+                   //   $("#s_organisation").orgChart({container: $("#s_main")});
+                      
+                   // $('#btnTableaux').click();
+        	        
+                },
+        	    error: function(retorno2) { 
 
-	$.ajax({
-		
-        url: 'http://127.0.0.1:8000/api/tableaux/',
-    	type: 'GET',
-        callback: '?',
-        data: myData, 
-        datatype: 'application/json',
-        success: function(retorno) {
-	        //console.log(retorno);
-	        var obj = JSON.parse(retorno);
-            console.log(obj);
-			$('#t_divFormulas').append("<article> --------------------------------------------------------- </article>" );
+        	    	console.log(retorno2); },
+                });
+                	
+        }
+        function f_abreGabTab(){
+            var win = window.open('gabTableaux.html');
+            
 
-            $("#organisation").append(obj);
-            $("#organisation").orgChart({container: $("#main")});
-           // f_teste();
-	        
-	        
-	        
-        },
-	    error: function(retorno2) { 
-
-	    	console.log(retorno2); },
-        });
+        }
+        function f_LimpaTableaux(){
         	
-}
-
-
-
-
-function f_LimpaTableaux(){
-}
-
+        	
+        }

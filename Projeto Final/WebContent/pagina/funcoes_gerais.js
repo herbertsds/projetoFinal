@@ -403,6 +403,13 @@
 				
 			case "semantica":
 				$('#formulas').append("<br/>" + pergunta );
+				 for (cont = 0; cont in vet_regras; cont++){
+					  numLinha = cont+1;
+						$('#s_divFormulas').append("<p id='" + cont+ "'>"+ numLinha +": " + vet_regras[cont] + "</p>" );
+	
+				  }
+				  numLinha++;
+				$('#s_divFormulas').append("<p id='finalVetor'>"+ numLinha +": " + pergunta + " # Pergunta </p>" );
 				break;
 				
 			case "t_lpo":
@@ -670,7 +677,9 @@
 
 				$('#btn_TransformarRegra').show();
 //				$('#btn_ProximoPasso').show();
-		
+				if(tipoEx == 'semantica' || tipoEx == 'tableaux' || tipoEx == 't_lpo'  ){
+					$('#btnSem').click();
+				}
 	}
 	
 	function f_RemoverRegra(){
@@ -716,7 +725,7 @@
 		switch(tipoEx){
 		
 		case "tableaux":
-			f_GabTableaux();
+			 f_abreGabTab();
 			break;
 		case "resolucao":
 			f_GabResolucao();
@@ -728,7 +737,7 @@
 			f_abreGabSem();
 			break;
 		case "t_lpo":
-			f_Gabt_lpo();
+			f_GabTab_lpo();
 			break;
 		}
 			
@@ -883,7 +892,7 @@ function f_LimpaTipo(){
 	f_LimpaResolucao();
 	f_LimpaDeducao();
 	f_LimpaSemantica();
-	f_Limpat_lpo();
+	f_LimpaTableaux_lpo();
 	$("#buttonRemoverRegra").attr("style",'display:none');   
 	$("#buttonRemoverPerg").attr("style",'display:none');   
 	$("#buttonRemoverRegra").prop("disabled",false);   
@@ -904,5 +913,5 @@ function f_LimpaDesenvolvimento(){
 	f_LimpaResolucao();
 	f_LimpaDeducao();
 	f_LimpaSemantica();
-	f_Limpat_lpo();
+	f_LimpaTableaux_lpo();
 }

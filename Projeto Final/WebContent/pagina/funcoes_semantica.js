@@ -34,6 +34,7 @@ function f_GabSemantica(){
 }
 function f_abreGabSem(){
     var win = window.open('gabSemantica.html');
+    
 
 }
 function f_LimpaSemantica(){
