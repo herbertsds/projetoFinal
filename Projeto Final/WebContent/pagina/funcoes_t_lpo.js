@@ -1,5 +1,5 @@
-        function f_GabTab_lpo(){
-        	var myData = { 'exercicio' : exercicioBuscado}; // parseInt(numExercicio)
+        function f_GabTab_lpo(exercicio){
+        	var myData = { 'exercicio' : exercicio}; // parseInt(numExercicio)
         	console.log(' enviando : ' + myData);
 
         	$.ajax({
@@ -33,11 +33,12 @@
                 	
         }
         function f_abreGabTab_lpo(){
-            var win = window.open('gabTableaux_lpo.html');
+            var win = window.open('gabTableaux_lpo.html?exercicioBuscado='+numExercicio);
             
 
         }
         function f_LimpaTableaux_lpo(){
         	
-        	
+        	$("#t_lpo_divFormulas").empty();
+
         }

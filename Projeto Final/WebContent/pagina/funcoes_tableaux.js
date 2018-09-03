@@ -1,5 +1,5 @@
-        function f_GabTableaux(){
-        	var myData = { 'exercicio' : exercicioBuscado}; // parseInt(numExercicio)
+        function f_GabTableaux(exercicio){
+        	var myData = { 'exercicio' : exercicio}; // parseInt(numExercicio)
         	console.log(' enviando : ' + myData);
 
         	$.ajax({
@@ -33,11 +33,12 @@
                 	
         }
         function f_abreGabTab(){
-            var win = window.open('gabTableaux.html');
+            var win = window.open('gabTableaux.html?exercicioBuscado='+numExercicio);
             
 
         }
         function f_LimpaTableaux(){
-        	
+        	$("#t_divFormulas").empty();
+
         	
         }

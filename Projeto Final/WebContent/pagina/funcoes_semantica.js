@@ -1,5 +1,5 @@
-function f_GabSemantica(){
-	var myData = { 'exercicio' : exercicioBuscado}; // parseInt(numExercicio)
+function f_GabSemantica(exercicio){
+	var myData = { 'exercicio' : exercicio}; // parseInt(numExercicio)
 	console.log(' enviando : ' + myData);
 
 	$.ajax({
@@ -32,12 +32,14 @@ function f_GabSemantica(){
         });
         	
 }
+
+
 function f_abreGabSem(){
-    var win = window.open('gabSemantica.html');
+    var win = window.open('gabSemantica.html?exercicioBuscado='+numExercicio);
     
 
 }
 function f_LimpaSemantica(){
-	
+	$("#s_divFormulas").empty();
 	
 }
