@@ -1,6 +1,6 @@
         function f_GabTableaux(exercicio){
         	var myData = { 'exercicio' : exercicio}; // parseInt(numExercicio)
-        	console.log(' enviando : ' + myData);
+        	console.log(myData);
 
         	$.ajax({
         		
@@ -11,8 +11,8 @@
                 datatype: 'application/json',
                 success: function(obj) {
         	        //console.log(retorno);
-        	        //var obj = JSON.parse(retorno);
-                    //console.log(obj);
+        	        obj = JSON.parse(obj);
+                    console.log(obj);
                 	$('#iframe').contents().find('head').append('    <link rel="stylesheet" href="jquery.orgchart.css"/>');
                 	$('#iframe').css('height', $(window).height()+'px');
         			

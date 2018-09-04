@@ -6,11 +6,11 @@
 $(document).ready(function(){
     $("button").click(function(){
     	var myData = {
-	        // 'formulas': ["(((not(A))ouB)", "(CouD)", "(AouB)"]
+	        'formulas': ["(((not(A))ouB)", "(CouD)", "(AouB)"]
 	    };
 
         $.ajax({
-	        url: 'http://127.0.0.1:8000/api/tableauxLPO/',
+	        url: 'http://127.0.0.1:8000/api/tableaux/',
 	        type: 'GET',
 	        callback: '?',
 	        data: myData,
