@@ -730,9 +730,7 @@
 		case "resolucao":
 			f_GabResolucao();
 			break;
-		case "deducao":
-			f_gabDeducao();
-			break;
+
 		case "semantica":	
 			f_abreGabSem();
 			break;
