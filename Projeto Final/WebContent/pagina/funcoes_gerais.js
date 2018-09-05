@@ -252,7 +252,7 @@
 			$('#pergunta').prop('disabled', false);
 			$('#buttonRegra').show();
 			$('#buttonPergunta').show();
-			
+			$('#btn_gabarito').prop('disabled',false);
 			f_LimpaTipo();
 //			f_BuscaListas();
 
@@ -276,7 +276,7 @@
 			$('#pergunta').prop('disabled', false);
 			$('#buttonRegra').show();
 			$('#buttonPergunta').show();
-			
+			$('#btn_gabarito').prop('disabled',false);
 			f_LimpaTipo();
 //			f_BuscaListas();
 			break;
@@ -299,7 +299,7 @@
 			$('#pergunta').prop('disabled', false);
 			$('#buttonRegra').show();
 			$('#buttonPergunta').show();
-			
+			$('#btn_gabarito').prop('disabled',true);
 			f_LimpaTipo();
 //			f_BuscaListas();
 
@@ -323,7 +323,7 @@
 			$('#pergunta').prop('disabled', false);
 			$('#buttonRegra').show();
 			$('#buttonPergunta').show();
-			
+			$('#btn_gabarito').prop('disabled',false);
 			f_LimpaTipo();
 //			f_BuscaListas();
 			break;
@@ -348,7 +348,7 @@
 			$('#pergunta').prop('disabled', false);
 			$('#buttonRegra').show();
 			$('#buttonPergunta').show();
-			
+			$('#btn_gabarito').prop('disabled',false);
 			f_LimpaTipo();
 //			f_BuscaListas();			
 
@@ -398,16 +398,16 @@
 				
 			break;
 			case "deducao":
-				$('#formulas').append("<br/>" + pergunta );
+				 for (cont = 0; cont in vet_regras; cont++){
+					  numLinha = cont+1;
+						$('#dnFormmulas').append("<p id='" + cont+ "'>"+ numLinha +": " + vet_regras[cont] + "</p>" );
+	
+				  }
+				 numLinha++;
+					$('#dnFormmulas').append("<p id='finalVetor'>"+ numLinha +": " + pergunta + " # Pergunta </p>" );
 				break;
 				
 			case "semantica":
-				$('#formulas').append("<br/>" + pergunta );
-				 for (cont = 0; cont in vet_regras; cont++){
-					  numLinha = cont+1;
-						$('#s_divFormulas').append("<p id='" + cont+ "'>"+ numLinha +": " + vet_regras[cont] + "</p>" );
-	
-				  }
 				  numLinha++;
 				$('#s_divFormulas').append("<p id='finalVetor'>"+ numLinha +": " + pergunta + " # Pergunta </p>" );
 				break;

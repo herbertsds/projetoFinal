@@ -23,8 +23,15 @@
 	<link href="assets/css/demo.css" rel="stylesheet" />
 <!--     <link rel="stylesheet" href="demo_arvore.css"/> -->
     <link rel="stylesheet" href="jquery.orgchart.css"/>
-	
-	
+
+<!-- 	DN -->
+	<link rel="stylesheet" type="text/css" href="./assets/js/jstree/dist/themes/default/style.min.css"/>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="./assets/js/jstree/dist/jstree.min.js"></script>
+	<script src="./assets/js/dn.js"></script>
+<!-- ---------------	 -->
+
+
 	<script src="assets/js/jquery-1-12-4.js"></script> 	
 	
 	
@@ -383,7 +390,7 @@
 												<div class="regrasTableaux" id='divTableaux' style="display: none">											
  									
 													<div class="passos" id="t_passos">
-														<h4 class="control-label"><strong> > Passo-a-passo Para Tableaux:</strong></h4>
+														<h4 class="control-label"><strong> > Passo-a-passo para Tableaux:</strong></h4>
 														
 														<article id='info1'>- Selecione a fórmula que deseja expandir</article>
 														<article id='info2'>- Desenvolver o exercício até fechar todos os ramos da árvore </article>
@@ -425,9 +432,30 @@
 												<div class="col-sm-8 col-sm-offset-2">
 					
 													<div class="regrasDeducao" id='divDeducao' style="display: none">		
-														<h4 class="info-text"> Execução da Dedução Natural...</h4>
-																						
+															<div id='dnFormmulas'>
+														<h4 class="control-label"><strong> > Passo-a-passo para Dedução Natural:</strong></h4>
+														
+														<article id='info1'>- Selecione uma das opções de regras possíveis ou abrir uma suposição</article>
+														<article id='info2'>- Repetir o passo anterior até que se chegue na pergunta </article>
+														 <h4><strong>> Início do Exercício</strong> </h4>
+														 
+															</div>
+<div class='resultado'></div>
+
+<div id="jstree_div"></div>
+<div id='buttonsDN'>
+<button type="button" class="btn btn-info btn-xs" id="supor" style='display:inline-block'>Supor</button>
+<button type="button" class="btn btn-info btn-xs" id="elimNot" style='display:inline-block'>Eliminação do not</button>
+<button type="button" class="btn btn-info btn-xs" id="elimE" style='display:inline-block'>Eliminação do E</button><br/>
+<button type="button" class="btn btn-info btn-xs" id="excImp" style='display:inline-block'>Exclusão do Implica</button>
+<button type="button" class="btn btn-info btn-xs" id="incE" style='display:inline-block'>Inclusão do E</button>
+<button type="button" class="btn btn-info btn-xs" id="abs" style='display:inline-block'>Declarar Absurdo</button><br/>
+
+</div>					
+											
+
 													</div>
+
 												</div>
 					 <!--FIM DEDUCAO	-->											
 					<!--  DIV PARA SEMANTICA-->
@@ -458,7 +486,7 @@
 												<div class="regrasSemantica" id='divSemantica' style="display: none">											
  									
 													<div class="passos" id="s_passos">
-														<h4 class="control-label"><strong> > Passo-a-passo Para Semântica:</strong></h4>
+														<h4 class="control-label"><strong> > Passo-a-passo para Semântica:</strong></h4>
 														
 														<article id='info1'>- Selecione a fórmula que deseja expandir</article>
 														<article id='info2'>- Desenvolver o exercício até fechar todos os ramos da árvore </article>
@@ -492,7 +520,7 @@
 												<div class="regrast_lpo" id='divt_lpo' style="display: none">											
  									
 													<div class="passos" id="t_lpo_passos">
-														<h4 class="control-label"><strong> > Passo-a-passo Para Tableaux LPO:</strong></h4>
+														<h4 class="control-label"><strong> > Passo-a-passo para Tableaux LPO:</strong></h4>
 														
 														<article id='info1'>- Selecione a fórmula que deseja expandir</article>
 														<article id='info2'>- Desenvolver o exercício até fechar todos os ramos da árvore </article>
@@ -549,7 +577,7 @@
 											
 													
 													<div class="passos" id="r_passos">
-														<h4 class="control-label"><strong> > Passo-a-passo Para Resolução:</strong></h4>
+														<h4 class="control-label"><strong> > Passo-a-passo para Resolução:</strong></h4>
 														
 														<span id='r_passo1'>- Negar a Pergunta</span> </br>
 																													
