@@ -1,5 +1,4 @@
-
-function f_LimpaDeducao(){
+function f_LimpaDeducao() {
 	$('#dnFormmulas').empty();
 
 }
