@@ -247,6 +247,7 @@ class Tableaux extends Model
 		//return $resultado;
 		$resposta[]=$array;
 		$resposta[]=$listaDeNos;
+		//dd("Qualquer coisa");
 		$resposta = $this->retornaArvore($resposta,$this->exercicioEscolhido);
 		return $resposta;
     }

@@ -694,8 +694,9 @@ class FuncoesTableaux extends Model
 				if (FuncoesTableaux::checaAtomico($noAuxCen1['info'])) {
 					if ($noAuxCen1['info']['conectivo']=='notnot') {
 						//Equivalente a notnot
-						//$noAuxCen1['info']['conectivo']=null;
+						$noAuxCen1['info']['conectivo']=null;
 					}
+					FuncoesTableaux::corrigeAtomo($noAuxCen1['info']);
 				}
 
 				//ARRUMAR O CASO EM QUE NOTNOT ESTIVER EM ARRAY
@@ -1313,7 +1314,7 @@ class FuncoesTableaux extends Model
 	}*/
 	public static function imprimeArvore2(&$no){
 		if (@$no['info']!=NULL && $no!='fechado') {
-			FuncoesTableaux::converteFormulaStringTableaux($no['info']);
+			//FuncoesTableaux::converteFormulaStringTableaux($no['info']);
 			 print "<br>";
 			 print_r($no['info']);
 			FuncoesTableaux::verificaStatusNo2($no);
@@ -1651,6 +1652,16 @@ class FuncoesTableaux extends Model
 		}
 		return;
 	}
+	//Recebe o info de um array fórmula atômica que contenha parênteses
+	//do lado direito e a retorna sem parênteses
+	//GARANTA que a aplicação ocorra depois do checa atômico retornar verdadeiro
+	public static function corrigeAtomo(&$form){
+		if(strlen($form['direito'])==3){
+			$form['direito']=substr($form['direito'], 1);
+			$form['direito']=substr($form['direito'], 0, strlen($form['direito'])-1);
+			return;
+		}
+	}
 	//Função que processa o equivalente a um not(array)
 	//Para processar not(atomo) funções não são necessárias
 	public static function negaArrayTableaux(&$form){
@@ -1823,7 +1834,12 @@ class FuncoesTableaux extends Model
 						//print "<br>Repetindo<br>";
 					//	FuncoesTableaux::colocaParentesesTableaux($form['esquerdo']);
 					//}
-					$form['esquerdo']="not(".$form['esquerdo'];
+					if (@$form['esquerdo']['info']) {
+						$aux="not(".$form['esquerdo']['info'];
+					}
+					else{
+						$aux="not(".$form['esquerdo'];
+					}
 					$aux=$aux."implica";
 					$aux=$aux.$form['direito']."))";
 					$form=$aux;
@@ -2490,6 +2506,9 @@ class FuncoesTableaux extends Model
 
 			$aux="(";
 			if (@$form['info']) {
+				if (is_string($form['info'])) {
+					return;
+				}
 				while((is_array($form['info']['esquerdo'])) && is_array($form['info']['esquerdo']['info'])) {
 						FuncoesTableaux::colocaParentesesTableaux($form['info']['esquerdo']);
 				}
