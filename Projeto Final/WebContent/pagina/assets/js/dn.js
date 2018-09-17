@@ -19,6 +19,8 @@ $(function(){
 	$("#elimNot").click(function(){ elimNot(); });
 	$("#excImp").click(function(){ excImp(); });
 	$("#abs").click(function(){ abs(); });
+	$("#incImp").click(function(){ incImp(); });
+	$("#incNot").click(function(){ incNot(); });
 });
 
 //Carga inicial da dedução natural
@@ -64,7 +66,7 @@ function startArvore(myData,pergunta){
 function supor(){
 	var myData = {
 		"step": "supor",
-		"supor": "notnot(Ae(not(C)))",
+		"supor": "(notnot(Ae(not(C))))",
 		"atual": tree
 	};
 	// Carga inicial da dedução natural
@@ -84,6 +86,9 @@ function supor(){
         	data['icon'] = resposta['icon'] == "" ? false:true;
         	data['state'] = {"opened" : true};
         	$('#jstree_div').jstree().create_node(resposta['parent'], data, 'last', function(){}, true);
+        	finalizaExercício(resposta['text'],resposta['id']);
+        	finalizaExercício(resposta['text'],resposta['id']);
+        	$('#jstree_div').jstree(true).uncheck_all();
         },
         error: function(erro) {
 			console.log(erro.responseText);
@@ -119,6 +124,8 @@ function elimNot(){
 	        	data['icon'] = resposta['icon'] == "" ? false:true;
 	        	data['state'] = {"opened" : true};
 	        	$('#jstree_div').jstree().create_node(resposta['parent'], data, 'last', function(){}, true);
+	        	finalizaExercício(resposta['text'],resposta['id']);
+	        	$('#jstree_div').jstree(true).uncheck_all();
         	}
 	        
         },
@@ -157,6 +164,47 @@ function incE(){
 	        	data['icon'] = resposta['icon'] == "" ? false:true;
 	        	data['state'] = {"opened" : true};
 	        	$('#jstree_div').jstree().create_node(resposta['parent'], data, 'last', function(){}, true);
+	        	finalizaExercício(resposta['text'],resposta['id']);
+	        	$('#jstree_div').jstree(true).uncheck_all();
+	        }
+        },
+        error: function(erro) {
+			console.log(erro.responseText);
+		}
+    });
+}
+
+function incNot(){
+	var selecionados = $("#jstree_div").jstree("get_selected",true);
+	var myData = {
+		"step": "incNot",
+		"selecionados": selecionados,
+		"atual": tree
+	};
+	// Carga inicial da dedução natural
+    $.ajax({
+        url: 'http://127.0.0.1:8000/api/deducaoNatural/step/',
+        type: 'GET',
+        callback: '?',
+        data: myData,
+        datatype: 'application/json',
+        success: function(resposta) { 
+        	// console.log(resposta);
+        	if("erro" in resposta){
+        		console.log(resposta);
+        	}else{
+        		// console.log(resposta);
+        		tree.push(resposta);
+	        
+		        var data = {};
+
+		        data['id'] = resposta['id'];
+	        	data['text'] = data['id']+". "+resposta['text'];
+	        	data['icon'] = resposta['icon'] == "" ? false:true;
+	        	data['state'] = {"opened" : true};
+	        	$('#jstree_div').jstree().create_node(resposta['parent'], data, 'last', function(){}, true);
+	        	finalizaExercício(resposta['text'],resposta['id']);
+	        	$('#jstree_div').jstree(true).uncheck_all();
 	        }
         },
         error: function(erro) {
@@ -196,6 +244,8 @@ function elimE(){
 		        	data['icon'] = resposta[chave]['icon'] == "" ? false:true;
 		        	data['state'] = {"opened" : true};
 		        	$('#jstree_div').jstree().create_node(resposta[chave]["parent"], data, 'last', function(){}, true);
+		        	finalizaExercício(resposta['text'],resposta['id']);
+		        	$('#jstree_div').jstree(true).uncheck_all();
 		        }
         	}
 	        
@@ -234,6 +284,8 @@ function abs(){
 	        	data['state'] = {"opened" : true};
 	        	$('#jstree_div').jstree().create_node(resposta['parent'], data, 'last', function(){}, true);
 	        	raa(data['id']);
+	        	finalizaExercício(resposta['text'],resposta['id']);
+	        	$('#jstree_div').jstree(true).uncheck_all();
         	}
 	        
         },
@@ -273,7 +325,46 @@ function raa(data){
 	        	data['state'] = {"opened" : true};
 	        	$('#jstree_div').jstree().create_node(resposta['parent'], data, 'last', function(){}, true);
 	        	finalizaExercício(resposta['text'],resposta['id']);
+	        	$('#jstree_div').jstree(true).uncheck_all();
         	// }
+	        
+        },
+        error: function(erro) {
+			console.log(erro.responseText);
+		}
+    });
+}
+
+function incImp(){
+	var selecionados = $("#jstree_div").jstree("get_selected",true);
+	var myData = {
+		"step": "incImp",
+		"selecionados": selecionados,
+		"atual": tree
+	};
+	// Carga inicial da dedução natural
+    $.ajax({
+        url: 'http://127.0.0.1:8000/api/deducaoNatural/step/',
+        type: 'GET',
+        callback: '?',
+        data: myData,
+        datatype: 'application/json',
+        success: function(resposta) { 
+        	if("erro" in resposta){
+        		console.log(resposta);
+        	}else{
+        		tree.push(resposta);
+	        
+		        var data = {};
+
+		        data['id'] = resposta['id'];
+	        	data['text'] = data['id']+". "+resposta['text'];
+	        	data['icon'] = resposta['icon'] == "" ? false:true;
+	        	data['state'] = {"opened" : true};
+	        	$('#jstree_div').jstree().create_node(resposta['parent'], data, 'last', function(){}, true);
+	        	$('#jstree_div').jstree(true).uncheck_all();
+	        	finalizaExercício(resposta['text'],resposta['id']);
+        	}
 	        
         },
         error: function(erro) {
@@ -310,6 +401,8 @@ function excImp(){
 	        	data['icon'] = resposta['icon'] == "" ? false:true;
 	        	data['state'] = {"opened" : true};
 	        	$('#jstree_div').jstree().create_node(resposta['parent'], data, 'last', function(){}, true);
+	        	$('#jstree_div').jstree(true).uncheck_all();
+	        	finalizaExercício(resposta['text'],resposta['id']);
         	}
 	        
         },
@@ -326,6 +419,10 @@ function finalizaExercício(texto,id){
     	data['icon'] = false;
     	data['state'] = {"opened" : true};
     	$('#jstree_div').jstree().create_node("#", data, 'last', function(){}, true);
-    	$('.jstree-checkbox').attr('disabled','disabled');
+    	$('#jstree_div').jstree(true).uncheck_all();
+    	$('#jstree_div').jstree(true).disable_checkbox(
+		    $('#jstree_div').jstree(true)._model.data["#"].children_d
+		);
+		$('#jstree_div').jstree(true).hide_checkboxes();
 	}
 }

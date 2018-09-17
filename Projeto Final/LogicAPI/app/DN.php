@@ -52,8 +52,14 @@ class DN extends Model
             case "abs":
                 return $this->abs($request);
                 break;
-    		case "raa":
-    			return $this->raa($request);
+            case "raa":
+                return $this->raa($request);
+                break;
+            case "incImp":
+                return $this->incImp($request);
+                break;
+    		case "incNot":
+    			return $this->incNot($request);
     			break;
     		default:
     			return $this->abs($request);
@@ -76,7 +82,7 @@ class DN extends Model
 
     //Função para eliminação do not
     private function elimNot($request){
-    	if (count($request->selecionados) > 1 ){
+    	if (count($request->selecionados) != 1 ){
     		$mensagem['erro'] = "Não é permitido selecionar mais de uma linha para esta operação";
     		return $mensagem;
     	}
@@ -103,7 +109,7 @@ class DN extends Model
     }
 
     private function elimE($request){
-        if (count($request->selecionados) > 1 ){
+        if (count($request->selecionados) != 1 ){
             $mensagem['erro'] = "Não é permitido selecionar mais de uma linha para esta operação";
             return $mensagem;
         }
@@ -170,8 +176,9 @@ class DN extends Model
         //Volta a fórmula selecionada para eliminar o implica para o formato de string
         $selecionado[$indexEliminar] = explode(". ",$request->selecionados[$indexEliminar]['text'])[1];
 
-        if($selecionado[$indexImplica]['esquerdo'] != $selecionado[$indexEliminar]){
+        if(Exercicios::converteSaida($selecionado[$indexImplica]['esquerdo']) != Exercicios::converteSaida($selecionado[$indexEliminar])){
             $mensagem['erro'] = "Não é possível realizar a exclusão do implica com a fórmula selecionada";
+            $mensagem['erro'] = $selecionado[$indexEliminar];
             return $mensagem;
         }
 
@@ -308,6 +315,39 @@ class DN extends Model
 
     }
 
+    private function incImp($request){
+
+        if (count($request->selecionados) != 1){
+            $mensagem['erro'] = "É necessário selecionar uma linha e apenas uma linha para essa operação";
+            return $mensagem;
+        }
+
+        if(filter_var($request->selecionados[0]['id'], FILTER_VALIDATE_INT)){
+            $mensagem['erro'] = "Não é possível aplicar essa operação para essa fórmula";
+            return $mensagem;
+        }
+        
+        $arvoreAtual = $request->atual;
+
+        $formula1 = explode(". ", $request->selecionados[0]['text'])[1];
+        $id = $request->selecionados[0]['id'];
+        // return $formula1;
+
+        $newData = $this->incluirImplica($arvoreAtual, $formula1,$id);
+        // return $newData;
+
+        $data['contexto'] = $newData['contexto'];
+        $data['icon'] = $newData['icon'];
+        $data['id'] = $newData['id'];
+        $data['idContexto'] = $newData['idContexto'];
+        $data['parent'] = $newData['parent'];
+        $data['suposicao'] = $newData['suposicao'];
+        $data['text'] = $newData['text'];
+
+        return $data;
+
+    }
+
     private function verificaContexto($arvoreAtual,$selecionados){
         $contextoMaior = array();
         foreach ($selecionados as $chave => $selecionado) {
@@ -383,9 +423,32 @@ class DN extends Model
         return $arvoreAtual[$index];
     }
 
+    private function incluirImplica(&$arvoreAtual,$data,$id){
+        $index = count($arvoreAtual);
+        $indicePai = substr($id, 0, -2);
+        // return $indicePai;
+        foreach ($arvoreAtual as $key => $value) {
+            if($value['id'] == $indicePai){
+                $arvoreAtual[$index]['contexto'] = $value['contexto'];
+                array_pop($arvoreAtual[$index]['contexto']);
+                $arvoreAtual[$index]['icon'] = "";
+                $arvoreAtual[$index]['id'] = $indicePai+1;
+                array_push($arvoreAtual[$index]['contexto'], (string)$arvoreAtual[$index]['id']);
+                $arvoreAtual[$index]['idContexto'] = $value['idContexto']+1;
+                $arvoreAtual[$index]['parent'] = $value['parent'];
+                $arvoreAtual[$index]['suposicao'] = 0;
+                $arvoreAtual[$index]['text'] = "(".$value['text']."→".$data.")";
+                // return $value;
+                break;
+            }
+        }
+        return $arvoreAtual[$index];
+    }
+
     private function pegarInverso($formula){
         if($formula[0] == "("){
-            if(substr($formula, 1, 3) == "¬" && substr($formula, 3, 5) == "¬")
+            // return substr($formula, 1, 4);
+            if(substr($formula, 1, 4) == "¬¬")
                 return "(".substr($formula, 3);
             elseif(substr($formula, 1, 3) == "¬")
                 return "(".substr($formula, 3);
