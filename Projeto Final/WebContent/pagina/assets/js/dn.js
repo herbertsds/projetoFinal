@@ -1,3 +1,5 @@
+var perguntaBD;
+
 $(function(){
 	var tree = [];
 	
@@ -6,10 +8,10 @@ $(function(){
     };
 
     var pergunta = {
-    	'pergunta': ["not(Ae(not(C)))"]
+    	'pergunta': ["(not(Ae(not(C))))"]
     }
 
-	startArvore(myData);
+	startArvore(myData,pergunta);
 
 	$("#incE").click(function(){ incE(); });
 	$("#elimE").click(function(){ elimE(); });
@@ -20,7 +22,7 @@ $(function(){
 });
 
 //Carga inicial da dedução natural
-function startArvore(myData){
+function startArvore(myData,pergunta){
     $.ajax({
         url: 'http://127.0.0.1:8000/api/deducaoNatural/',
         type: 'GET',
@@ -38,6 +40,20 @@ function startArvore(myData){
 	        	data['state'] = {"opened" : true};
 	        	$('#jstree_div').jstree().create_node('#', data, 'last', function(){}, true);
 	        }
+        },
+        error: function(erro) {
+			console.log(erro.responseText);
+		}
+    });
+
+    $.ajax({
+        url: 'http://127.0.0.1:8000/api/deducaoNatural/formataPergunta',
+        type: 'GET',
+        callback: '?',
+        data: pergunta,
+        datatype: 'application/json',
+        success: function(resposta) { 
+        	perguntaBD = resposta;
         },
         error: function(erro) {
 			console.log(erro.responseText);
@@ -127,10 +143,11 @@ function incE(){
         data: myData,
         datatype: 'application/json',
         success: function(resposta) { 
+        	// console.log(resposta);
         	if("erro" in resposta){
         		console.log(resposta);
         	}else{
-        		console.log(resposta);
+        		// console.log(resposta);
         		tree.push(resposta);
 	        
 		        var data = {};
@@ -189,6 +206,82 @@ function elimE(){
     });
 }
 
+function abs(){
+	var selecionados = $("#jstree_div").jstree("get_selected",true);
+	var myData = {
+		"step": "abs",
+		"selecionados": selecionados,
+		"atual": tree
+	};
+	// Carga inicial da dedução natural
+    $.ajax({
+        url: 'http://127.0.0.1:8000/api/deducaoNatural/step/',
+        type: 'GET',
+        callback: '?',
+        data: myData,
+        datatype: 'application/json',
+        success: function(resposta) { 
+        	if("erro" in resposta){
+        		console.log(resposta);
+        	}else{
+        		tree.push(resposta);
+	        
+		        var data = {};
+
+		        data['id'] = resposta['id'];
+	        	data['text'] = data['id']+". "+resposta['text'];
+	        	data['icon'] = resposta['icon'] == "" ? false:true;
+	        	data['state'] = {"opened" : true};
+	        	$('#jstree_div').jstree().create_node(resposta['parent'], data, 'last', function(){}, true);
+	        	raa(data['id']);
+        	}
+	        
+        },
+        error: function(erro) {
+			console.log(erro.responseText);
+		}
+    });
+}
+
+function raa(data){
+	var selecionados = data;
+	var myData = {
+		"step": "raa",
+		"selecionados": selecionados,
+		"atual": tree
+	};
+	// Carga inicial da dedução natural
+    $.ajax({
+        url: 'http://127.0.0.1:8000/api/deducaoNatural/step/',
+        type: 'GET',
+        callback: '?',
+        data: myData,
+        datatype: 'application/json',
+        success: function(resposta) { 
+        	console.log("raa");
+        	console.log(resposta)
+        	// if("erro" in resposta){
+        	// 	console.log(resposta);
+        	// }else{
+        		tree.push(resposta);
+	        
+		        var data = {};
+
+		        data['id'] = resposta['id'];
+	        	data['text'] = data['id']+". "+resposta['text'];
+	        	data['icon'] = resposta['icon'] == "" ? false:true;
+	        	data['state'] = {"opened" : true};
+	        	$('#jstree_div').jstree().create_node(resposta['parent'], data, 'last', function(){}, true);
+	        	finalizaExercício(resposta['text'],resposta['id']);
+        	// }
+	        
+        },
+        error: function(erro) {
+			console.log(erro.responseText);
+		}
+    });
+}
+
 function excImp(){
 	var selecionados = $("#jstree_div").jstree("get_selected",true);
 	var myData = {
@@ -224,4 +317,15 @@ function excImp(){
 			console.log(erro.responseText);
 		}
     });
+}
+
+function finalizaExercício(texto,id){
+	var data = {};
+	if(texto == perguntaBD && Number.isInteger(id)){
+    	data['text'] = "Exercício Finalizado";
+    	data['icon'] = false;
+    	data['state'] = {"opened" : true};
+    	$('#jstree_div').jstree().create_node("#", data, 'last', function(){}, true);
+    	$('.jstree-checkbox').attr('disabled','disabled');
+	}
 }

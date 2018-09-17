@@ -13,8 +13,8 @@ class TableauxLPOController extends Controller
     public function index(Request $numeroExercicio){
         //Exercícios 72 até o 137
 
-
-    	$exercicio = Exercicios::getExercicio(137);
+        // return $numeroExercicio->exercicio;
+    	$exercicio = Exercicios::getExercicio($numeroExercicio->exercicio);
 
         //$exercicio = Exercicios::getExercicio($numeroExercicio->exercicio);
 
