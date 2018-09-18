@@ -1,6 +1,18 @@
 var perguntaBD;
 
 $(function(){
+	
+	$('#jstree_div').jstree({
+		'plugins' : [ "checkbox" ],
+		'checkbox' : {
+			'three_state' : false
+		},
+		'core' : {
+
+			'check_callback' : true
+		}
+	});
+	
 	var tree = [];
 	
 	var myData = {
