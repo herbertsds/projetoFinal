@@ -27,12 +27,15 @@ $(function(){
 
 	$("#incE").click(function(){ incE(); });
 	$("#elimE").click(function(){ elimE(); });
-	$("#supor").click(function(){ supor(); });
+	$('#btnSupor').click(function(){ supor(); });
 	$("#elimNot").click(function(){ elimNot(); });
 	$("#excImp").click(function(){ excImp(); });
 	$("#abs").click(function(){ abs(); });
+	//A partir daqui, colocar os botões
 	$("#incImp").click(function(){ incImp(); });
 	$("#incNot").click(function(){ incNot(); });
+	$('#btnOu').click(function(){ incOu(); });
+	// excOu
 });
 
 //Carga inicial da dedução natural
@@ -78,9 +81,45 @@ function startArvore(myData,pergunta){
 function supor(){
 	var myData = {
 		"step": "supor",
-		"supor": "(notnot(Ae(not(C))))",
+		"supor": $('#lblSupor').val().replace(/\s/gi, ''),
 		"atual": tree
 	};
+	$('#lblSupor').val("");
+	console.log(myData);
+	// Carga inicial da dedução natural
+    $.ajax({
+        url: 'http://127.0.0.1:8000/api/deducaoNatural/step/',
+        type: 'GET',
+        callback: '?',
+        data: myData,
+        datatype: 'application/json',
+        success: function(resposta) { 
+	        tree.push(resposta);
+	        
+	        var data = {};
+
+	        data['id'] = resposta['id'];
+        	data['text'] = data['id']+". "+resposta['text'];
+        	data['icon'] = resposta['icon'] == "" ? false:true;
+        	data['state'] = {"opened" : true};
+        	$('#jstree_div').jstree().create_node(resposta['parent'], data, 'last', function(){}, true);
+        	finalizaExercício(resposta['text'],resposta['id']);
+        	finalizaExercício(resposta['text'],resposta['id']);
+        	$('#jstree_div').jstree(true).uncheck_all();
+        },
+        error: function(erro) {
+			console.log(erro.responseText);
+		}
+    });
+}
+function incOu(){
+	var myData = {
+		"step": "incOu",
+		"incluir": $('#lblOu').val().replace(/\s/gi, ''),
+		"atual": tree
+	};
+	$('#lblOu').val("");
+	console.log(myData);
 	// Carga inicial da dedução natural
     $.ajax({
         url: 'http://127.0.0.1:8000/api/deducaoNatural/step/',

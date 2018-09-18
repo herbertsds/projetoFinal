@@ -303,17 +303,17 @@ function atualizaTela() {
 
 		break;
 	case "deducao":
-		for (cont = 0; cont in vet_regras; cont++) {
-			numLinha = cont + 1;
-			$('#dnFormmulas').append(
-					"<p id='" + cont + "'>" + numLinha + ": "
-							+ vet_regras[cont] + "</p>");
-
-		}
-		numLinha++;
-		$('#dnFormmulas').append(
-				"<p id='finalVetor'>" + numLinha + ": " + pergunta
-						+ " # Pergunta </p>");
+//		for (cont = 0; cont in vet_regras; cont++) {
+//			numLinha = cont + 1;
+//			$('#dnFormmulas').append(
+//					"<p id='" + cont + "'>" + numLinha + ": "
+//							+ vet_regras[cont] + "</p>");
+//
+//		}
+//		numLinha++;
+//		$('#dnFormmulas').append(
+//				"<p id='finalVetor'>" + numLinha + ": " + pergunta
+//						+ " # Pergunta </p>");
 		break;
 
 	case "semantica":
