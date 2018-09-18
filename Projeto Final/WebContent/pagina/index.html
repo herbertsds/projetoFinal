@@ -651,11 +651,66 @@ body {
 														<h4>
 															<strong>> Início do Exercício</strong>
 														</h4>
-
+																			
 
 														<div id="s_divFormulas"></div>
+													<button class='btn btn-info btn-xs' type="button"
+														id="buttonEnviarSemantica" 
+														>Enviar</button>														
+														<div id='adicaoSemantica'>
+
+
+												<div class="col-sm-4 col-sm-offset-1">
+
+													<div class="input-group">
+														<div class="form-group label-floating">
+															<label class="control-label">Domínio(Ex. 0)</label> <input
+																name="s_Dominio" id="s_Dominio" type="text" class="form-control">
+															<button class='btn btn-info btn-xs' type="button"
+																id="buttonDominio" onClick="f_AddDominio()">
+																Adicionar Domínio</button>
+														</div>
+													</div>
+
+													<div class="input-group">
+
+														<div class="form-group label-floating">
+															<label class="control-label">Relações(Ex. R(0;0))</label> <input
+																name="s_Relacoes" id="s_Relacoes" type="text"
+																class="form-control">
+															<button class='btn btn-info btn-xs' type="button"
+																id="buttonRelacoes" onclick="f_AddRelacao()">
+																Adicionar Relação</button>
+														</div>
 													</div>
 												</div>
+
+												<div class="col-sm-6 col-sm-offset-1">
+
+													<div class="form-group label-floating">
+														<strong>> Dominio adicionado:</strong>
+														<article id="dominioAdicionado"></article>
+													</div>
+													<button class='btn btn-info btn-xs' type="button"
+														id="buttonRemoverDominio" onclick="f_RemoverDominio()"
+														style="display: none">Remover o último domínio</button>
+
+													<div class="form-group label-floating">
+														<strong>> Relações:</strong>
+														<article id="relacoesAdicionadas"></article>
+													</div>
+													<button class='btn btn-info btn-xs' type="button"
+														id="buttonRemoverRelacao" onclick="f_RemoverRelacao()"
+														style="display: none">Remover a última relação</button>
+
+												</div>
+											</div>
+														
+													</div>
+
+													
+												</div>
+												
 											</div>
 											<div width='100%'>
 <!-- ############################################################################################### -->
