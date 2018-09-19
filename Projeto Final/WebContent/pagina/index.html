@@ -29,10 +29,8 @@
 <!-- 	DN -->
 <link rel="stylesheet" type="text/css"
 	href="./assets/js/jstree/dist/themes/default/style.min.css" />
-<script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<script src="./assets/js/jstree/dist/jstree.min.js"></script>
-<script src="./assets/js/dn.js"></script>
+
+
 <!-- ---------------	 -->
 
 
@@ -42,7 +40,6 @@
 <script src="./assets/js/orgchart/jquery.orgchart.js"
 	type="text/javascript"></script>
 <!-- 	<script src="/js/orgchart/jquery.orgchart.min.js" type="text/javascript"></script> -->
-<script src="teste.js" type="text/javascript"></script>
 <script src="assets/js/w3.js"></script>
 <script src="funcoes_gerais.js" type="text/javascript"></script>
 
@@ -52,6 +49,8 @@
 <script src="funcoes_semantica.js" type="text/javascript"></script>
 <script src="funcoes_t_lpo.js" type="text/javascript"></script>
 
+<script src="./assets/js/jstree/dist/jstree.min.js"></script>
+<script src="./assets/js/dn.js"></script>
 
 
 <style>
@@ -515,7 +514,30 @@ body {
 													<div id="jstree_div"></div>
 													<div id='buttonsDN'>
 														<button type="button" class="btn btn-info btn-xs"
-															id="supor" style='display: inline-block'>Supor</button>
+															id="supor" data-toggle="collapse" data-target="#collapseExample" 
+															aria-expanded="false" aria-controls="collapseExample"
+															style='display: inline-block'>Supor</button>
+															<div class="collapse" id="collapseExample">
+																  <div class="card card-body">
+																    <div class="input-group">
+																			<div class="form-group label-floating">
+																				<label class="control-label">Supor</label> <input
+																					name="labelSupor" id="lblSupor" type="text" 
+																					class="form-control">
+																				<button class='btn btn-success btn-xs' type="button"
+																					id="btnSupor"  data-toggle="collapse"
+																					 data-target="#collapseExample"
+																					  aria-expanded="false"
+																					  aria-controls="collapseExample"	>
+																					Ok!</button>
+																			</div>
+																		</div>
+																  </div>
+															</div>
+															
+														<button type="button" class="btn btn-info btn-xs"
+															id="elimNot" style='display: inline-block'>Inclusão
+															do not</button>
 														<button type="button" class="btn btn-info btn-xs"
 															id="elimNot" style='display: inline-block'>Eliminação
 															do not</button>
@@ -524,15 +546,44 @@ body {
 															do E</button>
 														<br />
 														<button type="button" class="btn btn-info btn-xs"
+															id="excImp" style='display: inline-block'>Inclusão
+															do Implica</button>
+														
+														<button type="button" class="btn btn-info btn-xs"
 															id="excImp" style='display: inline-block'>Exclusão
 															do Implica</button>
 														<button type="button" class="btn btn-info btn-xs"
 															id="incE" style='display: inline-block'>Inclusão
 															do E</button>
-														<button type="button" class="btn btn-info btn-xs" id="abs"
-															style='display: inline-block'>Declarar Absurdo</button>
 														<br />
 
+														<button type="button" class="btn btn-info btn-xs" id="abs"
+															style='display: inline-block'>Declarar Absurdo</button>
+														<button type="button" class="btn btn-info btn-xs" id="incOu"
+															data-toggle="collapse" data-target="#collapseOU" 
+															aria-expanded="false" aria-controls="collapseOU"
+															style='display: inline-block'>Inclusão do Ou</button>
+														<div class="collapse" id="collapseOU">
+																  <div class="card card-body">
+																    <div class="input-group">
+																			<div class="form-group label-floating">
+																				<label class="control-label">Inclusão do OU</label> <input
+																					name="labelOu" id="lblOu" type="text" 
+																					class="form-control">
+																				<button class='btn btn-success btn-xs' type="button"
+																					id="btnOu"  data-toggle="collapse"
+																					 data-target="#collapseOU"
+																					  aria-expanded="false"
+																					  aria-controls="collapseOU"	>
+																					Ok!</button>
+																			</div>
+																		</div>
+																  </div>
+															</div>
+														<button type="button" class="btn btn-info btn-xs" id="excOu"
+															style='display: inline-block'>Exclusão do Ou</button>
+														
+														
 													</div>
 
 
@@ -600,11 +651,66 @@ body {
 														<h4>
 															<strong>> Início do Exercício</strong>
 														</h4>
-
+																			
 
 														<div id="s_divFormulas"></div>
+													<button class='btn btn-info btn-xs' type="button"
+														id="buttonEnviarSemantica" 
+														>Enviar</button>														
+														<div id='adicaoSemantica'>
+
+
+												<div class="col-sm-4 col-sm-offset-1">
+
+													<div class="input-group">
+														<div class="form-group label-floating">
+															<label class="control-label">Domínio(Ex. 0)</label> <input
+																name="s_Dominio" id="s_Dominio" type="text" class="form-control">
+															<button class='btn btn-info btn-xs' type="button"
+																id="buttonDominio" onClick="f_AddDominio()">
+																Adicionar Domínio</button>
+														</div>
+													</div>
+
+													<div class="input-group">
+
+														<div class="form-group label-floating">
+															<label class="control-label">Relações(Ex. R(0;0))</label> <input
+																name="s_Relacoes" id="s_Relacoes" type="text"
+																class="form-control">
+															<button class='btn btn-info btn-xs' type="button"
+																id="buttonRelacoes" onclick="f_AddRelacao()">
+																Adicionar Relação</button>
+														</div>
 													</div>
 												</div>
+
+												<div class="col-sm-6 col-sm-offset-1">
+
+													<div class="form-group label-floating">
+														<strong>> Dominio adicionado:</strong>
+														<article id="dominioAdicionado"></article>
+													</div>
+													<button class='btn btn-info btn-xs' type="button"
+														id="buttonRemoverDominio" onclick="f_RemoverDominio()"
+														style="display: none">Remover o último domínio</button>
+
+													<div class="form-group label-floating">
+														<strong>> Relações:</strong>
+														<article id="relacoesAdicionadas"></article>
+													</div>
+													<button class='btn btn-info btn-xs' type="button"
+														id="buttonRemoverRelacao" onclick="f_RemoverRelacao()"
+														style="display: none">Remover a última relação</button>
+
+												</div>
+											</div>
+														
+													</div>
+
+													
+												</div>
+												
 											</div>
 											<div width='100%'>
 <!-- ############################################################################################### -->

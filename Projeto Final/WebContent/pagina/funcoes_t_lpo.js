@@ -2,17 +2,19 @@ function f_GabTab_lpo(exercicio) {
 	var myData = {
 		'exercicio' : exercicio
 	}; // parseInt(numExercicio)
-	console.log(' enviando : ' + myData);
+	console.log(myData);
 
 	$
 			.ajax({
 
-				url : 'http://127.0.0.1:8000/api/tableaux/',
+				url : 'http://127.0.0.1:8000/api/tableauxLPO/',
 				type : 'GET',
 				callback : '?',
 				data : myData,
 				datatype : 'application/json',
 				success : function(obj) {
+					obj = JSON.parse(obj);
+					console.log(obj);
 					$('#iframe')
 							.contents()
 							.find('head')
@@ -33,7 +35,7 @@ function f_GabTab_lpo(exercicio) {
 				},
 				error : function(retorno2) {
 
-					console.log(retorno2);
+					console.log(retorno2.responseText);
 				},
 			});
 

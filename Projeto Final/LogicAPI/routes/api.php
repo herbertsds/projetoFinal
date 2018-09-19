@@ -107,11 +107,14 @@ Route::group(['prefix' => 'semantica', 'middleware' => 'cors'], function(){
 
 });
 
-// api/resolucao/
+// api/deducaoNatural/
 Route::group(['prefix' => 'deducaoNatural', 'middleware' => 'cors'], function(){
 	
 	//Inicia a construção da árvore de DN
 	Route::get('/', 'DNController@index');
+
+	//Formata a pergunta
+	Route::get('/formataPergunta', 'DNController@formataPergunta');
 
 	//Resolve um passo de um exercício específico
 	Route::get('/step', 'DNController@step');

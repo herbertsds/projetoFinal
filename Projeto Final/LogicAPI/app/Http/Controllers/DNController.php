@@ -22,6 +22,11 @@ class DNController extends Controller
         return Exercicios::converteSaida($dn->iniciarDN($exercicios));
     }
 
+    public function formataPergunta(Request $request)
+    {
+        return Exercicios::converteSaida($request->pergunta);
+    }
+
     public function step(Request $request){
         $dn = new DN();
 

@@ -49,8 +49,17 @@ class DN extends Model
             case "incE":
                 return $this->incE($request);
                 break;
-    		case "abs":
-    			return $this->incE($request);
+            case "abs":
+                return $this->abs($request);
+                break;
+            case "raa":
+                return $this->raa($request);
+                break;
+            case "incImp":
+                return $this->incImp($request);
+                break;
+    		case "incNot":
+    			return $this->incNot($request);
     			break;
     		default:
     			return $this->abs($request);
@@ -73,7 +82,7 @@ class DN extends Model
 
     //Função para eliminação do not
     private function elimNot($request){
-    	if (count($request->selecionados) > 1 ){
+    	if (count($request->selecionados) != 1 ){
     		$mensagem['erro'] = "Não é permitido selecionar mais de uma linha para esta operação";
     		return $mensagem;
     	}
@@ -100,7 +109,7 @@ class DN extends Model
     }
 
     private function elimE($request){
-        if (count($request->selecionados) > 1 ){
+        if (count($request->selecionados) != 1 ){
             $mensagem['erro'] = "Não é permitido selecionar mais de uma linha para esta operação";
             return $mensagem;
         }
@@ -167,8 +176,9 @@ class DN extends Model
         //Volta a fórmula selecionada para eliminar o implica para o formato de string
         $selecionado[$indexEliminar] = explode(". ",$request->selecionados[$indexEliminar]['text'])[1];
 
-        if($selecionado[$indexImplica]['esquerdo'] != $selecionado[$indexEliminar]){
+        if(Exercicios::converteSaida($selecionado[$indexImplica]['esquerdo']) != Exercicios::converteSaida($selecionado[$indexEliminar])){
             $mensagem['erro'] = "Não é possível realizar a exclusão do implica com a fórmula selecionada";
+            $mensagem['erro'] = $selecionado[$indexEliminar];
             return $mensagem;
         }
 
@@ -204,17 +214,18 @@ class DN extends Model
     }
 
     private function incE($request){
+        // return $request;
         if (count($request->selecionados) != 2 ){
             $mensagem['erro'] = "É necessário selecionar duas linhas para essa operação";
             return $mensagem;
         }
 
+        $arvoreAtual = $request->atual;
+
         if(!$this->verificaContexto($arvoreAtual,$request->selecionados)){
             $mensagem['erro'] = "As fórmulas não fazem parte do mesmo contexto";
             return $mensagem;
         }
-
-        $arvoreAtual = $request->atual;
 
         $formula1 = explode(". ", $request->selecionados[0]['text'])[1];
         $formula2 = explode(". ", $request->selecionados[1]['text'])[1];
@@ -238,6 +249,8 @@ class DN extends Model
             $mensagem['erro'] = "Para essa operação devem ser selecionadas uma ou duas linhas";
             return $mensagem;
         }
+        
+        $arvoreAtual = $request->atual;
 
         if(count($request->selecionados) == 2){
             if(!$this->verificaContexto($arvoreAtual,$request->selecionados)){
@@ -246,14 +259,28 @@ class DN extends Model
             }
         }
 
+        $selecionado = $this->verificaSelecionado($request->selecionados)[0];
+        // return $selecionado;
+
+        if($selecionado['conectivo'] != 'e'){
+            $mensagem['erro'] = "Não é possível aplicar essa operação para essa fórmula";
+            return $mensagem;
+        }
         
+        // return $selecionado;
 
-        $arvoreAtual = $request->atual;
+        //String de maior tamanho
+        $formula1 = strlen($selecionado['esquerdo']) > strlen($selecionado['direito']) ? $selecionado['esquerdo']:$selecionado['direito'];
 
-        $formula1 = explode(". ", $request->selecionados[0]['text'])[1];
-        $formula2 = explode(". ", $request->selecionados[1]['text'])[1];
+        //String de menor tamanho
+        $formula2 = strlen($selecionado['esquerdo']) < strlen($selecionado['direito']) ? $selecionado['esquerdo']:$selecionado['direito'];
 
-        $data['text'] = Exercicios::converteSaida("($formula1"."e$formula2)");
+        if("(not".$formula2.")" != $formula1){
+            $mensagem['erro'] = "Não é possível declarar absurdo com as fórmulas selecionadas";
+            return $mensagem;
+        }
+
+        $data['text'] = "⊥";
         $data['icon'] = "";
         $data['suposicao'] = 0;
 
@@ -265,6 +292,60 @@ class DN extends Model
 
         return $data;
         
+    }
+
+    private function raa($request){
+        
+        $arvoreAtual = $request->atual;
+
+        $formula1 = $request->selecionados;
+        // return $arvoreAtual;
+
+        $newData = $this->reduzirAbsurdo($arvoreAtual, $formula1);
+
+        $data['contexto'] = $newData['contexto'];
+        $data['icon'] = $newData['icon'];
+        $data['id'] = $newData['id'];
+        $data['idContexto'] = $newData['idContexto'];
+        $data['parent'] = $newData['parent'];
+        $data['suposicao'] = $newData['suposicao'];
+        $data['text'] = $newData['text'];
+
+        return $data;
+
+    }
+
+    private function incImp($request){
+
+        if (count($request->selecionados) != 1){
+            $mensagem['erro'] = "É necessário selecionar uma linha e apenas uma linha para essa operação";
+            return $mensagem;
+        }
+
+        if(filter_var($request->selecionados[0]['id'], FILTER_VALIDATE_INT)){
+            $mensagem['erro'] = "Não é possível aplicar essa operação para essa fórmula";
+            return $mensagem;
+        }
+        
+        $arvoreAtual = $request->atual;
+
+        $formula1 = explode(". ", $request->selecionados[0]['text'])[1];
+        $id = $request->selecionados[0]['id'];
+        // return $formula1;
+
+        $newData = $this->incluirImplica($arvoreAtual, $formula1,$id);
+        // return $newData;
+
+        $data['contexto'] = $newData['contexto'];
+        $data['icon'] = $newData['icon'];
+        $data['id'] = $newData['id'];
+        $data['idContexto'] = $newData['idContexto'];
+        $data['parent'] = $newData['parent'];
+        $data['suposicao'] = $newData['suposicao'];
+        $data['text'] = $newData['text'];
+
+        return $data;
+
     }
 
     private function verificaContexto($arvoreAtual,$selecionados){
@@ -320,6 +401,69 @@ class DN extends Model
         $arvoreAtual[$index]['text'] = $data['text'];
         
     }
+
+    private function reduzirAbsurdo(&$arvoreAtual,$data){
+        $index = count($arvoreAtual);
+        $indicePai = substr($data, 0, -2);
+        foreach ($arvoreAtual as $key => $value) {
+            if($value['id'] == $indicePai){
+                $arvoreAtual[$index]['contexto'] = $value['contexto'];
+                array_pop($arvoreAtual[$index]['contexto']);
+                $arvoreAtual[$index]['icon'] = "";
+                $arvoreAtual[$index]['id'] = $indicePai+1;
+                array_push($arvoreAtual[$index]['contexto'], (string)$arvoreAtual[$index]['id']);
+                $arvoreAtual[$index]['idContexto'] = $value['idContexto']+1;
+                $arvoreAtual[$index]['parent'] = $value['parent'];
+                $arvoreAtual[$index]['suposicao'] = 0;
+                $arvoreAtual[$index]['text'] = $this->pegarInverso($value['text']);
+                // return $value;
+                break;
+            }
+        }
+        return $arvoreAtual[$index];
+    }
+
+    private function incluirImplica(&$arvoreAtual,$data,$id){
+        $index = count($arvoreAtual);
+        $indicePai = substr($id, 0, -2);
+        // return $indicePai;
+        foreach ($arvoreAtual as $key => $value) {
+            if($value['id'] == $indicePai){
+                $arvoreAtual[$index]['contexto'] = $value['contexto'];
+                array_pop($arvoreAtual[$index]['contexto']);
+                $arvoreAtual[$index]['icon'] = "";
+                $arvoreAtual[$index]['id'] = $indicePai+1;
+                array_push($arvoreAtual[$index]['contexto'], (string)$arvoreAtual[$index]['id']);
+                $arvoreAtual[$index]['idContexto'] = $value['idContexto']+1;
+                $arvoreAtual[$index]['parent'] = $value['parent'];
+                $arvoreAtual[$index]['suposicao'] = 0;
+                $arvoreAtual[$index]['text'] = "(".$value['text']."→".$data.")";
+                // return $value;
+                break;
+            }
+        }
+        return $arvoreAtual[$index];
+    }
+
+    private function pegarInverso($formula){
+        if($formula[0] == "("){
+            // return substr($formula, 1, 4);
+            if(substr($formula, 1, 4) == "¬¬")
+                return "(".substr($formula, 3);
+            elseif(substr($formula, 1, 3) == "¬")
+                return "(".substr($formula, 3);
+            else
+                return "(¬".$formula.")";
+        }elseif(substr($formula, 0, 4) == "¬¬")
+            return "(".substr($formula, 2).")";
+            // return "estou aqui";
+        elseif(substr($formula, 0, 2) == "¬")
+            return substr($formula, 2);
+        else
+            return substr($formula, 2);
+
+    }
+
 
     //Adiciona as informações de descendência do nó a ser inserido
     private function verificaDescendencia($arvoreAtual, &$data){
