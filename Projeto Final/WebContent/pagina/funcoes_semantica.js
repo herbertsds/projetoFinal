@@ -41,7 +41,7 @@ function f_GabSemantica(partes) {
 				data : myData,
 				datatype : 'application/json',
 				success : function(obj) {
-					console.log(obj);
+					//console.log(obj);
 					$('#iframe')
 							.contents()
 							.find('head')
@@ -83,7 +83,8 @@ function f_abreGabSem() {
 
 function f_AddDominio(){
 	dominios++;
-	vet_dominio.push( $('#s_Dominio').val().replace(/\s/gi, ''));
+	var str = $('#s_Dominio').val().replace(/\s/gi, '');
+	vet_dominio.push(str.replace(',',';'));
 	dominioAdicionado = $('#s_Dominio').val().replace(/\s/gi, '');
 
 	$('#dominioAdicionado').append(
@@ -119,7 +120,10 @@ function f_LimpaDominio(){
 
 function f_AddRelacao(){
 	relacoes++;
-	vet_relacoes.push( $('#s_Relacoes').val().replace(/\s/gi, ''));
+
+	var str = $('#s_Relacoes').val().replace(/\s/gi, '');
+	vet_relacoes.push(str.replace(',',';'));
+	
 	relacaoAdicionada = $('#s_Relacoes').val().replace(/\s/gi, '');
 
 	$('#relacoesAdicionadas').append(
