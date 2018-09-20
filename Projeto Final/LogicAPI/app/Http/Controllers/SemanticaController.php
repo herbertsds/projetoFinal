@@ -29,7 +29,7 @@ class SemanticaController extends Controller
 
       //print_r($resposta->fullSteps());
     	//return json_encode($resposta->fullSteps(), JSON_UNESCAPED_UNICODE);
-      return $resposta->fullSteps();
+      return $resposta->fullSteps($numeroExercicio);
     	//print_r($resposta->fullSteps());
       
       // dd($exercicio);
