@@ -58,8 +58,11 @@ class DN extends Model
             case "incImp":
                 return $this->incImp($request);
                 break;
-    		case "incNot":
-    			return $this->incNot($request);
+            case "incNot":
+                return $this->incNot($request);
+                break;
+    		case "incOu":
+    			return $this->incOu($request);
     			break;
     		default:
     			return $this->abs($request);
@@ -106,6 +109,50 @@ class DN extends Model
 		$this->adicionarContexto($arvoreAtual,$data);
 
 		return $data;
+    }
+
+    private function incNot($request){
+
+        $arvoreAtual = $request->atual;
+
+        if (count($request->selecionados) != 1){
+            $mensagem['erro'] = "É necessário selecionar uma linha e apenas uma linha para essa operação";
+            return $mensagem;
+        }
+
+        $formula1 = explode(". ", $request->selecionados[0]['text'])[1];
+        $data['text'] = Exercicios::converteSaida("(¬¬".$formula1.")");
+        $data['icon'] = "";
+        $data['suposicao'] = 0;
+
+        $this->verificaDescendencia($arvoreAtual,$data);
+        $this->adicionarContexto($arvoreAtual,$data);
+        return $data;
+    }
+
+    private function incOu($request){
+
+        $arvoreAtual = $request->atual;
+
+        if (count($request->selecionados) != 1){
+            $mensagem['erro'] = "É necessário selecionar uma linha e apenas uma linha para essa operação";
+            return $mensagem;
+        }
+
+        if($request->incluir == ""){
+            $mensagem['erro'] = "É necessário digitar uma fórmula para que seja incluída no ou";
+            return $mensagem;
+        }
+
+        $formula1 = explode(". ", $request->selecionados[0]['text'])[1];
+        $formula2 = $request->incluir;
+        $data['text'] = Exercicios::converteSaida("(".$formula1."ou".$formula2.")");
+        $data['icon'] = "";
+        $data['suposicao'] = 0;
+
+        $this->verificaDescendencia($arvoreAtual,$data);
+        $this->adicionarContexto($arvoreAtual,$data);
+        return $data;
     }
 
     private function elimE($request){
