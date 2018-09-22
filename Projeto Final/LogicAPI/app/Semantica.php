@@ -18,7 +18,7 @@ class Semantica extends Model
     	$this->exercicioEscolhido = $exercicioEscolhido;
     }
 
-    public function fullSteps(){
+    public function fullSteps($numeroExercicio){
     	$contador=0;
     	//$resposta=[];
     	$nosFolha=[];
@@ -28,7 +28,7 @@ class Semantica extends Model
     	$indice=0;
     	//Passo 1 - Recebe entrada e parâmetros
     	$entrada = $this->exercicioEscolhido;
-		$dominio= array ('0','1');
+		$dominio= $numeroExercicio->dominio;
 		$tamanho=count($entrada);		
 		$entradaConvertida=FuncoesSemantica::processaEntradaSemantica($entrada);
 		// print_r($entradaConvertida);
@@ -45,7 +45,7 @@ class Semantica extends Model
 		//dd(1);
 		//Passo 3
 		//$relacoes = array ();
-		$relacoes = array ("R(0;0)","R(1;1)");
+		$relacoes = $numeroExercicio->relacoes;
 		//$relacoes = array ("P(0)");
 		FuncoesSemantica::preencheProximo($relacoes,$entradaConvertida[0]);
 		//dd(1);

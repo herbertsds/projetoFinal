@@ -104,7 +104,6 @@ function supor(){
         	data['state'] = {"opened" : true};
         	$('#jstree_div').jstree().create_node(resposta['parent'], data, 'last', function(){}, true);
         	finalizaExercício(resposta['text'],resposta['id']);
-        	finalizaExercício(resposta['text'],resposta['id']);
         	$('#jstree_div').jstree(true).uncheck_all();
         },
         error: function(erro) {
@@ -113,8 +112,10 @@ function supor(){
     });
 }
 function incOu(){
+	var selecionados = $("#jstree_div").jstree("get_selected",true);
 	var myData = {
 		"step": "incOu",
+		"selecionados": selecionados,
 		"incluir": $('#lblOu').val().replace(/\s/gi, ''),
 		"atual": tree
 	};
@@ -128,18 +129,21 @@ function incOu(){
         data: myData,
         datatype: 'application/json',
         success: function(resposta) { 
-	        tree.push(resposta);
-	        
-	        var data = {};
+        	if("erro" in resposta){
+        		console.log(resposta);
+        	}else{
+		        tree.push(resposta);
+		        
+		        var data = {};
 
-	        data['id'] = resposta['id'];
-        	data['text'] = data['id']+". "+resposta['text'];
-        	data['icon'] = resposta['icon'] == "" ? false:true;
-        	data['state'] = {"opened" : true};
-        	$('#jstree_div').jstree().create_node(resposta['parent'], data, 'last', function(){}, true);
-        	finalizaExercício(resposta['text'],resposta['id']);
-        	finalizaExercício(resposta['text'],resposta['id']);
-        	$('#jstree_div').jstree(true).uncheck_all();
+		        data['id'] = resposta['id'];
+	        	data['text'] = data['id']+". "+resposta['text'];
+	        	data['icon'] = resposta['icon'] == "" ? false:true;
+	        	data['state'] = {"opened" : true};
+	        	$('#jstree_div').jstree().create_node(resposta['parent'], data, 'last', function(){}, true);
+	        	finalizaExercício(resposta['text'],resposta['id']);
+	        	$('#jstree_div').jstree(true).uncheck_all();
+	        }
         },
         error: function(erro) {
 			console.log(erro.responseText);

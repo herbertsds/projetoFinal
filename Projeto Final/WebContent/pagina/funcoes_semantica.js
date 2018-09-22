@@ -4,12 +4,34 @@ var dominioAdicionado = "";
 var relacoes = 0;
 var vet_relacoes=[];
 var relacoesAdicionadas = "";
-function f_GabSemantica(exercicio) {
+var vet_dominio_pt1 = [];
+var vet_dominio_pt2 = [];
+var dominio = [];
+var relacoes2 = []
+function f_GabSemantica(partes) {
+	
+	
+	//console.log(partes);
+	    exercicio= partes[0].split('=')[1];
+	    //console.log(exercicio);
+	    vet_dominio_pt1 = partes[1].split('=');
+	     vet_dominio = vet_dominio_pt1[1].split(',');
+	    //console.log(vet_dominio);
+	    
+	    vet_relacoes_pt1 = partes[2].split('=');
+	     vet_relacoes = vet_relacoes_pt1[1].split(',');
+	  //  console.log(vet_relacoes);
+	    
+	
 	var myData = {
-		'exercicio' : exercicio
+		'exercicio' : exercicio,
+		'dominio' : vet_dominio,
+		'relacoes' : vet_relacoes
 	};
-	console.log(' enviando : ' + myData);
-
+	//console.log(' enviando : ' + JSON.parse(myData));
+	console.log(exercicio);
+	console.log(vet_dominio);
+	console.log(vet_relacoes);
 	$
 			.ajax({
 
@@ -19,7 +41,7 @@ function f_GabSemantica(exercicio) {
 				data : myData,
 				datatype : 'application/json',
 				success : function(obj) {
-					console.log(obj);
+					//console.log(obj);
 					$('#iframe')
 							.contents()
 							.find('head')
@@ -55,13 +77,14 @@ function f_GabSemantica(exercicio) {
 }
 
 function f_abreGabSem() {
-	var win = window.open('gabSemantica.html?exercicioBuscado=' + numExercicio);
+	var win = window.open('gabSemantica.html?exercicioBuscado=' + numExercicio+'&vet_dominio='+vet_dominio+'&vet_relacoes='+vet_relacoes);
 
 }
 
 function f_AddDominio(){
 	dominios++;
-	vet_dominio.push( $('#s_Dominio').val().replace(/\s/gi, ''));
+	var str = $('#s_Dominio').val().replace(/\s/gi, '');
+	vet_dominio.push(str.replace(',',';'));
 	dominioAdicionado = $('#s_Dominio').val().replace(/\s/gi, '');
 
 	$('#dominioAdicionado').append(
@@ -97,7 +120,10 @@ function f_LimpaDominio(){
 
 function f_AddRelacao(){
 	relacoes++;
-	vet_relacoes.push( $('#s_Relacoes').val().replace(/\s/gi, ''));
+
+	var str = $('#s_Relacoes').val().replace(/\s/gi, '');
+	vet_relacoes.push(str.replace(',',';'));
+	
 	relacaoAdicionada = $('#s_Relacoes').val().replace(/\s/gi, '');
 
 	$('#relacoesAdicionadas').append(
@@ -132,5 +158,11 @@ function f_LimpaRelacao(){
 
 function f_LimpaSemantica() {
 	$("#s_divFormulas").empty();
+	relacoes = 0;
+	dominio = 0;
+	vet_dominio = [];
+	vet_relacoes=[];
+	f_LimpaRelacao();
+	f_LimpaDominio();
 
 }
