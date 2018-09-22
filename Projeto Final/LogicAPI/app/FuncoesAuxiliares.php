@@ -70,6 +70,9 @@ class FuncoesAuxiliares extends Model
 		$abreFormula=false;
 		$esquerdo=true;
 		$subFormula=0;
+		if (is_array($form)) {
+			return;
+		}
 
 		for ($i=0; $i<strlen($form); $i++){
 			

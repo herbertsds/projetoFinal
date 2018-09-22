@@ -1058,7 +1058,7 @@ class FuncoesTableauxLPO extends Model
 				}
 				if (@$noAuxDir['filhoCentral']!='fechado') {
 						FuncoesTableauxLPO::adicionaArray($nosFolha, $noAuxDir);
-				}	
+				}
 				return;	
 			
 			case 'not_ou':
@@ -1627,24 +1627,23 @@ class FuncoesTableauxLPO extends Model
 			return false;
 		}
 	}
-	public static function imprimeArvore(&$no,&$contador,&$listaDeNos,&$arvoreSaida,&$array){
+	public static function imprimeArvore(&$no,&$listaDeNos,&$arvoreSaida,&$array){
 		
 		if (@$no['info']!=NULL) {
 			FuncoesTableauxLPO::converteFormulaStringTableaux($no['info']);
 			FuncoesTableauxLPO::converteFormulaStringTableaux($no['formulaGeradora']);
 			//print_r($no['info']);
+			//print "<br>";
 			FuncoesTableauxLPO::verificaStatusNo($no);
 			////print "<br>Lista de hashs<br>";
 			////print_r($no['funcoesComSubstituicao']);
 		}
-		if ($contador==0) {
-			$contador++;
-			//print "<br>";
-		}
+
 		if (@$no['filhoCentral']=='fechado'){
 			//print "<br>Fechado<br>";
 		}
-
+		//print "<br>Análise do array<br>";
+		//print_r($array);
 		$array2=null;
 		$array3=null;
 		if($no['id']==0){
@@ -1680,18 +1679,18 @@ class FuncoesTableauxLPO extends Model
 		
 		if(@$no['filhoCentral']!=NULL && @$no['filhoCentral']!='fechado'){
 			if ($no['id']==0) {
-				@FuncoesTableauxLPO::imprimeArvore($no['filhoCentral'],$contador,$listaDeNos,$arvoreSaida,$array2);
+				@FuncoesTableauxLPO::imprimeArvore($no['filhoCentral'],$listaDeNos,$arvoreSaida,$array2);
 			}
 			else{
 				$array2=[];
 				$array2['id']=$no['filhoCentral']['id'];
 				$array[1]=&$array2;
-				@FuncoesTableauxLPO::imprimeArvore(@$no['filhoCentral'],$contador,$listaDeNos,$arvoreSaida,$array2);
+				@FuncoesTableauxLPO::imprimeArvore(@$no['filhoCentral'],$listaDeNos,$arvoreSaida,$array2);
 			}	
 		}
 		if(@$no['filhoEsquerdo'] && @$no['filhoEsquerdo']!='fechado'){
 			if ($no['id']==0) {
-				@FuncoesTableauxLPO::imprimeArvore(@$no['filhoEsquerdo'],$contador,$listaDeNos,$arvoreSaida,$array2);
+				@FuncoesTableauxLPO::imprimeArvore(@$no['filhoEsquerdo'],$listaDeNos,$arvoreSaida,$array2);
 			}
 			else{
 				$array2=[];
@@ -1700,18 +1699,18 @@ class FuncoesTableauxLPO extends Model
 				/*$array3=[];
 				$array3['id']=$no['filhoDireito']['id'];
 				$array[2]=&$array3;*/
-				@FuncoesTableauxLPO::imprimeArvore(@$no['filhoEsquerdo'],$contador,$listaDeNos,$arvoreSaida,$array2);
+				@FuncoesTableauxLPO::imprimeArvore(@$no['filhoEsquerdo'],$listaDeNos,$arvoreSaida,$array2);
 			}
 		}
 		if(@$no['filhoDireito'] && @$no['filhoDireito']!='fechado'){
 			if ($no['id']==0) {
-				@FuncoesTableauxLPO::imprimeArvore(@$no['filhoEsquerdo'],$contador,$listaDeNos,$arvoreSaida,$array2);
+				@FuncoesTableauxLPO::imprimeArvore(@$no['filhoDireito'],$listaDeNos,$arvoreSaida,$array3);
 			}
 			else{
 				$array3=[];
 				$array3['id']=$no['filhoDireito']['id'];
 				$array[2]=&$array3;
-				@FuncoesTableauxLPO::imprimeArvore(@$no['filhoDireito'],$contador,$listaDeNos,$arvoreSaida,$array3);
+				@FuncoesTableauxLPO::imprimeArvore(@$no['filhoDireito'],$listaDeNos,$arvoreSaida,$array3);
 			}
 		}
 	}

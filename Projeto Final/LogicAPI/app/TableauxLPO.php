@@ -185,8 +185,9 @@ class TableauxLPO extends Model
 		$raiz['id']=0;
 		//print "<br>Árvore a partir da raiz<br>";
 		$contador=0;
-		FuncoesTableauxLPO::imprimeArvore($raiz,$contador,$listaDeNos,$arvoreSaida,$array);
+		FuncoesTableauxLPO::imprimeArvore($raiz,$listaDeNos,$arvoreSaida,$array);
 		//print_r($array);
+		//print_r($arvoreSaida);
 		//print_r($listaDeNos);
 		////print '<br>Raiz<br>';
 		////print_r($raiz);
