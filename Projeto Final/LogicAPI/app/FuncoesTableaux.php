@@ -1165,8 +1165,8 @@ class FuncoesTableaux extends Model
 			FuncoesTableaux::converteFormulaStringTableaux($no['info']);
 			FuncoesTableaux::converteFormulaStringTableaux($no['formulaGeradora']);
 			// FuncoesTableaux::consertaStringFormula($no['info']);
-			 // print "<br>";
-			 // print_r($no['info']);
+			  //print "<br>";
+			  //print_r($no['info']);
 			if (@$no['info']=='()') {
 				//Faça nada, só passa
 			}
@@ -1174,9 +1174,9 @@ class FuncoesTableaux extends Model
 			if (@$no['info']['esquerdo']==null && @$no['info']['conectivo']==null && @$no['info']['direito']==null) {
 				//Faça nada, só passa
 			}
-			else{
-				FuncoesTableaux::verificaStatusNo($no,$resultado);
-			}
+			//else{
+		//		FuncoesTableaux::verificaStatusNo($no,$resultado);
+			//}
 			if (@$no=='fechado' ) {
 				return;
 			}
@@ -1219,9 +1219,9 @@ class FuncoesTableaux extends Model
 			if ($no['id']==0) {
 				@FuncoesTableaux::imprimeArvore(@$no['filhoCentral'],$resultado,$listaDeNos,$arvoreSaida,$array2);
 			}
-			/*elseif ($no['atualDireito']) {				
-				@FuncoesTableaux::imprimeArvore(@$no['filhoCentral'],$resultado,$listaDeNos,$arvoreSaida,$array);
-			}*/
+			//elseif ($no['atualDireito']) {				
+			//	@FuncoesTableaux::imprimeArvore(@$no['filhoCentral'],$resultado,$listaDeNos,$arvoreSaida,$array);
+			//}
 			else{
 				$array2=[];
 				$array2['id']=$no['filhoCentral']['id'];
@@ -1233,22 +1233,22 @@ class FuncoesTableaux extends Model
 			if ($no['id']==0) {
 				@FuncoesTableaux::imprimeArvore(@$no['filhoEsquerdo'],$resultado,$listaDeNos,$arvoreSaida,$array2);
 			}
-			/*elseif ($no['atualDireito']) {
-				@FuncoesTableaux::imprimeArvore(@$no['filhoEsquerdo'],$resultado,$listaDeNos,$arvoreSaida,$array);
-			}*/
+			//elseif ($no['atualDireito']) {
+			//	@FuncoesTableaux::imprimeArvore(@$no['filhoEsquerdo'],$resultado,$listaDeNos,$arvoreSaida,$array);
+			//}
 			else{
 				$array2=[];
 				$array2['id']=$no['filhoEsquerdo']['id'];
 				$array[1]=&$array2;
-				/*$array3=[];
-				$array3['id']=$no['filhoDireito']['id'];
-				$array[2]=&$array3;*/
+				//$array3=[];
+				//$array3['id']=$no['filhoDireito']['id'];
+				//$array[2]=&$array3;
 				@FuncoesTableaux::imprimeArvore(@$no['filhoEsquerdo'],$resultado,$listaDeNos,$arvoreSaida,$array2);
 			}
 		}
 		if(@$no['filhoDireito'] && @$no['filhoDireito']!='fechado'){
 			if ($no['id']==0) {
-				@FuncoesTableaux::imprimeArvore(@$no['filhoEsquerdo'],$resultado,$listaDeNos,$arvoreSaida,$array2);
+				@FuncoesTableaux::imprimeArvore(@$no['filhoDireito'],$resultado,$listaDeNos,$arvoreSaida,$array3);
 			}
 			else{
 				$array3=[];
@@ -1314,7 +1314,7 @@ class FuncoesTableaux extends Model
 	}*/
 	public static function imprimeArvore2(&$no){
 		if (@$no['info']!=NULL && $no!='fechado') {
-			//FuncoesTableaux::converteFormulaStringTableaux($no['info']);
+			FuncoesTableaux::converteFormulaStringTableaux($no['info']);
 			 print "<br>";
 			 print_r($no['info']);
 			FuncoesTableaux::verificaStatusNo2($no);

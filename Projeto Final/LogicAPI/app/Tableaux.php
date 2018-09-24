@@ -209,10 +209,10 @@ class Tableaux extends Model
 		$raiz['id']=0;
 		FuncoesTableaux::imprimeArvore($raiz,$resultado,$listaDeNos,$arvoreSaida,$array);
 		//FuncoesTableaux::imprimeArvore2($raiz);
+		//dd(1);
 		//print_r($arvoreSaida);
 		//print_r($array);
 		//print_r($listaDeNos);
-		//dd(1);
 		//FuncoesTableaux::imprimeArvore($raiz);
 		//print '<br>Raiz<br>';
 		//print_r($raiz);
