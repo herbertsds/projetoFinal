@@ -32,6 +32,19 @@ function f_GabTab_lpo(exercicio) {
 						container : $('#iframe').contents().find("#s_main")
 					});
 
+					var cell1 = document.querySelectorAll('.verdadeiro');
+					var cell2 = document.querySelectorAll('.falso');
+					for(var i=0;i<cell1.length;i++){
+					  	cell[i].addEventListener('mouseover',function() {
+						    exibirDetalhes(cell[i]);
+						});
+					}
+					for(var i=0;i<cell2.length;i++){
+					  	cell[i].addEventListener('mouseover',function() {
+						    exibirDetalhes(cell[i]);
+						});
+					}
+
 				},
 				error : function(retorno2) {
 
@@ -49,4 +62,8 @@ function f_LimpaTableaux_lpo() {
 
 	$("#t_lpo_divFormulas").empty();
 
+}
+
+function exibirDetalhes(celula){
+	console.log(celula);
 }

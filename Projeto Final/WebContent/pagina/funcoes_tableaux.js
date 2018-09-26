@@ -32,6 +32,21 @@ function f_GabTableaux(exercicio) {
 						container : $('#iframe').contents().find("#s_main")
 					});
 
+                    
+                    var cell1 = document.querySelectorAll('.verdadeiro');
+                    console.log(cell1);
+                    var cell2 = document.querySelectorAll('.falso');
+                    for(var i=0;i<cell1.length;i++){
+                        cell[i].addEventListener('mouseover',function() {
+                            exibirDetalhes(cell[i]);
+                        });
+                    }
+                    for(i=0;i<cell2.length;i++){
+                        cell[i].addEventListener('mouseover',function() {
+                            exibirDetalhes(cell[i]);
+                        });
+                    }
+
 				},
 				error : function(retorno2) {
 
@@ -47,4 +62,8 @@ function f_abreGabTab() {
 function f_LimpaTableaux() {
 	$("#t_divFormulas").empty();
 
+}
+
+function exibirDetalhes(celula){
+    console.log(celula);
 }

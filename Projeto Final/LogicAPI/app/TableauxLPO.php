@@ -235,7 +235,7 @@ class TableauxLPO extends Model
     		// if($arrayArvore['id'] == 20){
     		// 	dd(count($arrayArvore));
     		// }
-    		$respostaFinal .= "<li>";
+    		$respostaFinal .= "<li class='".$classe."'>";
     			//Colocar ['formula']
     			$respostaFinal .= Exercicios::converteSaida($hash[$arrayArvore[$i]['id']]['info']);
     				$respostaFinal .= "<ul>";
