@@ -14,7 +14,7 @@ class TableauxController extends Controller
 
         $exercicio = Exercicios::getExercicio($numeroExercicio->exercicio);
 
-        //$exercicio = Exercicios::getExercicio(1);
+        //$exercicio = Exercicios::getExercicio(25);
 
     	$resposta = new Tableaux($exercicio);
 
