@@ -12,10 +12,10 @@ class TableauxController extends Controller
 {
     public function index(Request $numeroExercicio){
         // return $numeroExercicio;
-        $exercicio = Exercicios::getExercicio($numeroExercicio->exercicio);
+       $exercicio = Exercicios::getExercicio($numeroExercicio->exercicio);
 
 
-        //$exercicio = Exercicios::getExercicio(25);
+        //$exercicio = Exercicios::getExercicio(19);
 
     	$resposta = new Tableaux($exercicio);
 

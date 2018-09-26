@@ -1657,7 +1657,7 @@ class FuncoesTableauxLPO extends Model
 				$array[0][1]=&$array2;
 				FuncoesTableauxLPO::converteFormulaStringTableaux($no['filhoCentral']['info']);
 				FuncoesTableauxLPO::converteFormulaStringTableaux($no['filhoCentral']['formulaGeradora']);
-				$listaDeNos[$no['filhoCentral']['id']]=array('info'=>$no['filhoCentral']['info'],'formulaGeradora'=>$no['filhoCentral']['formulaGeradora']);
+				$listaDeNos[$no['filhoCentral']['id']]=array('info'=>$no['filhoCentral']['info'],'formulaGeradora'=>$no['filhoCentral']['formulaGeradora'],'fechado'=>'false');
 			}
 			elseif ($no['filhoEsquerdo']!=null) {
 				$array2=[];
@@ -1670,12 +1670,17 @@ class FuncoesTableauxLPO extends Model
 				FuncoesTableauxLPO::converteFormulaStringTableaux($no['filhoDireito']['info']);
 				FuncoesTableauxLPO::converteFormulaStringTableaux($no['filhoEsquerdo']['formulaGeradora']);
 				FuncoesTableauxLPO::converteFormulaStringTableaux($no['filhoDireito']['formulaGeradora']);
-				$listaDeNos[$no['filhoEsquerdo']['id']]=array('info'=>$no['filhoEsquerdo']['info'],'formulaGeradora'=>$no['filhoEsquerdo']['formulaGeradora']);
-				$listaDeNos[$no['filhoDireito']['id']]=array('info'=>$no['filhoDireito']['info'],'formulaGeradora'=>$no['filhoDireito']['formulaGeradora']);
+				$listaDeNos[$no['filhoEsquerdo']['id']]=array('info'=>$no['filhoEsquerdo']['info'],'formulaGeradora'=>$no['filhoEsquerdo']['formulaGeradora'],'fechado'=>'false');
+				$listaDeNos[$no['filhoDireito']['id']]=array('info'=>$no['filhoDireito']['info'],'formulaGeradora'=>$no['filhoDireito']['formulaGeradora'],'fechado'=>'false');
 			}
 		}
-
-		$listaDeNos[$no['id']]=array('info'=>$no['info'],'formulaGeradora'=>$no['formulaGeradora']);	
+		if (@$no['filhoCentral']=='fechado') {
+				$listaDeNos[$no['id']]=array('info'=>$no['info'],'formulaGeradora'=>$no['formulaGeradora'],'fechado'=>'true');
+		}
+		else{
+			$listaDeNos[$no['id']]=array('info'=>$no['info'],'formulaGeradora'=>$no['formulaGeradora'],'fechado'=>'false');
+		}
+		//$listaDeNos[$no['id']]=array('info'=>$no['info'],'formulaGeradora'=>$no['formulaGeradora']);	
 		
 		if(@$no['filhoCentral']!=NULL && @$no['filhoCentral']!='fechado'){
 			if ($no['id']==0) {
