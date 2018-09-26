@@ -12,8 +12,8 @@ function f_GabTab_lpo(exercicio) {
 				callback : '?',
 				data : myData,
 				datatype : 'application/json',
-				success : function(obj) {
-					obj = JSON.parse(obj);
+				success : function(resposta) {
+					obj = resposta[0];
 					console.log(obj);
 					$('#iframe')
 							.contents()
