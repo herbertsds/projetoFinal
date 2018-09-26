@@ -248,7 +248,7 @@ class Tableaux extends Model
 		$resposta[]=$array;
 		$resposta[]=$listaDeNos;
 		//dd("Qualquer coisa");
-		$resposta = $this->retornaArvore($resposta,$this->exercicioEscolhido);
+		$resposta =  array($this->retornaArvore($resposta,$this->exercicioEscolhido),$resposta[1]);
 		return $resposta;
     }
 
@@ -271,7 +271,7 @@ class Tableaux extends Model
 		$exercicio[count($exercicio) - 1] = "not(".$exercicio[count($exercicio) - 1].")";
 
 		for($i = count($exercicio) - 1; $i >=0 ; $i--){
-			$respostaFinal = "<ul><li>" . Exercicios::converteSaida($exercicio[$i]) .  $respostaFinal . "</li></ul>";
+			$respostaFinal = "<ul><li class='verdadeiro'>" . Exercicios::converteSaida($exercicio[$i]) .  $respostaFinal . "</li></ul>";
 		}
 
     	return $respostaFinal;
@@ -282,7 +282,11 @@ class Tableaux extends Model
     private function retornaNo($arrayArvore,$hash){
     	$respostaFinal = "";
     	for($i = 1; $i < count($arrayArvore); $i++){
-    		$respostaFinal .= "<li>";
+    		if($hash[$arrayArvore[$i]['id']]['fechado'] == "true")
+    			$classe = "falso";
+    		else
+    			$classe = "verdadeiro";
+    		$respostaFinal .= "<li class='".$classe."'>";
     			//Colocar ['formula']
     			$respostaFinal .= Exercicios::converteSaida($hash[$arrayArvore[$i]['id']]['info']);
     				$respostaFinal .= "<ul>";

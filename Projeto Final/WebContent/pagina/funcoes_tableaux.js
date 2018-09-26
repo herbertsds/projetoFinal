@@ -4,17 +4,17 @@ function f_GabTableaux(exercicio) {
 	}; // parseInt(numExercicio)
 	console.log(myData);
 
-	$
-			.ajax({
+	$.ajax({
 
 				url : 'http://127.0.0.1:8000/api/tableaux/',
 				type : 'GET',
 				callback : '?',
 				data : myData,
 				datatype : 'application/json',
-				success : function(obj) {
-					obj = JSON.parse(obj);
-					console.log(obj);
+				success : function(resposta) {
+                    obj = resposta[0];
+					// obj = JSON.parse(obj);
+					console.log(resposta);
 					$('#iframe')
 							.contents()
 							.find('head')

@@ -560,22 +560,19 @@ function f_SelecionaExercicio(btn_numExercicio) {
 	vet_regras = [];
 
 	if(tipoEx == "semantica"){
-		console.log('estou no if');
 		exercicioBuscado = vet_exercicios[idnumExercicio]['sentenca'].split(';')
 	}
 	else if(tipoEx == "t_lpo"){
-		console.log('estou no elseif');
 		exercicioBuscado = vet_exercicios[idnumExercicio]['sentenca'].split(',(')
 	}
 	else{
-		console.log('estou no else');
 		exercicioBuscado = vet_exercicios[idnumExercicio]['sentenca'].split(',')
 	}
 	var limiteFormulas = ((exercicioBuscado.length) - 1);
 	for (var data = 0; data < limiteFormulas; data++) {
 
 		regras++;
-		if(data != 0){
+		if(data != 0 && tipoEx == "t_lpo"){
 			vet_regras.push("("+exercicioBuscado[data]);
 			adicionadas = "("+exercicioBuscado[data];
 		}else{
