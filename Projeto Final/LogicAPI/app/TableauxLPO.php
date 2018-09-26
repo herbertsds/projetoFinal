@@ -194,7 +194,7 @@ class TableauxLPO extends Model
 		$resposta[] = $array;
 		$resposta[] = $listaDeNos;		
 		// dd($resposta);
-		$resposta = $this->retornaArvore($resposta,$this->exercicioEscolhido);
+		$resposta = array($this->retornaArvore($resposta,$this->exercicioEscolhido),$resposta[1]);
 		return $resposta;
     }
 
@@ -217,7 +217,7 @@ class TableauxLPO extends Model
 		$exercicio[count($exercicio) - 1] = "not(".$exercicio[count($exercicio) - 1].")";
 
 		for($i = count($exercicio) - 1; $i >=0 ; $i--){
-			$respostaFinal = "<ul><li>" . Exercicios::converteSaida($exercicio[$i]) .  $respostaFinal . "</li></ul>";
+			$respostaFinal = "<ul><li class='verdadeiro'>" . Exercicios::converteSaida($exercicio[$i]) .  $respostaFinal . "</li></ul>";
 		}
 
     	return $respostaFinal;
@@ -228,6 +228,10 @@ class TableauxLPO extends Model
     private function retornaNo($arrayArvore,$hash){
     	$respostaFinal = "";
     	for($i = 1; $i < count($arrayArvore); $i++){
+    		if($hash[$arrayArvore[$i]['id']]['fechado'] == "true")
+    			$classe = "falso";
+    		else
+    			$classe = "verdadeiro";
     		// if($arrayArvore['id'] == 20){
     		// 	dd(count($arrayArvore));
     		// }

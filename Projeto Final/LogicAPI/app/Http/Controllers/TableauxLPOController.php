@@ -28,7 +28,7 @@ class TableauxLPOController extends Controller
     	//print_r("<br>----------------------------------------------<br><br>");
         //dd(1);
 
-    	return json_encode($resposta->fullSteps(), JSON_UNESCAPED_UNICODE);
+    	return $resposta->fullSteps();
     	 //dd($resposta->fullSteps());
     }
 }
