@@ -77,8 +77,8 @@ class Semantica extends Model
     	$arrayArvore = $resposta[0];
     	$hash = $resposta[1];
     	// dd($resposta);
-
-		$respostaFinal = "<ul><li id='".$arrayArvore[0]['id']."'>";
+    	$classe = $hash[$arrayArvore[0]['id']]['valor'] == true ? "verdadeiro":"falso";
+		$respostaFinal = "<ul><li class='".$classe."'>";
 			//Colocar ['formula']
 			$respostaFinal .= Exercicios::converteSaida($hash[$arrayArvore[0]['id']]['info']);
 				$respostaFinal .= "<ul>";
@@ -95,7 +95,8 @@ class Semantica extends Model
     private function retornaNo($arrayArvore,$hash){
     	$respostaFinal = "";
     	for($i = 1; $i < count($arrayArvore); $i++){
-    		$respostaFinal .= "<li id='".$arrayArvore[$i]['id']."'>";
+    		$classe = $hash[$arrayArvore[$i]['id']]['valor'] == true ? "verdadeiro":"falso";
+    		$respostaFinal .= "<li class='".$classe."'>";
     			//Colocar ['formula']
     			$respostaFinal .= Exercicios::converteSaida($hash[$arrayArvore[$i]['id']]['info']);
     				$respostaFinal .= "<ul>";

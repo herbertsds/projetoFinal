@@ -41,7 +41,7 @@ function f_GabSemantica(partes) {
 				data : myData,
 				datatype : 'application/json',
 				success : function(obj) {
-					//console.log(obj);
+					console.log(obj);
 					$('#iframe')
 							.contents()
 							.find('head')
@@ -54,6 +54,7 @@ function f_GabSemantica(partes) {
 							.find('body')
 							.append(
 									'<div name="divArvSem" class="form-check"  id="s_divNovasFormulas"><div id="s_content"><div id="s_main"><ul id="s_organisation"></ul></div></div></div>');
+					// console.log(obj[1]);
 					$('#iframe').contents().find("#s_organisation").append(obj[0]);
 					$('#iframe').contents().find("#s_organisation").orgChart({
 						container : $('#iframe').contents().find("#s_main")
