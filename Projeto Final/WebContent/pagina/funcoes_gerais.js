@@ -559,7 +559,10 @@ function f_SelecionaExercicio(btn_numExercicio) {
 
 	vet_regras = [];
 
-	exercicioBuscado = vet_exercicios[idnumExercicio]['sentenca'].split(',');
+	if(tipoEx != "semantica")
+		exercicioBuscado = vet_exercicios[idnumExercicio]['sentenca'].split(',');
+	else
+		exercicioBuscado = vet_exercicios[idnumExercicio]['sentenca'].split(';')
 	var limiteFormulas = ((exercicioBuscado.length) - 1);
 	for (var data = 0; data < limiteFormulas; data++) {
 
