@@ -311,9 +311,9 @@ function atualizaTela() {
 //
 //		}
 //		numLinha++;
-//		$('#dnFormmulas').append(
-//				"<p id='finalVetor'>" + numLinha + ": " + pergunta
-//						+ " # Pergunta </p>");
+		$('#dnFormmulas').append(
+				"<p id='finalVetor'>" + "Pergunta" + ": " + pergunta
+						+ "</p>");
 		break;
 
 	case "semantica":
