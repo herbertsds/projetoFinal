@@ -584,7 +584,11 @@ function f_SelecionaExercicio(btn_numExercicio) {
 		$('#regrasAdicionadas').append("<br/>" + regras + ": " + adicionadas);
 
 	}
-	pergunta = "("+exercicioBuscado[limiteFormulas];
+	if(tipoEx == "t_lpo"){
+		pergunta = "("+exercicioBuscado[limiteFormulas];
+	}else{
+		pergunta = exercicioBuscado[limiteFormulas];
+	}
 	linhaPerg = regras + 1;
 
 	$('#perguntaAdicionada').append(
@@ -599,6 +603,9 @@ function f_SelecionaExercicio(btn_numExercicio) {
 	$('#btn_TransformarRegra').show();
 	if (tipoEx == 'semantica' || tipoEx == 'tableaux' || tipoEx == 't_lpo') {
 		$('#btnSem').click();
+	}
+	if(tipoEx == "deducao"){
+		initDeducao();
 	}
 }
 

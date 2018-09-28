@@ -1,5 +1,6 @@
-var perguntaBD;
+// var perguntaBD;
 var cacheOu;
+var tree;
 
 $(function(){
 	
@@ -14,14 +15,18 @@ $(function(){
 		}
 	});
 	
+	
+});
+
+function initDeducao(){
 	var tree = [];
 	
 	var myData = {
-        'formulas': ["(AouB),(AimplicaC),(BimplicaC)"]
+        'formulas': vet_regras
     };
 
     var pergunta = {
-    	'pergunta': ["(C)"]
+    	'pergunta': pergunta
     }
 
 	startArvore(myData,pergunta);
@@ -40,7 +45,7 @@ $(function(){
 	$('#stepOu').click(function(){ stepOu(); });
 	$('#elimOu').click(function(){ elimOu(); });
 	// excOu
-});
+}
 
 //Carga inicial da dedução natural
 function startArvore(myData,pergunta){
@@ -74,7 +79,7 @@ function startArvore(myData,pergunta){
         data: pergunta,
         datatype: 'application/json',
         success: function(resposta) { 
-        	perguntaBD = resposta;
+        	pergunta = resposta;
         },
         error: function(erro) {
 			console.log(erro.responseText);
@@ -594,7 +599,9 @@ function excImp(){
 
 function finalizaExercício(texto,id){
 	var data = {};
-	if(texto == perguntaBD && Number.isInteger(id)){
+	console.log(pergunta);
+	console.log(texto);
+	if(texto == pergunta && Number.isInteger(id)){
     	data['text'] = "Exercício Finalizado";
     	data['icon'] = false;
     	data['state'] = {"opened" : true};

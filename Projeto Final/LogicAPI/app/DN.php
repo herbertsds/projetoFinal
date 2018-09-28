@@ -321,9 +321,18 @@ class DN extends Model
         }
 
         $formula1 = explode(". ", $request->selecionados[0]['text'])[1];
+        if(strlen($formula1) == 3)
+            $formula1 = $formula1[1];
         $formula2 = explode(". ", $request->selecionados[1]['text'])[1];
+        if(strlen($formula2) == 3)
+            $formula2 = $formula2[1];
 
-        $data['text'] = Exercicios::converteSaida("($formula1"."e$formula2)");
+        if($formula1 > $formula2){
+            $data['text'] = Exercicios::converteSaida("($formula2"."e$formula1)");
+        }else{
+            $data['text'] = Exercicios::converteSaida("($formula1"."e$formula2)");
+        }
+        
         $data['icon'] = "";
         $data['suposicao'] = 0;
 
@@ -444,6 +453,8 @@ class DN extends Model
         
 
         $formula1 = explode(". ", $request->selecionados[0]['text'])[1];
+        if(strlen($formula1) == 3)
+            $formula1 = $formula1[1];
         $id = $request->selecionados[0]['id'];
         // return $formula1;
 
@@ -621,6 +632,8 @@ class DN extends Model
                 $arvoreAtual[$index]['idContexto'] = $value['idContexto']+1;
                 $arvoreAtual[$index]['parent'] = $value['parent'];
                 $arvoreAtual[$index]['suposicao'] = 0;
+                if(strlen($value['text']) == 3)
+                    $value['text'] = $value['text'][1];
                 $arvoreAtual[$index]['text'] = "(".$value['text']."→".$data.")";
                 // return $value;
                 break;
