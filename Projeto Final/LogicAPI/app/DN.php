@@ -64,6 +64,15 @@ class DN extends Model
     		case "incOu":
     			return $this->incOu($request);
     			break;
+            case "excOu":
+                return $this->excOu($request);
+                break;
+            case "stepOu":
+                return $this->stepOu($request);
+                break;
+            case "elimOu":
+                return $this->elimOu($request);
+                break;
     		default:
     			return $this->abs($request);
     			break;
@@ -152,6 +161,43 @@ class DN extends Model
 
         $this->verificaDescendencia($arvoreAtual,$data);
         $this->adicionarContexto($arvoreAtual,$data);
+        return $data;
+    }
+
+    private function excOu($request){
+
+        $arvoreAtual = $request->atual;
+
+        if (count($request->selecionados) != 1){
+            $mensagem['erro'] = "É necessário selecionar uma linha e apenas uma linha para essa operação";
+            return $mensagem;
+        }
+
+        $selecionado = $this->verificaSelecionado($request->selecionados)[0];
+
+
+        if($selecionado['conectivo'] != 'ou'){
+            $mensagem['erro'] = "Não é possivel aplicar a operação para essa fórmula";
+            return $mensagem;
+        }
+
+
+        
+        $data[0]['text'] = Exercicios::converteSaida($selecionado['esquerdo']);
+        $data[0]['icon'] = "true";
+        $data[0]['suposicao'] = 1;
+        $data[0]['excOu'] = 1;
+
+        $data[1]['text'] = Exercicios::converteSaida($selecionado['direito']);
+        $data[1]['icon'] = "true";
+        $data[1]['suposicao'] = 1;
+        $data[1]['excOu'] = 1;
+        
+
+        $this->verificaDescendencia($arvoreAtual,$data[0]);
+        $this->adicionarContexto($arvoreAtual,$data[0]);
+        $data[1]['parent'] = $data[0]['parent'];
+        $data[1]['idContexto'] = $data[0]['idContexto']+1;
         return $data;
     }
 
@@ -345,6 +391,16 @@ class DN extends Model
         
         $arvoreAtual = $request->atual;
 
+        foreach ($arvoreAtual as $key => $value) {
+            if($value['id'] == $request->selecionados['parent']){
+                if(array_key_exists("excOu", $value)){
+                    $mensagem['erro'] = "Não é possível aplicar a operação. Exclusão do ou aberta";
+                    return $mensagem;
+                }
+                break;
+            }
+        }
+
         $formula1 = $request->selecionados;
         // return $arvoreAtual;
 
@@ -373,8 +429,19 @@ class DN extends Model
             $mensagem['erro'] = "Não é possível aplicar essa operação para essa fórmula";
             return $mensagem;
         }
-        
+
         $arvoreAtual = $request->atual;
+
+        foreach ($arvoreAtual as $key => $value) {
+            if($value['id'] == $request->selecionados[0]['parent']){
+                if(array_key_exists("excOu", $value)){
+                    $mensagem['erro'] = "Não é possível aplicar a operação. Exclusão do ou aberta";
+                    return $mensagem;
+                }
+                break;
+            }
+        }
+        
 
         $formula1 = explode(". ", $request->selecionados[0]['text'])[1];
         $id = $request->selecionados[0]['id'];
@@ -382,6 +449,76 @@ class DN extends Model
 
         $newData = $this->incluirImplica($arvoreAtual, $formula1,$id);
         // return $newData;
+
+        $data['contexto'] = $newData['contexto'];
+        $data['icon'] = $newData['icon'];
+        $data['id'] = $newData['id'];
+        $data['idContexto'] = $newData['idContexto'];
+        $data['parent'] = $newData['parent'];
+        $data['suposicao'] = $newData['suposicao'];
+        $data['text'] = $newData['text'];
+
+        return $data;
+
+    }
+
+    private function elimOu($request){
+
+        if (count($request->selecionados) != 2){
+            $mensagem['erro'] = "É necessário selecionar duas linhas e apenas duas linhas para essa operação";
+            return $mensagem;
+        }
+
+        $arvoreAtual = $request->atual;
+
+        // return $this->irmaos($arvoreAtual,$request->selecionados);
+
+        if(!$this->irmaos($arvoreAtual,$request->selecionados)){
+            $mensagem['erro'] = "Não é possível aplicar essa operação para essas fórmulas";
+            return $mensagem;
+        }
+
+        $formula1 = explode(". ", $request->selecionados[0]['text']);
+        $formula1 = $formula1[count($formula1)-1];
+
+        $formula2 = explode(". ", $request->selecionados[1]['text']);
+        $formula2 = $formula2[count($formula2)-1];
+
+        if($formula1 != $formula2){
+            $mensagem['erro'] = "Não é possível eliminar o Ou. As fórmulas não são iguais";
+            return $mensagem;
+        }       
+
+        $id = $request->selecionados[1]['id'] > $request->selecionados[0]['id'] ? $request->selecionados[1]['id']:$request->selecionados[0]['id'];
+        // return $formula1;
+
+        $newData = $this->eliminarOu($arvoreAtual, $formula1,$id);
+        // return $newData;
+
+        $data['contexto'] = $newData['contexto'];
+        $data['icon'] = $newData['icon'];
+        $data['id'] = $newData['id'];
+        $data['idContexto'] = $newData['idContexto'];
+        $data['parent'] = $newData['parent'];
+        $data['suposicao'] = $newData['suposicao'];
+        $data['text'] = $newData['text'];
+
+        return $data;
+
+    }
+    private function stepOu($request){
+      
+        $arvoreAtual = $request->atual;
+
+        $formula1 = $request->selecionados;
+        if($request->selecionados['parent'] == "#")
+            $id = $request->selecionados['idContexto']-2;
+        else
+            $id = $request->selecionados['parent'];
+        // return $formula1;
+
+        $newData = $this->iniciarOu($arvoreAtual, $formula1,$id);
+        return $newData;
 
         $data['contexto'] = $newData['contexto'];
         $data['icon'] = $newData['icon'];
@@ -492,6 +629,50 @@ class DN extends Model
         return $arvoreAtual[$index];
     }
 
+    private function eliminarOu(&$arvoreAtual,$data,$id){
+        $index = count($arvoreAtual);
+        $indicePai = substr($id, 0, -2);
+        // return $indicePai;
+        foreach ($arvoreAtual as $key => $value) {
+            if($value['id'] == $indicePai){
+                $arvoreAtual[$index]['contexto'] = $value['contexto'];
+                array_pop($arvoreAtual[$index]['contexto']);
+                $arvoreAtual[$index]['icon'] = "";
+                $arvoreAtual[$index]['id'] = $indicePai+1;
+                array_push($arvoreAtual[$index]['contexto'], (string)$arvoreAtual[$index]['id']);
+                $arvoreAtual[$index]['idContexto'] = $value['idContexto']+2;
+                $arvoreAtual[$index]['parent'] = $value['parent'];
+                $arvoreAtual[$index]['suposicao'] = 0;
+                $arvoreAtual[$index]['text'] = $data;
+                // return $value;
+                break;
+            }
+        }
+        return $arvoreAtual[$index];
+    }
+
+    private function iniciarOu(&$arvoreAtual,$data,$id){
+        $index = count($arvoreAtual);
+        $indicePai = $id;
+        foreach ($arvoreAtual as $key => $value) {
+            if($value['id'] == $indicePai){
+                $arvoreAtual[$index]['contexto'] = $value['contexto'];
+                // array_pop($arvoreAtual[$index]['contexto']);
+                $arvoreAtual[$index]['icon'] = "true";
+                $arvoreAtual[$index]['id'] = $indicePai+2;
+                array_push($arvoreAtual[$index]['contexto'], (string)$arvoreAtual[$index]['id']);
+                $arvoreAtual[$index]['idContexto'] = $value['idContexto']+1;
+                 $arvoreAtual[$index]['idIrmao'] = $data['idIrmao'];
+                $arvoreAtual[$index]['parent'] = $value['parent'];
+                $arvoreAtual[$index]['suposicao'] = 1;
+                $arvoreAtual[$index]['text'] = $data['text'];
+                // return $data;
+                break;
+            }
+        }
+        return $arvoreAtual[$index];
+    }
+
     private function pegarInverso($formula){
         if($formula[0] == "("){
             // return substr($formula, 1, 4);
@@ -512,11 +693,48 @@ class DN extends Model
     }
 
 
+    private function irmaos($arvoreAtual,$selecionados){
+        foreach ($selecionados as $key => $value) {
+
+            foreach ($arvoreAtual as $chave => $valor) {
+                if($valor['id'] == $value['parent']){
+                    if(!array_key_exists("idIrmao", $valor)){
+                        $irmao[$key] = "";
+                        $pai[$key] = $valor['id'];
+                    }else{
+                        $irmao[$key] = $valor['idIrmao'];
+                        $pai[$key] = $valor['id'];
+                    }
+                    
+                    break;
+                }
+            }
+
+        }
+
+
+        if(count($irmao) == 1)
+            return false;
+
+        foreach ($irmao as $key => $value) {
+            $controle = $key == 0 ? 1:0;
+            if($value != ""){
+                // return array($value,$controle);
+                if($value == $pai[$controle]){
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     //Adiciona as informações de descendência do nó a ser inserido
     private function verificaDescendencia($arvoreAtual, &$data){
 
-    	if( $arvoreAtual[count($arvoreAtual)-1]['suposicao'] == 1 ){
+	if( $arvoreAtual[count($arvoreAtual)-1]['suposicao'] == 1 ){
     		$data['idContexto'] = 1;
+
     		$data['id'] = $arvoreAtual[count($arvoreAtual)-1]['id'].".".$data['idContexto'];
     		$data['parent'] = $arvoreAtual[count($arvoreAtual)-1]['id'];
     	}

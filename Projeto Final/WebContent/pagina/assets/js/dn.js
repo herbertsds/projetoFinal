@@ -1,4 +1,5 @@
 var perguntaBD;
+var cacheOu;
 
 $(function(){
 	
@@ -16,11 +17,11 @@ $(function(){
 	var tree = [];
 	
 	var myData = {
-        'formulas': ["(AimplicaC)"]
+        'formulas': ["(AouB),(AimplicaC),(BimplicaC)"]
     };
 
     var pergunta = {
-    	'pergunta': ["(not(Ae(not(C))))"]
+    	'pergunta': ["(C)"]
     }
 
 	startArvore(myData,pergunta);
@@ -35,6 +36,9 @@ $(function(){
 	$("#incImp").click(function(){ incImp(); });
 	$("#incNot").click(function(){ incNot(); });
 	$('#btnOu').click(function(){ incOu(); });
+	$('#excOu').click(function(){ excOu(); });
+	$('#stepOu').click(function(){ stepOu(); });
+	$('#elimOu').click(function(){ elimOu(); });
 	// excOu
 });
 
@@ -129,6 +133,127 @@ function incOu(){
         data: myData,
         datatype: 'application/json',
         success: function(resposta) { 
+        	if("erro" in resposta){
+        		console.log(resposta);
+        	}else{
+		        tree.push(resposta);
+		        
+		        var data = {};
+
+		        data['id'] = resposta['id'];
+	        	data['text'] = data['id']+". "+resposta['text'];
+	        	data['icon'] = resposta['icon'] == "" ? false:true;
+	        	data['state'] = {"opened" : true};
+	        	$('#jstree_div').jstree().create_node(resposta['parent'], data, 'last', function(){}, true);
+	        	finalizaExercício(resposta['text'],resposta['id']);
+	        	$('#jstree_div').jstree(true).uncheck_all();
+	        }
+        },
+        error: function(erro) {
+			console.log(erro.responseText);
+		}
+    });
+}
+
+function excOu(){
+	var selecionados = $("#jstree_div").jstree("get_selected",true);
+	var myData = {
+		"step": "excOu",
+		"selecionados": selecionados,
+		"atual": tree
+	};
+	console.log(myData);
+	// Carga inicial da dedução natural
+    $.ajax({
+        url: 'http://127.0.0.1:8000/api/deducaoNatural/step/',
+        type: 'GET',
+        callback: '?',
+        data: myData,
+        datatype: 'application/json',
+        success: function(resposta) { 
+        	// console.log(resposta);
+        	cacheOu = resposta[1];
+        	resposta = resposta[0];
+        	cacheOu['idIrmao'] = resposta['id'];
+        	if("erro" in resposta){
+        		console.log(resposta);
+        	}else{
+		        tree.push(resposta);
+		        
+		        var data = {};
+
+		        data['id'] = resposta['id'];
+	        	data['text'] = data['id']+". "+resposta['text'];
+	        	data['icon'] = resposta['icon'] == "" ? false:true;
+	        	data['state'] = {"opened" : true};
+	        	$('#jstree_div').jstree().create_node(resposta['parent'], data, 'last', function(){}, true);
+	        	// finalizaExercício(resposta['text'],resposta['id']);
+	        	$('#jstree_div').jstree(true).uncheck_all();
+	        }
+        },
+        error: function(erro) {
+			console.log(erro.responseText);
+		}
+    });
+}
+
+function elimOu(){
+	var selecionados = $("#jstree_div").jstree("get_selected",true);
+	var myData = {
+		"step": "elimOu",
+		"selecionados": selecionados,
+		"atual": tree
+	};
+	console.log(myData);
+	// Carga inicial da dedução natural
+    $.ajax({
+        url: 'http://127.0.0.1:8000/api/deducaoNatural/step/',
+        type: 'GET',
+        callback: '?',
+        data: myData,
+        datatype: 'application/json',
+        success: function(resposta) { 
+        	// console.log(resposta);
+        	if("erro" in resposta){
+        		console.log(resposta);
+        	}else{
+		        tree.push(resposta);
+		        
+		        var data = {};
+
+		        data['id'] = resposta['id'];
+	        	data['text'] = data['id']+". "+resposta['text'];
+	        	data['icon'] = resposta['icon'] == "" ? false:true;
+	        	data['state'] = {"opened" : true};
+	        	$('#jstree_div').jstree().create_node(resposta['parent'], data, 'last', function(){}, true);
+	        	finalizaExercício(resposta['text'],resposta['id']);
+	        	$('#jstree_div').jstree(true).uncheck_all();
+	        }
+        },
+        error: function(erro) {
+			console.log(erro.responseText);
+		}
+    });
+}
+
+function stepOu(){
+	var selecionados = cacheOu;
+	var myData = {
+		"step": "stepOu",
+		"selecionados": selecionados,
+		"atual": tree
+	};
+	console.log(myData);
+	// Carga inicial da dedução natural
+    $.ajax({
+        url: 'http://127.0.0.1:8000/api/deducaoNatural/step/',
+        type: 'GET',
+        callback: '?',
+        data: myData,
+        datatype: 'application/json',
+        success: function(resposta) { 
+        	// console.log(resposta);
+        	// cacheOu = resposta[1];
         	if("erro" in resposta){
         		console.log(resposta);
         	}else{
