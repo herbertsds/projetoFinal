@@ -154,6 +154,8 @@ class DN extends Model
         }
 
         $formula1 = explode(". ", $request->selecionados[0]['text'])[1];
+        if(strlen($formula1) == 3)
+            $formula1 = $formula1[1];
         $formula2 = $request->incluir;
         $data['text'] = Exercicios::converteSaida("(".$formula1."ou".$formula2.")");
         $data['icon'] = "";
