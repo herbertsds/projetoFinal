@@ -14,6 +14,20 @@ $(function(){
 			'check_callback' : true
 		}
 	});
+
+	$("#incE").click(function(){ incE(); });
+	$("#elimE").click(function(){ elimE(); });
+	$('#btnSupor').click(function(){ supor(); });
+	$("#elimNot").click(function(){ elimNot(); });
+	$("#excImp").click(function(){ excImp(); });
+	$("#abs").click(function(){ abs(); });
+	//A partir daqui, colocar os botões
+	$("#incImp").click(function(){ incImp(); });
+	$("#incNot").click(function(){ incNot(); });
+	$('#btnOu').click(function(){ incOu(); });
+	$('#excOu').click(function(){ excOu(); });
+	$('#stepOu').click(function(){ stepOu(); });
+	$('#elimOu').click(function(){ elimOu(); });
 	
 	
 });
@@ -29,21 +43,22 @@ function initDeducao(){
     	'pergunta': pergunta
     }
 
+   	$('#jstree_div').empty().jstree('destroy');
+
+   	$('#jstree_div').jstree({
+		'plugins' : [ "checkbox" ],
+		'checkbox' : {
+			'three_state' : false
+		},
+		'core' : {
+
+			'check_callback' : true
+		}
+	});
+
 	startArvore(myData,pergunta);
 
-	$("#incE").click(function(){ incE(); });
-	$("#elimE").click(function(){ elimE(); });
-	$('#btnSupor').click(function(){ supor(); });
-	$("#elimNot").click(function(){ elimNot(); });
-	$("#excImp").click(function(){ excImp(); });
-	$("#abs").click(function(){ abs(); });
-	//A partir daqui, colocar os botões
-	$("#incImp").click(function(){ incImp(); });
-	$("#incNot").click(function(){ incNot(); });
-	$('#btnOu').click(function(){ incOu(); });
-	$('#excOu').click(function(){ excOu(); });
-	$('#stepOu').click(function(){ stepOu(); });
-	$('#elimOu').click(function(){ elimOu(); });
+	
 	// excOu
 }
 
@@ -602,7 +617,9 @@ function finalizaExercício(texto,id){
 	var data = {};
 	console.log(pergunta);
 	console.log(texto);
-	if(texto == pergunta && Number.isInteger(id)){
+
+	if(texto == pergunta && Number.isInteger(Number(id)) ){
+		console.log("estou aqui");
     	data['text'] = "Exercício Finalizado";
     	data['icon'] = false;
     	data['state'] = {"opened" : true};
@@ -612,5 +629,11 @@ function finalizaExercício(texto,id){
 		    $('#jstree_div').jstree(true)._model.data["#"].children_d
 		);
 		$('#jstree_div').jstree(true).hide_checkboxes();
+	}else{
+		console.log("Prints");
+		console.log(pergunta);
+		console.log(texto);
+		console.log(Number.isInteger(id));
+		console.log(typeof id);
 	}
 }
