@@ -467,8 +467,9 @@ function abs(){
 	        	data['text'] = data['id']+". "+resposta['text'];
 	        	data['icon'] = resposta['icon'] == "" ? false:true;
 	        	data['state'] = {"opened" : true};
+	        	data['parent'] = resposta['parent'];
 	        	$('#jstree_div').jstree().create_node(resposta['parent'], data, 'last', function(){}, true);
-	        	raa(data['id']);
+	        	raa(data);
 	        	finalizaExercício(resposta['text'],resposta['id']);
 	        	$('#jstree_div').jstree(true).uncheck_all();
         	}

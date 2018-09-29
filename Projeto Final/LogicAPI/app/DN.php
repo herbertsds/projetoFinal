@@ -361,6 +361,17 @@ class DN extends Model
             }
         }
 
+
+        foreach ($arvoreAtual as $key => $value) {
+            if($value['id'] == $request->selecionados[0]['parent']){
+                if(array_key_exists("excOu", $value)){
+                    $mensagem['erro'] = "Não é possível aplicar a operação. Exclusão do ou aberta";
+                    return $mensagem;
+                }
+                break;
+            }
+        }
+
         $selecionado = $this->verificaSelecionado($request->selecionados)[0];
         // return $selecionado;
 
@@ -398,19 +409,9 @@ class DN extends Model
 
     private function raa($request){
         
-        $arvoreAtual = $request->atual;
+        $arvoreAtual = $request->atual;        
 
-        foreach ($arvoreAtual as $key => $value) {
-            if($value['id'] == $request->selecionados['parent']){
-                if(array_key_exists("excOu", $value)){
-                    $mensagem['erro'] = "Não é possível aplicar a operação. Exclusão do ou aberta";
-                    return $mensagem;
-                }
-                break;
-            }
-        }
-
-        $formula1 = $request->selecionados;
+        $formula1 = $request->selecionados['id'];
         // return $arvoreAtual;
 
         $newData = $this->reduzirAbsurdo($arvoreAtual, $formula1);
@@ -605,7 +606,12 @@ class DN extends Model
                 $arvoreAtual[$index]['contexto'] = $value['contexto'];
                 array_pop($arvoreAtual[$index]['contexto']);
                 $arvoreAtual[$index]['icon'] = "";
-                $arvoreAtual[$index]['id'] = $indicePai+1;
+                if(filter_var($indicePai, FILTER_VALIDATE_INT))
+                    $arvoreAtual[$index]['id'] = $indicePai+1;
+                else{
+                    $arvoreAtual[$index]['id'] = ((int)substr($indicePai, -1))+1;
+                    $arvoreAtual[$index]['id'] = substr($indicePai, 0, -1).$arvoreAtual[$index]['id'];
+                }
                 array_push($arvoreAtual[$index]['contexto'], (string)$arvoreAtual[$index]['id']);
                 $arvoreAtual[$index]['idContexto'] = $value['idContexto']+1;
                 $arvoreAtual[$index]['parent'] = $value['parent'];
