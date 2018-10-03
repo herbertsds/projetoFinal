@@ -1,6 +1,7 @@
 // var perguntaBD;
 var cacheOu;
 var tree;
+var qtdBd;
 
 $(function(){
 	
@@ -28,6 +29,7 @@ $(function(){
 	$('#excOu').click(function(){ excOu(); });
 	$('#stepOu').click(function(){ stepOu(); });
 	$('#elimOu').click(function(){ elimOu(); });
+	$('#undo').click(function(){ undo(); });
 	
 	
 });
@@ -55,6 +57,8 @@ function initDeducao(){
 			'check_callback' : true
 		}
 	});
+
+	qtdBd = vet_regras.length;
 
 	startArvore(myData,pergunta);
 
@@ -635,5 +639,17 @@ function finalizaExercício(texto,id){
 		console.log(texto);
 		console.log(Number.isInteger(id));
 		console.log(typeof id);
+	}
+}
+
+function undo(){
+	if (tree.length > qtdBd){
+		var remover = tree.pop();
+		// $('#jstree_div').jstree().delete_node(remover['id']);
+
+		$('#jstree_div').jstree("delete_node","#"+remover['id']);
+		console.log(remover['id']);
+	}else{
+		console.log("Não é possível remover o BD da DN");
 	}
 }
