@@ -88,6 +88,8 @@ function startArvore(myData,pergunta){
         },
         error: function(erro) {
 			console.log(erro.responseText);
+			
+//
 		}
     });
 
@@ -102,6 +104,7 @@ function startArvore(myData,pergunta){
         },
         error: function(erro) {
 			console.log(erro.responseText);
+//
 		}
     });
 }
@@ -136,6 +139,7 @@ function supor(){
         },
         error: function(erro) {
 			console.log(erro.responseText);
+//
 		}
     });
 }
@@ -159,6 +163,8 @@ function incOu(){
         success: function(resposta) { 
         	if("erro" in resposta){
         		console.log(resposta);
+        		alert(resposta['erro']);
+
         	}else{
 		        tree.push(resposta);
 		        
@@ -175,6 +181,7 @@ function incOu(){
         },
         error: function(erro) {
 			console.log(erro.responseText);
+//
 		}
     });
 }
@@ -201,6 +208,8 @@ function excOu(){
         	cacheOu['idIrmao'] = resposta['id'];
         	if("erro" in resposta){
         		console.log(resposta);
+        		alert(resposta['erro']);
+
         	}else{
 		        tree.push(resposta);
 		        
@@ -217,6 +226,7 @@ function excOu(){
         },
         error: function(erro) {
 			console.log(erro.responseText);
+//
 		}
     });
 }
@@ -240,6 +250,8 @@ function elimOu(){
         	// console.log(resposta);
         	if("erro" in resposta){
         		console.log(resposta);
+        		alert(resposta['erro']);
+
         	}else{
 		        tree.push(resposta);
 		        
@@ -256,6 +268,7 @@ function elimOu(){
         },
         error: function(erro) {
 			console.log(erro.responseText);
+//
 		}
     });
 }
@@ -280,6 +293,8 @@ function stepOu(){
         	// cacheOu = resposta[1];
         	if("erro" in resposta){
         		console.log(resposta);
+        		alert(resposta['erro']);
+
         	}else{
 		        tree.push(resposta);
 		        
@@ -296,6 +311,7 @@ function stepOu(){
         },
         error: function(erro) {
 			console.log(erro.responseText);
+//
 		}
     });
 }
@@ -318,6 +334,8 @@ function elimNot(){
         	console.log(resposta);
         	if("erro" in resposta){
         		// console.log(resposta['erro']);
+        		alert(resposta['erro']);
+
         	}else{
         		tree.push(resposta);
 	        
@@ -335,6 +353,7 @@ function elimNot(){
         },
         error: function(erro) {
 			console.log(erro.responseText);
+//
 		}
     });
 }
@@ -357,6 +376,8 @@ function incE(){
         	// console.log(resposta);
         	if("erro" in resposta){
         		console.log(resposta);
+        		alert(resposta['erro']);
+
         	}else{
         		// console.log(resposta);
         		tree.push(resposta);
@@ -374,6 +395,7 @@ function incE(){
         },
         error: function(erro) {
 			console.log(erro.responseText);
+//
 		}
     });
 }
@@ -396,6 +418,7 @@ function incNot(){
         	// console.log(resposta);
         	if("erro" in resposta){
         		console.log(resposta);
+        		alert(resposta['erro']);
         	}else{
         		// console.log(resposta);
         		tree.push(resposta);
@@ -413,6 +436,7 @@ function incNot(){
         },
         error: function(erro) {
 			console.log(erro.responseText);
+//
 		}
     });
 }
@@ -434,6 +458,8 @@ function elimE(){
         success: function(resposta) { 
         	if("erro" in resposta){
         		console.log(resposta);
+        		alert(resposta['erro']);
+
         	}else{
         		// console.log(resposta);
         		
@@ -456,7 +482,8 @@ function elimE(){
         },
         error: function(erro) {
 			console.log(erro.responseText);
-		}
+//
+        }
     });
 }
 
@@ -477,6 +504,8 @@ function abs(){
         success: function(resposta) { 
         	if("erro" in resposta){
         		console.log(resposta);
+        		alert(resposta['erro']);
+
         	}else{
         		tree.push(resposta);
 	        
@@ -496,6 +525,7 @@ function abs(){
         },
         error: function(erro) {
 			console.log(erro.responseText);
+//
 		}
     });
 }
@@ -536,6 +566,7 @@ function raa(data){
         },
         error: function(erro) {
 			console.log(erro.responseText);
+//
 		}
     });
 }
@@ -557,6 +588,8 @@ function incImp(){
         success: function(resposta) { 
         	if("erro" in resposta){
         		console.log(resposta);
+        		alert(resposta['erro']);
+
         	}else{
         		tree.push(resposta);
 	        
@@ -574,6 +607,7 @@ function incImp(){
         },
         error: function(erro) {
 			console.log(erro.responseText);
+//
 		}
     });
 }
@@ -595,6 +629,8 @@ function excImp(){
         success: function(resposta) { 
         	if("erro" in resposta){
         		console.log(resposta);
+        		alert(resposta['erro']);
+
         	}else{
         		console.log(resposta);
         		tree.push(resposta);
@@ -613,6 +649,7 @@ function excImp(){
         },
         error: function(erro) {
 			console.log(erro.responseText);
+//
 		}
     });
 }
@@ -651,5 +688,6 @@ function undo(){
 		console.log(remover['id']);
 	}else{
 		console.log("Não é possível remover o BD da DN");
+		alert("Não é possível remover o BD da DN");
 	}
 }
