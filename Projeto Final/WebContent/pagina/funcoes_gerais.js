@@ -368,19 +368,24 @@ function f_Escolha(forma) {
 
 }
 function f_PreencherDivListas() {
-
+	console.log(vet_exercicios);
 	for (j = inicio; j < vet_exercicios.length; j++) {
-		$('#div_ListaEx' + vet_exercicios[j]['pivot']['listas_id'])
-				.append(
-						"<button id='"
-								+ vet_exercicios[j]['id']
-								+ "' class='btn btn-info btn-sm dropdown-item' type='button' data-toggle='tooltip' data-placement='top'"
-								+ " onclick='f_SelecionaExercicio(this.id)'>Ex."
-								+ vet_exercicios[j]['id'] + "</button>");
 
-		$("button[id='" + vet_exercicios[j]['id'] + "']").prop('title',
-				vet_exercicios[j]['sentenca']);
-		console.log("listando...");
+		if(typeof vet_exercicios[j] != "undefined"){
+			console.log("Entrei: "+j);
+			$('#div_ListaEx' + vet_exercicios[j]['pivot']['listas_id'])
+					.append(
+							"<button id='"
+									+ vet_exercicios[j]['id']
+									+ "' class='btn btn-info btn-sm dropdown-item' type='button' data-toggle='tooltip' data-placement='top'"
+									+ " onclick='f_SelecionaExercicio(this.id)'>Ex."
+									+ vet_exercicios[j]['label'] + "</button>");
+
+			$("button[id='" + vet_exercicios[j]['id'] + "']").prop('title',
+					vet_exercicios[j]['sentenca']);
+			console.log("listando...");
+		}
+		
 
 	}
 
@@ -768,10 +773,33 @@ function f_BuscaEx() {
 					success : function(retorno) {
 						exercicios = JSON.parse(retorno);
 						inicio = exercicios[0]['id'];
+						correcaoIndex = parseInt(exercicios[0]['id']) - 1;
 						for (k = 0, j = indice_vet_Ex; j < (n + exercicios.length); j++, k++) {
-							vet_exercicios[exercicios[k]['id']] = exercicios[k];
-							indice_vet_Ex++;
+							if(tipoEx == "tableaux" && exercicios[k]['id'] == 1){
+								inicio = exercicios[1]['id'];
+							}else if(tipoEx == "t_lpo" && 
+								(exercicios[k]['id'] == 32 ||
+									parseInt(exercicios[k]['id']) - correcaoIndex == 32 ||
+									parseInt(exercicios[k]['id']) - correcaoIndex == 35 ||
+									parseInt(exercicios[k]['id']) - correcaoIndex == 36 ||
+									parseInt(exercicios[k]['id']) - correcaoIndex == 37 ||
+									parseInt(exercicios[k]['id']) - correcaoIndex == 38 ||
+									parseInt(exercicios[k]['id']) - correcaoIndex == 52 ||
+									parseInt(exercicios[k]['id']) - correcaoIndex == 53 ||
+									parseInt(exercicios[k]['id']) - correcaoIndex == 54 ||
+									parseInt(exercicios[k]['id']) - correcaoIndex == 57 ||
+									parseInt(exercicios[k]['id']) - correcaoIndex == 58 ||
+									parseInt(exercicios[k]['id']) - correcaoIndex == 60 ||
+									parseInt(exercicios[k]['id']) - correcaoIndex == 62 ||
+									parseInt(exercicios[k]['id']) - correcaoIndex == 66  )
+								){
 
+
+							}else{
+								vet_exercicios[exercicios[k]['id']] = exercicios[k];
+								vet_exercicios[exercicios[k]['id']]['label'] = parseInt(exercicios[k]['id']) - correcaoIndex;
+								indice_vet_Ex++;
+							}
 						}
 						n = indice_vet_Ex;
 						f_PreencherDivListas();
