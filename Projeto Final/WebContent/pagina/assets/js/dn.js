@@ -69,11 +69,12 @@ function initDeducao(){
 //Carga inicial da dedução natural
 function startArvore(myData,pergunta){
     $.ajax({
-        url: 'http://127.0.0.1:8000/api/deducaoNatural/',
+        url: urlWebService+'api/deducaoNatural/novoExercicio',
         type: 'GET',
         callback: '?',
         data: myData,
         datatype: 'application/json',
+        
         success: function(resposta) { 
 	        tree = resposta;
 	        var data = {};
@@ -88,13 +89,12 @@ function startArvore(myData,pergunta){
         },
         error: function(erro) {
 			console.log(erro.responseText);
-			
-//
+			console.log(urlWebService);
 		}
     });
 
     $.ajax({
-        url: 'http://127.0.0.1:8000/api/deducaoNatural/formataPergunta',
+        url: urlWebService+'api/deducaoNatural/formataPergunta',
         type: 'GET',
         callback: '?',
         data: pergunta,
@@ -119,7 +119,7 @@ function supor(){
 	console.log(myData);
 	// Carga inicial da dedução natural
     $.ajax({
-        url: 'http://127.0.0.1:8000/api/deducaoNatural/step/',
+        url: urlWebService+'api/deducaoNatural/step',
         type: 'GET',
         callback: '?',
         data: myData,
@@ -155,7 +155,7 @@ function incOu(){
 	console.log(myData);
 	// Carga inicial da dedução natural
     $.ajax({
-        url: 'http://127.0.0.1:8000/api/deducaoNatural/step/',
+        url: urlWebService+'api/deducaoNatural/step',
         type: 'GET',
         callback: '?',
         data: myData,
@@ -196,7 +196,7 @@ function excOu(){
 	console.log(myData);
 	// Carga inicial da dedução natural
     $.ajax({
-        url: 'http://127.0.0.1:8000/api/deducaoNatural/step/',
+        url: urlWebService+'api/deducaoNatural/step',
         type: 'GET',
         callback: '?',
         data: myData,
@@ -241,7 +241,7 @@ function elimOu(){
 	console.log(myData);
 	// Carga inicial da dedução natural
     $.ajax({
-        url: 'http://127.0.0.1:8000/api/deducaoNatural/step/',
+        url: urlWebService+'api/deducaoNatural/step',
         type: 'GET',
         callback: '?',
         data: myData,
@@ -283,7 +283,7 @@ function stepOu(){
 	console.log(myData);
 	// Carga inicial da dedução natural
     $.ajax({
-        url: 'http://127.0.0.1:8000/api/deducaoNatural/step/',
+        url: urlWebService+'api/deducaoNatural/step',
         type: 'GET',
         callback: '?',
         data: myData,
@@ -325,7 +325,7 @@ function elimNot(){
 	};
 	// Carga inicial da dedução natural
     $.ajax({
-        url: 'http://127.0.0.1:8000/api/deducaoNatural/step/',
+        url: urlWebService+'api/deducaoNatural/step',
         type: 'GET',
         callback: '?',
         data: myData,
@@ -367,7 +367,7 @@ function incE(){
 	};
 	// Carga inicial da dedução natural
     $.ajax({
-        url: 'http://127.0.0.1:8000/api/deducaoNatural/step/',
+        url: urlWebService+'api/deducaoNatural/step',
         type: 'GET',
         callback: '?',
         data: myData,
@@ -409,7 +409,7 @@ function incNot(){
 	};
 	// Carga inicial da dedução natural
     $.ajax({
-        url: 'http://127.0.0.1:8000/api/deducaoNatural/step/',
+        url: urlWebService+'api/deducaoNatural/step',
         type: 'GET',
         callback: '?',
         data: myData,
@@ -450,7 +450,7 @@ function elimE(){
 	};
 	// Carga inicial da dedução natural
     $.ajax({
-        url: 'http://127.0.0.1:8000/api/deducaoNatural/step/',
+        url: urlWebService+'api/deducaoNatural/step',
         type: 'GET',
         callback: '?',
         data: myData,
@@ -496,7 +496,7 @@ function abs(){
 	};
 	// Carga inicial da dedução natural
     $.ajax({
-        url: 'http://127.0.0.1:8000/api/deducaoNatural/step/',
+        url: urlWebService+'api/deducaoNatural/step',
         type: 'GET',
         callback: '?',
         data: myData,
@@ -539,7 +539,7 @@ function raa(data){
 	};
 	// Carga inicial da dedução natural
     $.ajax({
-        url: 'http://127.0.0.1:8000/api/deducaoNatural/step/',
+        url: urlWebService+'api/deducaoNatural/step',
         type: 'GET',
         callback: '?',
         data: myData,
@@ -580,7 +580,7 @@ function incImp(){
 	};
 	// Carga inicial da dedução natural
     $.ajax({
-        url: 'http://127.0.0.1:8000/api/deducaoNatural/step/',
+        url: urlWebService+'api/deducaoNatural/step',
         type: 'GET',
         callback: '?',
         data: myData,
@@ -621,7 +621,7 @@ function excImp(){
 	};
 	// Carga inicial da dedução natural
     $.ajax({
-        url: 'http://127.0.0.1:8000/api/deducaoNatural/step/',
+        url: urlWebService+'api/deducaoNatural/step',
         type: 'GET',
         callback: '?',
         data: myData,

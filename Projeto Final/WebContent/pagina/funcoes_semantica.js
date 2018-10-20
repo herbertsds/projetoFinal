@@ -35,7 +35,7 @@ function f_GabSemantica(partes) {
 	$
 			.ajax({
 
-				url : 'http://127.0.0.1:8000/api/semantica/',
+				url : urlWebService+'api/semantica',
 				type : 'GET',
 				callback : '?',
 				data : myData,
@@ -78,7 +78,7 @@ function f_GabSemantica(partes) {
 }
 
 function f_abreGabSem() {
-	var win = window.open('gabSemantica.html?exercicioBuscado=' + numExercicio+'&vet_dominio='+vet_dominio+'&vet_relacoes='+vet_relacoes);
+	var win = window.open('./WebContent/pagina/gabSemantica.html?exercicioBuscado=' + numExercicio+'&vet_dominio='+vet_dominio+'&vet_relacoes='+vet_relacoes);
 
 }
 

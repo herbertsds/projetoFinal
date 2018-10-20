@@ -13,9 +13,9 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:api')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
 
 // api/exercicios/
 Route::group(['prefix' => 'exercicios', 'middleware' => 'cors'], function(){
@@ -55,7 +55,7 @@ Route::group(['prefix' => 'exercicios', 'middleware' => 'cors'], function(){
 Route::group(['prefix' => 'resolucao', 'middleware' => 'cors'], function(){
 	
 	//Resolve um exercício específico, rodando o algoritmo inteiro de resolução (fullSteps)
-	Route::get('/', 'ResolucaoController@index');
+	Route::get('/fullSteps', 'ResolucaoController@index');
 
 	Route::get('/stepByStep', 'ResolucaoController@stepByStep');
 
@@ -65,10 +65,6 @@ Route::group(['prefix' => 'resolucao', 'middleware' => 'cors'], function(){
 	//Teste de relacionamento (não usar)
 	Route::get('/teste', 'ResolucaoController@teste');
 
-	Route::post('', function () {
-	    return 'Resolucao ae';
-	});
-
 });
 
 // api/tableaux/
@@ -76,10 +72,6 @@ Route::group(['prefix' => 'tableaux', 'middleware' => 'cors'], function(){
 	
 	//Resolve um exercício específico, rodando o algoritmo inteiro do tableaux(fullSteps)
 	Route::get('/', 'TableauxController@index');
-
-	Route::post('', function () {
-	    return request();
-	});
 
 });
 
@@ -89,10 +81,6 @@ Route::group(['prefix' => 'tableauxLPO', 'middleware' => 'cors'], function(){
 	//Resolve um exercício específico, rodando o algoritmo inteiro do tableaux(fullSteps)
 	Route::get('/', 'TableauxLPOController@index');
 
-	Route::post('', function () {
-	    return request();
-	});
-
 });
 
 // api/semantica/
@@ -101,17 +89,13 @@ Route::group(['prefix' => 'semantica', 'middleware' => 'cors'], function(){
 	//Resolve um exercício específico, rodando o algoritmo inteiro do tableaux(fullSteps)
 	Route::get('/', 'SemanticaController@index');
 
-	Route::post('', function () {
-	    return request();
-	});
-
 });
 
 // api/deducaoNatural/
 Route::group(['prefix' => 'deducaoNatural', 'middleware' => 'cors'], function(){
 	
 	//Inicia a construção da árvore de DN
-	Route::get('/', 'DNController@index');
+	Route::get('/NovoExercicio', 'DNController@index');
 
 	//Formata a pergunta
 	Route::get('/formataPergunta', 'DNController@formataPergunta');

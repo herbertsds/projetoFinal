@@ -79,7 +79,7 @@ function f_FNC() {
 	$
 			.ajax({
 
-				url : 'http://127.0.0.1:8000/api/resolucao/stepByStep',
+				url : urlWebService+'api/resolucao/stepByStep',
 				type : 'GET',
 				callback : '?',
 				data : myData,
@@ -156,7 +156,7 @@ function f_Negar() {
 	$
 			.ajax({
 
-				url : 'http://127.0.0.1:8000/api/resolucao/stepByStep',
+				url : urlWebService+'api/resolucao/stepByStep',
 				type : 'GET',
 				callback : '?',
 				data : myData,
@@ -234,7 +234,7 @@ function f_PassarNotPraDentro() {
 		$
 				.ajax({
 
-					url : 'http://127.0.0.1:8000/api/resolucao/stepByStep',
+					url : urlWebService+'api/resolucao/stepByStep',
 					type : 'GET',
 					callback : '?',
 					data : myData,
@@ -344,7 +344,7 @@ function f_Notnot() {
 		$
 				.ajax({
 
-					url : 'http://127.0.0.1:8000/api/resolucao/stepByStep',
+					url : urlWebService+'api/resolucao/stepByStep',
 					type : 'GET',
 					callback : '?',
 					data : myData,
@@ -416,7 +416,7 @@ function f_Verificar() {
 	$
 			.ajax({
 
-				url : 'http://127.0.0.1:8000/api/resolucao/stepByStep',
+				url : urlWebService+'api/resolucao/stepByStep',
 				type : 'GET',
 				callback : '?',
 				data : myData,
@@ -498,7 +498,7 @@ function f_SepararE() {
 		$
 				.ajax({
 
-					url : 'http://127.0.0.1:8000/api/resolucao/stepByStep',
+					url : urlWebService+'api/resolucao/stepByStep',
 					type : 'GET',
 					callback : '?',
 					data : myData,
@@ -615,7 +615,7 @@ function f_SepararOU() {
 		$
 				.ajax({
 
-					url : 'http://127.0.0.1:8000/api/resolucao/stepByStep',
+					url : urlWebService+'api/resolucao/stepByStep',
 					type : 'GET',
 					callback : '?',
 					data : myData,
@@ -741,11 +741,12 @@ function f_GabResolucao() {
 	$
 			.ajax({
 
-				url : 'http://127.0.0.1:8000/api/resolucao/',
+				url : urlWebService+'api/resolucao/fullSteps',
 				type : 'GET',
 				callback : '?',
 				data : myData,
 				datatype : 'application/json',
+				Accept: "*/*",
 
 				success : function(retorno) {
 
@@ -956,6 +957,7 @@ function f_GabResolucao() {
 				},
 				error : function(erro) {
 					console.log('ERRO: Gabarito não encontrado!');
+					console.log(urlWebService);
 				},
 			});
 

@@ -21,6 +21,9 @@ var vet_idListas = [];
 var exercicios;
 var inicio = 0;
 var manual = false;
+var urlWebService = "http://logicapi.tk/";
+// var urlWebService = "http://127.0.0.1:8000/";
+
 // funcao apenas para testes de eventos
 function teste() {
 
@@ -368,11 +371,9 @@ function f_Escolha(forma) {
 
 }
 function f_PreencherDivListas() {
-	console.log(vet_exercicios);
 	for (j = inicio; j < vet_exercicios.length; j++) {
 
 		if(typeof vet_exercicios[j] != "undefined"){
-			console.log("Entrei: "+j);
 			$('#div_ListaEx' + vet_exercicios[j]['pivot']['listas_id'])
 					.append(
 							"<button id='"
@@ -383,7 +384,7 @@ function f_PreencherDivListas() {
 
 			$("button[id='" + vet_exercicios[j]['id'] + "']").prop('title',
 					vet_exercicios[j]['sentenca']);
-			console.log("listando...");
+			// console.log("listando...");
 		}
 		
 
@@ -404,7 +405,7 @@ function f_AddRegra() {
 		$
 				.ajax({
 
-					url : 'http://127.0.0.1:8000/api/exercicios/verificaFormula',
+					url : urlWebService+'api/exercicios/verificaFormula',
 					type : 'GET',
 					callback : '?',
 					data : myData,
@@ -452,7 +453,7 @@ function f_AddPergunta() {
 		$
 				.ajax({
 
-					url : 'http://127.0.0.1:8000/api/exercicios/verificaFormula',
+					url : urlWebService+'api/exercicios/verificaFormula',
 					async : false,
 					type : 'GET',
 					callback : '?',
@@ -518,7 +519,7 @@ function f_verificaEx() {
 	$
 			.ajax({
 
-				url : 'http://127.0.0.1:8000/api/resolucao/validaExercicio',
+				url : urlWebService+'api/resolucao/validaExercicio',
 				type : 'GET',
 				async : false,
 				callback : '?',
@@ -685,10 +686,11 @@ function f_BuscaListas() {
 		'id' : categoriaExercicio
 	};
 
+
 	// BUSCAR AS LISTAS NA CATEGORIA ESCOLHIDA
 	$
 			.ajax({
-				url : 'http://127.0.0.1:8000/api/exercicios/getListas',
+				url : urlWebService+'api/exercicios/getListas',
 				type : 'GET',
 				callback : '?',
 				data : myData,
@@ -764,11 +766,12 @@ function f_BuscaEx() {
 		};
 		$
 				.ajax({
-					url : 'http://127.0.0.1:8000/api/exercicios/listarExercicios',
+					url : urlWebService+'api/exercicios/listarExercicios',
 					type : 'GET',
 					callback : '?',
 					data : myData,
 					datatype : 'application/json',
+					Accept: "*/*",
 
 					success : function(retorno) {
 						exercicios = JSON.parse(retorno);
@@ -836,7 +839,7 @@ function f_PreencheDrop() {
 }
 
 function f_LimpaTipo() {
-	console.log("limpando");
+	// console.log("limpando");
 	$('#regrasAdicionadas').empty();
 	$('#perguntaAdicionada').empty();
 	vet_regras = [];

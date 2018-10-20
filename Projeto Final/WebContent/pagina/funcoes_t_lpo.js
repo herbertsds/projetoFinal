@@ -7,7 +7,7 @@ function f_GabTab_lpo(exercicio) {
 	$
 			.ajax({
 
-				url : 'http://127.0.0.1:8000/api/tableauxLPO/',
+				url : urlWebService+'api/tableauxLPO',
 				type : 'GET',
 				callback : '?',
 				data : myData,
@@ -54,7 +54,7 @@ function f_GabTab_lpo(exercicio) {
 
 }
 function f_abreGabTab_lpo() {
-	var win = window.open('gabTableaux_lpo.html?exercicioBuscado='
+	var win = window.open('./WebContent/pagina/gabTableaux_lpo.html?exercicioBuscado='
 			+ numExercicio);
 
 }

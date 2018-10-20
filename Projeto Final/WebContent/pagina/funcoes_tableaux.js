@@ -6,7 +6,7 @@ function f_GabTableaux(exercicio) {
 
 	$.ajax({
 
-				url : 'http://127.0.0.1:8000/api/tableaux/',
+				url : urlWebService+'api/tableaux',
 				type : 'GET',
 				callback : '?',
 				data : myData,
@@ -56,7 +56,7 @@ function f_GabTableaux(exercicio) {
 
 }
 function f_abreGabTab() {
-	var win = window.open('gabTableaux.html?exercicioBuscado=' + numExercicio);
+	var win = window.open('./WebContent/pagina/gabTableaux.html?exercicioBuscado=' + numExercicio);
 
 }
 function f_LimpaTableaux() {
